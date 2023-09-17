@@ -45,7 +45,7 @@ import RenderCity from '../list/RenderCity'
 import { normalize } from '../../utils'
 
 const logoNav = {
-    screen: 'Home'
+    screen: 'Explore'
 }
 
 const Header = ({ navigation, route }) => {
@@ -258,7 +258,7 @@ const Header = ({ navigation, route }) => {
     return (
         <View style={isSmallScreen ? styles.headerSmall: styles.headerLarge}>
             <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
-                {!isSmallScreen && <View
+                <View
                     onClick={onLogoPress}
                     style={{ height: normalize(50), justifyContent: 'center',  marginRight: SPACING.small }}
                     {...logoNavProps}
@@ -271,7 +271,7 @@ const Header = ({ navigation, route }) => {
                             width: normalize(102)
                         }}
                     />
-                </View>}
+                </View>
                 {params.city && <HoverableView style={{ ...styles.locationWrapper }} hoveredOpacity={0.7}>
                     <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
                         onPress={() => setLocationModalVisible(true)}
