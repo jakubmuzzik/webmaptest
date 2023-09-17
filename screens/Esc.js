@@ -1,12 +1,12 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-const Home = () => {
+const Esc = ({ navigation, route }) => {
     return (
         <View>
-            <Text>Home</Text>
+            <Text>Esc</Text>
         </View>
     )
 }
 
-export default Home
+export default Esc

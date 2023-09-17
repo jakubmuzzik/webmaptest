@@ -1,27 +1,34 @@
 import React from 'react'
-import { useWindowDimensions } from 'react-native'
-import { createDrawerNavigator } from '@react-navigation/drawer'
+import { useWindowDimensions, View } from 'react-native'
+import { useRoute } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { SMALL_SCREEN_THRESHOLD } from '../constants'
+import Explore from '../screens/Explore'
 
-import Home from '../screens/Home'
-import Massages from '../screens/Massages'
-import Girls from '../screens/Girls'
+const Stack = createStackNavigator()
 
-const Drawer = createDrawerNavigator()
-
-const Main = () => {
+const Main = ({ route }) => {
     const { width } = useWindowDimensions()
-    const isLargeScreen = width >= 768
+    const isSmalScreen = width < SMALL_SCREEN_THRESHOLD
+    const dynamicRoute = useRoute()
+    console.log(dynamicRoute.name)
+    console.log(route.params)
+
+    const { language = 'en' } = route.params ?? {}
 
     return (
-        <Drawer.Navigator 
-            screenOptions={{
-                drawerType:isLargeScreen ? 'permanent' : 'front',
-                drawerStyle: isLargeScreen ? { width: '15%' } : { width: '100%' },
-            }}>
-            <Drawer.Screen name="Home" component={Home} />
-            <Drawer.Screen name="Girls" component={Girls} />
-            <Drawer.Screen name="Massages" component={Massages} />
-        </Drawer.Navigator>
+        <>
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Explore"
+                    component={Explore} initialParams={{}} />
+            </Stack.Navigator>
+            {isSmalScreen && (
+                <View style={{ height: 100, width: '100%', backgroundColor: 'grey' }}>
+
+                </View>
+            )}
+        </>
     )
 }
 
