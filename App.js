@@ -91,7 +91,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} initialParams={{}} />
-            <Stack.Screen name="Home" component={Home} initialParams={{}} />
+            <Stack.Screen name="Home" component={Explore} initialParams={{}} />
             <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
             <Stack.Screen name="Pri" component={Pri} initialParams={{}} />
             <Stack.Screen name="Mas" component={Mas} initialParams={{}} />
