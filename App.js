@@ -39,7 +39,7 @@ const linking = {
       Pri: "/pri/:city",
       Mas: "/mas/:city",
       Clu: "/clu/:city",
-      Explore: "/explore",
+      Explore: "/explore/:city?",
       NotFound: "*",
     }
   },
@@ -104,7 +104,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={NotFound} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={Explore} initialParams={{}} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
