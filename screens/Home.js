@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 
 const Home = () => {
     return (
-        <View>
+        <View style={{ width: 600, backgroundColor: 'yellow' }}>
             <Text>Home</Text>
         </View>
     )

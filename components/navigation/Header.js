@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useRef, memo } from 'react'
+import React, { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react'
 import {
     View,
     StyleSheet,
@@ -10,28 +10,29 @@ import {
     TouchableWithoutFeedback,
     useWindowDimensions
 } from 'react-native'
-import { useLinkProps } from '@react-navigation/native'
-import { 
-    COLORS, 
-    FONTS, 
-    FONT_SIZES, 
-    DEFAULT_CITY, 
-    SPACING, 
-    DEFAULT_LANGUAGE, 
-    SMALL_SCREEN_THRESHOLD, 
-    SUPPORTED_LANGUAGES, 
-    SUPPORTED_CATEGORIES 
+import { useLinkProps, Link } from '@react-navigation/native'
+import {
+    COLORS,
+    FONTS,
+    FONT_SIZES,
+    DEFAULT_CITY,
+    SPACING,
+    DEFAULT_LANGUAGE,
+    SMALL_SCREEN_THRESHOLD,
+    LARGE_SCREEN_THRESHOLD,
+    SUPPORTED_LANGUAGES,
+    SUPPORTED_CATEGORIES
 } from '../../constants'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import { 
-    CZECH_CITIES, 
-    CZECH, 
-    CITY, 
-    SELECT_CITY, 
-    SEARCH, 
-    SIGN_IN, 
-    SIGN_UP, 
-    translateLabels 
+import {
+    CZECH_CITIES,
+    CZECH,
+    CITY,
+    SELECT_CITY,
+    SEARCH,
+    SIGN_IN,
+    SIGN_UP,
+    translateLabels
 } from '../../labels'
 import Animated, {
     Extrapolation,
@@ -44,16 +45,32 @@ import HoverableView from '../HoverableView'
 import RenderCity from '../list/RenderCity'
 import { normalize } from '../../utils'
 
-const logoNav = {
-    screen: 'Explore'
-}
-
 const Header = ({ navigation, route }) => {
-    console.log(route.params)
+    console.log(route.name)
     const params = useMemo(() => ({
         language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : DEFAULT_LANGUAGE,
         city: route.params.city
     }), [route.params])
+
+    const logoNav = useMemo(() => ({
+        screen: 'Home',
+        params: route.params.language ? { language: params.language } : {}
+    }), [route.params])
+
+    const csLanguageNav = useMemo(() => ({
+        screen: route.name,
+        params: { ...route.params, language: 'cs' }
+    }), [route])
+
+    const enLanguageNav = useMemo(() => ({
+        screen: route.name,
+        params: { ...route.params, language: 'en' }
+    }), [route])
+
+    const citiesNavigations = useMemo(() => CZECH_CITIES.map(city => ({
+        screen: route.name,
+        params: { ...route.params, city }
+    })), [route])
 
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
@@ -65,13 +82,14 @@ const Header = ({ navigation, route }) => {
     ]), [params.language])
 
     const { onPress: onLogoPress, ...logoNavProps } = useLinkProps({ to: logoNav })
+    const { onPress: onCSPress, ...csNavProps } = useLinkProps({ to: csLanguageNav })
+    const { onPress: onENPress, ...enNavProps } = useLinkProps({ to: enLanguageNav })
 
     const [search, setSearch] = useState('')
     const [citySearch, setCitySearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState('transparent')
-    const [searchCityBorderColor, setSearchCityBorderColor] = useState(COLORS.placeholder) 
+    const [searchCityBorderColor, setSearchCityBorderColor] = useState(COLORS.placeholder)
     const [locationModalVisible, setLocationModalVisible] = useState(false)
-    const [selectedCity, setSelectedCity] = useState(DEFAULT_CITY)
     const [userDropdownVisible, setUserDropdownVisible] = useState(false)
     const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false)
     const [dropdownTop, setDropdownTop] = useState(-1000)
@@ -81,8 +99,15 @@ const Header = ({ navigation, route }) => {
     const userDropdownRef = useRef()
     const languageDropdownRef = useRef()
 
+    //close modals when changing language, city etc...
+    useEffect(() => {
+        setLanguageDropdownVisible(false)
+        setLocationModalVisible(false)
+    }, [route.params])
+
     const { width } = useWindowDimensions()
-    const isSmallScreen =  width < SMALL_SCREEN_THRESHOLD
+    const isSmallScreen = width < SMALL_SCREEN_THRESHOLD
+    const isLargeScreen = width >= LARGE_SCREEN_THRESHOLD
 
     const scrollY = useSharedValue(0)
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -97,11 +122,6 @@ const Header = ({ navigation, route }) => {
         }
     })
 
-    const onSelectCity = useCallback((city) => {
-        setLocationModalVisible(false)
-        setSelectedCity(city)
-    }, [])
-
     const onCitySearch = useCallback((search) => {
         filteredCitiesRef.current = search ? [...CZECH_CITIES].filter(city => city.toLowerCase().includes(citySearch.toLowerCase())) : [...CZECH_CITIES]
         setCitySearch(search)
@@ -113,7 +133,7 @@ const Header = ({ navigation, route }) => {
 
     const onSearchSubmit = useCallback(() => {
         //navigate to search screen
-    }, [search]) 
+    }, [search])
 
     const toggleUserDropdown = useCallback(() => {
         userDropdownVisible ? setUserDropdownVisible(false) : openUserDropdown()
@@ -131,7 +151,7 @@ const Header = ({ navigation, route }) => {
             setLanguageDropdownRight(_w + 20)
         })
         setLanguageDropdownVisible(true)
-    }, [languageDropdownRef.current])
+    }, [languageDropdownRef.current, userDropdownRef.current])
 
     const openUserDropdown = useCallback(() => {
         userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
@@ -157,7 +177,7 @@ const Header = ({ navigation, route }) => {
                                 </TouchableOpacity>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.lightPlaceholder}>
-                                <TouchableOpacity  style={{ padding: SPACING.xx_small }}
+                                <TouchableOpacity style={{ padding: SPACING.xx_small }}
                                     activeOpacity={0.8}
                                 >
                                     <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>{labels.SIGN_UP}</Text>
@@ -170,6 +190,14 @@ const Header = ({ navigation, route }) => {
         )
     }, [userDropdownVisible, dropdownTop])
 
+    const renderSeoContent = useCallback(() => (
+        <>
+            <View {...csNavProps} onClick={onCSPress}></View>
+            <View {...enNavProps} onClick={onENPress}></View>
+            {citiesNavigations.map(cityNavigation => <Link key={cityNavigation.params.city} to={cityNavigation} />)}
+        </>
+    ), [citiesNavigations])
+
     const rendeLanguageDropdown = useCallback(() => {
         return (
             <Modal visible={languageDropdownVisible} transparent animationType="none">
@@ -180,8 +208,8 @@ const Header = ({ navigation, route }) => {
                     <TouchableWithoutFeedback>
                         <View style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, overflow: 'hidden' }]}>
                             <HoverableView hoveredBackgroundColor={COLORS.lightPlaceholder}>
-                                <TouchableOpacity onPress={() => navigation.setParams({ ...navigation.getState().routes[0].params, language: 'cs' })} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
-                                    activeOpacity={0.8}
+                                <View {...csNavProps} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
+                                    onClick={onCSPress}
                                 >
                                     <Image
                                         resizeMode='contain'
@@ -193,11 +221,11 @@ const Header = ({ navigation, route }) => {
                                         }}
                                     />
                                     <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>Čeština</Text>
-                                </TouchableOpacity>
+                                </View>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.lightPlaceholder}>
-                                <TouchableOpacity onPress={() => navigation.setParams({ ...navigation.getState().routes[0].params, language: 'en' })} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
-                                    activeOpacity={0.8}
+                                <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
+                                    {...enNavProps} onClick={onENPress}
                                 >
                                     <Image
                                         resizeMode='contain'
@@ -209,7 +237,7 @@ const Header = ({ navigation, route }) => {
                                         }}
                                     />
                                     <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>English</Text>
-                                </TouchableOpacity>
+                                </View>
                             </HoverableView>
                         </View>
                     </TouchableWithoutFeedback>
@@ -253,37 +281,43 @@ const Header = ({ navigation, route }) => {
                 </HoverableView>
             </>
         )
-    }, [isSmallScreen, search, params.language])
+    }, [isSmallScreen, search, params.language, searchBorderColor, languageDropdownVisible, userDropdownVisible])
+
+    const renderLeftHeader = useCallback(() => (
+        <>
+            <View
+                onClick={onLogoPress}
+                style={{ height: normalize(50), justifyContent: 'center', marginRight: SPACING.x_small }}
+                {...logoNavProps}
+            >
+                <Image
+                    resizeMode='contain'
+                    source={require('../../assets/images/logo-header.png')}
+                    style={{
+                        height: normalize(32),
+                        width: normalize(102)
+                    }}
+                />
+            </View>
+            <HoverableView style={{ ...styles.locationWrapper, marginRight: isSmallScreen ? SPACING.x_small : 0 }} hoveredOpacity={0.7}>
+                <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
+                    onPress={() => setLocationModalVisible(true)}
+                >
+                    <Ionicons style={{ paddingRight: isLargeScreen ? SPACING.xx_small : 0 }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
+                    {isLargeScreen && <View style={styles.locationWrapper__text}>
+                        <Text style={styles.locationHeader}>{labels.CITY}</Text>
+                        <Text style={styles.locationValue}>{params.city}</Text>
+                    </View>}
+                    <MaterialIcons style={{ paddingLeft: isLargeScreen ? SPACING.xx_small : 0 }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
+                </TouchableOpacity>
+            </HoverableView >
+        </>
+    ), [isSmallScreen, isLargeScreen, route])
 
     return (
-        <View style={isSmallScreen ? styles.headerSmall: styles.headerLarge}>
+        <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
             <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
-                <View
-                    onClick={onLogoPress}
-                    style={{ height: normalize(50), justifyContent: 'center',  marginRight: SPACING.small }}
-                    {...logoNavProps}
-                >
-                    <Image
-                        resizeMode='contain'
-                        source={require('../../assets/images/logo-header.png')}
-                        style={{
-                            height: normalize(32),
-                            width: normalize(102)
-                        }}
-                    />
-                </View>
-                {params.city && <HoverableView style={{ ...styles.locationWrapper }} hoveredOpacity={0.7}>
-                    <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
-                        onPress={() => setLocationModalVisible(true)}
-                    >
-                        <Ionicons style={{ paddingRight: SPACING.xx_small }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
-                        <View style={styles.locationWrapper__text}>
-                            <Text style={styles.locationHeader}>{labels.CITY}</Text>
-                            <Text style={styles.locationValue}>{selectedCity}</Text>
-                        </View>
-                        <MaterialIcons style={{ paddingLeft: SPACING.xx_small }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
-                    </TouchableOpacity>
-                </HoverableView>}
+                {renderLeftHeader()}
             </View>
             {!isSmallScreen && <View style={styles.headerMiddle}>
                 <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor }} hoveredBackgroundColor={COLORS.lightGrey} backgroundColor={COLORS.grey}>
@@ -301,7 +335,7 @@ const Header = ({ navigation, route }) => {
                     <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
                 </HoverableView>
             </View>}
-            <View style={isSmallScreen ? styles.headerRightSmall: styles.headerRightLarge}>
+            <View style={isSmallScreen ? styles.headerRightSmall : styles.headerRightLarge}>
                 {renderRightHeader()}
                 {rendeLanguageDropdown()}
                 {renderUserDropdown()}
@@ -321,7 +355,7 @@ const Header = ({ navigation, route }) => {
                             borderRadius: 24,
                             //minWidth: normalize(500),
                             width: normalize(500),
-                            maxWidth : '80%',
+                            maxWidth: '80%',
                             height: normalize(500),
                             maxHeight: '80%',
                             overflow: 'hidden'
@@ -364,12 +398,13 @@ const Header = ({ navigation, route }) => {
                                     />
                                     <Text style={styles.countrySection__text}>{labels.CZECH}</Text>
                                 </View>}
-                                {filteredCitiesRef.current.map(city => <RenderCity key={city} onSelectCity={onSelectCity} city={city} iconName={city === selectedCity ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === selectedCity ? COLORS.red : 'grey'} />)}
+                                {filteredCitiesRef.current.map(city => <RenderCity key={city} route={route} city={city} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                             </Animated.ScrollView>
                         </View>
                     </TouchableWithoutFeedback>
                 </TouchableOpacity>
             </Modal>
+            {renderSeoContent()}
         </View>
     )
 }
@@ -410,15 +445,15 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end'
     },
     headerLeftLarge: {
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap'
     },
     headerMiddle: {
-        flex:1,
+        flex: 1,
     },
     headerRightLarge: {
-        flex:1,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'flex-end'
     },
@@ -437,7 +472,8 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.regular,
         fontSize: FONT_SIZES.medium,
         outlineStyle: 'none',
-        color: '#FFF'
+        color: '#FFF',
+        minWidth: 30
     },
     citySearch: {
         flex: 1,

@@ -1,17 +1,25 @@
-import React, { memo } from "react"
-import { StyleSheet, TouchableOpacity, Text } from "react-native"
+import React, { memo, useMemo } from "react"
+import { StyleSheet, TouchableOpacity, Text, View } from "react-native"
 import HoverableView from "../HoverableView"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from "../../constants"
 import { normalize } from "../../utils"
+import { useLinkProps } from "@react-navigation/native"
 
-const RenderCity = ({ city, onSelectCity, iconName, iconColor }) => {
+const RenderCity = ({ city, iconName, iconColor, route }) => {
+    const cityNav = useMemo(() => ({
+        screen: route.name,
+        params: { ...route.params, city }
+    }), [route])
+
+    const { onPress: onNavPress, ...props } = useLinkProps({ to: cityNav })
+
     return (
         <HoverableView key={city} style={styles.cityContainer} hoveredBackgroundColor={COLORS.lightPlaceholder} backgroundColor='#FFF' transitionDuration='0ms'>
-            <TouchableOpacity style={{ flexDirection: 'row', width: '100%', paddingVertical: SPACING.xx_small, paddingLeft: SPACING.xx_small, alignItems: 'center' }} onPress={() => onSelectCity(city)}>
+            <View onClick={onNavPress} {...props} style={{ flexDirection: 'row', width: '100%', paddingVertical: SPACING.xx_small, paddingLeft: SPACING.xx_small, alignItems: 'center' }}>
                 <MaterialIcons style={{ paddingRight: SPACING.xx_small }} name={iconName} size={normalize(24)} color={iconColor} />
                 <Text style={styles.city}>{city}</Text>
-            </TouchableOpacity>
+            </View>
         </HoverableView>
     )
 }

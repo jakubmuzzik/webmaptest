@@ -22,6 +22,7 @@ import Mas from './screens/Mas'
 import { COLORS } from './constants'
 
 const linking = {
+  prefixes: ['https://jakubmuzzik.github.io/webmaptest'],
   config: {
     screens: {
       Register: ":lang/register",
@@ -35,10 +36,10 @@ const linking = {
         },
       },*/
       Home: "",
-      Esc: "/esc/:city", 
-      Pri: "/pri/:city",
-      Mas: "/mas/:city",
-      Clu: "/clu/:city",
+      Esc: "/esc/:city?", 
+      Pri: "/pri/:city?",
+      Mas: "/mas/:city?",
+      Clu: "/clu/:city?",
       Explore: "/explore/:city?",
       NotFound: "*",
     }
@@ -91,7 +92,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} initialParams={{}} />
-            <Stack.Screen name="Home" component={Explore} initialParams={{}} />
+            <Stack.Screen name="Home" component={Home} initialParams={{}} />
             <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
             <Stack.Screen name="Pri" component={Pri} initialParams={{}} />
             <Stack.Screen name="Mas" component={Mas} initialParams={{}} />
@@ -104,7 +105,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={Explore} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={NotFound} initialParams={{}} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

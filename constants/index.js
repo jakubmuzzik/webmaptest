@@ -57,13 +57,13 @@ export const COLORS = {
 }
 
 export const FONT_SIZES = {
-    x_small: normalizeSize(6, 8, 10),
-    small: normalizeSize(8, 10, 12), //span
-    medium: normalizeSize(10, 12, 14), //base
-    large: normalizeSize(12, 14, 16), //paragraph
-    h1: normalizeSize(20, 24, 28),
-    h2: normalizeSize(18, 22, 26),
-    h3: normalizeSize(16, 20, 24),
+    x_small: normalizeSize(8, 8, 10),
+    small: normalizeSize(10, 10, 12), //span
+    medium: normalizeSize(12, 12, 14), //base
+    large: normalizeSize(14, 14, 16), //paragraph
+    h1: normalizeSize(24, 24, 28),
+    h2: normalizeSize(22, 22, 26),
+    h3: normalizeSize(20, 20, 24),
 }
 
 export const SPACING = {
