@@ -46,14 +46,14 @@ export const FONTS = {
 }
 
 export const COLORS = {
-    //979797
     lightGrey: '#404040',
+    hoveredLightGrey: '#4c4c4c',
     grey: '#323232',
     lightBlack: '#161616',
     red: '#ed242f',
     placeholder: '#c4c4c4',
-    lightPlaceholder: '#efeff0',
-    mediumPlaceholder: '#e1e1e1',
+    hoveredWhite: '#efeff0',
+    hoveredHoveredWhite: '#e1e1e1',
 }
 
 export const FONT_SIZES = {

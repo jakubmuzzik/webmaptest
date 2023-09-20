@@ -25,7 +25,7 @@ const linking = {
   prefixes: ['https://jakubmuzzik.github.io/webmaptest'],
   config: {
     screens: {
-      Register: ":lang/register",
+      Register: "register",
       //Main: "home",
       //Feed: "feed/:sort?/:type", -> “/feed/notifications?sort=latest” OR “/feed/latest/notifications”
       /*Main: {
@@ -85,7 +85,8 @@ export default function App() {
       <Provider store={store}>
         <NavigationContainer linking={linking}>
           <Stack.Navigator screenOptions={{
-            header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />
+            header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
+            animationEnabled: true
           }}>
             <Stack.Screen name="Register"
               component={Register}

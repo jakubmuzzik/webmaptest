@@ -74,6 +74,7 @@ export const SEARCH = 'SEARCH'
 export const SELECT_CITY = 'SELECT_CITY'
 export const SIGN_IN = 'SIGN_IN'
 export const SIGN_UP = 'SIGN_UP'
+export const ANYWHERE = 'ANYWHERE'
 
 export const LABELS = {
     [HOME]: {
@@ -104,4 +105,8 @@ export const LABELS = {
         'en': 'Register',
         'cs': 'Registrace'
     },
+    [ANYWHERE]: {
+        'en': 'Anywhere',
+        'cs': 'Kdekoliv'
+    }
 }

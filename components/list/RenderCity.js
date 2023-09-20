@@ -4,7 +4,7 @@ import HoverableView from "../HoverableView"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from "../../constants"
 import { normalize } from "../../utils"
-import { useLinkProps } from "@react-navigation/native"
+import { useLinkProps, Link } from "@react-navigation/native"
 
 const RenderCity = ({ city, iconName, iconColor, route }) => {
     const cityNav = useMemo(() => ({
@@ -15,7 +15,7 @@ const RenderCity = ({ city, iconName, iconColor, route }) => {
     const { onPress: onNavPress, ...props } = useLinkProps({ to: cityNav })
 
     return (
-        <HoverableView key={city} style={styles.cityContainer} hoveredBackgroundColor={COLORS.lightPlaceholder} backgroundColor='#FFF' transitionDuration='0ms'>
+        <HoverableView key={city} style={styles.cityContainer} hoveredBackgroundColor={COLORS.hoveredWhite} backgroundColor='#FFF' transitionDuration='0ms'>
             <View onClick={onNavPress} {...props} style={{ flexDirection: 'row', width: '100%', paddingVertical: SPACING.xx_small, paddingLeft: SPACING.xx_small, alignItems: 'center' }}>
                 <MaterialIcons style={{ paddingRight: SPACING.xx_small }} name={iconName} size={normalize(24)} color={iconColor} />
                 <Text style={styles.city}>{city}</Text>
