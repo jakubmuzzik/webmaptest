@@ -106,7 +106,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={NotFound} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={Home} initialParams={{}} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

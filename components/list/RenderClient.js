@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flexGrow: 1,
         backgroundColor: COLORS.grey,
-        margin: SPACING.small,
-        borderRadius: 20
+        borderRadius: 20,
+        marginRight: SPACING.large
     },
 })

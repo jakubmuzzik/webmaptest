@@ -38,15 +38,16 @@ import {
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import CityPicker from '../modal/CityPicker'
+import Categories from './Categories'
 
-const SCREENS_WITHOUT_CITY_SELECTION = [
-    'Register', 'Home', 'NotFound'
+const SCREENS_WITH_CITY_SELECTION = [
+    'Esc', 'Pri', 'Mas', 'Clu'
 ]
 
 const Header = ({ route }) => {
     const params = useMemo(() => ({
         language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : DEFAULT_LANGUAGE,
-        city: route.params.city
+        city: route.params.city ?? ''
     }), [route.params])
 
     const logoNav = useMemo(() => ({
@@ -272,7 +273,7 @@ const Header = ({ route }) => {
                     }}
                 />
             </View>
-            {!SCREENS_WITHOUT_CITY_SELECTION.includes(route.name) && <HoverableView style={{ ...styles.locationWrapper, marginRight: isSmallScreen ? SPACING.x_small : 0 }} hoveredOpacity={0.7}>
+            {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <HoverableView style={{ ...styles.locationWrapper, marginRight: isSmallScreen ? SPACING.x_small : 0 }} hoveredOpacity={0.7}>
                 <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
                     onPress={() => setLocationModalVisible(true)}
                 >
@@ -288,36 +289,39 @@ const Header = ({ route }) => {
     ), [isSmallScreen, isLargeScreen, route])
 
     return (
-        <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
-            <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
-                {renderLeftHeader()}
-            </View>
-            {!isSmallScreen && <View style={styles.headerMiddle}>
-                <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
-                    <Ionicons name="search" size={normalize(20)} color="white" />
-                    <TextInput
-                        style={styles.search}
-                        onChangeText={setSearch}
-                        value={search}
-                        placeholder={labels.SEARCH}
-                        placeholderTextColor={COLORS.placeholder}
-                        onBlur={() => setSearchBorderColor('transparent')}
-                        onFocus={() => setSearchBorderColor(COLORS.red)}
-                        onSubmitEditing={onSearchSubmit}
-                    />
-                    <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
-                </HoverableView>
-            </View>}
-            <View style={isSmallScreen ? styles.headerRightSmall : styles.headerRightLarge}>
-                {renderRightHeader()}
-                {rendeLanguageDropdown()}
-                {renderUserDropdown()}
-            </View>
+        <>
+            <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
+                <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
+                    {renderLeftHeader()}
+                </View>
+                {!isSmallScreen && <View style={styles.headerMiddle}>
+                    <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
+                        <Ionicons name="search" size={normalize(20)} color="white" />
+                        <TextInput
+                            style={styles.search}
+                            onChangeText={setSearch}
+                            value={search}
+                            placeholder={labels.SEARCH}
+                            placeholderTextColor={COLORS.placeholder}
+                            onBlur={() => setSearchBorderColor('transparent')}
+                            onFocus={() => setSearchBorderColor(COLORS.red)}
+                            onSubmitEditing={onSearchSubmit}
+                        />
+                        <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
+                    </HoverableView>
+                </View>}
+                <View style={isSmallScreen ? styles.headerRightSmall : styles.headerRightLarge}>
+                    {renderRightHeader()}
+                    {rendeLanguageDropdown()}
+                    {renderUserDropdown()}
+                </View>
 
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={route} /> 
+                <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={route} />
 
-            {renderSeoContent()}
-        </View>
+                {renderSeoContent()}
+            </View>
+            {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories route={route} />}
+        </>
     )
 }
 
