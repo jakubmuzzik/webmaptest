@@ -1,15 +1,22 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native'
 import { AntDesign, Entypo, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONT_SIZES, FONTS, SPACING } from '../../constants'
 import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
-import { normalize } from '../../utils'
+import { normalize, stripEmptyParams } from '../../utils'
 import { Link } from '@react-navigation/native'
+import { SUPPORTED_LANGUAGES } from '../../constants'
+import { CZECH_CITIES } from '../../labels'
 
 import HoverableView from '../../components/HoverableView'
 
 const Categories = ({ route }) => {
+    const params = useMemo(() => ({
+        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : '',
+        city: CZECH_CITIES.includes(route.params.city) ? route.params.city : ''
+    }), [route.params])
+
     const leftCategoryScrollOpacity = useSharedValue(0)
     const rightCategoryScrollOpacity = useSharedValue(1)
     const leftCategoryScrollOpacityStyle = useAnimatedStyle(() => {
@@ -55,18 +62,19 @@ const Categories = ({ route }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 0.5, borderColor: 'grey' }}>
-            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.xx_large, marginVertical: SPACING.x_small }}>
+            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.page_horizontal, marginVertical: SPACING.x_small }}>
                 <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} centerContent showsHorizontalScrollIndicator={false} horizontal style={{ flexGrow: 1 }} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
                     <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.small }}>
-                        <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}>
+                        {/* <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}> */}
+                        <Link to={{ screen: 'Esc', params: { ...stripEmptyParams(params) } }}>
                             <View style={[styles.categoryContainer, route.name === 'Esc' ? styles.selectedCategoryContainer : {}]}>
-                                <Entypo name="mask" size={normalize(26)} color={route.name === 'Esc' ? COLORS.red : COLORS.placeholder}  />
+                                <Entypo name="mask" size={normalize(26)} color={route.name === 'Esc' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Esc' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
                             </View>
                         </Link>
                     </HoverableView>
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Pri', params: route.params.language ? { language: route.params.language } : {} }}>
+                        <Link to={{ screen: 'Pri', params: { ...stripEmptyParams(params) } }}>
                             <View style={[styles.categoryContainer, route.name === 'Pri' ? styles.selectedCategoryContainer : {}]}>
                                 <AntDesign name="github" size={normalize(26)} color={route.name === 'Pri' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Pri' ? COLORS.red : COLORS.placeholder }}>Pri</Text>
@@ -74,15 +82,15 @@ const Categories = ({ route }) => {
                         </Link>
                     </HoverableView>
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Mas', params: route.params.language ? { language: route.params.language } : {} }}>
+                        <Link to={{ screen: 'Mas', params: { ...stripEmptyParams(params) } }}>
                             <View style={[styles.categoryContainer, route.name === 'Mas' ? styles.selectedCategoryContainer : {}]}>
-                                <FontAwesome5 name="person-booth" size={normalize(26)} color={route.name === 'Mas' ? COLORS.red : COLORS.placeholder}  />
+                                <FontAwesome5 name="person-booth" size={normalize(26)} color={route.name === 'Mas' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Mas' ? COLORS.red : COLORS.placeholder }}>Mas</Text>
                             </View>
                         </Link>
                     </HoverableView>
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Clu', params: route.params.language ? { language: route.params.language } : {} }}>
+                        <Link to={{ screen: 'Clu', params: { ...stripEmptyParams(params) } }}>
                             <View style={[styles.categoryContainer, route.name === 'Clu' ? styles.selectedCategoryContainer : {}]}>
                                 <MaterialIcons name="meeting-room" size={normalize(26)} color={route.name === 'Clu' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Clu' ? COLORS.red : COLORS.placeholder }}>Clu</Text>
@@ -106,7 +114,7 @@ const Categories = ({ route }) => {
                         start={{ x: 0, y: 0.5 }}
                         end={{ x: 0, y: 0.5 }} style={{ position: 'absolute', width: normalize(30), height: '100%' }} />
                 </Animated.View>
-                <HoverableView hoveredOpacity={0.7} style={{ justifyContent: 'center' }}>
+                <HoverableView hoveredOpacity={0.7} style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <TouchableOpacity>
                         <Image
                             resizeMode='contain'

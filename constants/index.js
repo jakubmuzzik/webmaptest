@@ -78,6 +78,7 @@ export const SPACING = {
     xxx_large: normalizeSize(40, 45, 45),
     xxxx_large: normalizeSize(45, 50, 50),
     xxxxx_large: normalizeSize(55, 60, 60),
+    page_horizontal: normalizeSize(24, 40, 80)
 }
 
 export const rem = (number) => {
@@ -89,6 +90,7 @@ export const MOCK_DATA = [
         id: 1,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -96,6 +98,7 @@ export const MOCK_DATA = [
         id: 2,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -103,6 +106,7 @@ export const MOCK_DATA = [
         id: 3,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -110,6 +114,7 @@ export const MOCK_DATA = [
         id: 4,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -117,6 +122,7 @@ export const MOCK_DATA = [
         id: 5,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -124,6 +130,7 @@ export const MOCK_DATA = [
         id: 6,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -131,6 +138,7 @@ export const MOCK_DATA = [
         id: 7,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -138,6 +146,7 @@ export const MOCK_DATA = [
         id: 8,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -145,6 +154,7 @@ export const MOCK_DATA = [
         id: 9,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -152,6 +162,7 @@ export const MOCK_DATA = [
         id: 10,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -159,6 +170,7 @@ export const MOCK_DATA = [
         id: 11,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -166,6 +178,7 @@ export const MOCK_DATA = [
         id: 12,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -173,6 +186,7 @@ export const MOCK_DATA = [
         id: 13,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -180,6 +194,7 @@ export const MOCK_DATA = [
         id: 14,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -187,6 +202,7 @@ export const MOCK_DATA = [
         id: 15,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -194,6 +210,7 @@ export const MOCK_DATA = [
         id: 16,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -201,6 +218,7 @@ export const MOCK_DATA = [
         id: 17,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -208,6 +226,7 @@ export const MOCK_DATA = [
         id: 18,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -215,6 +234,7 @@ export const MOCK_DATA = [
         id: 19,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -222,6 +242,7 @@ export const MOCK_DATA = [
         id: 20,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -229,6 +250,7 @@ export const MOCK_DATA = [
         id: 21,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -236,6 +258,7 @@ export const MOCK_DATA = [
         id: 22,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -243,6 +266,7 @@ export const MOCK_DATA = [
         id: 23,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -250,6 +274,7 @@ export const MOCK_DATA = [
         id: 24,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -257,6 +282,7 @@ export const MOCK_DATA = [
         id: 25,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -264,6 +290,7 @@ export const MOCK_DATA = [
         id: 26,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -271,6 +298,7 @@ export const MOCK_DATA = [
         id: 27,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -278,6 +306,7 @@ export const MOCK_DATA = [
         id: 28,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -285,6 +314,7 @@ export const MOCK_DATA = [
         id: 29,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -292,6 +322,7 @@ export const MOCK_DATA = [
         id: 30,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -299,6 +330,7 @@ export const MOCK_DATA = [
         id: 31,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -306,6 +338,7 @@ export const MOCK_DATA = [
         id: 32,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -313,6 +346,7 @@ export const MOCK_DATA = [
         id: 33,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
+        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },

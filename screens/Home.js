@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import { View, Text, ImageBackground, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native'
+import { View, Text, ImageBackground, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, CATEGORY1, CATEGORY2, CATEGORY3, CATEGORY4, CATEGORY5, SMALL_SCREEN_THRESHOLD, LARGE_SCREEN_THRESHOLD } from '../constants'
 import HoverableView from '../components/HoverableView'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -11,6 +11,10 @@ import {
 import CityPicker from '../components/modal/CityPicker'
 import { Link } from '@react-navigation/native'
 import RenderClient from '../components/list/RenderClient'
+
+const {
+    width: INITIAL_SCREEN_WIDTH
+} = Dimensions.get('window')
 
 import { MOCK_DATA } from '../constants'
 
@@ -25,8 +29,6 @@ const Home = ({ route, navigation }) => {
 
     const [locationModalVisible, setLocationModalVisible] = useState(false)
 
-    console.log(navigation.isFocused())
-
     useEffect(() => {
         setLocationModalVisible(false)
     }, [route.params])
@@ -39,11 +41,7 @@ const Home = ({ route, navigation }) => {
         return unsubscribe
     }, [navigation])
 
-    const { width } = useWindowDimensions()
-    const isXSmallScreen = width < 350
-    const isSmallScreen = width >= 350 && width < SMALL_SCREEN_THRESHOLD
-    const isMediumScreen = width >= SMALL_SCREEN_THRESHOLD && width < 960
-    const isLargeScreen = width >= 960 && width < 1300
+    const [contentWidth, setContentWidth] = useState(INITIAL_SCREEN_WIDTH)
 
     //for 5 categories
     /*const categoryFlexBasis = isXSmallScreen ? (width) - (SPACING.large + SPACING.large)
@@ -51,15 +49,30 @@ const Home = ({ route, navigation }) => {
         : isMediumScreen ? (width / 3) - (SPACING.large + SPACING.large / 3)
         : isLargeScreen ? (width / 4) - (SPACING.large + SPACING.large / 4) : (width / 5) - (SPACING.large + SPACING.large / 5)*/
 
-    const categoryFlexBasis = isXSmallScreen ? (width) - (SPACING.large + SPACING.large)
+    //for 4 categories
+    /*const categoryFlexBasis = isXSmallScreen ? (width) - (SPACING.large + SPACING.large)
         : isSmallScreen ? (width / 2) - (SPACING.large + SPACING.large / 2)
         : isMediumScreen ? (width / 3) - (SPACING.large + SPACING.large / 3)
-        : isLargeScreen ? (width / 4) - (SPACING.large + SPACING.large / 4) : (width / 4) - (SPACING.large + SPACING.large / 4)
+        : isLargeScreen ? (width / 4) - (SPACING.large + SPACING.large / 4) : (width / 4) - (SPACING.large + SPACING.large / 4) */
+
+    const categoryFlexBasis = useMemo(() => {
+        const isXSmallScreen = contentWidth < 350
+        const isSmallScreen = contentWidth >= 350 && contentWidth < SMALL_SCREEN_THRESHOLD
+        const isMediumScreen = contentWidth >= SMALL_SCREEN_THRESHOLD && contentWidth < 960
+        const isLargeScreen = contentWidth >= 960 && contentWidth < 1300
+
+        const categoryFlexBasis = isXSmallScreen ? (contentWidth) - (SPACING.large + SPACING.large)
+            : isSmallScreen ? (contentWidth / 2) - (SPACING.large + SPACING.large / 2)
+            : isMediumScreen ? (contentWidth / 3) - (SPACING.large + SPACING.large / 3)
+            : isLargeScreen ? (contentWidth / 4) - (SPACING.large + SPACING.large / 4) : (contentWidth / 4) - (SPACING.large + SPACING.large / 4) 
+        
+        return categoryFlexBasis
+    }, [contentWidth])
     
     const categoryHeight = categoryFlexBasis / 3
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
+        <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ marginBottom: SPACING.medium }}>
                 <ImageBackground
                     source={require('../assets/header_logo2.png')}
@@ -80,7 +93,9 @@ const Home = ({ route, navigation }) => {
                 </ImageBackground>
             </View>
 
-            <View style={{ marginBottom: SPACING.large }}>
+            <View style={{ marginBottom: SPACING.large, marginHorizontal: SPACING.page_horizontal - SPACING.large }}
+                onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
+            >
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginLeft: SPACING.large, marginBottom: SPACING.medium }}>Browse by Category</Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large }}>
@@ -147,7 +162,7 @@ const Home = ({ route, navigation }) => {
                 </View>
             </View>
 
-            <View style={{ marginBottom: SPACING.large }}>
+            <View style={{ marginBottom: SPACING.large, marginHorizontal: SPACING.page_horizontal - SPACING.large }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.large }}>Newest Clients</Text>
 
                 <ScrollView style={{ marginLeft: SPACING.large }} horizontal showsHorizontalScrollIndicator={false}>
@@ -156,7 +171,7 @@ const Home = ({ route, navigation }) => {
             </View>
 
             <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={{ name: 'Explore', params: route.params.language ? { language: params.language } : {} }} />
-        </View>
+        </ScrollView>
     )
 }
 

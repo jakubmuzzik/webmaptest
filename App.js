@@ -19,7 +19,11 @@ import Pri from './screens/Pri'
 import Esc from './screens/Esc'
 import Clu from './screens/Clu'
 import Mas from './screens/Mas'
+import Profile from './screens/Profile'
 import { COLORS } from './constants'
+
+import { enableLegacyWebImplementation } from 'react-native-gesture-handler'
+enableLegacyWebImplementation(true)
 
 const linking = {
   prefixes: ['https://jakubmuzzik.github.io/webmaptest'],
@@ -36,10 +40,11 @@ const linking = {
         },
       },*/
       Home: "",
-      Esc: "/esc/:city?", 
+      Esc: "/esc/:city?",
       Pri: "/pri/:city?",
       Mas: "/mas/:city?",
       Clu: "/clu/:city?",
+      Profile: "/profile/:id",
       Explore: "/explore/:city?",
       NotFound: "*",
     }
@@ -81,35 +86,35 @@ export default function App() {
   }
 
   return (
-    <>
-      <Provider store={store}>
-        <NavigationContainer linking={linking}>
-          <Stack.Navigator screenOptions={{
-            header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
-            animationEnabled: true
-          }}>
-            <Stack.Screen name="Register"
-              component={Register}
-              options={{
-                headerShown: false
-              }} initialParams={{}} />
-            <Stack.Screen name="Home" component={Home} initialParams={{}} />
-            <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
-            <Stack.Screen name="Pri" component={Pri} initialParams={{}} />
-            <Stack.Screen name="Mas" component={Mas} initialParams={{}} />
-            <Stack.Screen name="Clu" component={Clu} initialParams={{}} />
-            <Stack.Screen name="Explore" component={Explore} initialParams={{}} />
-            {/* <Stack.Screen
+    <Provider store={store}>
+      <NavigationContainer linking={linking}>
+        <Stack.Navigator screenOptions={{
+          header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
+          animationEnabled: true,
+          cardStyle: { flex: 1 }
+        }}>
+          <Stack.Screen name="Register"
+            component={Register}
+            options={{
+              headerShown: false
+            }} initialParams={{}} />
+          <Stack.Screen name="Home" component={Home} initialParams={{}} />
+          <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
+          <Stack.Screen name="Pri" component={Pri} initialParams={{}} />
+          <Stack.Screen name="Mas" component={Mas} initialParams={{}} />
+          <Stack.Screen name="Clu" component={Clu} initialParams={{}} />
+          <Stack.Screen name="Profile" component={Profile} initialParams={{}} />
+          <Stack.Screen name="Explore" component={Explore} initialParams={{}} />
+          {/* <Stack.Screen
               name="Explore"
               component={Explore} initialParams={{}} />
             <Stack.Screen name="Main" component={Main}
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={Home} initialParams={{}} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </Provider>
-    </>
+          <Stack.Screen name="NotFound" component={Home} initialParams={{}} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   )
 }

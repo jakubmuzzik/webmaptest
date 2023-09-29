@@ -46,13 +46,13 @@ const SCREENS_WITH_CITY_SELECTION = [
 
 const Header = ({ route }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : DEFAULT_LANGUAGE,
-        city: route.params.city ?? ''
+        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : '',
+        city: CZECH_CITIES.includes(route.params.city) ? route.params.city : ''
     }), [route.params])
 
     const logoNav = useMemo(() => ({
         screen: 'Home',
-        params: route.params.language ? { language: params.language } : {}
+        params: params.language ? { language: params.language } : {}
     }), [route.params])
 
     const csLanguageNav = useMemo(() => ({
@@ -70,7 +70,7 @@ const Header = ({ route }) => {
         params: { ...route.params, city }
     })), [route])
 
-    const labels = useMemo(() => translateLabels(params.language, [
+    const labels = useMemo(() => translateLabels(route.params.language, [
         CZECH,
         CITY,
         SELECT_CITY,
@@ -243,7 +243,7 @@ const Header = ({ route }) => {
                 <HoverableView hoveredOpacity={0.8} style={{ borderRadius: 20, justifyContent: 'center', marginRight: SPACING.xx_small }}>
                     <TouchableOpacity ref={languageDropdownRef} onPress={toggleLanguageDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
                         <MaterialIcons style={{ paddingRight: SPACING.xxx_small }} name="language" size={normalize(20)} color="white" />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language.toUpperCase()}</Text>
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase(): DEFAULT_LANGUAGE.toUpperCase()}</Text>
                         <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="keyboard-arrow-down" size={normalize(20)} color='#FFF' />
                     </TouchableOpacity>
                 </HoverableView>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.large,
+        paddingHorizontal: SPACING.page_horizontal,
         backgroundColor: COLORS.grey,
         height: normalize(70)
     },
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: SPACING.large,
+        paddingHorizontal: SPACING.page_horizontal,
         paddingVertical: SPACING.x_small,
         backgroundColor: COLORS.grey,
     },
