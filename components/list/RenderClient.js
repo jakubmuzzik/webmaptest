@@ -18,7 +18,6 @@ const RenderClient = ({ client, width = '100' }) => {
     const [isHovered, setIsHovered] = useState(false)
 
     const carouselRef = useRef()
-    const cardHeight = useRef()
 
     const route = useRoute()
 
@@ -44,7 +43,6 @@ const RenderClient = ({ client, width = '100' }) => {
                 onClick={onPress}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                onLayout={(event) => cardHeight.current = event.nativeEvent.layout.height}
                 {...props}
             >
                 <Carousel
@@ -78,52 +76,64 @@ const RenderClient = ({ client, width = '100' }) => {
                     )}
                 />
 
-                <MaterialIcons onPress={onPrevPress}
-                    style={{
-                        position: 'absolute',
-                        padding: 3,
-                        backgroundColor: 'white',
-                        borderRadius: 25,
-                        opacity: isHovered && !isSmallScreen ? 0.7 : 0,
-                        transitionDuration: '150ms',
-                        left: 10,
-                        top: (cardHeight.current / 2) - 12.5,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 4,
-                        },
-                        shadowOpacity: 0.32,
-                        shadowRadius: 5.46,
-                        elevation: 9,
-                    }}
-                    name="keyboard-arrow-left"
-                    size={25}
-                    color={COLORS.lightBlack}
-                />
-                <MaterialIcons onPress={onNextPress}
-                    style={{
-                        position: 'absolute',
-                        padding: 3,
-                        backgroundColor: 'white',
-                        borderRadius: 25,
-                        opacity: isHovered && !isSmallScreen ? 0.7 : 0,
-                        transitionDuration: '150ms',
-                        right: 10,
-                        top: (cardHeight.current / 2) - 12.5,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 4,
-                        },
-                        shadowOpacity: 0.32,
-                        shadowRadius: 5.46,
-                        elevation: 9,
-                    }}
-                    name="keyboard-arrow-right"
-                    size={25}
-                    color={COLORS.lightBlack}
-                />
+                <View style={{
+                    position: 'absolute',
+                    opacity: isHovered && !isSmallScreen ? 0.7 : 0,
+                    transitionDuration: '150ms',
+                    left: 10,
+                    top: 0,
+                    bottom: 0,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <MaterialIcons onPress={onPrevPress}
+                        style={{
+                            borderRadius: 25, 
+                            backgroundColor: '#FFF', 
+                            padding: 3, 
+                            shadowColor: "#000",
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.32,
+                            shadowRadius: 5.46,
+                            elevation: 9,
+                        }}
+                        name="keyboard-arrow-left"
+                        size={25}
+                        color={COLORS.lightBlack}
+                    />
+                </View>
+                <View style={{
+                    position: 'absolute',
+                    opacity: isHovered && !isSmallScreen ? 0.7 : 0,
+                    transitionDuration: '150ms',
+                    right: 10,
+                    top: 0,
+                    bottom: 0,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <MaterialIcons onPress={onNextPress}
+                        style={{
+                            borderRadius: 25, 
+                            backgroundColor: '#FFF', 
+                            padding: 3, 
+                            shadowColor: "#000",
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.32,
+                            shadowRadius: 5.46,
+                            elevation: 9,
+                        }}
+                        name="keyboard-arrow-right"
+                        size={25}
+                        color={COLORS.lightBlack}
+                    />
+                </View>
 
                 <View style={{ position: 'absolute', bottom: normalize(20), left: 0, right: 0 }}>
                     <View style={{ alignSelf: 'center' }}>

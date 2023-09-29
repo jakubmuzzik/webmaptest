@@ -17,7 +17,7 @@ import { MOCK_DATA } from '../constants'
 
 const Esc = ({ navigation, route }) => {
     const [contentWidth, setContentWidth] = useState(INITIAL_SCREEN_WIDTH)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         setTimeout(() => {
