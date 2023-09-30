@@ -1,23 +1,22 @@
-import React, { memo, useState, useRef, useMemo } from "react"
-import { StyleSheet, Pressable, Text, View, Dimensions } from "react-native"
-import HoverableView from "../HoverableView"
+import React, { memo, useState, useRef, useMemo, useCallback } from "react"
+import { StyleSheet, Text, View, FlatList } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING, isSmallScreen, SUPPORTED_LANGUAGES } from "../../constants"
 import { normalize, stripEmptyParams } from "../../utils"
 import { Image } from 'expo-image'
-import Carousel from 'react-native-reanimated-carousel'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
 import { useRoute } from '@react-navigation/native'
-import { Link, useLinkProps } from '@react-navigation/native'
+import { useLinkProps } from '@react-navigation/native'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const RenderClient = ({ client, width = '100' }) => {
+const RenderClient = ({ client, width, showPrice = true }) => {
     const [index, setIndex] = useState(0)
     const [isHovered, setIsHovered] = useState(false)
 
     const carouselRef = useRef()
+    const carouselX = useRef(0)
 
     const route = useRoute()
 
@@ -29,13 +28,38 @@ const RenderClient = ({ client, width = '100' }) => {
 
     const onNextPress = (event) => {
         event.preventDefault()
-        carouselRef.current?.scrollTo({ count: 1, animated: true })
+        carouselRef.current.scrollToOffset({ offset: (Math.floor(carouselX.current / width) + 1) * width, animated: true })
     }
 
     const onPrevPress = (event) => {
         event.preventDefault()
-        carouselRef.current?.scrollTo({ count: -1, animated: true })
+        carouselRef.current.scrollToOffset({ offset: (Math.floor(carouselX.current / width) - 1) * width, animated: true })
     }
+
+    const handleScroll = ({ nativeEvent }) => {
+        carouselX.current = nativeEvent.contentOffset.x
+        const newIndex = Math.floor(carouselX.current / width)
+        if (newIndex != index) {
+            setIndex(newIndex)
+        }
+    }
+
+    const renderImage = useCallback(({ item }) => (
+        <View style={{ height: (width / 3) * 4, width: width, borderRadius: 20, overflow: 'hidden' }}>
+            <Image
+                style={{
+                    flex: 1,
+                    // aspectRatio: 3 / 4,
+                    borderRadius: 20
+                }}
+                source={item}
+                placeholder={blurhash}
+                contentFit="cover"
+                transition={200}
+                alt={client.name}
+            />
+        </View>
+    ), [width])
 
     return (
         <View style={styles.container}>
@@ -45,40 +69,21 @@ const RenderClient = ({ client, width = '100' }) => {
                 onMouseLeave={() => setIsHovered(false)}
                 {...props}
             >
-                <Carousel
+                <FlatList
                     ref={carouselRef}
-                    loop
-                    style={{
-                        flex: 1,
-                        aspectRatio: 3 / 4,
-                        borderRadius: 20
-                    }}
-                    width={width}
                     data={client.images}
-                    panGestureHandlerProps={{
-                        activeOffsetX: [-10, 10],
-                    }}
-                    onSnapToItem={(index) => setIndex(index)}
-                    renderItem={({ item, index }) => (
-                        <Image
-                            key={index}
-                            style={{
-                                flex: 1,
-                                aspectRatio: 3 / 4,
-                                borderRadius: 20
-                            }}
-                            source={item}
-                            placeholder={blurhash}
-                            contentFit="cover"
-                            transition={200}
-                            alt={item.name}
-                        />
-                    )}
+                    renderItem={renderImage}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    bounces={false}
+                    pagingEnabled
+                    initialScrollIndex={0}
+                    onScroll={handleScroll}
                 />
 
                 <View style={{
                     position: 'absolute',
-                    opacity: isHovered && !isSmallScreen ? 0.7 : 0,
+                    opacity: isHovered && !isSmallScreen && index !== 0 ? 0.7 : 0,
                     transitionDuration: '150ms',
                     left: 10,
                     top: 0,
@@ -88,9 +93,9 @@ const RenderClient = ({ client, width = '100' }) => {
                 }}>
                     <MaterialIcons onPress={onPrevPress}
                         style={{
-                            borderRadius: 25, 
-                            backgroundColor: '#FFF', 
-                            padding: 3, 
+                            borderRadius: 25,
+                            backgroundColor: '#FFF',
+                            padding: 3,
                             shadowColor: "#000",
                             shadowOffset: {
                                 width: 0,
@@ -107,7 +112,7 @@ const RenderClient = ({ client, width = '100' }) => {
                 </View>
                 <View style={{
                     position: 'absolute',
-                    opacity: isHovered && !isSmallScreen ? 0.7 : 0,
+                    opacity: isHovered && !isSmallScreen && index !== client.images.length - 1 ? 0.7 : 0,
                     transitionDuration: '150ms',
                     right: 10,
                     top: 0,
@@ -117,9 +122,9 @@ const RenderClient = ({ client, width = '100' }) => {
                 }}>
                     <MaterialIcons onPress={onNextPress}
                         style={{
-                            borderRadius: 25, 
-                            backgroundColor: '#FFF', 
-                            padding: 3, 
+                            borderRadius: 25,
+                            backgroundColor: '#FFF',
+                            padding: 3,
                             shadowColor: "#000",
                             shadowOffset: {
                                 width: 0,
@@ -146,17 +151,17 @@ const RenderClient = ({ client, width = '100' }) => {
                                 color: COLORS.red,
                                 margin: 3,
                                 opacity: 1,
-                                size: 8,
+                                size: 7,
                             }}
                             inactiveIndicatorConfig={{
                                 color: 'white',
                                 margin: 3,
                                 opacity: 0.5,
-                                size: 8,
+                                size: 7,
                             }}
                             decreasingDots={[
                                 {
-                                    config: { color: 'white', margin: 3, opacity: 0.5, size: 6 },
+                                    config: { color: 'white', margin: 3, opacity: 0.5, size: 5 },
                                     quantity: 1,
                                 },
                                 {
@@ -175,9 +180,9 @@ const RenderClient = ({ client, width = '100' }) => {
             <Text numberOfLines={1} style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                 {client.text1}
             </Text>
-            <Text numberOfLines={1} style={{ marginTop: SPACING.xxx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+            {showPrice && <Text numberOfLines={1} style={{ marginTop: SPACING.xxx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                 {client.text2}
-            </Text>
+            </Text>}
         </View>
     )
 }

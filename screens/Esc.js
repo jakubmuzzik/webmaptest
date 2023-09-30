@@ -48,7 +48,7 @@ const Esc = ({ navigation, route }) => {
     }, [cardFlexBasis])
 
     const loadingCards = useMemo(() => {
-        return Array(20).fill({}).map((card, index) => (
+        return Array(20).fill({}).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { flexBasis: cardFlexBasis }]}>
                 <ContentLoader
                     speed={2}

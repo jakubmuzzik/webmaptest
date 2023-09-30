@@ -23,7 +23,7 @@ import Profile from './screens/Profile'
 import { COLORS } from './constants'
 
 import { enableLegacyWebImplementation } from 'react-native-gesture-handler'
-enableLegacyWebImplementation(true)
+//enableLegacyWebImplementation(true)
 
 const linking = {
   prefixes: ['https://jakubmuzzik.github.io/webmaptest'],

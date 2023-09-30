@@ -162,15 +162,15 @@ const Home = ({ route, navigation }) => {
                 </View>
             </View>
 
-            <View style={{ marginBottom: SPACING.large, marginHorizontal: SPACING.page_horizontal - SPACING.large }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.large }}>Newest Clients</Text>
+            <View style={{ marginBottom: SPACING.large }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.page_horizontal }}>Newest Clients</Text>
 
-                <ScrollView style={{ marginLeft: SPACING.large }} horizontal showsHorizontalScrollIndicator={false}>
-                    {MOCK_DATA.map(data => <RenderClient key={data.id} client={data}/>)}
+                <ScrollView contentContainerStyle={{ marginHorizontal: SPACING.page_horizontal }} horizontal showsHorizontalScrollIndicator={false}>
+                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, flexBasis: 150 }}><RenderClient client={data} width={150} showPrice={false} /></View> )}
                 </ScrollView>
             </View>
 
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={{ name: 'Explore', params: route.params.language ? { language: params.language } : {} }} />
+            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={{ name: 'Esc', params: route.params.language ? { language: params.language } : {} }} />
         </ScrollView>
     )
 }
