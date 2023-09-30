@@ -45,12 +45,12 @@ const RenderClient = ({ client, width, showPrice = true }) => {
     }
 
     const renderImage = useCallback(({ item }) => (
-        <View style={{ height: (width / 3) * 4, width: width, borderRadius: 20, overflow: 'hidden' }}>
+        <View style={{ height: (width / 3) * 4, width: width }}>
             <Image
                 style={{
                     flex: 1,
                     // aspectRatio: 3 / 4,
-                    borderRadius: 20
+                    //borderRadius: 20
                 }}
                 source={item}
                 placeholder={blurhash}
@@ -69,17 +69,19 @@ const RenderClient = ({ client, width, showPrice = true }) => {
                 onMouseLeave={() => setIsHovered(false)}
                 {...props}
             >
-                <FlatList
-                    ref={carouselRef}
-                    data={client.images}
-                    renderItem={renderImage}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    bounces={false}
-                    pagingEnabled
-                    initialScrollIndex={0}
-                    onScroll={handleScroll}
-                />
+                <View style={{ borderRadius: 20, overflow: 'hidden' }}>
+                    <FlatList
+                        ref={carouselRef}
+                        data={client.images}
+                        renderItem={renderImage}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        bounces={false}
+                        pagingEnabled
+                        initialScrollIndex={0}
+                        onScroll={handleScroll}
+                    />
+                </View>
 
                 <View style={{
                     position: 'absolute',
