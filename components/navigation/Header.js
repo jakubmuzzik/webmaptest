@@ -35,6 +35,7 @@ import {
     ANYWHERE,
     translateLabels
 } from '../../labels'
+import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import CityPicker from '../modal/CityPicker'
@@ -46,8 +47,8 @@ const SCREENS_WITH_CITY_SELECTION = [
 
 const Header = ({ route }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : '',
-        city: CZECH_CITIES.includes(route.params.city) ? route.params.city : ''
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
+        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
     }), [route.params])
 
     const logoNav = useMemo(() => ({
@@ -85,7 +86,7 @@ const Header = ({ route }) => {
     const { onPress: onENPress, ...enNavProps } = useLinkProps({ to: enLanguageNav })
 
     const [search, setSearch] = useState('')
-    const [searchBorderColor, setSearchBorderColor] = useState('transparent')    
+    const [searchBorderColor, setSearchBorderColor] = useState('transparent')
     const [locationModalVisible, setLocationModalVisible] = useState(false)
     const [userDropdownVisible, setUserDropdownVisible] = useState(false)
     const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false)
@@ -94,6 +95,7 @@ const Header = ({ route }) => {
 
     const userDropdownRef = useRef()
     const languageDropdownRef = useRef()
+    const loginButtonsRef = useRef()
 
     //close modals when changing language, city etc...
     useEffect(() => {
@@ -115,24 +117,32 @@ const Header = ({ route }) => {
 
     const toggleLanguageDropdown = useCallback(() => {
         languageDropdownVisible ? setLanguageDropdownRight(false) : openLanguageDropdown()
-    }, [languageDropdownVisible])
+    }, [languageDropdownVisible, isLargeScreen])
 
-    const openLanguageDropdown = useCallback(() => {
+    const openLanguageDropdown = () => {
         languageDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
             setDropdownTop(py + h + 10)
         })
-        userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-            setLanguageDropdownRight(_w + 20)
-        })
-        setLanguageDropdownVisible(true)
-    }, [languageDropdownRef.current, userDropdownRef.current])
 
-    const openUserDropdown = useCallback(() => {
+        if (isLargeScreen) {
+            loginButtonsRef.current.measure((_fx, _fy, _w, h, _px, py) => {
+                setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
+            })
+        } else {
+            userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
+                setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
+            })
+        }
+
+        setLanguageDropdownVisible(true)
+    }
+
+    const openUserDropdown = () => {
         userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
             setDropdownTop(py + h + 10)
         })
         setUserDropdownVisible(true)
-    }, [userDropdownRef.current])
+    }
 
     const renderUserDropdown = useCallback(() => {
         return (
@@ -143,18 +153,28 @@ const Header = ({ route }) => {
                 >
                     <TouchableWithoutFeedback>
                         <View style={[styles.dropdown, { top: dropdownTop }]}>
-                            <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <TouchableOpacity style={{ padding: SPACING.xx_small }}
+                            <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
+                                <TouchableOpacity style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
                                 >
-                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>{labels.SIGN_IN}</Text>
+                                    <LinearGradient
+                                        colors={[COLORS.darkRed, COLORS.red]}
+                                        style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
+                                        start={{ x: 0, y: 0.5 }}
+                                        end={{ x: 1, y: 0.5 }}
+                                    />
+                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                                        {labels.SIGN_UP}
+                                    </Text>
                                 </TouchableOpacity>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
                                 <TouchableOpacity style={{ padding: SPACING.xx_small }}
                                     activeOpacity={0.8}
                                 >
-                                    <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>{labels.SIGN_UP}</Text>
+                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                        {labels.SIGN_IN}
+                                    </Text>
                                 </TouchableOpacity>
                             </HoverableView>
                         </View>
@@ -180,7 +200,7 @@ const Header = ({ route }) => {
                     onPress={() => setLanguageDropdownVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <View style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, overflow: 'hidden' }]}>
+                        <View style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, marginRight: 0, overflow: 'hidden' }]}>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
                                 <View {...csNavProps} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
                                     onClick={onCSPress}
@@ -218,7 +238,7 @@ const Header = ({ route }) => {
                 </TouchableOpacity>
             </Modal>
         )
-    }, [languageDropdownVisible, dropdownTop, userDropdownRef, params.language])
+    }, [languageDropdownVisible, languageDropdownRight, dropdownTop, userDropdownRef, params.language])
 
     const renderRightHeader = useCallback(() => {
         return isSmallScreen ? (
@@ -243,19 +263,40 @@ const Header = ({ route }) => {
                 <HoverableView hoveredOpacity={0.8} style={{ borderRadius: 20, justifyContent: 'center', marginRight: SPACING.xx_small }}>
                     <TouchableOpacity ref={languageDropdownRef} onPress={toggleLanguageDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
                         <MaterialIcons style={{ paddingRight: SPACING.xxx_small }} name="language" size={normalize(20)} color="white" />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase(): DEFAULT_LANGUAGE.toUpperCase()}</Text>
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase() : DEFAULT_LANGUAGE.toUpperCase()}</Text>
                         <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="keyboard-arrow-down" size={normalize(20)} color='#FFF' />
                     </TouchableOpacity>
                 </HoverableView>
-                <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ borderRadius: 20, justifyContent: 'center' }}>
-                    <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
-                        <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
-                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="menu" size={normalize(20)} color="white" />
-                    </TouchableOpacity>
-                </HoverableView>
+                {isLargeScreen ? (
+                    <View style={{ flexDirection: 'row' }} ref={loginButtonsRef}>
+                        <HoverableView hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red} style={{ borderRadius: 10, justifyContent: 'center', marginRight: SPACING.xx_small, overflow: 'hidden' }}>
+                            <LinearGradient
+                                colors={[COLORS.darkRed, COLORS.red]}
+                                style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
+                                start={{ x: 0, y: 0.5 }}
+                                end={{ x: 1, y: 0.5 }}
+                            />
+                            <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
+                                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign Up</Text>
+                            </TouchableOpacity>
+                        </HoverableView>
+                        <HoverableView hoveredOpacity={0.8} style={{ justifyContent: 'center' }}>
+                            <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
+                                <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Log In</Text>
+                            </TouchableOpacity>
+                        </HoverableView>
+                    </View>
+                ) : (
+                    <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ borderRadius: 20, justifyContent: 'center' }}>
+                        <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
+                            <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
+                            <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="menu" size={normalize(20)} color="white" />
+                        </TouchableOpacity>
+                    </HoverableView>
+                )}
             </>
         )
-    }, [isSmallScreen, search, params.language, searchBorderColor, languageDropdownVisible, userDropdownVisible])
+    }, [isSmallScreen, isLargeScreen, search, params.language, searchBorderColor, languageDropdownVisible, userDropdownVisible])
 
     const renderLeftHeader = useCallback(() => (
         <>
@@ -280,7 +321,7 @@ const Header = ({ route }) => {
                     <Ionicons style={{ paddingRight: isLargeScreen ? SPACING.xx_small : 0 }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
                     {isLargeScreen && <View style={styles.locationWrapper__text}>
                         <Text style={styles.locationHeader}>{params.city ? labels.CITY : labels.ANYWHERE}</Text>
-                        <Text style={styles.locationValue}>{decodeURIComponent(params.city)}</Text>
+                        <Text style={styles.locationValue} numberOfLines={1}>{params.city}</Text>
                     </View>}
                     <MaterialIcons style={{ paddingLeft: isLargeScreen ? SPACING.xx_small : 0 }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
                 </TouchableOpacity>
@@ -470,7 +511,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         minWidth: normalize(100),
         backgroundColor: '#fff',
-        marginRight: SPACING.large,
+        marginRight: SPACING.page_horizontal,
         borderRadius: 10,
         paddingVertical: SPACING.xxx_small,
         shadowColor: "#000",

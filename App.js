@@ -1,8 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { useState, useEffect } from 'react'
 import * as Font from 'expo-font'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { Provider } from 'react-redux'
+import { Ionicons } from '@expo/vector-icons'
 import initStore from './redux/store'
 const store = initStore()
 
@@ -20,6 +21,9 @@ import Esc from './screens/Esc'
 import Clu from './screens/Clu'
 import Mas from './screens/Mas'
 import Profile from './screens/Profile'
+import ProfilePhotosList from './screens/ProfilePhotosList'
+import PhotoGallery from './screens/PhotoGallery'
+
 import { COLORS } from './constants'
 
 import { enableLegacyWebImplementation } from 'react-native-gesture-handler'
@@ -46,6 +50,26 @@ const linking = {
       Clu: "/clu/:city?",
       Profile: "/profile/:id",
       Explore: "/explore/:city?",
+      Photos: {
+        path: "/photos/:id/:photos?",
+        parse: {
+          photos: (photos) => '',
+        },
+        stringify: {
+          photos: (photos) => '',
+        },
+      },
+      Gallery: {
+        path: "/gallery/:id/:photos?/:index?",
+        parse: {
+          photos: (photos) => '',
+          index: (index) => '',
+        },
+        stringify: {
+          photos: (photos) => '',
+          index: (index) => '',
+        },
+      },
       NotFound: "*",
     }
   },
@@ -105,6 +129,20 @@ export default function App() {
           <Stack.Screen name="Clu" component={Clu} initialParams={{}} />
           <Stack.Screen name="Profile" component={Profile} initialParams={{}} />
           <Stack.Screen name="Explore" component={Explore} initialParams={{}} />
+          <Stack.Screen
+              name="Photos"
+              component={ProfilePhotosList}
+              initialParams={{}}
+              options={{
+                headerShown: false,
+                cardStyleInterpolator: ({ current }) => ({
+                  cardStyle: {
+                    opacity: current.progress,
+                  },
+                }),
+              }}
+            />
+          
           {/* <Stack.Screen
               name="Explore"
               component={Explore} initialParams={{}} />
@@ -113,6 +151,18 @@ export default function App() {
                 headerShown: false
               }} /> */}
           <Stack.Screen name="NotFound" component={Home} initialParams={{}} />
+
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal'
+            }}
+          >
+            <Stack.Screen name="Gallery" component={PhotoGallery} initialParams={{}} options={{
+            
+            gestureEnabled: false,
+            headerShown: false
+          }} />
+          </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

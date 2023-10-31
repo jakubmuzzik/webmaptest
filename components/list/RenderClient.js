@@ -21,7 +21,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
     const route = useRoute()
 
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : ''
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : ''
     }), [route.params])
 
     const { onPress, ...props } = useLinkProps({ to: { screen: 'Profile', params: { ...stripEmptyParams(params), id: client.id } } })
@@ -39,13 +39,17 @@ const RenderClient = ({ client, width, showPrice = true }) => {
     const handleScroll = ({ nativeEvent }) => {
         carouselX.current = nativeEvent.contentOffset.x
         const newIndex = Math.floor(carouselX.current / width)
+        if (newIndex < 0 || newIndex > client.images.length - 1) {
+            return
+        }
+
         if (newIndex != index) {
             setIndex(newIndex)
         }
     }
 
     const renderImage = useCallback(({ item }) => (
-        <View style={{ height: (width / 3) * 4, width: width }}>
+        <View style={{ height: (width / 3) * 4, width: width + 1 }}>
             <Image
                 style={{
                     flex: 1,
@@ -72,12 +76,14 @@ const RenderClient = ({ client, width, showPrice = true }) => {
                 <View style={{ borderRadius: 20, overflow: 'hidden' }}>
                     <FlatList
                         ref={carouselRef}
+                        style={{ flex: 1 }}
                         data={client.images}
                         renderItem={renderImage}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         bounces={false}
                         pagingEnabled
+                        disableIntervalMomentum
                         initialScrollIndex={0}
                         onScroll={handleScroll}
                     />

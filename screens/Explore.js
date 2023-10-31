@@ -26,8 +26,8 @@ const Explore = ({ route, navigation }) => {
     }, [isSmalScreen, isLargeScreen])
 
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : undefined,
-        category: SUPPORTED_CATEGORIES.includes(route.params.category) ? route.params.category : undefined
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : undefined,
+        category: SUPPORTED_CATEGORIES.includes(decodeURIComponent(route.params.category)) ? decodeURIComponent(route.params.category) : undefined
     }), [route])
     
     const [selectedCategory, setSelectedCategory] = useState(SUPPORTED_CATEGORIES.includes(route.params.category) ? route.params.category : DEFAULT_CATEGORY)

@@ -3,10 +3,12 @@ import {
     View, 
     Dimensions, 
     StyleSheet,
-    ScrollView
+    ScrollView,
+    Text
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
-import { COLORS, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
+import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
+import { CZECH_CITIES } from '../labels'
 import RenderClient from '../components/list/RenderClient'
 
 const {
@@ -16,6 +18,11 @@ const {
 import { MOCK_DATA } from '../constants'
 
 const Mas = ({ navigation, route }) => {
+    const params = useMemo(() => ({
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
+        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
+    }), [route.params])
+
     const [contentWidth, setContentWidth] = useState(INITIAL_SCREEN_WIDTH)
     const [isLoading, setIsLoading] = useState(true)
 
@@ -26,15 +33,17 @@ const Mas = ({ navigation, route }) => {
     }, [])
 
     const cardWidth = useMemo(() => {
-        const isXSmallScreen = contentWidth < 350
-        const isSmallScreen = contentWidth >= 350 && contentWidth < SMALL_SCREEN_THRESHOLD
-        const isMediumScreen = contentWidth >= SMALL_SCREEN_THRESHOLD && contentWidth < 960
+        const isXSmallScreen = contentWidth < 300
+        const isSmallScreen = contentWidth >= 300 && contentWidth < SMALL_SCREEN_THRESHOLD
+        const isMediumScreen = contentWidth >= SMALL_SCREEN_THRESHOLD && contentWidth < 750
+        const isXMediumScreen = contentWidth >= 750 && contentWidth < 960
         const isLargeScreen = contentWidth >= 960 && contentWidth < 1300
 
         return isXSmallScreen ? (contentWidth) - (SPACING.large + SPACING.large)
             : isSmallScreen ? (contentWidth / 2) - (SPACING.large + SPACING.large / 2)
             : isMediumScreen ? (contentWidth / 3) - (SPACING.large + SPACING.large / 3)
-            : isLargeScreen ? (contentWidth / 4) - (SPACING.large + SPACING.large / 4) : (contentWidth / 5) - (SPACING.large + SPACING.large / 5) 
+            : isXMediumScreen ? (contentWidth / 4) - (SPACING.large + SPACING.large / 4)
+            : isLargeScreen ? (contentWidth / 5) - (SPACING.large + SPACING.large / 5) : (contentWidth / 6) - (SPACING.large + SPACING.large / 6) 
     }, [contentWidth])
 
     const renderCard = useCallback((data) => {
@@ -66,8 +75,14 @@ const Mas = ({ navigation, route }) => {
             contentContainerStyle={{ paddingTop: SPACING.large }}
             onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
         >
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large }}>
-                {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
+            <View style={{ marginLeft: SPACING.large }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
+                    {`Mas ${params.city ? 'in ' + params.city : ''} • Discover 212 ...`}
+                </Text>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
+                    {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
+                </View>
             </View>
         </ScrollView>
     )

@@ -20,7 +20,7 @@ import { MOCK_DATA } from '../constants'
 
 const Home = ({ route, navigation }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : DEFAULT_LANGUAGE
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
     }), [route.params])
 
     const labels = useMemo(() => translateLabels(params.language, [
@@ -166,7 +166,7 @@ const Home = ({ route, navigation }) => {
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.page_horizontal }}>Newest Clients</Text>
 
                 <ScrollView contentContainerStyle={{ marginHorizontal: SPACING.page_horizontal }} horizontal showsHorizontalScrollIndicator={false}>
-                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, flexBasis: 150 }}><RenderClient client={data} width={150} showPrice={false} /></View> )}
+                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}><RenderClient client={data} width={150} showPrice={false} /></View> )}
                 </ScrollView>
             </View>
 

@@ -1,11 +1,12 @@
-import React, { useMemo, useState, useCallback, useRef } from 'react'
-import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, TextInput, Image, StyleSheet } from 'react-native'
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, TextInput, Image, StyleSheet, Dimensions } from 'react-native'
 import Animated, {
     Extrapolation,
     interpolate,
     useAnimatedScrollHandler,
     useAnimatedStyle,
     useSharedValue,
+    withTiming
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
@@ -29,11 +30,25 @@ import {
 
 import RenderCity from '../list/RenderCity'
 
+const window = Dimensions.get('window')
+
 const CityPicker = ({ visible, setVisible, route }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(route.params.language) ? route.params.language : DEFAULT_LANGUAGE,
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE,
         city: route.params.city
     }), [route.params])
+
+    useEffect(() => {
+        if (visible) {
+            translateY.value = withTiming(0, {
+                useNativeDriver: true
+            })
+        } else {
+            translateY.value = withTiming(window.height, {
+                useNativeDriver: true
+            })
+        }
+    }, [visible])
 
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
@@ -52,6 +67,8 @@ const CityPicker = ({ visible, setVisible, route }) => {
         scrollY.value = event.contentOffset.y
     })
 
+    const translateY = useSharedValue(window.height)
+
     const modalHeaderTextStyles = useAnimatedStyle(() => {
         return {
             fontFamily: FONTS.medium,
@@ -65,6 +82,26 @@ const CityPicker = ({ visible, setVisible, route }) => {
         setCitySearch(search)
     }, [filteredCitiesRef.current])
 
+    const closeModal = () => {
+        translateY.value = withTiming(window.height, {
+            useNativeDriver: true
+        })
+        setVisible(false)
+    }
+
+    const modalContainerStyles = useAnimatedStyle(() => {
+        return {
+            backgroundColor: '#FFF',
+            borderRadius: 24,
+            width: normalize(500),
+            maxWidth: '80%',
+            height: normalize(500),
+            maxHeight: '80%',
+            overflow: 'hidden',
+            transform: [{ translateY: translateY.value }]
+        }
+    })
+
     return (
         <Modal transparent={true}
             visible={visible}
@@ -72,18 +109,10 @@ const CityPicker = ({ visible, setVisible, route }) => {
             <TouchableOpacity
                 style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', cursor: 'default' }}
                 activeOpacity={1}
-                onPressOut={() => setVisible(false)}
+                onPressOut={closeModal}
             >
                 <TouchableWithoutFeedback>
-                    <View style={{
-                        backgroundColor: '#FFF',
-                        borderRadius: 24,
-                        width: normalize(500),
-                        maxWidth: '80%',
-                        height: normalize(500),
-                        maxHeight: '80%',
-                        overflow: 'hidden'
-                    }}>
+                    <Animated.View style={modalContainerStyles}>
                         <View style={styles.modal__header}>
                             <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
                             <View style={{ flexShrink: 1, flexGrow: 0 }}>
@@ -91,7 +120,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
                             </View>
                             <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
                                 <HoverableView style={{ marginRight: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
-                                    <Ionicons onPress={() => setVisible(false)} name="close" size={normalize(25)} color="black" />
+                                    <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
                                 </HoverableView>
                             </View>
                         </View>
@@ -124,7 +153,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
                             </View>}
                             {filteredCitiesRef.current.map(city => <RenderCity key={city} route={route} city={city} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                         </Animated.ScrollView>
-                    </View>
+                    </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
         </Modal>

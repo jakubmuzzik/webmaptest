@@ -102,7 +102,7 @@ export const LABELS = {
         'cs': 'Přihlásit'
     },
     [SIGN_UP]: {
-        'en': 'Register',
+        'en': 'Sign Up',
         'cs': 'Registrace'
     },
     [ANYWHERE]: {
