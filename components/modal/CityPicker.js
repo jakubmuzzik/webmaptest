@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import React, { useMemo, useState, useCallback, useRef, useEffect, memo } from 'react'
 import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, TextInput, Image, StyleSheet, Dimensions } from 'react-native'
 import Animated, {
     Extrapolation,
@@ -94,7 +94,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
             backgroundColor: '#FFF',
             borderRadius: 24,
             width: normalize(500),
-            maxWidth: '80%',
+            maxWidth: '90%',
             height: normalize(500),
             maxHeight: '80%',
             overflow: 'hidden',
@@ -160,7 +160,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
     )
 }
 
-export default CityPicker
+export default memo(CityPicker)
 
 const styles = StyleSheet.create({
     modal__header: {

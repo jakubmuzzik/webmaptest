@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowD
 import { AntDesign, Entypo, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONT_SIZES, FONTS, SPACING, SMALL_SCREEN_THRESHOLD } from '../../constants'
 import { LinearGradient } from 'expo-linear-gradient'
-import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import Animated, { withTiming, useSharedValue, useAnimatedStyle, interpolate, Extrapolation } from 'react-native-reanimated'
 import { normalize, stripEmptyParams } from '../../utils'
 import { Link } from '@react-navigation/native'
 import { SUPPORTED_LANGUAGES } from '../../constants'
@@ -109,7 +109,7 @@ const Categories = ({ route }) => {
                         </Link>
                     </HoverableView>
                 </ScrollView>
-                <Animated.View style={leftCategoryScrollOpacityStyle}>
+                <Animated.View pointerEvents="none" style={leftCategoryScrollOpacityStyle}>
                     <LinearGradient colors={[
                         COLORS.grey,
                         'rgba(255 255 255/0)',
@@ -117,13 +117,13 @@ const Categories = ({ route }) => {
                         start={{ x: 0, y: 0.5 }}
                         end={{ x: 0, y: 0.5 }} style={{ width: normalize(30), height: '100%' }} />
                 </Animated.View>
-                <Animated.View style={rightCategoryScrollOpacityStyle}>
+                <Animated.View pointerEvents="none" style={rightCategoryScrollOpacityStyle}>
                     <LinearGradient colors={[
                         'rgba(255 255 255/0)',
                         COLORS.grey,
                     ]}
                         start={{ x: 0, y: 0.5 }}
-                        end={{ x: 0, y: 0.5 }} style={{ position: 'absolute', width: normalize(30), height: '100%' }} />
+                        end={{ x: 0, y: 0.5 }} style={{ width: normalize(30), height: '100%' }} />
                 </Animated.View>
             </View>
             <View style={{ flexGrow: 0, flexShrink: 1, flexBasis: 160, alignItems: 'flex-end', justifyContent: 'center' }}>
@@ -134,8 +134,8 @@ const Categories = ({ route }) => {
                             source={require('../../assets/icons/filter.svg')}
                             tintColor='#FFF'
                             style={{
-                                width: SPACING.x_small,
-                                height: SPACING.x_small
+                                width: normalize(18),
+                                height:  normalize(18)
                             }}
                         />
                         <Text style={{ marginLeft: SPACING.xx_small, fontFamily: FONTS.medium, letterSpacing: 1, fontSize: FONT_SIZES.medium, color: '#FFF' }}>

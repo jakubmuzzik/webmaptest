@@ -158,10 +158,10 @@ const Header = ({ route }) => {
                                     activeOpacity={0.8}
                                 >
                                     <LinearGradient
-                                        colors={[COLORS.darkRed, COLORS.red]}
+                                        colors={[COLORS.red, COLORS.darkRed]}
                                         style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                        start={{ x: 0, y: 0.5 }}
-                                        end={{ x: 1, y: 0.5 }}
+                                        //start={{ x: 0, y: 0.5 }}
+                                        //end={{ x: 1, y: 0.5 }}
                                     />
                                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                                         {labels.SIGN_UP}
@@ -269,12 +269,12 @@ const Header = ({ route }) => {
                 </HoverableView>
                 {isLargeScreen ? (
                     <View style={{ flexDirection: 'row' }} ref={loginButtonsRef}>
-                        <HoverableView hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red} style={{ borderRadius: 10, justifyContent: 'center', marginRight: SPACING.xx_small, overflow: 'hidden' }}>
+                        <HoverableView hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8} style={{ borderRadius: 10, justifyContent: 'center', marginRight: SPACING.xx_small, overflow: 'hidden' }}>
                             <LinearGradient
-                                colors={[COLORS.darkRed, COLORS.red]}
+                                colors={[COLORS.red, COLORS.darkRed]}
                                 style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 1, y: 0.5 }}
+                                //start={{ x: 0, y: 0.5 }}
+                                //end={{ x: 1, y: 0.5 }}
                             />
                             <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
                                 <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign Up</Text>

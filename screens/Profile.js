@@ -432,10 +432,10 @@ const Profile = ({ route, client, navigation }) => {
                                 </Text>
                                 <HoverableView style={{ borderRadius: 10, borderWidth: 0, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
                                     <LinearGradient
-                                        colors={[COLORS.darkRed, COLORS.red]}
+                                        colors={[COLORS.red, COLORS.darkRed]}
                                         style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                        start={{ x: 0, y: 0.5 }}
-                                        end={{ x: 1, y: 0.5 }}
+                                        //start={{ x: 0, y: 0.5 }}
+                                        //end={{ x: 1, y: 0.5 }}
                                     />
                                     <TouchableOpacity style={{ flex: 1, paddingHorizontal: SPACING.small, justifyContent: 'center' }}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONTS.bold, color: '#FFF' }}>Add Review</Text>
@@ -502,10 +502,10 @@ const Profile = ({ route, client, navigation }) => {
                     <HoverableView style={{ marginTop: SPACING.large, borderRadius: 15, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
                         <TouchableOpacity style={{ padding: SPACING.xx_small, alignItems: 'center' }}>
                             <LinearGradient
-                                colors={[COLORS.darkRed, COLORS.red]}
+                                colors={[COLORS.red, COLORS.darkRed]}
                                 style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 1, y: 0.5 }}
+                                //start={{ x: 0, y: 0.5 }}
+                                //end={{ x: 1, y: 0.5 }}
                             />
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Send Message</Text>
                         </TouchableOpacity>

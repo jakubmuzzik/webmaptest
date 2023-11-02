@@ -53,6 +53,7 @@ export const COLORS = {
     red: '#dc2e2e',
     hoveredRed: '#bc2020',
     darkRed: '#990000',
+    pastelRed: '#ec9e9f',
     placeholder: '#c4c4c4',
     hoveredWhite: '#efeff0',
     hoveredHoveredWhite: '#e1e1e1',
@@ -63,6 +64,7 @@ export const FONT_SIZES = {
     small: normalizeSize(10, 10, 12), //span
     medium: normalizeSize(12, 12, 14), //base
     large: normalizeSize(14, 14, 16), //paragraph
+    x_large: normalizeSize(18, 18, 20),
     h1: normalizeSize(24, 24, 28),
     h2: normalizeSize(22, 22, 26),
     h3: normalizeSize(20, 20, 24),

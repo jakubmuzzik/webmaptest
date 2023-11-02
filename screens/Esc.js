@@ -34,8 +34,8 @@ const Esc = ({ navigation, route }) => {
 
     const cardWidth = useMemo(() => {
         const isXSmallScreen = contentWidth < 300
-        const isSmallScreen = contentWidth >= 300 && contentWidth < SMALL_SCREEN_THRESHOLD
-        const isMediumScreen = contentWidth >= SMALL_SCREEN_THRESHOLD && contentWidth < 750
+        const isSmallScreen = contentWidth >= 300 && contentWidth < 550
+        const isMediumScreen = contentWidth >= 550 && contentWidth < 750
         const isXMediumScreen = contentWidth >= 750 && contentWidth < 960
         const isLargeScreen = contentWidth >= 960 && contentWidth < 1300
 
