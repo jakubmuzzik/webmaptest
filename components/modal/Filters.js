@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState, useCallback, useRef, memo } from 'react'
-import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, Dimensions, StyleSheet, TextInput } from 'react-native'
+import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, Dimensions, StyleSheet, TextInput, ScrollView } from 'react-native'
 import Animated, {
     Extrapolation,
     interpolate,
@@ -19,16 +19,23 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
-import { Switch, Chip} from 'react-native-paper'
+import { Switch, Chip, Checkbox } from 'react-native-paper'
 import Slider from '../Slider'
 
 const window = Dimensions.get('window')
 
-const SMOKER_VALUES = ['Non-Smoker', 'Occasionally', 'Regularly'] //nekurak, nepravidelne, pravidelne
+const SMOKER_VALUES = ['Non-Smoker', 'Occasionally', 'Regularly'] //yes, no, sometimes //nekurak, nepravidelne, pravidelne
 const BODY_TYPES = ['Slim', 'Athletic', 'Muscular', 'Curvy']
-const PUBIC_HAIR_VALUES = ['Shaved', 'Trimmed', 'Hairy']
+const PUBIC_HAIR_VALUES = ['Shaved', 'Trimmed', 'Natural']
 const SEXUAL_ORIENTATION = ['Heterosexual', 'Homosexual', 'Bisexual', 'Transsexual']
 const SERVICES = ['service1', 'service2', 'service3', 'service4', 'service5', 'service6', 'service7']
+const HAIR_COLORS = ['Black', 'Blonde', 'Blue', 'Brown', 'Gray', 'Green', 'Pink', 'Red', 'White']
+const BREAST_SIZES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H+']
+const BREAST_TYPES = ['Natural', 'Silicone']
+const TATOO = ['Yes', 'No']
+const EYE_COLORS = ['Blue', 'Brown', 'Gray', 'Green', 'Hazel']
+const LANGUAGES = ['English', 'French', 'German', 'Japanese', 'Italian', 'Russian', 'Spanish', 'Chinese', 'Arabic', 'Hindi', 'Portuguese', 'Turkish', 'Indonesian', 'Dutch', 'Korean', 'Bengali', 'Thai', 'Punjabi', 'Greek', 'Polish', 'Malay', 'Tagalog', 'Danish', 'Swedish', 'Finnish', 'Czech', 'Hungarian', 'Ukrainian']
+const NATIONALITIES = ['Australian','Brazilian','Canadian','Chinese','French','German','Indian','Italian','Japanese','Korean','Mexican','Russian','Spanish','American']
 
 const MIN_AGE = 18
 const MAX_AGE = 60
@@ -44,7 +51,17 @@ const DEFAULT_FILTERS = {
     onlyVerified: false,
     onlyIndependent: false,
     onlyPremium: false,
-    services: []
+    services: [],
+    outcall: false,
+    incall: false,
+    bodyType: [],
+    hairColor: [],
+    eyeColor: [],
+    pubicHair: [],
+    breastSize: [],
+    breastType: [],
+    language: [],
+    nationality: []
 }
 
 const Filters = ({ visible, setVisible, route }) => {
@@ -53,6 +70,9 @@ const Filters = ({ visible, setVisible, route }) => {
     }), [route.params])
 
     const [filters, setFilters] = useState(DEFAULT_FILTERS)
+    const [filtersCopy, setFiltersCopy] = useState(DEFAULT_FILTERS)
+    const [showMoreLanguages, setShowMoreLanguages] = useState(false)
+    const [showMoreNationalities, setShowMoreNationalities] = useState(false)
 
     useEffect(() => {
         if (visible) {
@@ -116,12 +136,12 @@ const Filters = ({ visible, setVisible, route }) => {
        closeModal()
     }, [])
 
-    const onServicePress = useCallback((service) => {
+    const onMultiPicklistPress = useCallback((value, filterName) => {
         setFilters(filters => ({
             ...filters,
-            services: filters.services.includes(service) 
-             ?  filters.services.filter(s => s !== service)
-             : filters.services.concat(service)
+            [filterName]: filters[filterName].includes(value) 
+             ?  filters[filterName].filter(s => s !== value)
+             : filters[filterName].concat(value)
         }))
     }, [])
 
@@ -157,31 +177,69 @@ const Filters = ({ visible, setVisible, route }) => {
                             </View>
 
                             <View style={styles.filterSection}>
-                                <Text style={styles.filterHeader}>Services</Text> 
+                                <Text style={styles.filterHeader}>Available For</Text>
+
+                                <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: SPACING.small }}>
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderTopLeftRadius: 10, borderBottomLeftRadius: 10, borderColor: !filters.incall && !filters.outcall ? 'transparent' : COLORS.placeholder }} 
+                                        backgroundColor={!filters.incall && !filters.outcall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={!filters.incall && !filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    >
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>
+                                                Both
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </HoverableView>
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderColor: filters.outcall ? 'transparent' : COLORS.placeholder }} 
+                                        backgroundColor={filters.outcall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    >
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: true, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>
+                                                Outcall
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </HoverableView>
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderColor: filters.incall ? 'transparent' : COLORS.placeholder,  borderTopRightRadius: 10, borderBottomRightRadius: 10 }} 
+                                        backgroundColor={filters.incall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={filters.incall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    >
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: true}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>
+                                                Incall
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </HoverableView>
+                                </View>
+                            </View>
+
+                            <View style={styles.filterSection}>
+                                <Text style={styles.filterHeader}>Services</Text>
+
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     {SERVICES.map((service) => {
                                         const selected = filters.services.includes(service)
                                         return (
-                                            <Chip key={service}
-                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
-                                                selected={selected}
-                                                icon={() => selected && <Entypo name="check" size={18} color="green" />}
-                                                mode="outlined"
-                                                selectedColor={selected ? 'green' : '#000'}
-                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                elevated
-                                                onPress={() => onServicePress(service)}
-                                            >
-                                                {service}
-                                            </Chip>
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={service}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    selectedColor={selected ? 'green' : '#000'}
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(service, 'services')}
+                                                >
+                                                    {service}
+                                                </Chip>
+                                            </HoverableView>
                                         )
                                     })}
                                 </View>
                             </View>
 
-                            <View style={styles.filterSection}>
-                                <Text style={styles.filterHeader}>Physical attributes</Text>  
-                                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            <View style={[styles.filterSection, { marginHorizontal: 0, paddingBottom: 0, borderWidth: 0 }]}>
+                                <Text style={[styles.filterHeader, { marginHorizontal: SPACING.small }]}>Physical attributes</Text>
+
+                                <View style={{ marginHorizontal: SPACING.small, flexDirection: 'row', flexWrap: 'wrap', marginBottom: SPACING.x_small }}>
                                     <View style={{ flex: 1, flexDirection: 'column', minWidth: 300, marginBottom: SPACING.small }}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
                                             Height (cm)
@@ -196,9 +254,142 @@ const Filters = ({ visible, setVisible, route }) => {
                                         <Slider range={filters.weight} minValue={MIN_WEIGHT} absoluteMinValue={false} maxValue={MAX_WEIGHT} absoluteMaxValue={false} filterName="weight" setFilters={setFilters} />
                                     </View>
                                 </View>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Body Type
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
+                                    {BODY_TYPES.map((bodyType) => {
+                                        const selected = filters.bodyType.includes(bodyType)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={bodyType}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(bodyType, 'bodyType')}
+                                                >
+                                                    {bodyType}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Hair Color
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
+                                    {HAIR_COLORS.map((hairColor) => {
+                                        const selected = filters.hairColor.includes(hairColor)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={hairColor}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(hairColor, 'hairColor')}
+                                                >
+                                                    {hairColor}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Eye Color
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
+                                    {EYE_COLORS.map((eyeColor) => {
+                                        const selected = filters.eyeColor.includes(eyeColor)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={eyeColor}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(eyeColor, 'eyeColor')}
+                                                >
+                                                    {eyeColor}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Pubic Hair
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
+                                    {PUBIC_HAIR_VALUES.map((pubicHair) => {
+                                        const selected = filters.pubicHair.includes(pubicHair)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={pubicHair}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(pubicHair, 'pubicHair')}
+                                                >
+                                                    {pubicHair}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Breast Size
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
+                                    {BREAST_SIZES.map((breastSize) => {
+                                        const selected = filters.breastSize.includes(breastSize)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={breastSize}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(breastSize, 'breastSize')}
+                                                >
+                                                    {breastSize}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+
+                                <Text style={{ marginHorizontal: SPACING.small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
+                                    Breast Type
+                                </Text>
+
+                                <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false}>
+                                    {BREAST_TYPES.map((breastType) => {
+                                        const selected = filters.breastType.includes(breastType)
+                                        return (
+                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip key={breastType}
+                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                    mode="outlined"
+                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                    onPress={() => onMultiPicklistPress(breastType, 'breastType')}
+                                                >
+                                                    {breastType}
+                                                </Chip>
+                                            </HoverableView>
+                                        )
+                                    })}
+                                </ScrollView>
+                                <View style={{ borderBottomWidth: 1, borderColor: COLORS.placeholder, marginTop: SPACING.small, marginHorizontal: SPACING.small }}></View>
                             </View>
 
-                            <View style={[styles.filterSection, { borderWidth: 0, paddingBottom: 0 }]}>
+                            <View style={styles.filterSection}>
                                 <Text style={styles.filterHeader}>Profile</Text> 
                                 
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small }}>
@@ -229,6 +420,56 @@ const Filters = ({ visible, setVisible, route }) => {
                                 </View>
                                 {//indepent, verified, premium, with reviews ?
                                 }
+                            </View>
+
+                            <View style={[styles.filterSection, { marginHorizontal: 0 }]}>
+                                <Text style={[styles.filterHeader, { marginHorizontal: SPACING.small }]}>Language</Text> 
+                                
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                    {NATIONALITIES.slice(0, showMoreNationalities ? NATIONALITIES.length: 4).map(nationality => (
+                                        <View style={{ width: '50%' }}>
+                                            <Checkbox.Item key={nationality}
+                                                onPress={() => onMultiPicklistPress(nationality, 'nationality')}
+                                                color={COLORS.red}
+                                                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
+                                                label={nationality} 
+                                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
+                                                status={filters.nationality.includes(nationality) ? 'checked': 'unchecked'}
+                                                mode="android"
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                                <Text
+                                    onPress={() => setShowMoreNationalities(v => !v)}
+                                    style={{ width: 'fit-content', textDecorationLine: 'underline', fontFamily: FONTS.medium, marginTop: SPACING.xx_small, marginHorizontal: SPACING.small, fontSize: FONT_SIZES.large }}>
+                                    {showMoreNationalities ? 'Show less' : 'Show more'}
+                                </Text>
+                            </View>
+
+                            <View style={[styles.filterSection, { borderWidth: 0, paddingBottom: 0, marginHorizontal: 0 }]}>
+                                <Text style={[styles.filterHeader, { marginHorizontal: SPACING.small }]}>Language</Text> 
+                                
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                    {LANGUAGES.slice(0, showMoreLanguages ? LANGUAGES.length: 4).map(language => (
+                                        <View style={{ width: '50%' }}>
+                                            <Checkbox.Item key={language}
+                                                onPress={() => onMultiPicklistPress(language, 'language')}
+                                                color={COLORS.red}
+                                                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
+                                                label={language} 
+                                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
+                                                status={filters.language.includes(language) ? 'checked': 'unchecked'}
+                                                mode="android"
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                                <Text
+                                    onPress={() => setShowMoreLanguages(v => !v)}
+                                    style={{ width: 'fit-content', textDecorationLine: 'underline', fontFamily: FONTS.medium, marginTop: SPACING.xx_small, marginHorizontal: SPACING.small, fontSize: FONT_SIZES.large }}>
+                                    {showMoreLanguages ? 'Show less' : 'Show more'}
+                                </Text>
                             </View>
                         </Animated.ScrollView>
 

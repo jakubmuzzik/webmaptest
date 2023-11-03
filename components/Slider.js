@@ -3,6 +3,7 @@ import { View, Text, TextInput } from "react-native"
 import { FONTS, COLORS, FONT_SIZES, SPACING } from "../constants"
 import { normalize } from "../utils"
 import { RangeSlider } from '@react-native-assets/slider'
+import HoverableView from "./HoverableView"
 
 const Slider = ({ range, minValue, absoluteMinValue = true, absoluteMaxValue = true, maxValue, filterName, setFilters }) => {
     useEffect(() => {
@@ -95,7 +96,7 @@ const Slider = ({ range, minValue, absoluteMinValue = true, absoluteMaxValue = t
                 </Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.small, marginTop: SPACING.small }}>
-                <View style={{ flex: 1, flexDirection: 'column', borderWidth: 1, borderRadius: 10, borderColor: minBorderColor, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
+                <HoverableView hoveredBorderColor={COLORS.red} borderColor={minBorderColor} style={{ flex: 1, flexDirection: 'column', borderWidth: 1, borderRadius: 10, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
                     <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>Minimum</Text>
                     <TextInput
                         style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, outlineStyle: 'none' }}
@@ -106,11 +107,11 @@ const Slider = ({ range, minValue, absoluteMinValue = true, absoluteMaxValue = t
                         keyboardType='numeric'
                         maxLength={3}
                     />
-                </View>
+                </HoverableView>
                 <Text style={{ marginHorizontal: SPACING.medium, fontFamily: FONTS.medium, fontSize: FONTS.h1 }}>
                     -
                 </Text>
-                <View style={{ flex: 1, flexDirection: 'column', borderWidth: 1, borderRadius: 10, borderColor: maxBorderColor, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
+                <HoverableView hoveredBorderColor={COLORS.red} borderColor={maxBorderColor} style={{ flex: 1, flexDirection: 'column', borderWidth: 1, borderRadius: 10, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
                     <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>Maximum</Text>
                     <TextInput
                         style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, outlineStyle: 'none' }}
@@ -121,7 +122,7 @@ const Slider = ({ range, minValue, absoluteMinValue = true, absoluteMaxValue = t
                         keyboardType='numeric'
                         maxLength={3}
                     />
-                </View>
+                </HoverableView>
             </View>
         </View>
     )

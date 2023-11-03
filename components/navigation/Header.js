@@ -15,30 +15,23 @@ import {
     COLORS,
     FONTS,
     FONT_SIZES,
-    DEFAULT_CITY,
     SPACING,
     DEFAULT_LANGUAGE,
     SMALL_SCREEN_THRESHOLD,
     LARGE_SCREEN_THRESHOLD,
-    SUPPORTED_LANGUAGES,
-    SUPPORTED_CATEGORIES
+    SUPPORTED_LANGUAGES
 } from '../../constants'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import {
     CZECH_CITIES,
-    CZECH,
-    CITY,
-    SELECT_CITY,
     SEARCH,
     SIGN_IN,
     SIGN_UP,
-    ANYWHERE,
     translateLabels
 } from '../../labels'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
-import CityPicker from '../modal/CityPicker'
 import Categories from './Categories'
 
 const SCREENS_WITH_CITY_SELECTION = [
@@ -72,13 +65,9 @@ const Header = ({ route }) => {
     })), [route])
 
     const labels = useMemo(() => translateLabels(route.params.language, [
-        CZECH,
-        CITY,
-        SELECT_CITY,
         SEARCH,
         SIGN_IN,
-        SIGN_UP,
-        ANYWHERE
+        SIGN_UP
     ]), [params.language])
 
     const { onPress: onLogoPress, ...logoNavProps } = useLinkProps({ to: logoNav })
@@ -87,7 +76,6 @@ const Header = ({ route }) => {
 
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState('transparent')
-    const [locationModalVisible, setLocationModalVisible] = useState(false)
     const [userDropdownVisible, setUserDropdownVisible] = useState(false)
     const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false)
     const [dropdownTop, setDropdownTop] = useState(-1000)
@@ -100,7 +88,6 @@ const Header = ({ route }) => {
     //close modals when changing language, city etc...
     useEffect(() => {
         setLanguageDropdownVisible(false)
-        setLocationModalVisible(false)
     }, [route.params])
 
     const { width } = useWindowDimensions()
@@ -117,7 +104,7 @@ const Header = ({ route }) => {
 
     const toggleLanguageDropdown = useCallback(() => {
         languageDropdownVisible ? setLanguageDropdownRight(false) : openLanguageDropdown()
-    }, [languageDropdownVisible, isLargeScreen])
+    }, [languageDropdownVisible, isLargeScreen, isSmallScreen])
 
     const openLanguageDropdown = () => {
         languageDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
@@ -128,10 +115,12 @@ const Header = ({ route }) => {
             loginButtonsRef.current.measure((_fx, _fy, _w, h, _px, py) => {
                 setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
             })
-        } else {
+        } else if (userDropdownRef.current){
             userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
                 setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
             })
+        } else {
+            setLanguageDropdownRight(SPACING.page_horizontal)
         }
 
         setLanguageDropdownVisible(true)
@@ -257,6 +246,13 @@ const Header = ({ route }) => {
                     />
                     <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
                 </HoverableView>
+                <HoverableView hoveredOpacity={0.8} style={{ borderRadius: 20, justifyContent: 'center', marginLeft: SPACING.xx_small }}>
+                    <TouchableOpacity ref={languageDropdownRef} onPress={toggleLanguageDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
+                        <MaterialIcons style={{ paddingRight: SPACING.xxx_small }} name="language" size={normalize(20)} color="white" />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase() : DEFAULT_LANGUAGE.toUpperCase()}</Text>
+                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="keyboard-arrow-down" size={normalize(20)} color='#FFF' />
+                    </TouchableOpacity>
+                </HoverableView>
             </>
         ) : (
             <>
@@ -314,18 +310,6 @@ const Header = ({ route }) => {
                     }}
                 />
             </View>
-            {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <HoverableView style={{ ...styles.locationWrapper, marginRight: isSmallScreen ? SPACING.x_small : 0 }} hoveredOpacity={0.7}>
-                <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
-                    onPress={() => setLocationModalVisible(true)}
-                >
-                    <Ionicons style={{ paddingRight: isLargeScreen ? SPACING.xx_small : 0 }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
-                    {isLargeScreen && <View style={styles.locationWrapper__text}>
-                        <Text style={styles.locationHeader}>{params.city ? labels.CITY : labels.ANYWHERE}</Text>
-                        <Text style={styles.locationValue} numberOfLines={1}>{params.city}</Text>
-                    </View>}
-                    <MaterialIcons style={{ paddingLeft: isLargeScreen ? SPACING.xx_small : 0 }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
-                </TouchableOpacity>
-            </HoverableView>}
         </>
     ), [isSmallScreen, isLargeScreen, route])
 
@@ -356,8 +340,6 @@ const Header = ({ route }) => {
                     {rendeLanguageDropdown()}
                     {renderUserDropdown()}
                 </View>
-
-                <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={route} />
 
                 {renderSeoContent()}
             </View>
