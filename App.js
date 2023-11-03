@@ -150,7 +150,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-          <Stack.Screen name="NotFound" component={Home} initialParams={{}} />
+          <Stack.Screen name="NotFound" component={Esc} initialParams={{}} />
 
           <Stack.Group
             screenOptions={{
