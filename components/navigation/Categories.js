@@ -1,19 +1,20 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions } from 'react-native'
 import { AntDesign, Entypo, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'
 import { COLORS, FONT_SIZES, FONTS, SPACING, SMALL_SCREEN_THRESHOLD, LARGE_SCREEN_THRESHOLD } from '../../constants'
 import { LinearGradient } from 'expo-linear-gradient'
-import Animated, { withTiming, useSharedValue, useAnimatedStyle, interpolate, Extrapolation } from 'react-native-reanimated'
+import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { normalize, stripEmptyParams } from '../../utils'
 import { Link } from '@react-navigation/native'
 import { SUPPORTED_LANGUAGES } from '../../constants'
 import { CZECH_CITIES, CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
+import { Badge } from 'react-native-paper'
 
 import HoverableView from '../../components/HoverableView'
 import Filters from '../modal/Filters'
 import CityPicker from '../modal/CityPicker'
 
-const Categories = ({ route }) => {
+const Categories = ({ route, navigation }) => {
     const params = useMemo(() => ({
         language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
         city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
@@ -27,10 +28,15 @@ const Categories = ({ route }) => {
         ANYWHERE
     ]), [params.language])
 
+    const filtersRef = useRef()
+
     //close modals when changing language, city etc...
     useEffect(() => {
         setFiltersVisible(false)
         setLocationModalVisible(false)
+        if (filtersRef.current) {
+            setFiltersCount(Object.keys(filtersRef.current.filterParams).length)
+        }
     }, [route.params])
 
     const { width } = useWindowDimensions()
@@ -39,6 +45,7 @@ const Categories = ({ route }) => {
 
     const [filtersVisible, setFiltersVisible] = useState(false)
     const [locationModalVisible, setLocationModalVisible] = useState(false)
+    const [filtersCount, setFiltersCount] = useState(0)
 
     const leftCategoryScrollOpacity = useSharedValue(0)
     const rightCategoryScrollOpacity = useSharedValue(1)
@@ -157,7 +164,7 @@ const Categories = ({ route }) => {
                     </TouchableOpacity>
                 </HoverableView>
 
-                <HoverableView hoveredBackgroundColor={COLORS.lightGrey} style={{ justifyContent: 'center', alignItems: 'flex-end', borderWidth: 2, borderRadius: 15, borderColor: COLORS.hoveredLightGrey, marginRight: SPACING.page_horizontal }}>
+                <HoverableView hoveredBackgroundColor={COLORS.lightGrey} style={{ justifyContent: 'center', alignItems: 'flex-end', borderWidth: 2, borderRadius: 15, borderColor: filtersCount > 0 ? COLORS.red :COLORS.hoveredLightGrey, marginRight: SPACING.page_horizontal }}>
                     <TouchableOpacity onPress={onFiltersPress} style={{ paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Image
                             resizeMode='contain'
@@ -171,11 +178,14 @@ const Categories = ({ route }) => {
                         {!isSmallScreen && <Text style={{ marginLeft: SPACING.xx_small, fontFamily: FONTS.medium, letterSpacing: 1, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                             Filters
                         </Text>}
+                        {filtersCount > 0 && <View style={{ position: 'absolute', top: normalize(-9, true), right: normalize(-9, true), backgroundColor: COLORS.red, borderRadius: '50%', width: normalize(20), height: normalize(20), alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{filtersCount}</Text>
+                        </View>}
                     </TouchableOpacity>
                 </HoverableView>
             </View>
 
-            <Filters visible={filtersVisible} setVisible={setFiltersVisible} route={route} />
+            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} route={route} navigation={navigation} />
             <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={route} />
         </View>
     )

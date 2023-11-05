@@ -29,16 +29,18 @@ import {
     SIGN_UP,
     translateLabels
 } from '../../labels'
+import { stripEmptyParams } from '../../utils'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import Categories from './Categories'
+import Login from '../modal/Login'
 
 const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu'
 ]
 
-const Header = ({ route }) => {
+const Header = ({ route, navigation }) => {
     const params = useMemo(() => ({
         language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
         city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
@@ -80,6 +82,7 @@ const Header = ({ route }) => {
     const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false)
     const [dropdownTop, setDropdownTop] = useState(-1000)
     const [languageDropdownRight, setLanguageDropdownRight] = useState(-1000)
+    const [loginVisible, setLoginVisible] = useState(false)
 
     const userDropdownRef = useRef()
     const languageDropdownRef = useRef()
@@ -133,6 +136,13 @@ const Header = ({ route }) => {
         setUserDropdownVisible(true)
     }
 
+    const onLoginPress = () => {
+        setLoginVisible(true)
+        /*navigation.navigate('LoginStack', { 
+            ...stripEmptyParams(params)
+        }) */
+    }
+
     const renderUserDropdown = useCallback(() => {
         return (
             <Modal visible={userDropdownVisible} transparent animationType="none">
@@ -143,7 +153,7 @@ const Header = ({ route }) => {
                     <TouchableWithoutFeedback>
                         <View style={[styles.dropdown, { top: dropdownTop }]}>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                <TouchableOpacity style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                <TouchableOpacity onPress={onLoginPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
                                 >
                                     <LinearGradient
@@ -277,7 +287,7 @@ const Header = ({ route }) => {
                             </TouchableOpacity>
                         </HoverableView>
                         <HoverableView hoveredOpacity={0.8} style={{ justifyContent: 'center' }}>
-                            <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
+                            <TouchableOpacity onPress={onLoginPress} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
                                 <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Log In</Text>
                             </TouchableOpacity>
                         </HoverableView>
@@ -343,7 +353,8 @@ const Header = ({ route }) => {
 
                 {renderSeoContent()}
             </View>
-            {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories route={route} />}
+            {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />}
+            <Login visible={loginVisible} setVisible={setLoginVisible} route={route} />
         </>
     )
 }

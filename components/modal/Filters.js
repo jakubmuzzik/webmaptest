@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useCallback, useRef, memo } from 'react'
+import React, { useMemo, useEffect, useState, useCallback, memo, forwardRef, useImperativeHandle } from 'react'
 import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, Dimensions, StyleSheet, TextInput, ScrollView } from 'react-native'
 import Animated, {
     Extrapolation,
@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, Entypo } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize } from '../../utils'
+import { normalize, deepClone, stripEmptyParams, stripDefaultFilters } from '../../utils'
 import {
     COLORS,
     FONTS,
@@ -19,6 +19,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
+import { CZECH_CITIES } from '../../labels'
 import { Switch, Chip, Checkbox } from 'react-native-paper'
 import Slider from '../Slider'
 
@@ -45,33 +46,85 @@ const MIN_WEIGHT = 50
 const MAX_WEIGHT = 90
 
 const DEFAULT_FILTERS = {
-    age: [MIN_AGE, MAX_AGE],
-    height: [MIN_HEIGHT, MAX_HEIGHT],
-    weight: [MIN_WEIGHT, MAX_WEIGHT],
+    ageRange: [MIN_AGE, MAX_AGE],
+    heightRange: [MIN_HEIGHT, MAX_HEIGHT],
+    weightRange: [MIN_WEIGHT, MAX_WEIGHT],
     onlyVerified: false,
     onlyIndependent: false,
-    onlyPremium: false,
-    services: [],
+    //onlyPremium: false,
     outcall: false,
     incall: false,
+    services: [],
     bodyType: [],
     hairColor: [],
     eyeColor: [],
     pubicHair: [],
     breastSize: [],
     breastType: [],
-    language: [],
+    speaks: [],
     nationality: [],
     sexualOrientation: []
 }
 
-const Filters = ({ visible, setVisible, route }) => {
+const Filters = forwardRef((props, ref) => {
+    const { visible, setVisible, route, navigation } = props
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
+        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : '',
     }), [route.params])
 
+    const filterParams = useMemo(() => {
+        const ageRangeParam = decodeURIComponent(route.params.ageRange)?.split(',')
+        let ageRange = undefined
+        if(Array.isArray(ageRangeParam) && ageRangeParam.length === 2) {
+            ageRange = []
+            ageRange[0] = !isNaN(ageRangeParam[0]) && ageRangeParam[0] >= MIN_AGE && ageRangeParam[0] < MAX_AGE ? ageRangeParam[0] : MIN_AGE
+            ageRange[1] = !isNaN(ageRangeParam[1]) && ageRangeParam[1] > ageRange[0] && ageRangeParam[1] <= MAX_AGE ? ageRangeParam[1] : MAX_AGE
+        }
+
+        const heightRangeParam = decodeURIComponent(route.params.heightRange)?.split(',')
+        let heightRange = undefined
+        if(Array.isArray(heightRangeParam) && heightRangeParam.length === 2) {
+            heightRange = []
+            heightRange[0] = !isNaN(heightRangeParam[0]) && heightRangeParam[0] >= MIN_HEIGHT && heightRangeParam[0] < MAX_HEIGHT ? heightRangeParam[0] : MIN_HEIGHT
+            heightRange[1] = !isNaN(heightRangeParam[1]) && heightRangeParam[1] > heightRange[0] && heightRangeParam[1] <= MAX_HEIGHT ? heightRangeParam[1] : MAX_HEIGHT
+        }
+
+        const weightRangeParam = decodeURIComponent(route.params.weightRange)?.split(',')
+        let weightRange = undefined
+        if(Array.isArray(weightRangeParam) && weightRangeParam.length === 2) {
+            weightRange = []
+            weightRange[0] = !isNaN(weightRangeParam[0]) && weightRangeParam[0] >= MIN_WEIGHT && weightRangeParam[0] < MAX_WEIGHT ? weightRangeParam[0] : MIN_WEIGHT
+            weightRange[1] = !isNaN(weightRangeParam[1]) && weightRangeParam[1] > weightRange[0] && weightRangeParam[1] <= MAX_WEIGHT ? weightRangeParam[1] : MAX_WEIGHT
+        }
+
+        return stripEmptyParams({
+            ageRange,
+            heightRange,
+            weightRange,
+            onlyVerified: typeof route.params.onlyVerified === 'boolean' ? route.params.onlyVerified : undefined,
+            onlyIndependent: typeof route.params.onlyIndependent === 'boolean' ? route.params.onlyIndependent : undefined,
+            outcall: typeof route.params.outcall === 'boolean' ? route.params.outcall : undefined,
+            incall: typeof route.params.incall === 'boolean' ? route.params.incall : undefined,
+            services: route.params.services ? decodeURIComponent(route.params.services).split(',').filter(val => SERVICES.includes(val)) : undefined,
+            bodyType: route.params.bodyType ? decodeURIComponent(route.params.bodyType).split(',').filter(val => BODY_TYPES.includes(val)) : undefined,
+            hairColor: route.params.hairColor ? decodeURIComponent(route.params.hairColor).split(',').filter(val => HAIR_COLORS.includes(val)) : undefined,
+            eyeColor: route.params.eyeColor ? decodeURIComponent(route.params.eyeColor).split(',').filter(val => EYE_COLORS.includes(val)) : undefined,
+            pubicHair: route.params.pubicHair ? decodeURIComponent(route.params.pubicHair).split(',').filter(val => PUBIC_HAIR_VALUES.includes(val)) : undefined,
+            breastSize: route.params.breastSize ? decodeURIComponent(route.params.breastSize).split(',').filter(val => BREAST_SIZES.includes(val)) : undefined,
+            breastType: route.params.breastType ? decodeURIComponent(route.params.breastType).split(',').filter(val => BREAST_TYPES.includes(val)) : undefined,
+            speaks: route.params.speaks ? decodeURIComponent(route.params.speaks).split(',').filter(val => LANGUAGES.includes(val)) : undefined,
+            nationality: route.params.nationality ? decodeURIComponent(route.params.nationality).split(',').filter(val => NATIONALITIES.includes(val)) : undefined,
+            sexualOrientation: route.params.sexualOrientation ? decodeURIComponent(route.params.sexualOrientation).split(',').filter(val => SEXUAL_ORIENTATION.includes(val)) : undefined
+        })
+    }, [route.params])
+
+    useImperativeHandle(ref, () => ({
+        filterParams
+    }))
+
     const [filters, setFilters] = useState(DEFAULT_FILTERS)
-    const [filtersCopy, setFiltersCopy] = useState(DEFAULT_FILTERS)
     const [showMoreLanguages, setShowMoreLanguages] = useState(false)
     const [showMoreNationalities, setShowMoreNationalities] = useState(false)
 
@@ -88,8 +141,13 @@ const Filters = ({ visible, setVisible, route }) => {
     }, [visible])
 
     useEffect(() => {
-        //apply filters
-    }, [filters])
+        setFilters({
+            ...DEFAULT_FILTERS,
+            ...filterParams
+        })
+
+        //TODO - apply filters
+    }, [filterParams])
 
     const scrollY = useSharedValue(0)
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -121,7 +179,7 @@ const Filters = ({ visible, setVisible, route }) => {
 
     const closeModal = () => {
         //reset filters when not saved
-        setFiltersCopy(filters)
+        setFilters(filters)
         translateY.value = withTiming(window.height, {
             useNativeDriver: true
         })
@@ -129,31 +187,34 @@ const Filters = ({ visible, setVisible, route }) => {
     }
 
     const onFiltersChange = useCallback((filterName, value) => {
-        setFiltersCopy(filtersCopy => ({
-            ...filtersCopy,
+        setFilters(filters => ({
+            ...filters,
             [filterName]: value
         }))
     }, [])
 
     const onClearFiltersPress = useCallback(() => {
-        setFiltersCopy(DEFAULT_FILTERS)
+        setFilters(DEFAULT_FILTERS)
     }, [])
 
     const onApplyFiltersPress = useCallback(() => {
-        setFilters(filtersCopy)
+        navigation.navigate(route.name, { 
+            ...stripEmptyParams(params),
+            ...stripDefaultFilters(DEFAULT_FILTERS, filters)
+        }) 
 
         translateY.value = withTiming(window.height, {
             useNativeDriver: true
         })
         setVisible(false)
-    }, [filtersCopy])
+    }, [filters, route])
 
     const onMultiPicklistPress = useCallback((value, filterName) => {
-        setFiltersCopy(filtersCopy => ({
-            ...filtersCopy,
-            [filterName]: filtersCopy[filterName].includes(value) 
-             ?  filtersCopy[filterName].filter(s => s !== value)
-             : filtersCopy[filterName].concat(value)
+        setFilters(filters => ({
+            ...filters,
+            [filterName]: filters[filterName].includes(value) 
+             ?  filters[filterName].filter(s => s !== value)
+             : filters[filterName].concat(value)
         }))
     }, [])
 
@@ -185,39 +246,39 @@ const Filters = ({ visible, setVisible, route }) => {
                             <View style={[styles.filterSection, { marginTop: SPACING.xxxxx_large - SPACING.small }]}>
                                 <Text style={styles.filterHeader}>Age range</Text>
 
-                                <Slider range={filtersCopy.age} minValue={MIN_AGE} absoluteMinValue maxValue={MAX_AGE} absoluteMaxValue={false} filterName="age" setFilters={setFiltersCopy} />
+                                <Slider range={filters.ageRange} minValue={MIN_AGE} absoluteMinValue maxValue={MAX_AGE} absoluteMaxValue={false} filterName="ageRange" setFilters={setFilters} />
                             </View>
 
                             <View style={styles.filterSection}>
                                 <Text style={styles.filterHeader}>Available For</Text>
 
                                 <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: SPACING.small }}>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderTopLeftRadius: 10, borderBottomLeftRadius: 10, borderColor: !filtersCopy.incall && !filtersCopy.outcall ? 'transparent' : COLORS.placeholder }} 
-                                        backgroundColor={!filtersCopy.incall && !filtersCopy.outcall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={!filtersCopy.incall && !filtersCopy.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderTopLeftRadius: 10, borderBottomLeftRadius: 10, borderColor: !filters.incall && !filters.outcall ? 'transparent' : COLORS.placeholder }} 
+                                        backgroundColor={!filters.incall && !filters.outcall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={!filters.incall && !filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
                                     >
-                                        <TouchableOpacity onPress={() => setFiltersCopy(filtersCopy => ({...filtersCopy, outcall: false, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filtersCopy.incall && !filtersCopy.outcall ? '#FFF' : '#000'}}>
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>
                                                 Both
                                             </Text>
                                         </TouchableOpacity>
                                     </HoverableView>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderColor: filtersCopy.outcall ? 'transparent' : COLORS.placeholder }} 
-                                        backgroundColor={filtersCopy.outcall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={filtersCopy.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderColor: filters.outcall ? 'transparent' : COLORS.placeholder }} 
+                                        backgroundColor={filters.outcall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
                                     >
-                                        <TouchableOpacity onPress={() => setFiltersCopy(filtersCopy => ({...filtersCopy, outcall: true, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filtersCopy.outcall ? '#FFF' : '#000'}}>
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: true, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>
                                                 Outcall
                                             </Text>
                                         </TouchableOpacity>
                                     </HoverableView>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderColor: filtersCopy.incall ? 'transparent' : COLORS.placeholder,  borderTopRightRadius: 10, borderBottomRightRadius: 10 }} 
-                                        backgroundColor={filtersCopy.incall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={filtersCopy.incall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
+                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderColor: filters.incall ? 'transparent' : COLORS.placeholder,  borderTopRightRadius: 10, borderBottomRightRadius: 10 }} 
+                                        backgroundColor={filters.incall ? COLORS.red: 'transparent'} 
+                                        hoveredBackgroundColor={filters.incall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
                                     >
-                                        <TouchableOpacity onPress={() => setFiltersCopy(filtersCopy => ({...filtersCopy, outcall: false, incall: true}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filtersCopy.incall ? '#FFF' : '#000'}}>
+                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: true}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>
                                                 Incall
                                             </Text>
                                         </TouchableOpacity>
@@ -230,10 +291,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     {SERVICES.map((service) => {
-                                        const selected = filtersCopy.services.includes(service)
+                                        const selected = filters.services.includes(service)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={service}
+                                            <HoverableView key={service} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     selectedColor={selected ? 'green' : '#000'}
@@ -256,14 +317,14 @@ const Filters = ({ visible, setVisible, route }) => {
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
                                             Height (cm)
                                         </Text>
-                                        <Slider range={filtersCopy.height} minValue={MIN_HEIGHT} absoluteMinValue={false} maxValue={MAX_HEIGHT} absoluteMaxValue={false} filterName="height" setFilters={setFiltersCopy} />
+                                        <Slider range={filters.heightRange} minValue={MIN_HEIGHT} absoluteMinValue={false} maxValue={MAX_HEIGHT} absoluteMaxValue={false} filterName="heightRange" setFilters={setFilters} />
                                     </View>
 
                                     <View style={{ flex: 1, flexDirection: 'column', minWidth: 300, marginBottom: SPACING.small }}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginBottom: SPACING.x_small }}>
                                             Weight (kg)
                                         </Text>
-                                        <Slider range={filtersCopy.weight} minValue={MIN_WEIGHT} absoluteMinValue={false} maxValue={MAX_WEIGHT} absoluteMaxValue={false} filterName="weight" setFilters={setFiltersCopy} />
+                                        <Slider range={filters.weightRange} minValue={MIN_WEIGHT} absoluteMinValue={false} maxValue={MAX_WEIGHT} absoluteMaxValue={false} filterName="weightRange" setFilters={setFilters} />
                                     </View>
                                 </View>
 
@@ -273,10 +334,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
                                     {BODY_TYPES.map((bodyType) => {
-                                        const selected = filtersCopy.bodyType.includes(bodyType)
+                                        const selected = filters.bodyType.includes(bodyType)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={bodyType}
+                                            <HoverableView key={bodyType} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -295,10 +356,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
                                     {HAIR_COLORS.map((hairColor) => {
-                                        const selected = filtersCopy.hairColor.includes(hairColor)
+                                        const selected = filters.hairColor.includes(hairColor)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={hairColor}
+                                            <HoverableView key={hairColor} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip 
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -317,10 +378,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
                                     {EYE_COLORS.map((eyeColor) => {
-                                        const selected = filtersCopy.eyeColor.includes(eyeColor)
+                                        const selected = filters.eyeColor.includes(eyeColor)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={eyeColor}
+                                            <HoverableView key={eyeColor} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip 
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -339,10 +400,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
                                     {PUBIC_HAIR_VALUES.map((pubicHair) => {
-                                        const selected = filtersCopy.pubicHair.includes(pubicHair)
+                                        const selected = filters.pubicHair.includes(pubicHair)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={pubicHair}
+                                            <HoverableView key={pubicHair} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip 
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -361,10 +422,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false} style={{ marginBottom: SPACING.x_small }}>
                                     {BREAST_SIZES.map((breastSize) => {
-                                        const selected = filtersCopy.breastSize.includes(breastSize)
+                                        const selected = filters.breastSize.includes(breastSize)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={breastSize}
+                                            <HoverableView key={breastSize} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip 
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -383,10 +444,10 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false}>
                                     {BREAST_TYPES.map((breastType) => {
-                                        const selected = filtersCopy.breastType.includes(breastType)
+                                        const selected = filters.breastType.includes(breastType)
                                         return (
-                                            <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip key={breastType}
+                                            <HoverableView key={breastType} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
+                                                <Chip 
                                                     style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                     mode="outlined"
                                                     textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
@@ -406,7 +467,7 @@ const Filters = ({ visible, setVisible, route }) => {
 
                                 <ScrollView horizontal contentContainerStyle={{ marginHorizontal: SPACING.small }} showsHorizontalScrollIndicator={false}>
                                     {SEXUAL_ORIENTATION.map((orientation) => {
-                                        const selected = filtersCopy.sexualOrientation.includes(orientation)
+                                        const selected = filters.sexualOrientation.includes(orientation)
                                         return (
                                             <HoverableView hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
                                                 <Chip key={orientation}
@@ -436,7 +497,7 @@ const Filters = ({ visible, setVisible, route }) => {
                                             Profiles that underwent identity verification process
                                         </Text>
                                     </View>
-                                    <Switch value={filtersCopy.onlyVerified}
+                                    <Switch value={filters.onlyVerified}
                                         onValueChange={(value) => onFiltersChange('onlyVerified', value)} color={COLORS.red}
                                     />
                                 </View>
@@ -449,7 +510,7 @@ const Filters = ({ visible, setVisible, route }) => {
                                             Not affiliated with agencies
                                         </Text>
                                     </View>
-                                    <Switch value={filtersCopy.onlyIndependent}
+                                    <Switch value={filters.onlyIndependent}
                                         onValueChange={(value) => onFiltersChange('onlyIndependent', value)} color={COLORS.red}
                                     />
                                 </View>
@@ -462,14 +523,14 @@ const Filters = ({ visible, setVisible, route }) => {
                                 
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     {NATIONALITIES.slice(0, showMoreNationalities ? NATIONALITIES.length: 4).map(nationality => (
-                                        <View style={{ width: '50%' }}>
-                                            <Checkbox.Item key={nationality}
+                                        <View key={nationality} style={{ width: '50%' }}>
+                                            <Checkbox.Item
                                                 onPress={() => onMultiPicklistPress(nationality, 'nationality')}
                                                 color={COLORS.red}
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
                                                 label={nationality} 
                                                 labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
-                                                status={filtersCopy.nationality.includes(nationality) ? 'checked': 'unchecked'}
+                                                status={filters.nationality.includes(nationality) ? 'checked': 'unchecked'}
                                                 mode="android"
                                             />
                                         </View>
@@ -486,15 +547,15 @@ const Filters = ({ visible, setVisible, route }) => {
                                 <Text style={[styles.filterHeader, { marginHorizontal: SPACING.small }]}>Language</Text> 
                                 
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                                    {LANGUAGES.slice(0, showMoreLanguages ? LANGUAGES.length: 4).map(language => (
-                                        <View style={{ width: '50%' }}>
-                                            <Checkbox.Item key={language}
-                                                onPress={() => onMultiPicklistPress(language, 'language')}
+                                    {LANGUAGES.slice(0, showMoreLanguages ? LANGUAGES.length: 4).map(speaks => (
+                                        <View key={speaks} style={{ width: '50%' }}>
+                                            <Checkbox.Item 
+                                                onPress={() => onMultiPicklistPress(speaks, 'speaks')}
                                                 color={COLORS.red}
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
-                                                label={language} 
+                                                label={speaks} 
                                                 labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
-                                                status={filtersCopy.language.includes(language) ? 'checked': 'unchecked'}
+                                                status={filters.speaks.includes(speaks) ? 'checked': 'unchecked'}
                                                 mode="android"
                                             />
                                         </View>
@@ -528,7 +589,7 @@ const Filters = ({ visible, setVisible, route }) => {
             </TouchableOpacity>
         </Modal>
     )
-}
+})
 
 export default memo(Filters)
 

@@ -44,7 +44,7 @@ const linking = {
         },
       },*/
       Home: "",
-      Esc: "/esc/:city?",
+      Esc: "/esc/:city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
       Pri: "/pri/:city?",
       Mas: "/mas/:city?",
       Clu: "/clu/:city?",
@@ -130,19 +130,19 @@ export default function App() {
           <Stack.Screen name="Profile" component={Profile} initialParams={{}} />
           <Stack.Screen name="Explore" component={Explore} initialParams={{}} />
           <Stack.Screen
-              name="Photos"
-              component={ProfilePhotosList}
-              initialParams={{}}
-              options={{
-                headerShown: false,
-                cardStyleInterpolator: ({ current }) => ({
-                  cardStyle: {
-                    opacity: current.progress,
-                  },
-                }),
-              }}
-            />
-          
+            name="Photos"
+            component={ProfilePhotosList}
+            initialParams={{}}
+            options={{
+              headerShown: false,
+              cardStyleInterpolator: ({ current }) => ({
+                cardStyle: {
+                  opacity: current.progress,
+                },
+              }),
+            }}
+          />
+
           {/* <Stack.Screen
               name="Explore"
               component={Explore} initialParams={{}} />
@@ -158,10 +158,10 @@ export default function App() {
             }}
           >
             <Stack.Screen name="Gallery" component={PhotoGallery} initialParams={{}} options={{
-            
-            gestureEnabled: false,
-            headerShown: false
-          }} />
+
+              gestureEnabled: false,
+              headerShown: false
+            }} />
           </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>

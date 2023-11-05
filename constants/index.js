@@ -57,6 +57,8 @@ export const COLORS = {
     placeholder: '#c4c4c4',
     hoveredWhite: '#efeff0',
     hoveredHoveredWhite: '#e1e1e1',
+    error: '#ff190c',
+    linkColor: '#0077cc'
 }
 
 export const FONT_SIZES = {

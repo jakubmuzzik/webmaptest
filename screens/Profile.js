@@ -500,7 +500,7 @@ const Profile = ({ route, client, navigation }) => {
                     </View>
 
                     <HoverableView style={{ marginTop: SPACING.large, borderRadius: 15, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                        <TouchableOpacity style={{ padding: SPACING.xx_small, alignItems: 'center' }}>
+                        <TouchableOpacity style={{ padding: SPACING.xx_small, alignItems: 'center' }} activeOpacity={0.8}>
                             <LinearGradient
                                 colors={[COLORS.red, COLORS.darkRed]}
                                 style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
