@@ -32,7 +32,7 @@ const HoverableInput = ({
             onMouseLeave={() => setIsHovered(false)}
         >
             <TextInput
-                label={<Text style={labelStyle}>{label}</Text>}
+                label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
                 placeholder={placeholder}
                 textColor={textColor}
                 outlineColor={isHovered ? hoveredBorderColor : borderColor}
