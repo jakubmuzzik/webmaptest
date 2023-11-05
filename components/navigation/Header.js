@@ -138,9 +138,6 @@ const Header = ({ route, navigation }) => {
 
     const onLoginPress = () => {
         setLoginVisible(true)
-        /*navigation.navigate('LoginStack', { 
-            ...stripEmptyParams(params)
-        }) */
     }
 
     const renderUserDropdown = useCallback(() => {
@@ -153,7 +150,7 @@ const Header = ({ route, navigation }) => {
                     <TouchableWithoutFeedback>
                         <View style={[styles.dropdown, { top: dropdownTop }]}>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                <TouchableOpacity onPress={onLoginPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                <TouchableOpacity style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
                                 >
                                     <LinearGradient
@@ -168,7 +165,7 @@ const Header = ({ route, navigation }) => {
                                 </TouchableOpacity>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <TouchableOpacity style={{ padding: SPACING.xx_small }}
+                                <TouchableOpacity onPress={onLoginPress} style={{ padding: SPACING.xx_small }}
                                     activeOpacity={0.8}
                                 >
                                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
