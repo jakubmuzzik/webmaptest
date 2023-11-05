@@ -35,8 +35,8 @@ const HoverableInput = ({
                 label={<Text style={labelStyle}>{label}</Text>}
                 placeholder={placeholder}
                 textColor={textColor}
-                outlineColor={borderColor}
-                activeOutlineColor={hoveredBorderColor}
+                outlineColor={isHovered ? hoveredBorderColor : borderColor}
+                activeOutlineColor={errorMessage ? COLORS.error : isHovered || isFocused ? hoveredBorderColor: borderColor}
                 underlineColor="red"
                 activeUnderlineColor="red"
                 error={errorMessage}
@@ -49,8 +49,7 @@ const HoverableInput = ({
                     text ? {...textStyle} : {...placeholderStyle}
                 ]}
                 outlineStyle={{ 
-                    backgroundColor: isHovered ? hoveredBackgroundColor: backgroundColor,
-                    borderColor: errorMessage ? COLORS.error : isHovered || isFocused ? hoveredBorderColor: borderColor
+                    backgroundColor: isHovered ? hoveredBackgroundColor: backgroundColor
                 }}
                 style={containerStyle}
                 onFocus={() => setIsFocused(true)}

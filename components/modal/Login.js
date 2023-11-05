@@ -36,8 +36,11 @@ const Login = ({ visible, setVisible, route }) => {
         secureTextEntry: true
     })
     const [showErrorMessages, setShowErrorMessages] = useState(false)
+    const [contentWidth, setContentWidth] = useState(normalize(500))
+    const [index, setIndex] = useState(0)
 
     const viewPagerRef = useRef()
+    const viewPagerX = useRef(0)
 
     useEffect(() => {
         if (visible) {
@@ -72,6 +75,8 @@ const Login = ({ visible, setVisible, route }) => {
         })
         setVisible(false)
         setShowErrorMessages(false)
+        setIndex(0)
+        viewPagerX.current = 0
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -95,7 +100,11 @@ const Login = ({ visible, setVisible, route }) => {
     }
 
     const onForgotPasswordPress = () => {
+        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+    }
 
+    const onGoBackPress = () => {
+        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
     }
 
     const onLoginPress = () => {
@@ -107,6 +116,139 @@ const Login = ({ visible, setVisible, route }) => {
 
     const onSignUpPress = () => {
 
+    }
+
+    const handleScroll = ({ nativeEvent }) => {
+        viewPagerX.current = nativeEvent.contentOffset.x
+        const newIndex = Math.floor(viewPagerX.current / contentWidth)
+
+        if (newIndex != index) {
+            setIndex(newIndex)
+        }
+    }
+
+    const renderLoginPage = () => {
+        return (
+            <>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>
+                    Log In
+                </Text>
+
+                <View style={{ marginHorizontal: SPACING.small, marginTop: SPACING.medium }}>
+                    <HoverableInput
+                        placeholder="Enter your email"
+                        label="Email"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.email}
+                        setText={(text) => setData({ ...data, ['email']: text })}
+                        left={() => <AntDesign
+                            name="user"
+                            size={normalize(20)}
+                            color={COLORS.lightBlack}
+                        />}
+                        errorMessage={showErrorMessages && !data.email ? 'Enter Email' : undefined}
+                    />
+
+                    <HoverableInput
+                        containerStyle={{ marginTop: SPACING.xxx_small }}
+                        placeholder="Enter your password"
+                        label="Password"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.password}
+                        setText={(text) => setData({ ...data, ['password']: text })}
+                        left={() => <AntDesign
+                            name="lock"
+                            size={normalize(20)}
+                            color={COLORS.lightBlack}
+                        />}
+                        right={() =>
+                            <TouchableOpacity onPress={updateSecureTextEntry}>
+                                {data.secureTextEntry ?
+                                    <Entypo name="eye-with-line" size={normalize(20)} color={COLORS.lightBlack} />
+                                    :
+                                    <Entypo name="eye" size={normalize(20)} color={COLORS.lightBlack} />
+                                }
+                            </TouchableOpacity>
+                        }
+                        secureTextEntry={data.secureTextEntry}
+                        errorMessage={showErrorMessages && !data.password ? 'Enter Password' : undefined}
+                    />
+
+                    <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.linkColor }}>
+                        Forgot Password?
+                    </Text>
+
+                    <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
+                        <TouchableOpacity onPress={onLoginPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
+                            <LinearGradient
+                                colors={[COLORS.red, COLORS.darkRed]}
+                                style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
+                            />
+                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Log In</Text>
+                        </TouchableOpacity>
+                    </HoverableView>
+
+                    <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
+                        Don't have an Account?
+                        <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign Up</Text>
+                    </Text>
+                </View>
+            </>
+        )
+    }
+
+    const renderForgotPasswordPage = () => {
+        return (
+            <>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>
+                    Forgot your password?
+                </Text>
+
+                <View style={{ marginHorizontal: SPACING.small, marginTop: SPACING.medium }}>
+                    <HoverableInput
+                        placeholder="Enter your email"
+                        label="Email"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.email}
+                        setText={(text) => setData({ ...data, ['email']: text })}
+                        left={() => <AntDesign
+                            name="user"
+                            size={normalize(20)}
+                            color={COLORS.lightBlack}
+                        />}
+                        errorMessage={showErrorMessages && !data.email ? 'Enter Email' : undefined}
+                    />
+                </View>
+            </>
+        )
+    }
+
+    const pages = {
+        'login': renderLoginPage,
+        'forgowPassword': renderForgotPasswordPage,
+    }
+
+    const renderPage = ({ item }) => {
+        return (
+            <View style={{ width: contentWidth }}>
+                {pages[item]()}
+            </View>
+        )
     }
 
     return (
@@ -121,7 +263,13 @@ const Login = ({ visible, setVisible, route }) => {
                 <TouchableWithoutFeedback>
                     <Animated.View style={modalContainerStyles}>
                         <View style={styles.modal__header}>
-                            <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
+                            <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}>
+                                {index === 1 && (
+                                    <HoverableView style={{ marginLeft: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                                        <Ionicons onPress={onGoBackPress} name="arrow-back" size={normalize(25)} color="black" />
+                                    </HoverableView>
+                                )}
+                            </View>
                             <View style={{ flexShrink: 1, flexGrow: 0 }}>
                                 <Animated.Text style={modalHeaderTextStyles}>Log In</Animated.Text>
                             </View>
@@ -133,80 +281,26 @@ const Login = ({ visible, setVisible, route }) => {
                         </View>
                         <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles]} />
 
-                        <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small }}>
-                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>
-                                Log In
-                            </Text>
-
-                            <View style={{ marginHorizontal: SPACING.small, marginTop: SPACING.medium }}>
-                               <HoverableInput 
-                                    placeholder="Enter your email"
-                                    label="Email"
-                                    borderColor={COLORS.placeholder}
-                                    hoveredBorderColor={COLORS.red}
-                                    textColor='#000'
-                                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                    text={data.email}
-                                    setText={(text) => setData({ ...data, ['email']: text })}
-                                    left={() => <AntDesign
-                                        name="user"
-                                        size={normalize(20)}
-                                        color={COLORS.lightBlack}
-                                    />}
-                                    errorMessage={showErrorMessages && !data.email ? 'Enter Email' : undefined}
-                                />
-
-                                <HoverableInput 
-                                    containerStyle={{ marginTop: SPACING.xxx_small }}
-                                    placeholder="Enter your password"
-                                    label="Password"
-                                    borderColor={COLORS.placeholder}
-                                    hoveredBorderColor={COLORS.red}
-                                    textColor='#000'
-                                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                    text={data.password}
-                                    setText={(text) => setData({ ...data, ['password']: text })}
-                                    left={() => <AntDesign
-                                        name="lock"
-                                        size={normalize(20)}
-                                        color={COLORS.lightBlack}
-                                    />}
-                                    right={() =>
-                                        <TouchableOpacity onPress={updateSecureTextEntry}>
-                                            {data.secureTextEntry ?
-                                                <Entypo name="eye-with-line" size={normalize(20)} color={COLORS.lightBlack} />
-                                                :
-                                                <Entypo name="eye" size={normalize(20)} color={COLORS.lightBlack} />
-                                            }
-                                        </TouchableOpacity>
-                                    }
-                                    secureTextEntry={data.secureTextEntry}
-                                    errorMessage={showErrorMessages && !data.password ? 'Enter Password' : undefined}
-                                />
-
-                                <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.linkColor }}>
-                                    Forgot Password?
-                                </Text>
-
-                                <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                                    <TouchableOpacity onPress={onLoginPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
-                                        <LinearGradient
-                                            colors={[COLORS.red, COLORS.darkRed]}
-                                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                        />
-                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Log In</Text>
-                                    </TouchableOpacity>
-                                </HoverableView>
-
-                                <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
-                                    Don't have an Account?
-                                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign Up</Text>
-                                </Text>
-                            </View>
+                        <Animated.ScrollView scrollEventThrottle={1} 
+                            onScroll={scrollHandler} 
+                            style={{ flex: 1, zIndex: 1 }} 
+                            contentContainerStyle={{ paddingBottom: SPACING.small }}
+                            onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+                        >
+                            <FlatList 
+                                ref={viewPagerRef}
+                                onScroll={handleScroll}
+                                style={{ flex: 1 }}
+                                data={Object.keys(pages)}
+                                renderItem={renderPage}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                bounces={false}
+                                pagingEnabled
+                                disableIntervalMomentum
+                                initialScrollIndex={0}
+                                scrollEnabled={false}
+                            />
                         </Animated.ScrollView>
                     </Animated.View>
                 </TouchableWithoutFeedback>
