@@ -35,6 +35,7 @@ import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import Categories from './Categories'
 import Login from '../modal/Login'
+import Signup from '../modal/Signup'
 
 const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu'
@@ -83,6 +84,7 @@ const Header = ({ route, navigation }) => {
     const [dropdownTop, setDropdownTop] = useState(-1000)
     const [languageDropdownRight, setLanguageDropdownRight] = useState(-1000)
     const [loginVisible, setLoginVisible] = useState(false)
+    const [signUpVisible, setSignUpVisible] = useState(false)
 
     const userDropdownRef = useRef()
     const languageDropdownRef = useRef()
@@ -137,7 +139,13 @@ const Header = ({ route, navigation }) => {
     }
 
     const onLoginPress = () => {
+        setSignUpVisible(false)
         setLoginVisible(true)
+    }
+
+    const onSignUpPress = () => {
+        setLoginVisible(false)
+        setSignUpVisible(true)
     }
 
     const renderUserDropdown = useCallback(() => {
@@ -279,13 +287,13 @@ const Header = ({ route, navigation }) => {
                                 //start={{ x: 0, y: 0.5 }}
                                 //end={{ x: 1, y: 0.5 }}
                             />
-                            <TouchableOpacity activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
-                                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign Up</Text>
+                            <TouchableOpacity onPress={onSignUpPress} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
+                                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign up</Text>
                             </TouchableOpacity>
                         </HoverableView>
                         <HoverableView hoveredOpacity={0.8} style={{ justifyContent: 'center' }}>
                             <TouchableOpacity onPress={onLoginPress} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
-                                <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Log In</Text>
+                                <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Log in</Text>
                             </TouchableOpacity>
                         </HoverableView>
                     </View>
@@ -351,7 +359,9 @@ const Header = ({ route, navigation }) => {
                 {renderSeoContent()}
             </View>
             {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />}
-            <Login visible={loginVisible} setVisible={setLoginVisible} route={route} />
+
+            <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} route={route} />
+            <Signup visible={signUpVisible} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
         </>
     )
 }

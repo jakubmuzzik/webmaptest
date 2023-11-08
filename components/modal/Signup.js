@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue,
     withTiming
 } from 'react-native-reanimated'
-import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons'
+import { Ionicons, AntDesign, MaterialCommunityIcons, Entypo } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import {
@@ -21,10 +21,11 @@ import {
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
 import { LinearGradient } from 'expo-linear-gradient'
+import { TouchableRipple } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, route, onSignUpPress }) => {
+const Signup = ({ visible, setVisible, route, onLoginPress }) => {
     const params = useMemo(() => ({
         language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE,
     }), [route.params])
@@ -37,6 +38,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
     })
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [contentWidth, setContentWidth] = useState(normalize(500))
+    const [profileType, setProfileType] = useState()
     const [index, setIndex] = useState(0)
 
     const viewPagerRef = useRef()
@@ -107,7 +109,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
         viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
     }
 
-    const onLoginPress = () => {
+    const onSignUpPress = () => {
         if (!data.email || !data.password) {
             setShowErrorMessages(true)
             return
@@ -133,76 +135,75 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
     const renderLoginPage = () => {
         return (
             <>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginBottom: SPACING.medium }}>
-                    Log in
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large }}>
+                    Sign up
                 </Text>
 
-                <HoverableInput
-                    placeholder="Enter your email"
-                    label="Email"
-                    borderColor={COLORS.placeholder}
-                    hoveredBorderColor={COLORS.red}
-                    textColor='#000'
-                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.email}
-                    setText={(text) => setData({ ...data, ['email']: text })}
-                    left={() => <AntDesign
-                        name="user"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    errorMessage={showErrorMessages && !data.email ? 'Enter Email' : undefined}
-                />
-
-                <HoverableInput
-                    containerStyle={{ marginTop: SPACING.xxx_small }}
-                    placeholder="Enter your password"
-                    label="Password"
-                    borderColor={COLORS.placeholder}
-                    hoveredBorderColor={COLORS.red}
-                    textColor='#000'
-                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.password}
-                    setText={(text) => setData({ ...data, ['password']: text })}
-                    left={() => <AntDesign
-                        name="lock"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    right={() =>
-                        <TouchableOpacity onPress={updateSecureTextEntry}>
-                            {data.secureTextEntry ?
-                                <Entypo name="eye-with-line" size={normalize(20)} color={COLORS.lightBlack} />
-                                :
-                                <Entypo name="eye" size={normalize(20)} color={COLORS.lightBlack} />
-                            }
-                        </TouchableOpacity>
-                    }
-                    secureTextEntry={data.secureTextEntry}
-                    errorMessage={showErrorMessages && !data.password ? 'Enter Password' : undefined}
-                />
-
-                <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.linkColor }}>
-                    Forgot Password?
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, paddingTop: SPACING.small, marginBottom: SPACING.medium }}>
+                    What are you looking for?
                 </Text>
+
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableRipple style={{ 
+                        flex:1, 
+                        marginRight: SPACING.xx_small, 
+                        flexDirection: 'column', 
+                        padding: SPACING.x_small, 
+                        borderRadius: 5, 
+                        borderColor: profileType === 'member' ? COLORS.red : COLORS.placeholder, 
+                        backgroundColor: profileType === 'member' ? 'rgba(220, 46, 46, .10)' : 'transparent',
+                        borderWidth: 1 
+                    }}
+                        onPress={() => setProfileType('member')}
+                        rippleColor="rgba(220, 46, 46, .32)"
+                    >
+                        <>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <MaterialCommunityIcons name="guy-fawkes-mask" size={28} color="black" />
+                            </View>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginTop: SPACING.x_small }}>
+                                I'm seeking a Lady, to have fun
+                            </Text>
+                        </>
+
+                    </TouchableRipple>
+                    <TouchableRipple style={{ 
+                        flex: 1,
+                        marginLeft: SPACING.xx_small, 
+                        flexDirection: 'column', 
+                        padding: SPACING.x_small, 
+                        borderRadius: 5, 
+                        borderColor: profileType === 'lady' ? COLORS.red : COLORS.placeholder, 
+                        backgroundColor: profileType === 'lady' ? 'rgba(220, 46, 46, .10)' : 'transparent',
+                        borderWidth: 1 
+                    }}
+                        onPress={() => setProfileType('lady')}
+                        rippleColor="rgba(220, 46, 46, .32)"
+                    >
+                        <>
+                            <View>
+                                <Entypo name="mask" size={28} color="black" />
+                            </View>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginTop: SPACING.x_small }}>
+                                I'm a Lady, providing services
+                            </Text>
+                        </>
+                    </TouchableRipple>
+                </View>
 
                 <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                    <TouchableOpacity onPress={onLoginPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
+                    <TouchableOpacity onPress={onSignUpPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
                         <LinearGradient
                             colors={[COLORS.red, COLORS.darkRed]}
                             style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
                         />
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Log In</Text>
+                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Continue</Text>
                     </TouchableOpacity>
                 </HoverableView>
 
                 <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
-                    Don't have an Account?
-                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign Up</Text>
+                    Already have an Account?
+                    <Text onPress={onLoginPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Log in</Text>
                 </Text>
             </>
         )
@@ -289,7 +290,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                                 )}
                             </View>
                             <View style={{ flexShrink: 1, flexGrow: 0 }}>
-                                <Animated.Text style={modalHeaderTextStyles}>{index === 0 ? 'Log in': 'Forgot Password'}</Animated.Text>
+                                <Animated.Text style={modalHeaderTextStyles}>Sign up</Animated.Text>
                             </View>
                             <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
                                 <HoverableView style={{ marginRight: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
@@ -327,7 +328,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
     )
 }
 
-export default memo(Login)
+export default memo(Signup)
 
 const styles = StyleSheet.create({
     modal__header: {
