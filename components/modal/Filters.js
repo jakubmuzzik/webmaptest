@@ -537,7 +537,7 @@ const Filters = forwardRef((props, ref) => {
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
                                                 disableBuiltInState
                                                 isChecked={filters.nationality.includes(nationality)}
-                                                size={25}
+                                                size={normalize(21)}
                                                 fillColor={COLORS.red}
                                                 unfillColor="#FFFFFF"
                                                 text={nationality}
@@ -566,7 +566,7 @@ const Filters = forwardRef((props, ref) => {
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
                                                 disableBuiltInState
                                                 isChecked={filters.speaks.includes(speaks)}
-                                                size={25}
+                                                size={normalize(21)}
                                                 fillColor={COLORS.red}
                                                 unfillColor="#FFFFFF"
                                                 text={speaks}
