@@ -20,7 +20,6 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
-import { Button } from 'react-native-paper'
 import { LinearGradient } from 'expo-linear-gradient'
 
 const window = Dimensions.get('window')

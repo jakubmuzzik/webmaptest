@@ -20,7 +20,8 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import { CZECH_CITIES } from '../../labels'
-import { Switch, Chip, Checkbox } from 'react-native-paper'
+import { Switch, Chip, SegmentedButtons } from 'react-native-paper'
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 import Slider from '../Slider'
 
 const window = Dimensions.get('window')
@@ -252,15 +253,39 @@ const Filters = forwardRef((props, ref) => {
                             <View style={styles.filterSection}>
                                 <Text style={styles.filterHeader}>Available For</Text>
 
-                                <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: SPACING.small }}>
+                                <SegmentedButtons
+                                    style={{ paddingHorizontal: SPACING.small }}
+                                    buttons={[
+                                        {
+                                            style: {borderColor: COLORS.placeholder, backgroundColor: !filters.incall && !filters.outcall ? COLORS.red: 'transparent', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
+                                            value: !filters.incall && !filters.outcall,
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>Both</Text>,
+                                            onPress: () => setFilters(filters => ({...filters, outcall: false, incall: false}))
+                                        },
+                                        {
+                                            style: {borderColor: COLORS.placeholder, backgroundColor: filters.outcall ? COLORS.red: 'transparent'},
+                                            value: filters.outcall,
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>Outcall</Text>,
+                                            checkedColor: '#FFF',
+                                            onPress: () => setFilters(filters => ({...filters, outcall: true, incall: false}))
+                                        },
+                                        { 
+                                            style: {borderColor: COLORS.placeholder, backgroundColor: filters.incall ? COLORS.red: 'transparent', borderTopRightRadius: 10, borderBottomRightRadius: 10},
+                                            value: filters.incall, 
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>Incall</Text>,
+                                            checkedColor: '#FFF',
+                                            onPress: () => setFilters(filters => ({...filters, incall: true, outcall: false}))
+                                        }
+                                    ]}
+                                />
+
+                                {/* <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: SPACING.small }}>
                                     <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderTopLeftRadius: 10, borderBottomLeftRadius: 10, borderColor: !filters.incall && !filters.outcall ? 'transparent' : COLORS.placeholder }} 
                                         backgroundColor={!filters.incall && !filters.outcall ? COLORS.red: 'transparent'} 
                                         hoveredBackgroundColor={!filters.incall && !filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
                                     >
                                         <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>
-                                                Both
-                                            </Text>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>Both</Text>
                                         </TouchableOpacity>
                                     </HoverableView>
                                     <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderColor: filters.outcall ? 'transparent' : COLORS.placeholder }} 
@@ -268,9 +293,7 @@ const Filters = forwardRef((props, ref) => {
                                         hoveredBackgroundColor={filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
                                     >
                                         <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: true, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>
-                                                Outcall
-                                            </Text>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>Outcall</Text>
                                         </TouchableOpacity>
                                     </HoverableView>
                                     <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderColor: filters.incall ? 'transparent' : COLORS.placeholder,  borderTopRightRadius: 10, borderBottomRightRadius: 10 }} 
@@ -283,7 +306,7 @@ const Filters = forwardRef((props, ref) => {
                                             </Text>
                                         </TouchableOpacity>
                                     </HoverableView>
-                                </View>
+                                </View> */}
                             </View>
 
                             <View style={styles.filterSection}>
@@ -293,17 +316,15 @@ const Filters = forwardRef((props, ref) => {
                                     {SERVICES.map((service) => {
                                         const selected = filters.services.includes(service)
                                         return (
-                                            <HoverableView key={service} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    selectedColor={selected ? 'green' : '#000'}
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(service, 'services')}
-                                                >
-                                                    {service}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={service}
+                                                style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small, backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                mode="outlined"
+                                                selectedColor={selected ? 'green' : '#000'}
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(service, 'services')}
+                                            >
+                                                {service}
+                                            </Chip>
                                         )
                                     })}
                                 </View>
@@ -336,16 +357,14 @@ const Filters = forwardRef((props, ref) => {
                                     {BODY_TYPES.map((bodyType) => {
                                         const selected = filters.bodyType.includes(bodyType)
                                         return (
-                                            <HoverableView key={bodyType} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(bodyType, 'bodyType')}
-                                                >
-                                                    {bodyType}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={bodyType}
+                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(bodyType, 'bodyType')}
+                                            >
+                                                {bodyType}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -358,16 +377,14 @@ const Filters = forwardRef((props, ref) => {
                                     {HAIR_COLORS.map((hairColor) => {
                                         const selected = filters.hairColor.includes(hairColor)
                                         return (
-                                            <HoverableView key={hairColor} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip 
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(hairColor, 'hairColor')}
-                                                >
-                                                    {hairColor}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={hairColor}
+                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(hairColor, 'hairColor')}
+                                            >
+                                                {hairColor}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -380,16 +397,14 @@ const Filters = forwardRef((props, ref) => {
                                     {EYE_COLORS.map((eyeColor) => {
                                         const selected = filters.eyeColor.includes(eyeColor)
                                         return (
-                                            <HoverableView key={eyeColor} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip 
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(eyeColor, 'eyeColor')}
-                                                >
-                                                    {eyeColor}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={eyeColor}
+                                                style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small, backgroundColor: selected ? COLORS.red : 'transparent' }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(eyeColor, 'eyeColor')}
+                                            >
+                                                {eyeColor}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -402,16 +417,14 @@ const Filters = forwardRef((props, ref) => {
                                     {PUBIC_HAIR_VALUES.map((pubicHair) => {
                                         const selected = filters.pubicHair.includes(pubicHair)
                                         return (
-                                            <HoverableView key={pubicHair} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip 
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(pubicHair, 'pubicHair')}
-                                                >
-                                                    {pubicHair}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={pubicHair}
+                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(pubicHair, 'pubicHair')}
+                                            >
+                                                {pubicHair}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -424,16 +437,14 @@ const Filters = forwardRef((props, ref) => {
                                     {BREAST_SIZES.map((breastSize) => {
                                         const selected = filters.breastSize.includes(breastSize)
                                         return (
-                                            <HoverableView key={breastSize} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip 
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(breastSize, 'breastSize')}
-                                                >
-                                                    {breastSize}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={breastSize}
+                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(breastSize, 'breastSize')}
+                                            >
+                                                {breastSize}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -446,16 +457,14 @@ const Filters = forwardRef((props, ref) => {
                                     {BREAST_TYPES.map((breastType) => {
                                         const selected = filters.breastType.includes(breastType)
                                         return (
-                                            <HoverableView key={breastType} hoveredOpacity={0.9} style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}>
-                                                <Chip 
-                                                    style={{ backgroundColor: selected ? COLORS.red : 'transparent' }}
-                                                    mode="outlined"
-                                                    textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
-                                                    onPress={() => onMultiPicklistPress(breastType, 'breastType')}
-                                                >
-                                                    {breastType}
-                                                </Chip>
-                                            </HoverableView>
+                                            <Chip key={breastType}
+                                                style={{ backgroundColor: selected ? COLORS.red : 'transparent', marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small }}
+                                                mode="outlined"
+                                                textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
+                                                onPress={() => onMultiPicklistPress(breastType, 'breastType')}
+                                            >
+                                                {breastType}
+                                            </Chip>
                                         )
                                     })}
                                 </ScrollView>
@@ -524,14 +533,18 @@ const Filters = forwardRef((props, ref) => {
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     {NATIONALITIES.slice(0, showMoreNationalities ? NATIONALITIES.length: 4).map(nationality => (
                                         <View key={nationality} style={{ width: '50%' }}>
-                                            <Checkbox.Item
-                                                onPress={() => onMultiPicklistPress(nationality, 'nationality')}
-                                                color={COLORS.red}
+                                            <BouncyCheckbox
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
-                                                label={nationality} 
-                                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
-                                                status={filters.nationality.includes(nationality) ? 'checked': 'unchecked'}
-                                                mode="android"
+                                                disableBuiltInState
+                                                isChecked={filters.nationality.includes(nationality)}
+                                                size={25}
+                                                fillColor={COLORS.red}
+                                                unfillColor="#FFFFFF"
+                                                text={nationality}
+                                                iconStyle={{ borderColor: COLORS.red, borderRadius: 3 }}
+                                                innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
+                                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                                onPress={() => onMultiPicklistPress(nationality, 'nationality')}
                                             />
                                         </View>
                                     ))}
@@ -549,14 +562,18 @@ const Filters = forwardRef((props, ref) => {
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                                     {LANGUAGES.slice(0, showMoreLanguages ? LANGUAGES.length: 4).map(speaks => (
                                         <View key={speaks} style={{ width: '50%' }}>
-                                            <Checkbox.Item 
-                                                onPress={() => onMultiPicklistPress(speaks, 'speaks')}
-                                                color={COLORS.red}
+                                            <BouncyCheckbox
                                                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
-                                                label={speaks} 
-                                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} 
-                                                status={filters.speaks.includes(speaks) ? 'checked': 'unchecked'}
-                                                mode="android"
+                                                disableBuiltInState
+                                                isChecked={filters.speaks.includes(speaks)}
+                                                size={25}
+                                                fillColor={COLORS.red}
+                                                unfillColor="#FFFFFF"
+                                                text={speaks}
+                                                iconStyle={{ borderColor: COLORS.red, borderRadius: 3 }}
+                                                innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
+                                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                                onPress={() => onMultiPicklistPress(speaks, 'speaks')}
                                             />
                                         </View>
                                     ))}
