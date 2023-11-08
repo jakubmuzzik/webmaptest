@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { View, Text } from 'react-native'
 import { TextInput, HelperText } from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES } from "../constants"
+import {isBrowser } from 'react-device-detect'
 
 const HoverableInput = ({ 
     borderColor,
@@ -27,9 +28,10 @@ const HoverableInput = ({
     const [isFocused, setIsFocused] = useState(false)
 
     return (
-        <View
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        <View  
+            style={containerStyle}
+            onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
+            onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
         >
             <TextInput
                 label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
@@ -51,7 +53,7 @@ const HoverableInput = ({
                 outlineStyle={{ 
                     backgroundColor: isHovered ? hoveredBackgroundColor: backgroundColor
                 }}
-                style={containerStyle}
+                //style={containerStyle}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 secureTextEntry={secureTextEntry}

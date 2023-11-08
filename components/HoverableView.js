@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
+import {isBrowser } from 'react-device-detect'
 
 const HoverableView = ({ children, style, hoveredBackgroundColor, backgroundColor, hoveredOpacity = 1, hoveredBorderColor, borderColor, transitionDuration = '150ms', ...props }) => {
     const [isHovered, setIsHovered] = useState(false)
@@ -14,8 +15,8 @@ const HoverableView = ({ children, style, hoveredBackgroundColor, backgroundColo
             ...style
         }}
             {...props}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
+            onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
         >
             {children}
         </View>

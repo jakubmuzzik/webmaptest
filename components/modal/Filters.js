@@ -255,6 +255,7 @@ const Filters = forwardRef((props, ref) => {
 
                                 <SegmentedButtons
                                     style={{ paddingHorizontal: SPACING.small }}
+                                    onValueChange={() => null}
                                     buttons={[
                                         {
                                             style: {borderColor: COLORS.placeholder, backgroundColor: !filters.incall && !filters.outcall ? COLORS.red: 'transparent', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },

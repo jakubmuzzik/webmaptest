@@ -7,6 +7,7 @@ import { Image } from 'expo-image'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
 import { useRoute } from '@react-navigation/native'
 import { useLinkProps } from '@react-navigation/native'
+import { isBrowser } from 'react-device-detect'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -69,8 +70,8 @@ const RenderClient = ({ client, width, showPrice = true }) => {
         <View style={styles.container}>
             <View style={{ flex: 1 }}
                 onClick={onPress}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
+                onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
                 {...props}
             >
                 <View style={{ borderRadius: 20, overflow: 'hidden' }}>
