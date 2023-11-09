@@ -10,7 +10,7 @@ const store = initStore()
 import { createStackNavigator } from '@react-navigation/stack'
 const Stack = createStackNavigator()
 
-import Register from './screens/Register'
+import LadySignup from './screens/LadySignup'
 import Home from './screens/Home'
 import Main from './navigations/Main'
 import NotFound from './screens/NotFound'
@@ -33,7 +33,7 @@ const linking = {
   prefixes: ['https://jakubmuzzik.github.io/webmaptest'],
   config: {
     screens: {
-      Register: "register",
+      LadySignup: "lady-signup",
       //Main: "home",
       //Feed: "feed/:sort?/:type", -> “/feed/notifications?sort=latest” OR “/feed/latest/notifications”
       /*Main: {
@@ -117,11 +117,7 @@ export default function App() {
           animationEnabled: true,
           cardStyle: { flex: 1 }
         }}>
-          <Stack.Screen name="Register"
-            component={Register}
-            options={{
-              headerShown: false
-            }} initialParams={{}} />
+          <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />
           <Stack.Screen name="Home" component={Home} initialParams={{}} />
           <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
           <Stack.Screen name="Pri" component={Pri} initialParams={{}} />

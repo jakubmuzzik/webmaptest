@@ -50,7 +50,7 @@ export const COLORS = {
     hoveredLightGrey: '#4c4c4c',
     grey: '#323232',
     lightBlack: '#161616',
-    red: '#dc2e2e',
+    red: '#c91e1e',//'#dc2e2e',
     hoveredRed: '#bc2020',
     darkRed: '#990000',
     pastelRed: '#ec9e9f',

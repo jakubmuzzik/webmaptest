@@ -3,6 +3,7 @@ import { View, Text } from 'react-native'
 import { TextInput, HelperText } from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES } from "../constants"
 import {isBrowser } from 'react-device-detect'
+import { normalize } from "../utils"
 
 const HoverableInput = ({ 
     borderColor,
@@ -20,8 +21,10 @@ const HoverableInput = ({
     placeholderStyle={},
     containerStyle={},
     setText,
-    left,
-    right,
+    leftIconName,
+    onLeftIconPress,
+    onRightIconPress,
+    rightIconName,
     secureTextEntry=false
 }) => {
     const [isHovered, setIsHovered] = useState(false)
@@ -30,8 +33,8 @@ const HoverableInput = ({
     return (
         <View  
             style={containerStyle}
-            onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
-            onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
+            onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+            onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
         >
             <TextInput
                 label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
@@ -45,21 +48,20 @@ const HoverableInput = ({
                 mode={mode}
                 value={text}
                 onChangeText={text => setText(text)}
-                left={left ? <TextInput.Icon icon={left}/> : null}
-                right={right ? <TextInput.Icon icon={right}/> : null}
+                left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} onPress={onLeftIconPress ?? undefined} />}
+                right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} onPress={onRightIconPress ?? undefined} />}
                 contentStyle={[
                     text ? {...textStyle} : {...placeholderStyle}
                 ]}
                 outlineStyle={{ 
                     backgroundColor: isHovered ? hoveredBackgroundColor: backgroundColor
                 }}
-                //style={containerStyle}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 secureTextEntry={secureTextEntry}
             />
             {errorMessage && <HelperText type="error" visible>
-                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small, color: COLORS.error }}>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
                     {errorMessage}
                 </Text>
             </HelperText>}

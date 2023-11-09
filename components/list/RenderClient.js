@@ -70,8 +70,8 @@ const RenderClient = ({ client, width, showPrice = true }) => {
         <View style={styles.container}>
             <View style={{ flex: 1 }}
                 onClick={onPress}
-                onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
-                onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
+                onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+                onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
                 {...props}
             >
                 <View style={{ borderRadius: 20, overflow: 'hidden' }}>

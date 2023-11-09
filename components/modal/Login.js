@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue,
     withTiming
 } from 'react-native-reanimated'
-import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import {
@@ -21,6 +21,7 @@ import {
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
 import { LinearGradient } from 'expo-linear-gradient'
+import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
@@ -148,12 +149,8 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                     text={data.email}
                     setText={(text) => setData({ ...data, ['email']: text })}
-                    left={() => <AntDesign
-                        name="user"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    errorMessage={showErrorMessages && !data.email ? 'Enter Email' : undefined}
+                    leftIconName="email-outline"
+                    errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
                 />
 
                 <HoverableInput
@@ -168,41 +165,30 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                     text={data.password}
                     setText={(text) => setData({ ...data, ['password']: text })}
-                    left={() => <AntDesign
-                        name="lock"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    right={() =>
-                        <TouchableOpacity onPress={updateSecureTextEntry}>
-                            {data.secureTextEntry ?
-                                <Entypo name="eye-with-line" size={normalize(20)} color={COLORS.lightBlack} />
-                                :
-                                <Entypo name="eye" size={normalize(20)} color={COLORS.lightBlack} />
-                            }
-                        </TouchableOpacity>
-                    }
+                    leftIconName="lock-outline"
+                    rightIconName={data.secureTextEntry ? 'eye-off': 'eye'}
+                    onRightIconPress={updateSecureTextEntry}
                     secureTextEntry={data.secureTextEntry}
-                    errorMessage={showErrorMessages && !data.password ? 'Enter Password' : undefined}
+                    errorMessage={showErrorMessages && !data.password ? 'Enter your Password' : undefined}
                 />
 
                 <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.linkColor }}>
                     Forgot Password?
                 </Text>
 
-                <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                    <TouchableOpacity onPress={onLoginPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
-                        <LinearGradient
-                            colors={[COLORS.red, COLORS.darkRed]}
-                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                        />
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Log In</Text>
-                    </TouchableOpacity>
-                </HoverableView>
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                    buttonColor={COLORS.red}
+                    mode="contained"
+                    onPress={onLoginPress}
+                >
+                    Log in
+                </Button>
 
                 <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
                     Don't have an Account?
-                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign Up</Text>
+                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign up</Text>
                 </Text>
             </>
         )
@@ -235,12 +221,8 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                     text={data.emailForReset}
                     setText={(text) => setData({ ...data, ['emailForReset']: text })}
-                    left={() => <AntDesign
-                        name="user"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Email' : undefined}
+                    leftIconName="email-outline"
+                    errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Your Email' : undefined}
                 />
 
                 <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>

@@ -21,7 +21,7 @@ import {
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
 import { LinearGradient } from 'expo-linear-gradient'
-import { TouchableRipple } from 'react-native-paper'
+import { TouchableRipple, Button, HelperText } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
@@ -31,10 +31,13 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
     }), [route.params])
 
     const [data, setData] = useState({
+        gender: '',
+        name: '',
         email: '',
         password: '',
-        emailForReset: '',
-        secureTextEntry: true
+        confirmPassword: '',
+        secureTextEntry: true,
+        confirmSecureTextEntry: true,
     })
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [contentWidth, setContentWidth] = useState(normalize(500))
@@ -78,6 +81,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
         setVisible(false)
         setShowErrorMessages(false)
         setIndex(0)
+        setProfileType(null)
         viewPagerX.current = 0
     }
 
@@ -94,15 +98,10 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
         }
     })
 
-    const updateSecureTextEntry = () => {
-        setData((data) => ({
-            ...data,
-            secureTextEntry: !data.secureTextEntry
-        }))
-    }
-
-    const onForgotPasswordPress = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+    const onContinuePress = () => {
+        if (profileType === 'member') {
+            viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        }
     }
 
     const onGoBackPress = () => {
@@ -110,14 +109,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
     }
 
     const onSignUpPress = () => {
-        if (!data.email || !data.password) {
-            setShowErrorMessages(true)
-            return
-        }
-    }
-    
-    const onResetPasswordPress = () => {
-        if (!data.emailForReset) {
+        if (!data.email || !data.password || !data.name || !data.confirmPassword || !data.gender) {
             setShowErrorMessages(true)
             return
         }
@@ -130,6 +122,20 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
         if (newIndex != index) {
             setIndex(newIndex)
         }
+    }
+
+    const updateSecureTextEntry = () => {
+        setData({
+            ...data,
+            secureTextEntry: !data.secureTextEntry
+        })
+    }
+
+    const updateConfirmSecureTextEntry = () => {
+        setData({
+            ...data,
+            confirmSecureTextEntry: !data.confirmSecureTextEntry
+        })
     }
 
     const renderLoginPage = () => {
@@ -191,15 +197,16 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
                     </TouchableRipple>
                 </View>
 
-                <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                    <TouchableOpacity onPress={onSignUpPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
-                        <LinearGradient
-                            colors={[COLORS.red, COLORS.darkRed]}
-                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                        />
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Continue</Text>
-                    </TouchableOpacity>
-                </HoverableView>
+                <Button 
+                    disabled={!profileType}
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                    buttonColor={COLORS.red}
+                    mode="contained"
+                    onPress={onContinuePress}
+                >
+                    Continue
+                </Button>
 
                 <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
                     Already have an Account?
@@ -209,57 +216,143 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
         )
     }
 
-    const renderForgotPasswordPage = () => {
+    const renderMemberSignUp = () => {
         return (
             <>
-                <Image
-                    resizeMode='contain'
-                    source={require('../../assets/images/padlock-icon.png')}
-                    style={{ width: contentWidth * 0.18, height: contentWidth * 0.18, alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
-                />
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large }}>
+                    Member sign up
+                </Text>
 
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.large, textAlign: 'center' }}>
-                    Forgot your password?
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, paddingTop: SPACING.small, marginBottom: SPACING.xx_small }}>
+                    Who are you?
                 </Text>
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, paddingTop: SPACING.small, textAlign: 'center', marginBottom: SPACING.medium }}>
-                    Enter your email and we will send you the instructions to reset your password.
-                </Text>
+
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableRipple style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: SPACING.x_small, marginRight: SPACING.x_small, borderRadius: 10 }}
+                        onPress={() => setData({ ...data, gender: 'man' })}
+                        rippleColor="rgba(220, 46, 46, .32)"
+                    >
+                        <Image
+                            resizeMode='contain'
+                            source={require('../../assets/images/man.png')}
+                            style={[
+                                {
+                                    width: normalize(45),
+                                    height: normalize(45),
+                                },
+                                data.gender === 'man' ? {} : { tintColor: COLORS.placeholder }
+                            ]}
+                        />
+                    </TouchableRipple>
+                    <TouchableRipple style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: SPACING.x_small, marginLeft: SPACING.x_small, borderRadius: 10 }}
+                        onPress={() => setData({ ...data, gender: 'woman' })}
+                        rippleColor="rgba(220, 46, 46, .32)"
+                    >
+                        <Image
+                            resizeMode='contain'
+                            source={require('../../assets/images/woman.png')}
+                            style={[
+                                {
+                                    width: normalize(45),
+                                    height: normalize(45),
+                                },
+                                data.gender === 'woman' ? {} : { tintColor: COLORS.placeholder }
+                            ]}
+                        />
+                    </TouchableRipple>
+                </View>
+                {showErrorMessages && !data.gender && <HelperText type="error" visible>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
+                        Select Your Gender
+                    </Text>
+                </HelperText>}
 
                 <HoverableInput
-                    placeholder="Enter your email"
+                    placeholder="Enter your Name"
+                    label="Full Name"
+                    borderColor={COLORS.placeholder}
+                    hoveredBorderColor={COLORS.red}
+                    textColor='#000'
+                    containerStyle={{ marginTop: SPACING.xx_small }}
+                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    text={data.name}
+                    setText={(text) => setData({ ...data, ['name']: text })}
+                    leftIconName="badge-account-outline"
+                    errorMessage={showErrorMessages && !data.name ? 'Enter your Name' : undefined}
+                />
+
+                <HoverableInput
+                    placeholder="Enter Your email"
                     label="Email"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
                     textColor='#000'
+                    containerStyle={{ marginTop: SPACING.xxx_small }}
                     textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                     labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.emailForReset}
-                    setText={(text) => setData({ ...data, ['emailForReset']: text })}
-                    left={() => <AntDesign
-                        name="user"
-                        size={normalize(20)}
-                        color={COLORS.lightBlack}
-                    />}
-                    errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Email' : undefined}
+                    text={data.email}
+                    setText={(text) => setData({ ...data, ['email']: text })}
+                    leftIconName="email-outline"
+                    errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
                 />
 
-                <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                    <TouchableOpacity onPress={onResetPasswordPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
-                        <LinearGradient
-                            colors={[COLORS.red, COLORS.darkRed]}
-                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                        />
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Reset Password</Text>
-                    </TouchableOpacity>
-                </HoverableView>
+                <HoverableInput
+                    placeholder="Enter Your Password"
+                    label="Password"
+                    borderColor={COLORS.placeholder}
+                    hoveredBorderColor={COLORS.red}
+                    textColor='#000'
+                    containerStyle={{ marginTop: SPACING.xxx_small }}
+                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    text={data.password}
+                    setText={(text) => setData({ ...data, ['password']: text.replaceAll(' ', '') })}
+                    leftIconName='lock-outline'
+                    rightIconName={data.secureTextEntry ? 'eye-off': 'eye'}
+                    onRightIconPress={updateSecureTextEntry}
+                    errorMessage={showErrorMessages && (!data.password || data.password.length < 8) ? 'Password must be at least 8 characters long' : undefined}
+                    secureTextEntry={data.secureTextEntry}
+                />
+
+                <HoverableInput
+                    placeholder="Enter Your Password"
+                    label="Confirm Password"
+                    borderColor={COLORS.placeholder}
+                    hoveredBorderColor={COLORS.red}
+                    textColor='#000'
+                    containerStyle={{ marginTop: SPACING.xxx_small }}
+                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                    text={data.confirmPassword}
+                    setText={(text) => setData({ ...data, ['confirmPassword']: text.replaceAll(' ', '') })}
+                    leftIconName="lock-outline"
+                    rightIconName={data.confirmSecureTextEntry ? 'eye-off': 'eye'}
+                    onRightIconPress={updateConfirmSecureTextEntry}
+                    errorMessage={showErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : undefined}
+                    secureTextEntry={data.confirmSecureTextEntry}
+                />
+
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                    buttonColor={COLORS.red}
+                    mode="contained"
+                    onPress={onSignUpPress}
+                >
+                    Sign up
+                </Button>
             </>
         )
     }
 
     const pages = {
         'login': renderLoginPage,
-        'forgowPassword': renderForgotPasswordPage,
+        'renderMemberSignUp': renderMemberSignUp,
     }
 
     const renderPage = ({ item }) => {
@@ -290,7 +383,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
                                 )}
                             </View>
                             <View style={{ flexShrink: 1, flexGrow: 0 }}>
-                                <Animated.Text style={modalHeaderTextStyles}>Sign up</Animated.Text>
+                                <Animated.Text style={modalHeaderTextStyles}>{index === 0 ? 'Sign up': 'Member sign up'}</Animated.Text>
                             </View>
                             <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
                                 <HoverableView style={{ marginRight: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>

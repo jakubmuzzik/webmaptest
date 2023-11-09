@@ -20,7 +20,7 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import { CZECH_CITIES } from '../../labels'
-import { Switch, Chip, SegmentedButtons } from 'react-native-paper'
+import { Switch, Chip, SegmentedButtons, Button } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import Slider from '../Slider'
 
@@ -256,58 +256,33 @@ const Filters = forwardRef((props, ref) => {
                                 <SegmentedButtons
                                     style={{ paddingHorizontal: SPACING.small }}
                                     onValueChange={() => null}
+                                    theme={{ roundness: 1.5 }}
                                     buttons={[
                                         {
                                             style: {borderColor: COLORS.placeholder, backgroundColor: !filters.incall && !filters.outcall ? COLORS.red: 'transparent', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
                                             value: !filters.incall && !filters.outcall,
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>Both</Text>,
-                                            onPress: () => setFilters(filters => ({...filters, outcall: false, incall: false}))
+                                            onPress: () => setFilters(filters => ({...filters, outcall: false, incall: false})),
+                                            rippleColor:"rgba(220, 46, 46, .32)"
                                         },
                                         {
                                             style: {borderColor: COLORS.placeholder, backgroundColor: filters.outcall ? COLORS.red: 'transparent'},
                                             value: filters.outcall,
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>Outcall</Text>,
                                             checkedColor: '#FFF',
-                                            onPress: () => setFilters(filters => ({...filters, outcall: true, incall: false}))
+                                            onPress: () => setFilters(filters => ({...filters, outcall: true, incall: false})),
+                                            rippleColor:"rgba(220, 46, 46, .32)",
                                         },
                                         { 
                                             style: {borderColor: COLORS.placeholder, backgroundColor: filters.incall ? COLORS.red: 'transparent', borderTopRightRadius: 10, borderBottomRightRadius: 10},
                                             value: filters.incall, 
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>Incall</Text>,
                                             checkedColor: '#FFF',
-                                            onPress: () => setFilters(filters => ({...filters, incall: true, outcall: false}))
+                                            onPress: () => setFilters(filters => ({...filters, incall: true, outcall: false})),
+                                            rippleColor:"rgba(220, 46, 46, .32)",
                                         }
                                     ]}
                                 />
-
-                                {/* <View style={{ flex: 1, flexDirection: 'row', paddingHorizontal: SPACING.small }}>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderTopLeftRadius: 10, borderBottomLeftRadius: 10, borderColor: !filters.incall && !filters.outcall ? 'transparent' : COLORS.placeholder }} 
-                                        backgroundColor={!filters.incall && !filters.outcall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={!filters.incall && !filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
-                                    >
-                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>Both</Text>
-                                        </TouchableOpacity>
-                                    </HoverableView>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderRightWidth: 0, borderColor: filters.outcall ? 'transparent' : COLORS.placeholder }} 
-                                        backgroundColor={filters.outcall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={filters.outcall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
-                                    >
-                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: true, incall: false}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>Outcall</Text>
-                                        </TouchableOpacity>
-                                    </HoverableView>
-                                    <HoverableView style={{ flex: 1, justifyContent: 'center', borderWidth: 1, borderColor: filters.incall ? 'transparent' : COLORS.placeholder,  borderTopRightRadius: 10, borderBottomRightRadius: 10 }} 
-                                        backgroundColor={filters.incall ? COLORS.red: 'transparent'} 
-                                        hoveredBackgroundColor={filters.incall ? COLORS.hoveredRed: COLORS.hoveredWhite} 
-                                    >
-                                        <TouchableOpacity onPress={() => setFilters(filters => ({...filters, outcall: false, incall: true}))} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small }}>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>
-                                                Incall
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </HoverableView>
-                                </View> */}
                             </View>
 
                             <View style={styles.filterSection}>
@@ -363,6 +338,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(bodyType, 'bodyType')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {bodyType}
                                             </Chip>
@@ -383,6 +359,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(hairColor, 'hairColor')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {hairColor}
                                             </Chip>
@@ -403,6 +380,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(eyeColor, 'eyeColor')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {eyeColor}
                                             </Chip>
@@ -423,6 +401,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(pubicHair, 'pubicHair')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {pubicHair}
                                             </Chip>
@@ -443,6 +422,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(breastSize, 'breastSize')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {breastSize}
                                             </Chip>
@@ -463,6 +443,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(breastType, 'breastType')}
+                                                rippleColor="rgba(220, 46, 46, .32)"
                                             >
                                                 {breastType}
                                             </Chip>
@@ -532,23 +513,25 @@ const Filters = forwardRef((props, ref) => {
                                 <Text style={[styles.filterHeader, { marginHorizontal: SPACING.small }]}>Nationality</Text> 
                                 
                                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                                    {NATIONALITIES.slice(0, showMoreNationalities ? NATIONALITIES.length: 4).map(nationality => (
-                                        <View key={nationality} style={{ width: '50%' }}>
-                                            <BouncyCheckbox
-                                                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
-                                                disableBuiltInState
-                                                isChecked={filters.nationality.includes(nationality)}
-                                                size={normalize(21)}
-                                                fillColor={COLORS.red}
-                                                unfillColor="#FFFFFF"
-                                                text={nationality}
-                                                iconStyle={{ borderColor: COLORS.red, borderRadius: 3 }}
-                                                innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
-                                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
-                                                onPress={() => onMultiPicklistPress(nationality, 'nationality')}
-                                            />
-                                        </View>
-                                    ))}
+                                    {NATIONALITIES.slice(0, showMoreNationalities ? NATIONALITIES.length: 4).map(nationality => {
+                                        const selected = filters.nationality.includes(nationality)
+                                        return (
+                                            <View key={nationality} style={{ width: '50%' }}>
+                                                <BouncyCheckbox
+                                                    style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
+                                                    disableBuiltInState
+                                                    isChecked={selected}
+                                                    size={normalize(21)}
+                                                    fillColor={COLORS.red}
+                                                    unfillColor="#FFFFFF"
+                                                    text={nationality}
+                                                    iconStyle={{ borderRadius: 3 }}
+                                                    innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
+                                                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                                    onPress={() => onMultiPicklistPress(nationality, 'nationality')}
+                                                />
+                                            </View>
+                                        )})}
                                 </View>
                                 <Text
                                     onPress={() => setShowMoreNationalities(v => !v)}
@@ -588,19 +571,25 @@ const Filters = forwardRef((props, ref) => {
                         </Animated.ScrollView>
 
                         <View style={{ borderTopWidth: 1, borderTopColor: COLORS.placeholder, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <HoverableView style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }} hoveredBackgroundColor={COLORS.hoveredWhite} backgroundColor='transparent'>
-                                <TouchableOpacity onPress={onClearFiltersPress} style={{ flex: 1, paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small, justifyContent: 'center' }}>
-                                    <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, textDecorationLine: 'underline' }}>
-                                        Clear all
-                                    </Text>
-                                </TouchableOpacity>
-                            </HoverableView>
+                            <Button
+                                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightBlack, textDecorationLine: 'underline' }}
+                                style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
+                                buttonColor="#FFF"
+                                mode="outlined"
+                                onPress={onClearFiltersPress}
+                            >
+                                Clear all
+                            </Button>
 
-                            <HoverableView style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }} hoveredBackgroundColor='#000' backgroundColor={COLORS.lightBlack}>
-                                <TouchableOpacity onPress={onApplyFiltersPress} style={{ flex: 1, paddingHorizontal: SPACING.small, paddingVertical: SPACING.xx_small, justifyContent: 'center' }}>
-                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONTS.large, color: '#FFF' }}>Apply filters</Text>
-                                </TouchableOpacity>
-                            </HoverableView>
+                            <Button
+                                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
+                                style={{ flexShrink: 1, borderRadius: 10 }}
+                                buttonColor={COLORS.lightBlack}
+                                mode="contained"
+                                onPress={onApplyFiltersPress}
+                            >
+                                Apply filters
+                            </Button>
                         </View>
                     </Animated.View>
                 </TouchableWithoutFeedback>

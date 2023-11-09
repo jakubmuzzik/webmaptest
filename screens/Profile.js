@@ -537,8 +537,7 @@ const styles = StyleSheet.create({
     containerSmall: { 
         flex: 1, 
         paddingHorizontal: SPACING.large, 
-        flexDirection: 'column', 
-        backgroundColor: COLORS.lightBlack,
+        flexDirection: 'column'
     },
     contentLarge: { 
         flexShrink: 1, 

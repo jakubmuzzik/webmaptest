@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { Button } from '@rneui/themed'
+import { isBrowser } from 'react-device-detect'
 
 /**
     <HoverableButton
@@ -20,11 +21,10 @@ import { Button } from '@rneui/themed'
 const HoverableButton = ({ title, onPress, buttonStyle, titleStyle }) => {
     const [isHovered, setIsHovered] = useState(false)
 
-    //TODO - maybe implement responder when rendered on mobile? https://stackoverflow.com/questions/70573259/how-to-style-hover-in-react-native
     return (
         <View style={{ transitionDuration: '150ms', opacity: isHovered ? 0.8 : 1 }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}>
+            onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+            onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}>
             <Button
                 title={title}
                 onPress={onPress}

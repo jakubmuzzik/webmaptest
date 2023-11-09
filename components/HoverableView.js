@@ -15,8 +15,8 @@ const HoverableView = ({ children, style, hoveredBackgroundColor, backgroundColo
             ...style
         }}
             {...props}
-            onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
-            onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
+            onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+            onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
         >
             {children}
         </View>

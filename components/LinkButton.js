@@ -11,8 +11,8 @@ const LinkButton = ({ to, action, children, containerStyle }) => {
     return (
         <View
             onClick={onPress}
-            onMouseEnter={() => isBrowser ? setIsHovered(true) : null}
-            onMouseLeave={() => isBrowser ? setIsHovered(false) : null}
+            onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+            onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
             style={{ transitionDuration: '150ms', opacity: isHovered ? 0.5 : 1, ...containerStyle }}
             {...props}
         >
