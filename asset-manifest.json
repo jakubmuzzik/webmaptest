@@ -1,9 +1,8 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.96ce51e9.js",
-    "static/js/988.bdad19c8.js": "/webmaptest/static/js/988.bdad19c8.js",
+    "main.js": "/webmaptest/static/js/main.0e29a9c2.js",
+    "static/js/425.b14ede68.js": "/webmaptest/static/js/425.b14ede68.js",
     "static/media/header_logo2.png": "/webmaptest/static/media/header_logo2.e402890e748e5a77f86a.png",
-    "static/media/logo.png": "/webmaptest/static/media/logo.62b01c68fa276da076e9.png",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
     "static/media/MaterialIcons.ttf": "/webmaptest/static/media/MaterialIcons.120b4c7bbd155bd0a04d.ttf",
@@ -26,24 +25,22 @@
     "static/media/FontAwesome5_Regular.ttf": "/webmaptest/static/media/FontAwesome5_Regular.1017bce89c72f95bcf8e.ttf",
     "static/media/logo-header.png": "/webmaptest/static/media/logo-header.6575dd315c027bd4e2bb.png",
     "static/media/us.png": "/webmaptest/static/media/us.fa44cd5298e756aadaac.png",
+    "static/media/man.png": "/webmaptest/static/media/man.28ec5b21f8dfee4198ff.png",
+    "static/media/woman.png": "/webmaptest/static/media/woman.f2daa8fa94778d6a816b.png",
     "favicon.ico": "/webmaptest/favicon.ico",
     "static/media/EvilIcons.ttf": "/webmaptest/static/media/EvilIcons.699664b33ac2837d5bee.ttf",
     "static/media/cz.png": "/webmaptest/static/media/cz.4c6cfc79c62bbbd9ad57.png",
     "index.html": "/webmaptest/index.html",
-    "static/media/rocket.png": "/webmaptest/static/media/rocket.d2f3bf41d5e4515c39a9.png",
-    "static/media/bell.png": "/webmaptest/static/media/bell.cf04af27d6a651c4b904.png",
     "static/media/padlock-icon.png": "/webmaptest/static/media/padlock-icon.0bbe8e274540af5627be.png",
     "favicon-32.png": "/webmaptest/favicon-32.png",
-    "static/media/star.png": "/webmaptest/static/media/star.69c7138684828d68fe5a.png",
-    "static/media/heart.png": "/webmaptest/static/media/heart.23b5c2c0eb77d50ff1b4.png",
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.96ce51e9.js.map": "/webmaptest/static/js/main.96ce51e9.js.map",
-    "988.bdad19c8.js.map": "/webmaptest/static/js/988.bdad19c8.js.map"
+    "main.0e29a9c2.js.map": "/webmaptest/static/js/main.0e29a9c2.js.map",
+    "425.b14ede68.js.map": "/webmaptest/static/js/425.b14ede68.js.map"
   },
   "entrypoints": [
-    "static/js/988.bdad19c8.js",
-    "static/js/main.96ce51e9.js"
+    "static/js/425.b14ede68.js",
+    "static/js/main.0e29a9c2.js"
   ]
 }
