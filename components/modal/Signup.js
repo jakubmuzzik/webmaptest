@@ -20,14 +20,14 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
-import { LinearGradient } from 'expo-linear-gradient'
+import { stripEmptyParams } from '../../utils'
 import { TouchableRipple, Button, HelperText } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const Signup = ({ visible, setVisible, route, onLoginPress }) => {
+const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE,
+        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     }), [route.params])
 
     const [data, setData] = useState({
@@ -101,6 +101,9 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
     const onContinuePress = () => {
         if (profileType === 'member') {
             viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        } else if (profileType === 'lady') {
+            closeModal()
+            navigation.navigate('lady-signup', { ...stripEmptyParams(params) })
         }
     }
 
@@ -202,6 +205,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
                     labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                     style={{ marginTop: SPACING.medium, borderRadius: 10 }}
                     buttonColor={COLORS.red}
+                    rippleColor="rgba(220, 46, 46, .16)"
                     mode="contained"
                     onPress={onContinuePress}
                 >
@@ -341,6 +345,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress }) => {
                     labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                     style={{ marginTop: SPACING.medium, borderRadius: 10 }}
                     buttonColor={COLORS.red}
+                    rippleColor="rgba(220, 46, 46, .16)"
                     mode="contained"
                     onPress={onSignUpPress}
                 >

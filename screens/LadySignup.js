@@ -22,7 +22,7 @@ const LadySignup = () => {
     const renderPersonalDetails = () => {
         return (
             <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3 }}>
-                Login Information
+                Personal Details
             </Text>
         )
     }
@@ -30,7 +30,7 @@ const LadySignup = () => {
     const renderLocationAndAvailability = () => {
         return (
             <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3 }}>
-                Personal Details
+                Location & Availability
             </Text>
         )
     }
@@ -69,7 +69,7 @@ const LadySignup = () => {
 
     const handleScroll = ({ nativeEvent }) => {
         viewPagerX.current = nativeEvent.contentOffset.x
-        const newIndex = Math.floor(viewPagerX.current / contentWidth)
+        const newIndex = Math.ceil(viewPagerX.current / contentWidth)
 
         if (newIndex != index) {
             setIndex(newIndex)
@@ -77,7 +77,11 @@ const LadySignup = () => {
     }
 
     const onNextPress = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        if (index === Object.keys(pages).length - 1) {
+
+        } else {
+            viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        }
     }
 
     const onPreviousPress = () => {
@@ -94,7 +98,7 @@ const LadySignup = () => {
             >
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.medium }}>Lady Sign up</Text>
                 <View style={{ marginBottom: SPACING.small }}>
-                    <ProgressBar progress={index / Object.keys(pages).length} color={COLORS.error} />
+                    <ProgressBar progress={(index + 1) / Object.keys(pages).length} color={COLORS.error} />
                 </View>
 
                 <FlatList
@@ -113,7 +117,7 @@ const LadySignup = () => {
                 />
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Button
+                    {index === 0 ? <View/> : <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                         style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
                         buttonColor={COLORS.grey}
@@ -122,16 +126,17 @@ const LadySignup = () => {
                         onPress={onPreviousPress}
                     >
                         Back
-                    </Button>
+                    </Button>}
 
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                         style={{ flexShrink: 1, borderRadius: 10 }}
                         buttonColor={COLORS.red}
+                        rippleColor="rgba(220, 46, 46, .16)"
                         mode="contained"
                         onPress={onNextPress}
                     >
-                        Next
+                        {index === Object.keys(pages).length - 1 ? 'Sign up' : 'Next'}
                     </Button>
                 </View>
             </ScrollView>

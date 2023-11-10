@@ -38,7 +38,7 @@ import Login from '../modal/Login'
 import Signup from '../modal/Signup'
 
 const SCREENS_WITH_CITY_SELECTION = [
-    'Esc', 'Pri', 'Mas', 'Clu'
+    'Esc', 'Pri', 'Mas', 'Clu', 'NotFound'
 ]
 
 const Header = ({ route, navigation }) => {
@@ -361,7 +361,7 @@ const Header = ({ route, navigation }) => {
             {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />}
 
             <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} route={route} />
-            <Signup visible={signUpVisible} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
+            <Signup visible={signUpVisible} navigation={navigation} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
         </>
     )
 }

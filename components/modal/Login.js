@@ -180,6 +180,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                     style={{ marginTop: SPACING.medium, borderRadius: 10 }}
                     buttonColor={COLORS.red}
+                    rippleColor="rgba(220, 46, 46, .16)"
                     mode="contained"
                     onPress={onLoginPress}
                 >
@@ -225,15 +226,16 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Your Email' : undefined}
                 />
 
-                <HoverableView style={{ marginTop: SPACING.medium, borderRadius: 10, overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                    <TouchableOpacity onPress={onResetPasswordPress} style={{ padding: 10, alignItems: 'center' }} activeOpacity={0.8}>
-                        <LinearGradient
-                            colors={[COLORS.red, COLORS.darkRed]}
-                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                        />
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Reset Password</Text>
-                    </TouchableOpacity>
-                </HoverableView>
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                    buttonColor={COLORS.red}
+                    rippleColor="rgba(220, 46, 46, .16)"
+                    mode="contained"
+                    onPress={onResetPasswordPress}
+                >
+                    Reset password
+                </Button>
             </>
         )
     }
