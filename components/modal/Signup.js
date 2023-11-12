@@ -273,7 +273,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
 
                 <HoverableInput
                     placeholder="Enter your Name"
-                    label="Full Name"
+                    label="Name"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
                     textColor='#000'
@@ -362,7 +362,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
 
     const renderPage = ({ item }) => {
         return (
-            <View style={{ width: contentWidth,  paddingHorizontal: SPACING.small }}>
+            <View style={{ width: contentWidth, paddingHorizontal: SPACING.small }}>
                 {pages[item]()}
             </View>
         )
