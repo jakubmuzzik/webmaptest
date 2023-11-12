@@ -4,6 +4,7 @@ import { COLORS, FONTS, FONT_SIZES, SPACING } from '../constants'
 import { normalize } from '../utils'
 import { ProgressBar, Button } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
+import Dropdown from '../components/Dropdown'
 
 const LadySignup = () => {
     const [data, setData] = useState({
@@ -73,6 +74,11 @@ const LadySignup = () => {
     }
 
     const processLoginInformationPage = () => {
+        paginageNext()
+        return
+
+
+
         if (!data.email || !data.password || !data.name || !data.confirmPassword || !data.gender || data.password !== data.confirmPassword) {
             setShowLoginInfoErrorMessages(true)
             return
@@ -190,14 +196,31 @@ const LadySignup = () => {
                         errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
+
+                    <Dropdown
+                        placeholder="Enter Your Password"
+                        label="Confirm Password"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.confirmPassword}
+                        setText={(text) => setData({ ...data, ['confirmPassword']: text.replaceAll(' ', '') })}
+                        rightIconName='chevron-down'
+                        errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
+                    />
                 </View>
+
             </>
         )
-                }
+    }
 
     const renderPersonalDetails = () => {
         return (
-            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large }}>
                 2. Personal Details
             </Text>
         )
@@ -245,8 +268,8 @@ const LadySignup = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
-            <ScrollView 
-                showsVerticalScrollIndicator={false} 
+            <ScrollView
+                showsVerticalScrollIndicator={false}
                 style={{ flex: 1, width: normalize(800), maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20 }}
                 contentContainerStyle={{ flexGrow: 1 }}
                 onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
@@ -274,7 +297,7 @@ const LadySignup = () => {
                 />
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.medium, }}>
-                    {index === 0 ? <View/> : <Button
+                    {index === 0 ? <View /> : <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                         style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
                         buttonColor={COLORS.grey}
