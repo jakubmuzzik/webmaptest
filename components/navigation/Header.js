@@ -158,7 +158,7 @@ const Header = ({ route, navigation }) => {
                     <TouchableWithoutFeedback>
                         <View style={[styles.dropdown, { top: dropdownTop }]}>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                <TouchableOpacity style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                <TouchableOpacity onPress={onSignUpPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
                                 >
                                     <LinearGradient

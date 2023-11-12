@@ -247,9 +247,9 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
 
     const renderPage = ({ item }) => {
         return (
-            <View style={{ width: contentWidth,  paddingHorizontal: SPACING.small }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ width: contentWidth, paddingHorizontal: SPACING.small }}>
                 {pages[item]()}
-            </View>
+            </ScrollView>
         )
     }
 

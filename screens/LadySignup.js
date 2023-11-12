@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, FlatList, Image, ScrollView } from 'react-native'
+import { View, Text, FlatList, Image, ScrollView, Alert } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from '../constants'
 import { normalize } from '../utils'
 import { ProgressBar, Button } from 'react-native-paper'
@@ -15,7 +15,13 @@ const LadySignup = () => {
         secureTextEntry: true,
         confirmSecureTextEntry: true,
     })
-    const [showErrorMessages, setShowErrorMessages] = useState(false)
+    const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
+    const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
+    const [showLocationErrorMessages, setShowLocationErrorMessages] = useState(false)
+    const [showServicesErrorMessages, setShowServicesErrorMessages] = useState(false)
+    const [showPhotosErrorMessages, setShowPhotosErrorMessages] = useState(false)
+
+    const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
 
@@ -46,51 +52,63 @@ const LadySignup = () => {
     }
 
     const onNextPress = () => {
-        if (index === Object.keys(pages).length - 1) {
-            //complete signup
-        } else if (validate()) {
-            viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        if (nextButtonIsLoading) {
+            return
         }
-    }
 
-    const validate = () => {
         switch (index) {
             case 0:
-                return validateLoginInformation()
+                return processLoginInformationPage()
             case 1:
-                return validatePersonalDetails()
+                return processPersonalDetailsPage()
             case 2:
-                return validateLocationAndAvailability()
+                return processLocationAndAvailabilityPage()
             case 3:
-                return validateServicesAndPricing()
+                return processServicesAndPricingPage()
             case 4:
-                return validateUploadPhotos()
+                return processUploadPhotosPage()
             default:
-                return false
+                return
         }
     }
 
-    const validateLoginInformation = () => {
+    const processLoginInformationPage = () => {
+        if (!data.email || !data.password || !data.name || !data.confirmPassword || !data.gender || data.password !== data.confirmPassword) {
+            setShowLoginInfoErrorMessages(true)
+            return
+        }
 
+        setShowLoginInfoErrorMessages(false)
+
+        setNextButtonIsLoading(true)
+        setTimeout(() => {
+            //TODO - call fetchSignInMethodsForEmail
+            setNextButtonIsLoading(false)
+            paginageNext()
+        }, 1000)
     }
 
-    const validatePersonalDetails = () => {
-        
+    const processPersonalDetailsPage = () => {
+        paginageNext()
     }
 
-    const validateLocationAndAvailability = () => {
-        
+    const processLocationAndAvailabilityPage = () => {
+        paginageNext()
     }
 
-    const validateServicesAndPricing = () => {
-        
+    const processServicesAndPricingPage = () => {
+        paginageNext()
     }
 
-    const validateUploadPhotos = () => {
-        
+    const processUploadPhotosPage = () => {
+        paginageNext()
     }
 
-    const onPreviousPress = () => {
+    const paginageNext = () => {
+        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+    }
+
+    const paginateBack = () => {
         viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
     }
 
@@ -98,7 +116,7 @@ const LadySignup = () => {
         return (
             <>
                 <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }}>
-                    Login Information
+                    1. Login Information
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
@@ -115,7 +133,7 @@ const LadySignup = () => {
                         text={data.name}
                         setText={(text) => setData({ ...data, ['name']: text })}
                         leftIconName="badge-account-outline"
-                        errorMessage={showErrorMessages && !data.name ? 'Enter your Name' : undefined}
+                        errorMessage={showLoginInfoErrorMessages && !data.name ? 'Enter your Name' : undefined}
                     />
                     <HoverableInput
                         placeholder="Enter Your email"
@@ -130,7 +148,7 @@ const LadySignup = () => {
                         text={data.email}
                         setText={(text) => setData({ ...data, ['email']: text })}
                         leftIconName="email-outline"
-                        errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
+                        errorMessage={showLoginInfoErrorMessages && !data.email ? 'Enter your Email' : undefined}
                     />
                 </View>
 
@@ -150,7 +168,7 @@ const LadySignup = () => {
                         leftIconName='lock-outline'
                         rightIconName={data.secureTextEntry ? 'eye-off' : 'eye'}
                         onRightIconPress={updateSecureTextEntry}
-                        errorMessage={showErrorMessages && (!data.password || data.password.length < 8) ? 'Password must be at least 8 characters long' : undefined}
+                        errorMessage={showLoginInfoErrorMessages && (!data.password || data.password.length < 8) ? 'Password must be at least 8 characters long' : undefined}
                         secureTextEntry={data.secureTextEntry}
                     />
 
@@ -169,7 +187,7 @@ const LadySignup = () => {
                         leftIconName="lock-outline"
                         rightIconName={data.confirmSecureTextEntry ? 'eye-off' : 'eye'}
                         onRightIconPress={updateConfirmSecureTextEntry}
-                        errorMessage={showErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : undefined}
+                        errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
                 </View>
@@ -180,7 +198,7 @@ const LadySignup = () => {
     const renderPersonalDetails = () => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                Personal Details
+                2. Personal Details
             </Text>
         )
     }
@@ -188,7 +206,7 @@ const LadySignup = () => {
     const renderLocationAndAvailability = () => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                Location & Availability
+                3. Location & Availability
             </Text>
         )
     }
@@ -196,7 +214,7 @@ const LadySignup = () => {
     const renderServicesAndPricing = () => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                Services & Pricing
+                4. Services & Pricing
             </Text>
         )
     }
@@ -204,7 +222,7 @@ const LadySignup = () => {
     const renderUploadPhotos = () => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                Upload Photos
+                5. Upload Photos
             </Text>
         )
     }
@@ -234,7 +252,7 @@ const LadySignup = () => {
                 onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
             >
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: COLORS.lightBlack, margin: SPACING.x_large, marginBottom: SPACING.medium }}>
-                    Lady Sign up
+                    {/* Lady Sign up */}
                 </Text>
                 <View style={{ marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, }}>
                     <ProgressBar progress={(index) / Object.keys(pages).length} color={COLORS.error} />
@@ -262,7 +280,7 @@ const LadySignup = () => {
                         buttonColor={COLORS.grey}
                         rippleColor="rgba(76,76,76,.3)"
                         mode="outlined"
-                        onPress={onPreviousPress}
+                        onPress={paginateBack}
                     >
                         Back
                     </Button>}
@@ -274,6 +292,7 @@ const LadySignup = () => {
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="contained"
                         onPress={onNextPress}
+                        loading={nextButtonIsLoading}
                     >
                         {index === Object.keys(pages).length - 1 ? 'Sign up' : 'Next'}
                     </Button>

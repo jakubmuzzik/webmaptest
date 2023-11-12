@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect, memo } from 'react'
-import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, FlatList, Image, StyleSheet, Dimensions } from 'react-native'
+import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, FlatList, Image, StyleSheet, Dimensions, ScrollView } from 'react-native'
 import Animated, {
     Extrapolation,
     interpolate,
@@ -362,9 +362,9 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
 
     const renderPage = ({ item }) => {
         return (
-            <View style={{ width: contentWidth, paddingHorizontal: SPACING.small }}>
+            <ScrollView showsVerticalScrollIndicator={false} style={{ width: contentWidth, height: 'fit-content', paddingHorizontal: SPACING.small }}>
                 {pages[item]()}
-            </View>
+            </ScrollView>
         )
     }
 
