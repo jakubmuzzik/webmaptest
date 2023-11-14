@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { View, Text, FlatList, Image, ScrollView, Alert } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from '../constants'
 import { normalize } from '../utils'
 import { ProgressBar, Button } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
-import Dropdown from '../components/Dropdown'
+import DropdownSelect from '../components/DropdownSelect'
+
+import { LANGUAGES, NATIONALITIES } from '../labels'
 
 const LadySignup = () => {
     const [data, setData] = useState({
@@ -15,6 +17,8 @@ const LadySignup = () => {
         confirmPassword: '',
         secureTextEntry: true,
         confirmSecureTextEntry: true,
+        nationality: '',
+        languages: []
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -51,6 +55,22 @@ const LadySignup = () => {
             setIndex(newIndex)
         }
     }
+
+    const onMultiPicklistChange = useCallback((value, attribute) => {
+        setData(data => ({
+            ...data,
+            [attribute]: data[attribute].includes(value) 
+             ? data[attribute].filter(s => s !== value)
+             : data[attribute].concat(value)
+        }))
+    }, [])
+
+    const onValueChange = useCallback((value, attribute) => {
+        setData(data => ({
+            ...data,
+            [attribute]: value
+        }))
+    }, [])
 
     const onNextPress = () => {
         if (nextButtonIsLoading) {
@@ -118,7 +138,7 @@ const LadySignup = () => {
         viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
     }
 
-    const renderLoginInformation = () => {
+    const renderLoginInformation = useCallback(() => {
         return (
             <>
                 <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }}>
@@ -137,7 +157,7 @@ const LadySignup = () => {
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.name}
-                        setText={(text) => setData({ ...data, ['name']: text })}
+                        setText={(text) => onValueChange(text, 'name')}
                         leftIconName="badge-account-outline"
                         errorMessage={showLoginInfoErrorMessages && !data.name ? 'Enter your Name' : undefined}
                     />
@@ -152,7 +172,7 @@ const LadySignup = () => {
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.email}
-                        setText={(text) => setData({ ...data, ['email']: text })}
+                        setText={(text) => onValueChange(text, 'email')}
                         leftIconName="email-outline"
                         errorMessage={showLoginInfoErrorMessages && !data.email ? 'Enter your Email' : undefined}
                     />
@@ -170,7 +190,7 @@ const LadySignup = () => {
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.password}
-                        setText={(text) => setData({ ...data, ['password']: text.replaceAll(' ', '') })}
+                        setText={(text) => onValueChange(text, 'password')}
                         leftIconName='lock-outline'
                         rightIconName={data.secureTextEntry ? 'eye-off' : 'eye'}
                         onRightIconPress={updateSecureTextEntry}
@@ -189,17 +209,33 @@ const LadySignup = () => {
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.confirmPassword}
-                        setText={(text) => setData({ ...data, ['confirmPassword']: text.replaceAll(' ', '') })}
+                        setText={(text) => onValueChange(text, 'confirmPassword')}
                         leftIconName="lock-outline"
                         rightIconName={data.confirmSecureTextEntry ? 'eye-off' : 'eye'}
                         onRightIconPress={updateConfirmSecureTextEntry}
                         errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
+                </View>
 
-                    <Dropdown
-                        placeholder="Enter Your Password"
-                        label="Confirm Password"
+            </>
+        )
+    }, [showLocationErrorMessages, data, contentWidth])
+
+    const renderPersonalDetails = useCallback(() => {
+        return (
+            <>
+                <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large }}>
+                    2. Personal Details
+                </Text>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <DropdownSelect
+                        values={NATIONALITIES}
+                        searchable
+                        searchPlaceholder="Search nationality"
+                        placeholder="Select your nationality"
+                        label="Nationality"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
@@ -207,48 +243,58 @@ const LadySignup = () => {
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        text={data.confirmPassword}
-                        setText={(text) => setData({ ...data, ['confirmPassword']: text.replaceAll(' ', '') })}
+                        text={data.nationality}
+                        setText={(text) => onValueChange(text, 'nationality')}
                         rightIconName='chevron-down'
-                        errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
+                        errorMessage={showPersonalDetailsErrorMessages && !data.nationality ? 'Select your nationality' : undefined}
+                    />
+                    <DropdownSelect
+                        values={LANGUAGES}
+                        multiselect
+                        searchable
+                        searchPlaceholder="Search language"
+                        placeholder="Select languages"
+                        label="Languages"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.languages.join(', ')}
+                        setText={(text) => onMultiPicklistChange(text, 'languages')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.languages.length ? 'Select at least one language' : undefined}
                     />
                 </View>
-
             </>
         )
-    }
+    }, [showPersonalDetailsErrorMessages, data, contentWidth])
 
-    const renderPersonalDetails = () => {
-        return (
-            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large }}>
-                2. Personal Details
-            </Text>
-        )
-    }
-
-    const renderLocationAndAvailability = () => {
+    const renderLocationAndAvailability = useCallback(() => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                 3. Location & Availability
             </Text>
         )
-    }
+    }, [data, showLocationErrorMessages, contentWidth])
 
-    const renderServicesAndPricing = () => {
+    const renderServicesAndPricing = useCallback(() => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                 4. Services & Pricing
             </Text>
         )
-    }
+    }, [data, showServicesErrorMessages, contentWidth])
 
-    const renderUploadPhotos = () => {
+    const renderUploadPhotos = useCallback(() => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                 5. Upload Photos
             </Text>
         )
-    }
+    }, [data, showPhotosErrorMessages, contentWidth])
 
     const pages = {
         'Login Information': renderLoginInformation,
@@ -258,13 +304,21 @@ const LadySignup = () => {
         'Upload Photos': renderUploadPhotos
     }
 
-    const renderPage = ({ item }) => {
+    const renderPage = useCallback(({ item }) => {
         return (
             <View style={{ width: contentWidth }}>
                 {pages[item]()}
             </View>
         )
-    }
+    }, [
+        contentWidth, 
+        data, 
+        showLocationErrorMessages, 
+        showLoginInfoErrorMessages, 
+        showPersonalDetailsErrorMessages, 
+        showPhotosErrorMessages, 
+        showServicesErrorMessages
+    ])
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>

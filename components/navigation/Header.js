@@ -30,6 +30,7 @@ import {
     translateLabels
 } from '../../labels'
 import { stripEmptyParams } from '../../utils'
+import { MotiView } from 'moti'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
@@ -156,7 +157,21 @@ const Header = ({ route, navigation }) => {
                     onPress={() => setUserDropdownVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <View style={[styles.dropdown, { top: dropdownTop }]}>
+                        <MotiView 
+                            from={{ 
+                                opacity: 0, 
+                                transform: [{ scaleY: 0.8 }, { translateY: -10 }],
+                            }}
+                            animate={{ 
+                                opacity: 1, 
+                                transform: [{ scaleY: 1 }, { translateY: 0 }],
+                            }}
+                            transition={{
+                                type: 'timing',
+                                duration: 100,
+                            }}
+                            style={[styles.dropdown, { top: dropdownTop }]}
+                        >
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
                                 <TouchableOpacity onPress={onSignUpPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
@@ -181,7 +196,7 @@ const Header = ({ route, navigation }) => {
                                     </Text>
                                 </TouchableOpacity>
                             </HoverableView>
-                        </View>
+                        </MotiView>
                     </TouchableWithoutFeedback>
                 </TouchableOpacity>
             </Modal>
@@ -204,7 +219,21 @@ const Header = ({ route, navigation }) => {
                     onPress={() => setLanguageDropdownVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <View style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, marginRight: 0, overflow: 'hidden' }]}>
+                        <MotiView 
+                            from={{ 
+                                opacity: 0, 
+                                transform: [{ scaleY: 0.8 }, { translateY: -10 }],
+                            }}
+                            animate={{ 
+                                opacity: 1, 
+                                transform: [{ scaleY: 1 }, { translateY: 0 }],
+                            }}
+                            transition={{
+                                type: 'timing',
+                                duration: 100,
+                            }}
+                            style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, marginRight: 0, overflow: 'hidden' }]}
+                        >
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
                                 <View {...csNavProps} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
                                     onClick={onCSPress}
@@ -237,7 +266,7 @@ const Header = ({ route, navigation }) => {
                                     <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>English</Text>
                                 </View>
                             </HoverableView>
-                        </View>
+                        </MotiView>
                     </TouchableWithoutFeedback>
                 </TouchableOpacity>
             </Modal>

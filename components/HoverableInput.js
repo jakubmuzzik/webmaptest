@@ -25,7 +25,8 @@ const HoverableInput = ({
     onLeftIconPress,
     onRightIconPress,
     rightIconName,
-    secureTextEntry=false
+    secureTextEntry=false,
+    height
 }) => {
     const [isHovered, setIsHovered] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
@@ -48,7 +49,7 @@ const HoverableInput = ({
                 mode={mode}
                 value={text}
                 onChangeText={text => setText(text)}
-                left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} onPress={onLeftIconPress ?? undefined} />}
+                left={leftIconName && <TextInput.Icon style={{ alignSelf: 'center', height: height }} size={normalize(height ? height / 2 :  20)} icon={leftIconName} onPress={onLeftIconPress ?? undefined} />}
                 right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} onPress={onRightIconPress ?? undefined} />}
                 contentStyle={[
                     text ? {...textStyle} : {...placeholderStyle}
@@ -56,6 +57,7 @@ const HoverableInput = ({
                 outlineStyle={{ 
                     backgroundColor: isHovered ? hoveredBackgroundColor: backgroundColor
                 }}
+                style={height ? {height: height, paddingTop: 0} : undefined}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 secureTextEntry={secureTextEntry}

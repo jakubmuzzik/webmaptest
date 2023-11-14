@@ -30,6 +30,7 @@
     "expo-linear-gradient": "~12.3.0",
     "expo-linking": "~5.0.2",
     "expo-status-bar": "~1.6.0",
+    "moti": "^0.26.1",
     "react": "18.2.0",
     "react-content-loader": "^6.2.1",
     "react-device-detect": "^2.2.3",

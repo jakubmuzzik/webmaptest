@@ -19,26 +19,26 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
-import { CZECH_CITIES } from '../../labels'
+import { 
+    CZECH_CITIES, 
+    SMOKER_VALUES, 
+    BODY_TYPES,
+    PUBIC_HAIR_VALUES,
+    SEXUAL_ORIENTATION,
+    SERVICES,
+    HAIR_COLORS,
+    BREAST_SIZES,
+    BREAST_TYPES,
+    TATOO,
+    EYE_COLORS,
+    LANGUAGES,
+    NATIONALITIES
+} from '../../labels'
 import { Switch, Chip, SegmentedButtons, Button } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import Slider from '../Slider'
 
 const window = Dimensions.get('window')
-
-const SMOKER_VALUES = ['Non-Smoker', 'Occasionally', 'Regularly'] //yes, no, sometimes //nekurak, nepravidelne, pravidelne
-const BODY_TYPES = ['Slim', 'Athletic', 'Muscular', 'Curvy']
-const PUBIC_HAIR_VALUES = ['Shaved', 'Trimmed', 'Natural']
-const SEXUAL_ORIENTATION = ['Heterosexual', 'Homosexual', 'Bisexual', 'Transsexual']
-const SERVICES = ['service1', 'service2', 'service3', 'service4', 'service5', 'service6', 'service7']
-//const SERVICES = ['Classic sex', 'Oral with condom', 'Shower together', 'Kissing', 'Oral without condom', 'Deepthroat', 'Autoerotic', 'Lesbishow', 'Anal sex', 'Footfetish', 'Piss', 'Rimming', 'Cum on body', 'Cum on face', 'Cum in mouth', 'Swallowing', 'Licking', 'Position 69', 'Group sex', 'Prostate massage', 'Vibrator show', 'Relaxing & Erotic massage', 'Fisting']
-const HAIR_COLORS = ['Black', 'Blonde', 'Blue', 'Brown', 'Gray', 'Green', 'Pink', 'Red', 'White']
-const BREAST_SIZES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H+']
-const BREAST_TYPES = ['Natural', 'Silicone']
-const TATOO = ['Yes', 'No']
-const EYE_COLORS = ['Blue', 'Brown', 'Gray', 'Green', 'Hazel']
-const LANGUAGES = ['English', 'French', 'German', 'Japanese', 'Italian', 'Russian', 'Spanish', 'Chinese', 'Arabic', 'Hindi', 'Portuguese', 'Turkish', 'Indonesian', 'Dutch', 'Korean', 'Bengali', 'Thai', 'Punjabi', 'Greek', 'Polish', 'Malay', 'Tagalog', 'Danish', 'Swedish', 'Finnish', 'Czech', 'Hungarian', 'Ukrainian']
-const NATIONALITIES = ['Australian','Brazilian','Canadian','Chinese','French','German','Indian','Italian','Japanese','Korean','Mexican','Russian','Spanish','American']
 
 const MIN_AGE = 18
 const MAX_AGE = 60
