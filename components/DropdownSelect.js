@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react"
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Dimensions, ScrollView, TextInput as NativeTextInput } from 'react-native'
+import { View, useWindowDimensions, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, TextInput as NativeTextInput } from 'react-native'
 import { TextInput, HelperText, TouchableRipple } from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES, SPACING} from "../constants"
 import {isBrowser } from 'react-device-detect'
@@ -7,8 +7,6 @@ import { normalize } from "../utils"
 import HoverableView from "./HoverableView"
 import { MotiView } from 'moti'
 import { Ionicons } from '@expo/vector-icons'
-
-const { height } = Dimensions.get('window')
 
 const DropdownSelect = ({
     values, 
@@ -43,8 +41,13 @@ const DropdownSelect = ({
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState(COLORS.placeholder)
 
+    const { height } = useWindowDimensions()
+
     const onValuePress = (value) => {
         setText(value)
+        if (!multiselect) {
+            setVisible(false)
+        }
     }
 
     const onDropdownPress = () => {
@@ -88,7 +91,7 @@ const DropdownSelect = ({
                                 duration: 100,
                             }}
                             style={[styles.dropdown, { 
-                                minHeight: 150,
+                                //minHeight: 150,
                                 maxHeight: dropdownDesc.height - SPACING.xxx_large,
                                 minWidth: dropdownDesc.width, 
                                 top: dropdownDesc.y, 

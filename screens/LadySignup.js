@@ -6,7 +6,20 @@ import { ProgressBar, Button } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import DropdownSelect from '../components/DropdownSelect'
 
-import { LANGUAGES, NATIONALITIES } from '../labels'
+import { 
+    LANGUAGES, 
+    NATIONALITIES, 
+    SMOKER_VALUES, 
+    BODY_TYPES,
+    PUBIC_HAIR_VALUES,
+    SEXUAL_ORIENTATION,
+    SERVICES,
+    HAIR_COLORS,
+    BREAST_SIZES,
+    BREAST_TYPES,
+    TATOO,
+    EYE_COLORS
+} from '../labels'
 
 const LadySignup = () => {
     const [data, setData] = useState({
@@ -18,7 +31,13 @@ const LadySignup = () => {
         secureTextEntry: true,
         confirmSecureTextEntry: true,
         nationality: '',
-        languages: []
+        languages: [],
+        hairColor: '',
+        eyeColor: '',
+        breastSize: '',
+        breastType: '',
+        bodyType: '',
+        pubicHair: ''
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -268,6 +287,111 @@ const LadySignup = () => {
                         errorMessage={showPersonalDetailsErrorMessages && !data.languages.length ? 'Select at least one language' : undefined}
                     />
                 </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <DropdownSelect
+                        values={BODY_TYPES}
+                        placeholder="Select your body type"
+                        label="Body type"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.bodyType}
+                        setText={(text) => onValueChange(text, 'bodyType')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.bodyType ? 'Select your body type' : undefined}
+                    />
+                    <DropdownSelect
+                        values={PUBIC_HAIR_VALUES}
+                        placeholder="Search your pubic hair"
+                        label="Pubic hair"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.pubicHair}
+                        setText={(text) => onValueChange(text, 'pubicHair')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.pubicHair ? 'Select your pubic hair' : undefined}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <DropdownSelect
+                        values={HAIR_COLORS}
+                        placeholder="Select your hair color"
+                        label="Eye color"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.hairColor}
+                        setText={(text) => onValueChange(text, 'hairColor')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.hairColor ? 'Select your hair color' : undefined}
+                    />
+                    <DropdownSelect
+                        values={EYE_COLORS}
+                        placeholder="Search your eye color"
+                        label="Eye color"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.eyeColor}
+                        setText={(text) => onValueChange(text, 'eyeColor')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <DropdownSelect
+                        values={BREAST_SIZES}
+                        placeholder="Select your breast size"
+                        label="Breast size"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.breastSize}
+                        setText={(text) => onValueChange(text, 'breastSize')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.breastSize ? 'Select your breast size' : undefined}
+                    />
+                    <DropdownSelect
+                        values={BREAST_TYPES}
+                        placeholder="Search your breast type"
+                        label="Breast type"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.breastType}
+                        setText={(text) => onValueChange(text, 'breastType')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.breastType ? 'Select your breast type' : undefined}
+                    />
+                </View>
             </>
         )
     }, [showPersonalDetailsErrorMessages, data, contentWidth])
@@ -297,28 +421,20 @@ const LadySignup = () => {
     }, [data, showPhotosErrorMessages, contentWidth])
 
     const pages = {
-        'Login Information': renderLoginInformation,
-        'Personal Details': renderPersonalDetails,
+        'Login Information': renderPersonalDetails,
+        'Personal Details': renderLoginInformation,
         'Location & Availability': renderLocationAndAvailability,
         'Services & Pricing': renderServicesAndPricing,
         'Upload Photos': renderUploadPhotos
     }
 
-    const renderPage = useCallback(({ item }) => {
+    const renderPage = ({ item }) => {
         return (
             <View style={{ width: contentWidth }}>
                 {pages[item]()}
             </View>
         )
-    }, [
-        contentWidth, 
-        data, 
-        showLocationErrorMessages, 
-        showLoginInfoErrorMessages, 
-        showPersonalDetailsErrorMessages, 
-        showPhotosErrorMessages, 
-        showServicesErrorMessages
-    ])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
