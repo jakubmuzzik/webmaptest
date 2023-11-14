@@ -106,8 +106,8 @@ const Dropdown = ({
                     mode={mode}
                     value={text}
                     onChangeText={text => setText(text)}
-                    left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} />}
-                    right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} />}
+                    left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} pointerEvents="none"/>}
+                    right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} pointerEvents="none"/>}
                     contentStyle={[
                         text ? { ...textStyle } : { ...placeholderStyle }
                     ]}
