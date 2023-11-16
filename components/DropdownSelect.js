@@ -115,9 +115,6 @@ const DropdownSelect = forwardRef((props, ref) => {
                                 minWidth: dropdownDesc.width,
                                 top: dropdownDesc.y,
                                 left: dropdownDesc.x,
-                                borderColor,
-                                borderWidth: 1,
-                                overflow: 'hidden'
                             }]}
                         >
                             {searchable && (
@@ -228,8 +225,9 @@ const styles = StyleSheet.create({
         marginRight: SPACING.page_horizontal,
         borderRadius: 10,
         paddingVertical: SPACING.xxx_small,
-        shadowColor: "#000",
-        shadowColor: "#000",
+        shadowColor: COLORS.red,
+        borderWidth: 2,
+        borderColor: COLORS.placeholder,
         shadowOffset: {
             width: 0,
             height: 4,

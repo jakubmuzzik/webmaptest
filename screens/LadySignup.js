@@ -547,7 +547,7 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
-                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.hoveredHoveredWhite, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.placeholder, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredWhite}>
                         <TouchableRipple
                             onPress={onAddServicePress}
                             style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small,  justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
@@ -585,7 +585,7 @@ const LadySignup = ({ route }) => {
                 </View>
                 <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]} backgroundColor={COLORS.hoveredWhite} hoveredBackgroundColor={COLORS.hoveredHoveredWhite}>
+                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]} backgroundColor={COLORS.hoveredWhite} hoveredBackgroundColor={COLORS.hoveredWhite}>
                             <Text style={styles.tableHeaderText}>Length</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
@@ -620,7 +620,7 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small }}>
-                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.hoveredHoveredWhite, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.placeholder, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} >
                         <TouchableRipple
                             //onPress={onPricePress}
                             style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
