@@ -90,6 +90,8 @@ export const SPACING = {
     page_horizontal: normalizeSize(24, 40, 80)
 }
 
+export const CURRENCIES = ['CZK', 'EUR']
+
 export const rem = (number) => {
     return isLargeScreen ? number * 16 : isMediumScreen ? number * 14 : number * 12
 }

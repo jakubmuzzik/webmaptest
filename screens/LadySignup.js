@@ -1,13 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react'
-import { View, Text, FlatList, Image, ScrollView, StyleSheet } from 'react-native'
-import { COLORS, FONTS, FONT_SIZES, SPACING } from '../constants'
+import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
 import { ProgressBar, Button, TouchableRipple, Chip, Icon, IconButton } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
-import { Ionicons, Entypo } from '@expo/vector-icons'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 
 import { 
     LANGUAGES, 
@@ -43,7 +43,8 @@ const LadySignup = ({ route }) => {
         height: '',
         dateOfBirth: '',
         sexuality: '',
-        services: []
+        services: [],
+        currency: 'CZK'
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -59,6 +60,7 @@ const LadySignup = ({ route }) => {
 
     const viewPagerRef = useRef()
     const viewPagerX = useRef(0)
+    const currencyDropdownRef = useRef()
 
     const updateSecureTextEntry = () => {
         setData({
@@ -545,13 +547,13 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
-                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.hoveredHoveredWhite, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
                         <TouchableRipple
                             onPress={onAddServicePress}
-                            style={{ paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xxx_small,  justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
+                            style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small,  justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
                         >
                             <>
-                                <Ionicons name="add-outline" size={normalize(20)} color="black" />
+                                <Ionicons name="add-outline" size={normalize(18)} color="black" />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
                                     Add Service
                                 </Text>
@@ -560,9 +562,78 @@ const LadySignup = ({ route }) => {
                     </HoverableView>
                 </View>
 
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium }}>
-                    Pricing
-                </Text>
+                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium, alignItems: 'center' }}>
+                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                        Pricing
+                    </Text>
+
+                    <DropdownSelect
+                        ref={currencyDropdownRef}
+                        values={CURRENCIES}
+                        setText={(text) => onValueChange(text, 'currency')}
+                    >
+                        <TouchableOpacity
+                            onPress={() => currencyDropdownRef.current?.onDropdownPress()}
+                            style={styles.chip}
+                        >
+                            <>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: 5 }}>{data.currency}</Text>
+                                <MaterialIcons name="keyboard-arrow-down" size={normalize(20)} color="black" />
+                            </>
+                        </TouchableOpacity>
+                    </DropdownSelect>
+                </View>
+                <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]} backgroundColor={COLORS.hoveredWhite} hoveredBackgroundColor={COLORS.hoveredHoveredWhite}>
+                            <Text style={styles.tableHeaderText}>Length</Text>
+                        </View>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>0.5 hour</Text>
+                        </HoverableView>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>1 hour</Text>
+                        </HoverableView>
+                    </View>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]}>
+                            <Text style={styles.tableHeaderText}>Incall</Text>
+                        </View>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>1000 CZK</Text>
+                        </HoverableView>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>2500 CZK</Text>
+                        </HoverableView>
+                    </View>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]}>
+                            <Text style={styles.tableHeaderText}>Outcall</Text>
+                        </View>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>1500 CZK</Text>
+                        </HoverableView>
+                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                            <Text style={styles.tableHeaderValue}>3000 CZK</Text>
+                        </HoverableView>
+                    </View>
+                </View>
+
+                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small }}>
+                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.hoveredHoveredWhite, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                        <TouchableRipple
+                            //onPress={onPricePress}
+                            style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
+                        >
+                            <>
+                                <Ionicons name="add-outline" size={normalize(18)} color="black" />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium,  }}>
+                                    Add Price
+                                </Text>
+                            </>
+                        </TouchableRipple>
+                    </HoverableView>
+                </View>
             </>
         )
     }, [data, showServicesErrorMessages, contentWidth])
@@ -681,4 +752,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    table: {
+        borderWidth: 1,
+        borderColor: 'grey',
+        flexDirection: 'row',
+        borderRadius: 10,
+        overflow:'hidden'
+    },
+    tableHeaderText: { 
+        fontFamily: FONTS.bold, 
+        fontSize: FONT_SIZES.medium 
+    },
+    tableHeaderValue: { 
+        fontFamily: FONTS.medium, 
+        fontSize: FONT_SIZES.medium 
+    },
+    column: {
+        padding: SPACING.xx_small
+        
+    }
 })

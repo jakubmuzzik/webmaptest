@@ -1,36 +1,39 @@
-import React, { useState, useCallback, useRef } from "react"
+import React, { useState, useCallback, useRef, forwardRef, useImperativeHandle } from "react"
 import { View, useWindowDimensions, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, TextInput as NativeTextInput } from 'react-native'
 import { TextInput, HelperText, TouchableRipple } from 'react-native-paper'
-import { COLORS, FONTS, FONT_SIZES, SPACING} from "../constants"
-import {isBrowser } from 'react-device-detect'
+import { COLORS, FONTS, FONT_SIZES, SPACING } from "../constants"
+import { isBrowser } from 'react-device-detect'
 import { normalize } from "../utils"
 import HoverableView from "./HoverableView"
 import { MotiView } from 'moti'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 
-const DropdownSelect = ({
-    values, 
-    label, 
-    placeholder, 
-    multiselect = false,
-    searchable = false,
-    searchPlaceholder,
-    borderColor,
-    hoveredBorderColor, 
-    textColor="#FFF",
-    backgroundColor="transparent", 
-    hoveredBackgroundColor="transparent",
-    errorMessage, 
-    mode="outlined", 
-    labelStyle={},
-    text, 
-    textStyle={},
-    placeholderStyle={},
-    containerStyle={},
-    setText,
-    leftIconName,
-    rightIconName
-}) => {
+const DropdownSelect = forwardRef((props, ref) => {
+    const {
+        values,
+        label,
+        placeholder,
+        multiselect = false,
+        searchable = false,
+        searchPlaceholder,
+        borderColor,
+        hoveredBorderColor,
+        textColor = "#FFF",
+        backgroundColor = "transparent",
+        hoveredBackgroundColor = "transparent",
+        errorMessage,
+        mode = "outlined",
+        labelStyle = {},
+        text,
+        textStyle = {},
+        placeholderStyle = {},
+        containerStyle = {},
+        setText,
+        leftIconName,
+        rightIconName,
+        renderInput,
+        children
+    } = props
     const dropdownRef = useRef()
     const filteredValuesRef = useRef(values)
 
@@ -51,7 +54,6 @@ const DropdownSelect = ({
     }
 
     const onDropdownPress = () => {
-        //
         dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
             //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
             //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
@@ -66,6 +68,10 @@ const DropdownSelect = ({
             setVisible(true)
         })
     }
+
+    useImperativeHandle(ref, () => ({
+        onDropdownPress
+    }))
 
     const onSearch = useCallback((value) => {
         filteredValuesRef.current = value ? [...values].filter(val => val.toLowerCase().includes(value.toLowerCase())) : [...values]
@@ -90,14 +96,14 @@ const DropdownSelect = ({
                     onPress={() => setVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <MotiView 
+                        <MotiView
                             onLayout={onDropdownLayout}
-                            from={{ 
-                                opacity: 0, 
+                            from={{
+                                opacity: 0,
                                 transform: [{ scaleY: 0.8 }, { translateY: -10 }],
                             }}
-                            animate={{ 
-                                opacity: 1, 
+                            animate={{
+                                opacity: 1,
                                 transform: [{ scaleY: 1 }, { translateY: 0 }],
                             }}
                             transition={{
@@ -106,12 +112,12 @@ const DropdownSelect = ({
                             }}
                             style={[styles.dropdown, {
                                 maxHeight: 300,
-                                minWidth: dropdownDesc.width, 
-                                top: dropdownDesc.y, 
+                                minWidth: dropdownDesc.width,
+                                top: dropdownDesc.y,
                                 left: dropdownDesc.x,
                                 borderColor,
                                 borderWidth: 1,
-                                overflow:'hidden'
+                                overflow: 'hidden'
                             }]}
                         >
                             {searchable && (
@@ -134,7 +140,7 @@ const DropdownSelect = ({
                                 {filteredValuesRef.current.map((value) => {
                                     const selected = multiselect ? text.includes(value) : text === value
                                     return (
-                                        <HoverableView key={value} hoveredBackgroundColor={selected ?  "rgba(220, 46, 46, .17)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .12)" : '#FFF'}>
+                                        <HoverableView key={value} hoveredBackgroundColor={selected ? "rgba(220, 46, 46, .17)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .12)" : '#FFF'}>
                                             <TouchableRipple
                                                 onPress={() => onValuePress(value)}
                                                 style={{ padding: SPACING.xx_small, paddingHorizontal: SPACING.x_small, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
@@ -148,7 +154,7 @@ const DropdownSelect = ({
                                                         multiselect
                                                         && (
                                                             selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
-                                                            : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
+                                                                : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
                                                         )
                                                     }
                                                 </>
@@ -173,7 +179,7 @@ const DropdownSelect = ({
                 onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
                 onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
             >
-                <TextInput
+                {children ? children : <TextInput
                     pointerEvents="none"
                     label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
                     placeholder={placeholder}
@@ -185,9 +191,8 @@ const DropdownSelect = ({
                     error={errorMessage}
                     mode={mode}
                     value={text}
-                    onChangeText={text => setText(text)}
-                    left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} pointerEvents="none"/>}
-                    right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} pointerEvents="none"/>}
+                    left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} pointerEvents="none" />}
+                    right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} pointerEvents="none" />}
                     contentStyle={[
                         text ? { ...textStyle } : { ...placeholderStyle }
                     ]}
@@ -196,7 +201,7 @@ const DropdownSelect = ({
                     }}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                />
+                />}
                 {errorMessage && <HelperText type="error" visible>
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
                         {errorMessage}
@@ -206,7 +211,7 @@ const DropdownSelect = ({
             {renderDropdown()}
         </>
     )
-}
+})
 
 export default DropdownSelect
 
