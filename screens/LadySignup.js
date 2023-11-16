@@ -1,15 +1,17 @@
 import React, { useState, useRef, useCallback } from 'react'
-import { View, Text, FlatList, Image, ScrollView, Alert } from 'react-native'
+import { View, Text, FlatList, Image, ScrollView, StyleSheet } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, Chip, Icon, IconButton } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
+import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
+import ServicesPicker from '../components/modal/ServicesPicker'
+import { Ionicons, Entypo } from '@expo/vector-icons'
 
 import { 
     LANGUAGES, 
-    NATIONALITIES, 
-    SMOKER_VALUES, 
+    NATIONALITIES,
     BODY_TYPES,
     PUBIC_HAIR_VALUES,
     SEXUAL_ORIENTATION,
@@ -17,11 +19,10 @@ import {
     HAIR_COLORS,
     BREAST_SIZES,
     BREAST_TYPES,
-    TATOO,
     EYE_COLORS
 } from '../labels'
 
-const LadySignup = () => {
+const LadySignup = ({ route }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -41,13 +42,16 @@ const LadySignup = () => {
         weight: '',
         height: '',
         dateOfBirth: '',
-        sexuality: ''
+        sexuality: '',
+        services: []
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
     const [showLocationErrorMessages, setShowLocationErrorMessages] = useState(false)
     const [showServicesErrorMessages, setShowServicesErrorMessages] = useState(false)
     const [showPhotosErrorMessages, setShowPhotosErrorMessages] = useState(false)
+
+    const [servicesPickerVisible, setServicesPickerVisible] = useState(false)
 
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
@@ -139,6 +143,15 @@ const LadySignup = () => {
 
     const processPersonalDetailsPage = () => {
         paginageNext()
+        return
+
+        if (!data.dateOfBirth || !data.sexuality || !data.nationality || !data.languages.length || !data.height || data.weight || !data.bodyType || !data.pubicHair || !data.breastSize || !data.breastType || !data.hairColor || !data.eyeColor) {
+            setShowPersonalDetailsErrorMessages(true)
+            return
+        }
+
+        setShowPersonalDetailsErrorMessages(false)
+        paginageNext()
     }
 
     const processLocationAndAvailabilityPage = () => {
@@ -196,12 +209,14 @@ const LadySignup = () => {
         onValueChange(strippedText, 'dateOfBirth')
     }, [])
 
-    console.log(data.dateOfBirth)
+    const onAddServicePress = useCallback(() => {
+        setServicesPickerVisible(true)
+    }, [])
 
     const renderLoginInformation = useCallback(() => {
         return (
             <>
-                <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }}>
+                <Text style={styles.pageHeaderText}>
                     1. Login Information
                 </Text>
 
@@ -284,7 +299,7 @@ const LadySignup = () => {
     const renderPersonalDetails = useCallback(() => {
         return (
             <>
-                <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }}>
+                <Text style={styles.pageHeaderText}>
                     2. Personal Details
                 </Text>
 
@@ -301,7 +316,7 @@ const LadySignup = () => {
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={getDateOfBirth()}
                         setText={(text) => onBirthdateChange(text)}
-                        errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
+                        errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
                     />
                     <DropdownSelect
                         values={SEXUAL_ORIENTATION}
@@ -430,41 +445,6 @@ const LadySignup = () => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
-                        values={HAIR_COLORS}
-                        placeholder="Select your hair color"
-                        label="Hair color"
-                        borderColor={COLORS.placeholder}
-                        hoveredBorderColor={COLORS.red}
-                        textColor='#000'
-                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        text={data.hairColor}
-                        setText={(text) => onValueChange(text, 'hairColor')}
-                        rightIconName='chevron-down'
-                        errorMessage={showPersonalDetailsErrorMessages && !data.hairColor ? 'Select your hair color' : undefined}
-                    />
-                    <DropdownSelect
-                        values={EYE_COLORS}
-                        placeholder="Search your eye color"
-                        label="Eye color"
-                        borderColor={COLORS.placeholder}
-                        hoveredBorderColor={COLORS.red}
-                        textColor='#000'
-                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        text={data.eyeColor}
-                        setText={(text) => onValueChange(text, 'eyeColor')}
-                        rightIconName='chevron-down'
-                        errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
-                    />
-                </View>
-
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
-                    <DropdownSelect
                         values={BREAST_SIZES}
                         placeholder="Select your breast size"
                         label="Breast size"
@@ -497,25 +477,103 @@ const LadySignup = () => {
                         errorMessage={showPersonalDetailsErrorMessages && !data.breastType ? 'Select your breast type' : undefined}
                     />
                 </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <DropdownSelect
+                        values={HAIR_COLORS}
+                        placeholder="Select your hair color"
+                        label="Hair color"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.hairColor}
+                        setText={(text) => onValueChange(text, 'hairColor')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.hairColor ? 'Select your hair color' : undefined}
+                    />
+                    <DropdownSelect
+                        values={EYE_COLORS}
+                        placeholder="Search your eye color"
+                        label="Eye color"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.eyeColor}
+                        setText={(text) => onValueChange(text, 'eyeColor')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
+                    />
+                </View>
             </>
         )
     }, [showPersonalDetailsErrorMessages, data, contentWidth])
 
+    const renderServicesAndPricing = useCallback(() => {
+        return (
+            <>
+                <Text style={styles.pageHeaderText}>
+                    3. Services & Pricing
+                </Text>
+
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
+                    Services ({data.services.length})
+                </Text>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
+                    {data.services.map((service) => (
+                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={"rgba(220, 46, 46, .17)"} backgroundColor={'rgba(220, 46, 46, .22)'}>
+                            <TouchableRipple
+                                onPress={onAddServicePress}
+                                rippleColor="rgba(220, 46, 46, .16)"
+                                style={styles.chip}
+                            >
+                                <>
+                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small }}>{service}</Text>
+                                    <Ionicons onPress={() => onMultiPicklistChange(service, 'services')} name="close" size={normalize(18)} color="black" />
+                                </>
+                            </TouchableRipple>
+                        </HoverableView>
+                    ))}
+                </View>
+
+                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
+                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                        <TouchableRipple
+                            onPress={onAddServicePress}
+                            style={{ paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xxx_small,  justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
+                        >
+                            <>
+                                <Ionicons name="add-outline" size={normalize(20)} color="black" />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                    Add Service
+                                </Text>
+                            </>
+                        </TouchableRipple>
+                    </HoverableView>
+                </View>
+
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium }}>
+                    Pricing
+                </Text>
+            </>
+        )
+    }, [data, showServicesErrorMessages, contentWidth])
+
     const renderLocationAndAvailability = useCallback(() => {
         return (
             <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                3. Location & Availability
+                4. Location & Availability
             </Text>
         )
     }, [data, showLocationErrorMessages, contentWidth])
-
-    const renderServicesAndPricing = useCallback(() => {
-        return (
-            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                4. Services & Pricing
-            </Text>
-        )
-    }, [data, showServicesErrorMessages, contentWidth])
 
     const renderUploadPhotos = useCallback(() => {
         return (
@@ -526,10 +584,10 @@ const LadySignup = () => {
     }, [data, showPhotosErrorMessages, contentWidth])
 
     const pages = {
-        'Login Information': renderPersonalDetails,
-        'Personal Details': renderLoginInformation,
+        'Login Information': renderServicesAndPricing,
+        'Personal Details': renderPersonalDetails,
+        'Services & Pricing': renderLoginInformation,
         'Location & Availability': renderLocationAndAvailability,
-        'Services & Pricing': renderServicesAndPricing,
         'Upload Photos': renderUploadPhotos
     }
 
@@ -596,8 +654,32 @@ const LadySignup = () => {
                     </Button>
                 </View>
             </ScrollView>
+
+            <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route}/>
         </View>
     )
 }
 
 export default LadySignup
+
+const styles = StyleSheet.create({
+    pageHeaderText: {
+        color: COLORS.lightBlack, 
+        fontFamily: FONTS.bold, 
+        fontSize: FONT_SIZES.x_large, 
+        marginHorizontal: SPACING.x_large, 
+        marginBottom: SPACING.xx_small
+    },
+    chip: { 
+        flexDirection: 'row', 
+        width: 'fit-content', 
+        //backgroundColor: COLORS.grey, 
+        paddingHorizontal: SPACING.xx_small, 
+        paddingVertical: 5, 
+        borderRadius: 8,
+        borderColor: 'rgba(255, 255, 255, 0.5)',
+        borderWidth: 0.5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+})

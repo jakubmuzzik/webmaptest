@@ -1,9 +1,11 @@
 import React, { useState } from "react"
 import { View, Text } from 'react-native'
-import { TextInput, HelperText } from 'react-native-paper'
+import { TextInput, HelperText, Icon} from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES } from "../constants"
 import {isBrowser } from 'react-device-detect'
 import { normalize } from "../utils"
+import { MaterialIcons } from '@expo/vector-icons'; 
+
 
 const HoverableInput = ({ 
     borderColor,

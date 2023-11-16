@@ -51,6 +51,7 @@ export const COLORS = {
     grey: '#323232',
     lightBlack: '#161616',
     red: '#c91e1e',//'#dc2e2e',
+    lightRed: '#D9534F',
     hoveredRed: '#bc2020',
     darkRed: '#990000',
     pastelRed: '#ec9e9f',
@@ -58,7 +59,9 @@ export const COLORS = {
     hoveredWhite: '#efeff0',
     hoveredHoveredWhite: '#e1e1e1',
     error: '#ff190c',
-    linkColor: '#0077cc'
+    linkColor: '#0077cc',
+    lightPurple: '#cfbcff',
+    purple: '#6152bb'
 }
 
 export const FONT_SIZES = {
