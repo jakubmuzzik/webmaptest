@@ -37,7 +37,11 @@ const LadySignup = () => {
         breastSize: '',
         breastType: '',
         bodyType: '',
-        pubicHair: ''
+        pubicHair: '',
+        weight: '',
+        height: '',
+        dateOfBirth: '',
+        sexuality: ''
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -157,6 +161,43 @@ const LadySignup = () => {
         viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
     }
 
+    const getDateOfBirth = useCallback(() => {
+        switch (data.dateOfBirth.length) {
+            case 0:
+                return ''
+            case 1:
+                return data.dateOfBirth
+            case 2:
+                return data.dateOfBirth //+ '.'
+            case 3:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2]
+            case 4:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] //+ '.'
+            case 5:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] + '.' + data.dateOfBirth[4] 
+            case 6:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] + '.' + data.dateOfBirth[4] + data.dateOfBirth[5] 
+            case 7:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] + '.' + data.dateOfBirth[4] + data.dateOfBirth[5] + data.dateOfBirth[6] 
+            case 8:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] + '.' + data.dateOfBirth[4] + data.dateOfBirth[5] + data.dateOfBirth[6] + data.dateOfBirth[7]
+            default:
+                return data.dateOfBirth[0] + data.dateOfBirth[1] + '.' + data.dateOfBirth[2] + data.dateOfBirth[3] + '.' + data.dateOfBirth[4] + data.dateOfBirth[5] + data.dateOfBirth[5] + data.dateOfBirth[7]
+        }
+    }, [data.dateOfBirth])
+
+    const onBirthdateChange = useCallback((text) => {
+        const strippedText = text.replaceAll('.', '').replaceAll(' ', '').replace(/[^0-9]/g, '')
+
+        if (strippedText.length > 8) {
+            return
+        }
+
+        onValueChange(strippedText, 'dateOfBirth')
+    }, [])
+
+    console.log(data.dateOfBirth)
+
     const renderLoginInformation = useCallback(() => {
         return (
             <>
@@ -166,7 +207,7 @@ const LadySignup = () => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <HoverableInput
-                        placeholder="Enter your Name"
+                        placeholder="Enter your name"
                         label="Name"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
@@ -181,7 +222,7 @@ const LadySignup = () => {
                         errorMessage={showLoginInfoErrorMessages && !data.name ? 'Enter your Name' : undefined}
                     />
                     <HoverableInput
-                        placeholder="Enter Your email"
+                        placeholder="Enter your email"
                         label="Email"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
@@ -199,7 +240,7 @@ const LadySignup = () => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <HoverableInput
-                        placeholder="Enter Your Password"
+                        placeholder="Password (8 or more characters)"
                         label="Password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
@@ -218,8 +259,8 @@ const LadySignup = () => {
                     />
 
                     <HoverableInput
-                        placeholder="Enter Your Password"
-                        label="Confirm Password"
+                        placeholder="Confirm your password"
+                        label="Confirm password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
@@ -236,7 +277,6 @@ const LadySignup = () => {
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
                 </View>
-
             </>
         )
     }, [showLocationErrorMessages, data, contentWidth])
@@ -244,9 +284,42 @@ const LadySignup = () => {
     const renderPersonalDetails = useCallback(() => {
         return (
             <>
-                <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large }}>
+                <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }}>
                     2. Personal Details
                 </Text>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <HoverableInput
+                        placeholder="DD.MM.YYYY"
+                        label="Date of birth"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, minWidth: 110 }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={getDateOfBirth()}
+                        setText={(text) => onBirthdateChange(text)}
+                        errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
+                    />
+                    <DropdownSelect
+                        values={SEXUAL_ORIENTATION}
+                        placeholder="Select your sexuality"
+                        label="Sexuality"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.sexuality}
+                        setText={(text) => onValueChange(text, 'sexuality')}
+                        rightIconName='chevron-down'
+                        errorMessage={showPersonalDetailsErrorMessages && !data.sexuality ? 'Select your sexuality' : undefined}
+                    />
+                </View>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
@@ -289,6 +362,38 @@ const LadySignup = () => {
                 </View>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                    <HoverableInput
+                        placeholder="Height in cm"
+                        label="Height (cm)"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.height}
+                        setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
+                        errorMessage={showPersonalDetailsErrorMessages && !data.height ? 'Enter your height' : undefined}
+                    />
+
+                    <HoverableInput
+                        placeholder="Weight in kg"
+                        label="Weight (kg)"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.weight}
+                        setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
+                        errorMessage={showPersonalDetailsErrorMessages && !data.weight ? 'Enter your weight'  : undefined}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
                         values={BODY_TYPES}
                         placeholder="Select your body type"
@@ -327,7 +432,7 @@ const LadySignup = () => {
                     <DropdownSelect
                         values={HAIR_COLORS}
                         placeholder="Select your hair color"
-                        label="Eye color"
+                        label="Hair color"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
@@ -430,9 +535,9 @@ const LadySignup = () => {
 
     const renderPage = ({ item }) => {
         return (
-            <View style={{ width: contentWidth }}>
+            <ScrollView style={{ width: contentWidth }} showsVerticalScrollIndicator={false}>
                 {pages[item]()}
-            </View>
+            </ScrollView>
         )
     }
 

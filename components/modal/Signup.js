@@ -112,7 +112,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
     }
 
     const onSignUpPress = () => {
-        if (!data.email || !data.password || !data.name || !data.confirmPassword || !data.gender) {
+        if (!data.email || !data.password || !data.name || !data.confirmPassword || !data.gender || data.password !== data.confirmPassword) {
             setShowErrorMessages(true)
             return
         }
@@ -272,7 +272,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                 </HelperText>}
 
                 <HoverableInput
-                    placeholder="Enter your Name"
+                    placeholder="Enter your name"
                     label="Name"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
@@ -284,11 +284,11 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                     text={data.name}
                     setText={(text) => setData({ ...data, ['name']: text })}
                     leftIconName="badge-account-outline"
-                    errorMessage={showErrorMessages && !data.name ? 'Enter your Name' : undefined}
+                    errorMessage={showErrorMessages && !data.name ? 'Enter your name' : undefined}
                 />
 
                 <HoverableInput
-                    placeholder="Enter Your email"
+                    placeholder="Enter your email"
                     label="Email"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
@@ -300,11 +300,11 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                     text={data.email}
                     setText={(text) => setData({ ...data, ['email']: text })}
                     leftIconName="email-outline"
-                    errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
+                    errorMessage={showErrorMessages && !data.email ? 'Enter your email' : undefined}
                 />
 
                 <HoverableInput
-                    placeholder="Enter Your Password"
+                    placeholder="Password (8 or more characters"
                     label="Password"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
@@ -323,8 +323,8 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                 />
 
                 <HoverableInput
-                    placeholder="Enter Your Password"
-                    label="Confirm Password"
+                    placeholder="Confirm your password"
+                    label="Confirm password"
                     borderColor={COLORS.placeholder}
                     hoveredBorderColor={COLORS.red}
                     textColor='#000'
@@ -337,7 +337,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                     leftIconName="lock-outline"
                     rightIconName={data.confirmSecureTextEntry ? 'eye-off': 'eye'}
                     onRightIconPress={updateConfirmSecureTextEntry}
-                    errorMessage={showErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : undefined}
+                    errorMessage={showErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                     secureTextEntry={data.confirmSecureTextEntry}
                 />
 

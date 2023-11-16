@@ -142,11 +142,17 @@ const Header = ({ route, navigation }) => {
     const onLoginPress = () => {
         setSignUpVisible(false)
         setLoginVisible(true)
+        if (userDropdownVisible) {
+            setUserDropdownVisible(false)
+        }
     }
 
     const onSignUpPress = () => {
         setLoginVisible(false)
         setSignUpVisible(true)
+        if (userDropdownVisible) {
+            setUserDropdownVisible(false)
+        }
     }
 
     const renderUserDropdown = useCallback(() => {

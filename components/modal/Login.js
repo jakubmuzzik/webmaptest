@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect, memo } from 'react'
-import { Modal, TouchableOpacity, TouchableWithoutFeedback, View, Text, FlatList, Image, StyleSheet, Dimensions } from 'react-native'
+import { Modal, ScrollView, TouchableOpacity, TouchableWithoutFeedback, View, Text, FlatList, Image, StyleSheet, Dimensions } from 'react-native'
 import Animated, {
     Extrapolation,
     interpolate,

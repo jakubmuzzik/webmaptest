@@ -6,7 +6,7 @@ import {isBrowser } from 'react-device-detect'
 import { normalize } from "../utils"
 import HoverableView from "./HoverableView"
 import { MotiView } from 'moti'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 
 const DropdownSelect = ({
     values, 
@@ -51,23 +51,36 @@ const DropdownSelect = ({
     }
 
     const onDropdownPress = () => {
+        //
         dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-            const hasEnoughSpaceBelow = (height - (py + h + 10)) > 150
-            const dropdownHeight = hasEnoughSpaceBelow ? height - (py + h + 10) : 250
+            //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
+            //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
             setDropdownDesc({
-                y: hasEnoughSpaceBelow ? py + h + 10 : py - 250 + h - 10,
+                //y: hasEnoughSpaceBelow ? py + h + 5 : undefined,
                 x: _px,
                 width: _w,
-                height: dropdownHeight
+                //maxHeight,
+                py,
+                h
             })
+            setVisible(true)
         })
-        setVisible(true)
     }
 
     const onSearch = useCallback((value) => {
         filteredValuesRef.current = value ? [...values].filter(val => val.toLowerCase().includes(value.toLowerCase())) : [...values]
         setSearch(value)
     }, [filteredValuesRef.current])
+
+    const onDropdownLayout = useCallback((event) => {
+        const spaceBelowDropdown = height - (dropdownDesc.py + dropdownDesc.h + 5 + SPACING.medium)
+        const hasEnoughSpaceBelow = spaceBelowDropdown > event.nativeEvent.layout.height
+
+        setDropdownDesc((desc) => ({
+            ...desc,
+            y: hasEnoughSpaceBelow ? dropdownDesc.py + dropdownDesc.h + 5 : height - event.nativeEvent.layout.height - SPACING.medium
+        }))
+    }, [dropdownDesc, height])
 
     const renderDropdown = useCallback(() => {
         return (
@@ -78,6 +91,7 @@ const DropdownSelect = ({
                 >
                     <TouchableWithoutFeedback>
                         <MotiView 
+                            onLayout={onDropdownLayout}
                             from={{ 
                                 opacity: 0, 
                                 transform: [{ scaleY: 0.8 }, { translateY: -10 }],
@@ -90,9 +104,8 @@ const DropdownSelect = ({
                                 type: 'timing',
                                 duration: 100,
                             }}
-                            style={[styles.dropdown, { 
-                                //minHeight: 150,
-                                maxHeight: dropdownDesc.height - SPACING.xxx_large,
+                            style={[styles.dropdown, {
+                                maxHeight: 300,
                                 minWidth: dropdownDesc.width, 
                                 top: dropdownDesc.y, 
                                 left: dropdownDesc.x,
@@ -124,12 +137,21 @@ const DropdownSelect = ({
                                         <HoverableView key={value} hoveredBackgroundColor={selected ?  "rgba(220, 46, 46, .17)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .12)" : '#FFF'}>
                                             <TouchableRipple
                                                 onPress={() => onValuePress(value)}
-                                                style={{ padding: SPACING.xx_small, paddingHorizontal: SPACING.x_small }}
+                                                style={{ padding: SPACING.xx_small, paddingHorizontal: SPACING.x_small, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
                                                 rippleColor="rgba(220, 46, 46, .22)"
                                             >
-                                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                                    {value}
-                                                </Text>
+                                                <>
+                                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                                        {value}
+                                                    </Text>
+                                                    {
+                                                        multiselect
+                                                        && (
+                                                            selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
+                                                            : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
+                                                        )
+                                                    }
+                                                </>
                                             </TouchableRipple>
                                         </HoverableView>
                                     )
