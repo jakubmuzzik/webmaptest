@@ -523,7 +523,7 @@ const LadySignup = ({ route }) => {
                     3. Services & Pricing
                 </Text>
 
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
                     Services ({data.services.length})
                 </Text>
 
@@ -536,7 +536,7 @@ const LadySignup = ({ route }) => {
                                 style={styles.chip}
                             >
                                 <>
-                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small }}>{service}</Text>
+                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small }}>{service}</Text>
                                     <Ionicons onPress={() => onMultiPicklistChange(service, 'services')} name="close" size={normalize(18)} color="black" />
                                 </>
                             </TouchableRipple>
@@ -560,7 +560,7 @@ const LadySignup = ({ route }) => {
                     </HoverableView>
                 </View>
 
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium }}>
                     Pricing
                 </Text>
             </>
