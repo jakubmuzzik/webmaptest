@@ -132,7 +132,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                             {filteredServicesRef.current.map(service => {
                                 const selected = services.includes(service)
                                 return (
-                                    <HoverableView key={service} hoveredBackgroundColor={selected ?  "rgba(220, 46, 46, .17)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .12)" : '#FFF'}>
+                                    <HoverableView key={service} hoveredBackgroundColor={selected ?  "rgba(220, 46, 46, .22)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .18)" : '#FFF'}>
                                         <TouchableRipple
                                             onPress={() => onSelect(service)}
                                             style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}

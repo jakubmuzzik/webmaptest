@@ -529,10 +529,10 @@ const LadySignup = ({ route }) => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                     {data.services.map((service) => (
-                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={"rgba(220, 46, 46, .17)"} backgroundColor={'rgba(220, 46, 46, .22)'}>
+                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={"rgba(220, 46, 46, .22)"} backgroundColor={'rgba(220, 46, 46, .18)'}>
                             <TouchableRipple
                                 onPress={onAddServicePress}
-                                rippleColor="rgba(220, 46, 46, .16)"
+                                rippleColor="rgba(220, 46, 46, .22)"
                                 style={styles.chip}
                             >
                                 <>
@@ -672,8 +672,7 @@ const styles = StyleSheet.create({
     },
     chip: { 
         flexDirection: 'row', 
-        width: 'fit-content', 
-        //backgroundColor: COLORS.grey, 
+        width: 'fit-content',
         paddingHorizontal: SPACING.xx_small, 
         paddingVertical: 5, 
         borderRadius: 8,
