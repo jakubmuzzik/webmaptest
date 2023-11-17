@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react'
 import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button, TouchableRipple, TextInput, Icon } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, DataTable, Icon } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
@@ -22,6 +22,9 @@ import {
     EYE_COLORS
 } from '../labels'
 import { MotiView } from 'moti'
+import { user } from '../redux/reducers/user'
+
+const HOURS = ['0.5 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours','3.5 hour','4 hours','4.5 hour','5 hours','5.5 hour','6 hours','6.5 hour','7 hours','7.5 hour','8 hours','8.5 hour','9 hours','9.5 hour','10 hours','10.5 hour','11 hours','11.5 hour','12 hours','12.5 hour','13 hours','13.5 hour','14 hours','14.5 hour','15 hours','15.5 hour','16 hours','16.5 hour','17 hours','17.5 hour','18 hours','18.5 hour','19 hours','19.5 hour','20 hours','20.5 hour','21 hours','21.5 hour','22 hours','22.5 hour','23 hours','23.5 hour','24 hours']
 
 const LadySignup = ({ route }) => {
     const [data, setData] = useState({
@@ -45,7 +48,8 @@ const LadySignup = ({ route }) => {
         dateOfBirth: '',
         sexuality: '',
         services: [],
-        currency: 'CZK'
+        currency: 'CZK',
+        prices: [{length: 1, incall: '', outcall: ''}]
     })
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -62,6 +66,7 @@ const LadySignup = ({ route }) => {
     const viewPagerRef = useRef()
     const viewPagerX = useRef(0)
     const currencyDropdownRef = useRef()
+    const pricesDropdownPress = useRef()
 
     const updateSecureTextEntry = () => {
         setData({
@@ -214,6 +219,13 @@ const LadySignup = ({ route }) => {
 
     const onAddServicePress = useCallback(() => {
         setServicesPickerVisible(true)
+    }, [])
+
+    const onAddNewPrice = useCallback((val) => {
+        setData(data => ({
+            ...data,
+            ['prices']: data.prices.concat({ length: Number(val.substring(0, val.indexOf('h') - 1)), incall: '', outcall: '' })
+        }))
     }, [])
 
     const renderLoginInformation = useCallback(() => {
@@ -606,51 +618,54 @@ const LadySignup = ({ route }) => {
                         <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Length</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>0.5 hour</Text>
-                        </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>1 hour</Text>
-                        </HoverableView>
+                        {data.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Incall</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>1000 CZK</Text>
-                        </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>2500 CZK</Text>
-                        </HoverableView>
+                        {data.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.incall}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Outcall</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>1500 CZK</Text>
-                        </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                            <Text style={styles.tableHeaderValue}>3000 CZK</Text>
-                        </HoverableView>
+                        {data.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.outcall}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small }}>
-                    <Button
-                        labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
-                        style={{ borderRadius: 10, borderColor: '#FFF' }}
-                        contentStyle={{ height: 35 }}
-                        rippleColor="rgba(171, 94, 94, .1)"
-                        icon="plus"
-                        mode="outlined"
-                        onPress={onAddServicePress}
+                    <DropdownSelect
+                        ref={pricesDropdownPress}
+                        values={HOURS}
+                        setText={onAddNewPrice}
                     >
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                            Add price
-                        </Text>
-                    </Button>
+                        <Button
+                            labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
+                            style={{ borderRadius: 10, borderColor: '#FFF' }}
+                            contentStyle={{ height: 35 }}
+                            rippleColor="rgba(171, 94, 94, .1)"
+                            icon="plus"
+                            mode="outlined"
+                            onPress={() => pricesDropdownPress.current?.onDropdownPress()}
+                        >
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                                Add price
+                            </Text>
+                        </Button>
+                    </DropdownSelect>
                 </View>
             </>
         )
