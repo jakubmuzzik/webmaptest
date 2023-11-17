@@ -137,26 +137,25 @@ const DropdownSelect = forwardRef((props, ref) => {
                                 {filteredValuesRef.current.map((value) => {
                                     const selected = multiselect ? text.includes(value) : text === value
                                     return (
-                                        <HoverableView key={value} hoveredBackgroundColor={selected ? "rgba(220, 46, 46, .17)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .12)" : '#FFF'}>
-                                            <TouchableRipple
-                                                onPress={() => onValuePress(value)}
-                                                style={{ padding: SPACING.xx_small, paddingHorizontal: SPACING.x_small, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
-                                                rippleColor="rgba(220, 46, 46, .22)"
-                                            >
-                                                <>
-                                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                                        {value}
-                                                    </Text>
-                                                    {
-                                                        multiselect
-                                                        && (
-                                                            selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
-                                                                : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
-                                                        )
-                                                    }
-                                                </>
-                                            </TouchableRipple>
-                                        </HoverableView>
+                                        <TouchableRipple
+                                            key={value}
+                                            onPress={() => onValuePress(value)}
+                                            style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: selected ? "rgba(220, 46, 46, .22)" : undefined }}
+                                            rippleColor="rgba(220, 46, 46, .22)"
+                                        >
+                                            <>
+                                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                                    {value}
+                                                </Text>
+                                                {
+                                                    multiselect
+                                                    && (
+                                                        selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
+                                                            : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
+                                                    )
+                                                }
+                                            </>
+                                        </TouchableRipple>
                                     )
                                 })}
                             </ScrollView>
@@ -178,7 +177,7 @@ const DropdownSelect = forwardRef((props, ref) => {
             >
                 {children ? children : <TextInput
                     pointerEvents="none"
-                    label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
+                    label={<Text style={[labelStyle, { marginHorizontal: 2, zIndex: 2  }]}>{label}</Text>}
                     placeholder={placeholder}
                     textColor={textColor}
                     outlineColor={isHovered ? hoveredBorderColor : borderColor}
@@ -188,8 +187,8 @@ const DropdownSelect = forwardRef((props, ref) => {
                     error={errorMessage}
                     mode={mode}
                     value={text}
-                    left={leftIconName && <TextInput.Icon size={normalize(20)} icon={leftIconName} pointerEvents="none" />}
-                    right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} pointerEvents="none" />}
+                    left={leftIconName && <TextInput.Icon color={textStyle.color} size={normalize(20)} icon={leftIconName} pointerEvents="none" />}
+                    right={rightIconName && <TextInput.Icon color={textStyle.color} size={normalize(20)} icon={rightIconName} pointerEvents="none" />}
                     contentStyle={[
                         text ? { ...textStyle } : { ...placeholderStyle }
                     ]}
@@ -198,6 +197,7 @@ const DropdownSelect = forwardRef((props, ref) => {
                     }}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
+                    theme={{ colors: { background: backgroundColor } }}
                 />}
                 {errorMessage && <HelperText type="error" visible>
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
@@ -225,9 +225,9 @@ const styles = StyleSheet.create({
         marginRight: SPACING.page_horizontal,
         borderRadius: 10,
         paddingVertical: SPACING.xxx_small,
-        shadowColor: COLORS.red,
+        shadowColor: COLORS.lightBlack,
         borderWidth: 2,
-        borderColor: COLORS.placeholder,
+        borderColor: COLORS.lightBlack,
         shadowOffset: {
             width: 0,
             height: 4,

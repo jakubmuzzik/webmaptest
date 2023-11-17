@@ -584,7 +584,7 @@ const Filters = forwardRef((props, ref) => {
                             <Button
                                 labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                                 style={{ flexShrink: 1, borderRadius: 10 }}
-                                buttonColor={COLORS.lightBlack}
+                                buttonColor={COLORS.red}
                                 mode="contained"
                                 onPress={onApplyFiltersPress}
                             >

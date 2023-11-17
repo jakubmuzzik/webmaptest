@@ -22,7 +22,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
-import { TouchableRipple } from 'react-native-paper'
+import { TouchableRipple, Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
@@ -132,27 +132,38 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                             {filteredServicesRef.current.map(service => {
                                 const selected = services.includes(service)
                                 return (
-                                    <HoverableView key={service} hoveredBackgroundColor={selected ?  "rgba(220, 46, 46, .22)" : COLORS.hoveredWhite} backgroundColor={selected ? "rgba(220, 46, 46, .18)" : '#FFF'}>
-                                        <TouchableRipple
-                                            onPress={() => onSelect(service)}
-                                            style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
-                                            rippleColor="rgba(220, 46, 46, .22)"
-                                        >
-                                            <>
-                                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                                    {service}
-                                                </Text>
-                                                {
-                                                    selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
-                                                        : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
-                                                }
-                                            </>
-                                        </TouchableRipple>
-                                    </HoverableView>
+                                    <TouchableRipple
+                                        key={service}
+                                        onPress={() => onSelect(service)}
+                                        style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: selected ? "rgba(220, 46, 46, .22)" : undefined }}
+                                        rippleColor="rgba(220, 46, 46, .32)"
+                                    >
+                                        <>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                                {service}
+                                            </Text>
+                                            {
+                                                selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
+                                                    : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
+                                            }
+                                        </>
+                                    </TouchableRipple>
                                 )
 
                             })}
                         </Animated.ScrollView>
+
+                        <View style={{ borderTopWidth: 1, borderColor: COLORS.placeholder, flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small }}>
+                            <Button
+                                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
+                                style={{ flexShrink: 1, borderRadius: 10 }}
+                                buttonColor={COLORS.red}
+                                mode="contained"
+                                onPress={closeModal}
+                            >
+                                Done
+                            </Button>
+                        </View>
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>

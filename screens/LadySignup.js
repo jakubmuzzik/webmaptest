@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react'
 import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button, TouchableRipple, Chip, Icon, IconButton } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, TextInput, Icon } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
@@ -21,6 +21,7 @@ import {
     BREAST_TYPES,
     EYE_COLORS
 } from '../labels'
+import { MotiView } from 'moti'
 
 const LadySignup = ({ route }) => {
     const [data, setData] = useState({
@@ -228,11 +229,12 @@ const LadySignup = ({ route }) => {
                         label="Name"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        textColor='#000'
+                        backgroundColor={COLORS.grey}
+                        textColor='#FFF'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.name}
                         setText={(text) => onValueChange(text, 'name')}
                         leftIconName="badge-account-outline"
@@ -243,11 +245,12 @@ const LadySignup = ({ route }) => {
                         label="Email"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        textColor='#000'
+                        backgroundColor={COLORS.grey}
+                        textColor='#FFF'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.email}
                         setText={(text) => onValueChange(text, 'email')}
                         leftIconName="email-outline"
@@ -257,15 +260,16 @@ const LadySignup = ({ route }) => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <HoverableInput
-                        placeholder="Password (8 or more characters)"
+                        placeholder="8 or more characters"
                         label="Password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        textColor='#000'
+                        backgroundColor={COLORS.grey}
+                        textColor='#FFF'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.password}
                         setText={(text) => onValueChange(text, 'password')}
                         leftIconName='lock-outline'
@@ -280,11 +284,12 @@ const LadySignup = ({ route }) => {
                         label="Confirm password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        textColor='#000'
+                        backgroundColor={COLORS.grey}
+                        textColor='#FFF'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.confirmPassword}
                         setText={(text) => onValueChange(text, 'confirmPassword')}
                         leftIconName="lock-outline"
@@ -309,13 +314,14 @@ const LadySignup = ({ route }) => {
                     <HoverableInput
                         placeholder="DD.MM.YYYY"
                         label="Date of birth"
-                        borderColor={COLORS.placeholder}
+                        borderColor='#FFF'
                         hoveredBorderColor={COLORS.red}
-                        textColor='#000'
+                        textColor='#FFF'
+                        backgroundColor={COLORS.grey}
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, minWidth: 110 }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={getDateOfBirth()}
                         setText={(text) => onBirthdateChange(text)}
                         errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
@@ -325,11 +331,12 @@ const LadySignup = ({ route }) => {
                         placeholder="Select your sexuality"
                         label="Sexuality"
                         borderColor={COLORS.placeholder}
+                        backgroundColor={COLORS.grey}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.sexuality}
                         setText={(text) => onValueChange(text, 'sexuality')}
@@ -344,13 +351,14 @@ const LadySignup = ({ route }) => {
                         searchable
                         searchPlaceholder="Search nationality"
                         placeholder="Select your nationality"
+                        backgroundColor={COLORS.grey}
                         label="Nationality"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.nationality}
                         setText={(text) => onValueChange(text, 'nationality')}
@@ -363,13 +371,14 @@ const LadySignup = ({ route }) => {
                         searchable
                         searchPlaceholder="Search language"
                         placeholder="Select languages"
+                        backgroundColor={COLORS.grey}
                         label="Languages"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.languages.join(', ')}
                         setText={(text) => onMultiPicklistChange(text, 'languages')}
@@ -384,11 +393,12 @@ const LadySignup = ({ route }) => {
                         label="Height (cm)"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.height}
                         setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
                         errorMessage={showPersonalDetailsErrorMessages && !data.height ? 'Enter your height' : undefined}
@@ -400,10 +410,11 @@ const LadySignup = ({ route }) => {
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
+                        backgroundColor={COLORS.grey}
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.weight}
                         setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
                         errorMessage={showPersonalDetailsErrorMessages && !data.weight ? 'Enter your weight'  : undefined}
@@ -417,11 +428,12 @@ const LadySignup = ({ route }) => {
                         label="Body type"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.bodyType}
                         setText={(text) => onValueChange(text, 'bodyType')}
                         rightIconName='chevron-down'
@@ -433,11 +445,12 @@ const LadySignup = ({ route }) => {
                         label="Pubic hair"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.pubicHair}
                         setText={(text) => onValueChange(text, 'pubicHair')}
                         rightIconName='chevron-down'
@@ -452,11 +465,12 @@ const LadySignup = ({ route }) => {
                         label="Breast size"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.breastSize}
                         setText={(text) => onValueChange(text, 'breastSize')}
                         rightIconName='chevron-down'
@@ -468,11 +482,12 @@ const LadySignup = ({ route }) => {
                         label="Breast type"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.breastType}
                         setText={(text) => onValueChange(text, 'breastType')}
                         rightIconName='chevron-down'
@@ -487,11 +502,12 @@ const LadySignup = ({ route }) => {
                         label="Hair color"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.hairColor}
                         setText={(text) => onValueChange(text, 'hairColor')}
                         rightIconName='chevron-down'
@@ -503,11 +519,12 @@ const LadySignup = ({ route }) => {
                         label="Eye color"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
+                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.eyeColor}
                         setText={(text) => onValueChange(text, 'eyeColor')}
                         rightIconName='chevron-down'
@@ -525,21 +542,20 @@ const LadySignup = ({ route }) => {
                     3. Services & Pricing
                 </Text>
 
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
+                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
                     Services ({data.services.length})
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                     {data.services.map((service) => (
-                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={"rgba(220, 46, 46, .22)"} backgroundColor={'rgba(220, 46, 46, .18)'}>
+                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredSecondaryRed} backgroundColor={COLORS.secondaryRed}>
                             <TouchableRipple
-                                onPress={onAddServicePress}
-                                rippleColor="rgba(220, 46, 46, .22)"
+                                onPress={() => onMultiPicklistChange(service, 'services')}
                                 style={styles.chip}
                             >
                                 <>
-                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small }}>{service}</Text>
-                                    <Ionicons onPress={() => onMultiPicklistChange(service, 'services')} name="close" size={normalize(18)} color="black" />
+                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small, color: '#FFF' }}>{service}</Text>
+                                    <Ionicons onPress={() => onMultiPicklistChange(service, 'services')} name="close" size={normalize(18)} color="white" />
                                 </>
                             </TouchableRipple>
                         </HoverableView>
@@ -547,23 +563,23 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
-                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.placeholder, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredWhite}>
-                        <TouchableRipple
-                            onPress={onAddServicePress}
-                            style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small,  justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
-                        >
-                            <>
-                                <Ionicons name="add-outline" size={normalize(18)} color="black" />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                    Add Service
-                                </Text>
-                            </>
-                        </TouchableRipple>
-                    </HoverableView>
+                    <Button
+                        labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
+                        style={{ borderRadius: 10, borderColor: '#FFF' }}
+                        contentStyle={{ height: 35 }}
+                        rippleColor="rgba(171, 94, 94, .1)"
+                        icon="plus"
+                        mode="outlined"
+                        onPress={onAddServicePress}
+                    >
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                            Add service
+                        </Text>
+                    </Button>
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium, alignItems: 'center' }}>
-                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                    <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                         Pricing
                     </Text>
 
@@ -572,67 +588,69 @@ const LadySignup = ({ route }) => {
                         values={CURRENCIES}
                         setText={(text) => onValueChange(text, 'currency')}
                     >
-                        <TouchableOpacity
+                        <Button 
+                            icon="chevron-down" 
+                            labelStyle={{ fontStyle: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                            mode="text" 
+                            rippleColor="rgba(171, 94, 94, .1)"
+                            style={{ borderRadius: 10 }}
+                            contentStyle={{ flexDirection: 'row-reverse' }}
                             onPress={() => currencyDropdownRef.current?.onDropdownPress()}
-                            style={styles.chip}
                         >
-                            <>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: 5 }}>{data.currency}</Text>
-                                <MaterialIcons name="keyboard-arrow-down" size={normalize(20)} color="black" />
-                            </>
-                        </TouchableOpacity>
+                           {data.currency}
+                        </Button>
                     </DropdownSelect>
                 </View>
                 <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]} backgroundColor={COLORS.hoveredWhite} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Length</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>0.5 hour</Text>
                         </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>1 hour</Text>
                         </HoverableView>
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Incall</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>1000 CZK</Text>
                         </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>2500 CZK</Text>
                         </HoverableView>
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.hoveredWhite }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
                             <Text style={styles.tableHeaderText}>Outcall</Text>
                         </View>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>1500 CZK</Text>
                         </HoverableView>
-                        <HoverableView style={styles.column} backgroundColor={'#FFF'} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                        <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                             <Text style={styles.tableHeaderValue}>3000 CZK</Text>
                         </HoverableView>
                     </View>
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small }}>
-                    <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, borderColor: COLORS.placeholder, borderWidth: 2 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} >
-                        <TouchableRipple
-                            //onPress={onPricePress}
-                            style={{ paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}
-                        >
-                            <>
-                                <Ionicons name="add-outline" size={normalize(18)} color="black" />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium,  }}>
-                                    Add Price
-                                </Text>
-                            </>
-                        </TouchableRipple>
-                    </HoverableView>
+                    <Button
+                        labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
+                        style={{ borderRadius: 10, borderColor: '#FFF' }}
+                        contentStyle={{ height: 35 }}
+                        rippleColor="rgba(171, 94, 94, .1)"
+                        icon="plus"
+                        mode="outlined"
+                        onPress={onAddServicePress}
+                    >
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                            Add price
+                        </Text>
+                    </Button>
                 </View>
             </>
         )
@@ -671,62 +689,82 @@ const LadySignup = ({ route }) => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={{ flex: 1, width: normalize(800), maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20 }}
-                contentContainerStyle={{ flexGrow: 1 }}
-                onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
-            >
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: COLORS.lightBlack, margin: SPACING.x_large, marginBottom: SPACING.medium }}>
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
+            <View style={{ width: normalize(800), alignSelf: 'center', }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
                     {/* Lady Sign up */}
                 </Text>
-                <View style={{ marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, }}>
+                {/* <View style={{ marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, }}>
                     <ProgressBar progress={(index) / Object.keys(pages).length} color={COLORS.error} />
-                </View>
+                </View> */}
+            </View>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: 40 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                transition={{
+                    type: 'timing',
+                    duration: 400,
+                }}
+                style={{ width: normalize(800), alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={{ flex: 1, width: normalize(800), maxWidth: '100%', backgroundColor: COLORS.grey, borderRadius: 20 }}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+                >
+                    <View style={{ marginBottom: SPACING.small, marginTop: SPACING.large, marginHorizontal: SPACING.x_large, }}>
+                        <ProgressBar progress={(index) / Object.keys(pages).length} color={COLORS.error} />
+                    </View>
 
-                <FlatList
-                    ref={viewPagerRef}
-                    onScroll={handleScroll}
-                    style={{ flex: 1 }}
-                    data={Object.keys(pages)}
-                    renderItem={renderPage}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    bounces={false}
-                    pagingEnabled
-                    disableIntervalMomentum
-                    initialScrollIndex={0}
-                    scrollEnabled={false}
-                />
+                    <FlatList
+                        ref={viewPagerRef}
+                        onScroll={handleScroll}
+                        style={{ flex: 1 }}
+                        data={Object.keys(pages)}
+                        renderItem={renderPage}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        bounces={false}
+                        pagingEnabled
+                        disableIntervalMomentum
+                        initialScrollIndex={0}
+                        scrollEnabled={false}
+                    />
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.medium, }}>
-                    {index === 0 ? <View /> : <Button
-                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
-                        style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
-                        buttonColor={COLORS.grey}
-                        rippleColor="rgba(76,76,76,.3)"
-                        mode="outlined"
-                        onPress={paginateBack}
-                    >
-                        Back
-                    </Button>}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.medium, }}>
+                        {index === 0 ? <View /> : <Button
+                            labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
+                            style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
+                            buttonColor={COLORS.grey}
+                            rippleColor="rgba(76,76,76,.3)"
+                            mode="outlined"
+                            onPress={paginateBack}
+                        >
+                            Back
+                        </Button>}
 
-                    <Button
-                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
-                        style={{ flexShrink: 1, borderRadius: 10 }}
-                        buttonColor={COLORS.red}
-                        rippleColor="rgba(220, 46, 46, .16)"
-                        mode="contained"
-                        onPress={onNextPress}
-                        loading={nextButtonIsLoading}
-                    >
-                        {index === Object.keys(pages).length - 1 ? 'Sign up' : 'Next'}
-                    </Button>
-                </View>
-            </ScrollView>
+                        <Button
+                            labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
+                            style={{ flexShrink: 1, borderRadius: 10 }}
+                            buttonColor={COLORS.red}
+                            rippleColor="rgba(220, 46, 46, .16)"
+                            mode="contained"
+                            onPress={onNextPress}
+                            loading={nextButtonIsLoading}
+                        >
+                            {index === Object.keys(pages).length - 1 ? 'Sign up' : 'Next'}
+                        </Button>
+                    </View>
+                </ScrollView>
 
-            <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route}/>
+                <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />
+            </MotiView>
         </View>
     )
 }
@@ -735,7 +773,7 @@ export default LadySignup
 
 const styles = StyleSheet.create({
     pageHeaderText: {
-        color: COLORS.lightBlack, 
+        color: '#FFF', 
         fontFamily: FONTS.bold, 
         fontSize: FONT_SIZES.x_large, 
         marginHorizontal: SPACING.x_large, 
@@ -747,28 +785,29 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.xx_small, 
         paddingVertical: 5, 
         borderRadius: 8,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
-        borderWidth: 0.5,
+       // borderColor: 'rgba(255, 255, 255, 0.5)',
+       // borderWidth: 0.5,
         alignItems: 'center',
         justifyContent: 'center',
     },
     table: {
         borderWidth: 1,
-        borderColor: 'grey',
+        borderColor: COLORS.secondaryRed,
         flexDirection: 'row',
         borderRadius: 10,
         overflow:'hidden'
     },
     tableHeaderText: { 
         fontFamily: FONTS.bold, 
-        fontSize: FONT_SIZES.medium 
+        fontSize: FONT_SIZES.medium ,
+        color: '#FFF'
     },
     tableHeaderValue: { 
         fontFamily: FONTS.medium, 
-        fontSize: FONT_SIZES.medium 
+        fontSize: FONT_SIZES.medium ,
+        color: '#FFF'
     },
     column: {
         padding: SPACING.xx_small
-        
     }
 })
