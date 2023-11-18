@@ -12,7 +12,8 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
 import { normalize } from '../../utils'
 import {
-    SERVICES
+    SERVICES,
+    MASSAGE_SERVICES
 } from '../../labels'
 import {
     COLORS,
@@ -23,6 +24,7 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import { TouchableRipple, Button } from 'react-native-paper'
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
 
@@ -47,6 +49,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
     const [search, setSearch] = useState('')
 
     const filteredServicesRef = useRef([...SERVICES])
+    const filteredMassageServicesRef = useRef([...MASSAGE_SERVICES])
 
     const scrollY = useSharedValue(0)
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -65,8 +68,9 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
 
     const onSearch = useCallback((search) => {
         filteredServicesRef.current = search ? [...SERVICES].filter(service => service.toLowerCase().includes(search.toLowerCase())) : [...SERVICES]
+        filteredMassageServicesRef.current = search ? [...MASSAGE_SERVICES].filter(service => service.toLowerCase().includes(search.toLowerCase())) : [...MASSAGE_SERVICES]
         setSearch(search)
-    }, [filteredServicesRef.current])
+    }, [filteredServicesRef.current, filteredMassageServicesRef.current])
 
     const closeModal = () => {
         translateY.value = withTiming(window.height, {
@@ -129,27 +133,64 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                                 <Ionicons onPress={() => onSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
                             </HoverableView>
 
+                            {(filteredServicesRef.current.some(filteredService => SERVICES.includes(filteredService)) || !search) && <View style={styles.section}>
+                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Sexual</Text>
+                            </View>}
+
                             {filteredServicesRef.current.map(service => {
                                 const selected = services.includes(service)
                                 return (
                                     <TouchableRipple
                                         key={service}
                                         onPress={() => onSelect(service)}
-                                        style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', backgroundColor: selected ? "rgba(220, 46, 46, .22)" : undefined }}
-                                        rippleColor="rgba(220, 46, 46, .32)"
+                                        style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
+                                        //rippleColor="rgba(220, 46, 46, .32)"
                                     >
-                                        <>
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                                {service}
-                                            </Text>
-                                            {
-                                                selected ? <MaterialIcons name="done" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="green" />
-                                                    : <Ionicons name="add-outline" style={{ height: normalize(20), width: normalize(20) }} size={normalize(20)} color="black" />
-                                            }
-                                        </>
+                                        <BouncyCheckbox
+                                            pointerEvents="none"
+                                            //style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
+                                            disableBuiltInState
+                                            isChecked={selected}
+                                            size={normalize(21)}
+                                            fillColor={COLORS.red}
+                                            unfillColor="#FFFFFF"
+                                            text={service}
+                                            iconStyle={{ borderRadius: 3 }}
+                                            innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                        />
                                     </TouchableRipple>
                                 )
+                            })}
 
+                            {(filteredMassageServicesRef.current.some(filteredService => MASSAGE_SERVICES.includes(filteredService)) || !search) && <View style={styles.section}>
+                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Massage</Text>
+                            </View>}
+
+                            {filteredMassageServicesRef.current.map(service => {
+                                const selected = services.includes(service)
+                                return (
+                                    <TouchableRipple
+                                        key={service}
+                                        onPress={() => onSelect(service)}
+                                        style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
+                                    //rippleColor="rgba(220, 46, 46, .32)"
+                                    >
+                                        <BouncyCheckbox
+                                            pointerEvents="none"
+                                            //style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.xxx_small }}
+                                            disableBuiltInState
+                                            isChecked={selected}
+                                            size={normalize(21)}
+                                            fillColor={COLORS.red}
+                                            unfillColor="#FFFFFF"
+                                            text={service}
+                                            iconStyle={{ borderRadius: 3 }}
+                                            innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                        />
+                                    </TouchableRipple>
+                                )
                             })}
                         </Animated.ScrollView>
 
@@ -242,5 +283,10 @@ const styles = StyleSheet.create({
         paddingVertical: SPACING.xx_small, 
         paddingLeft: SPACING.xx_small, 
         alignItems: 'center'
+    },
+    section: {
+        paddingVertical: SPACING.xx_small,
+        paddingHorizontal: SPACING.small,
+        backgroundColor: COLORS.hoveredWhite
     },
 })

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, forwardRef, useImperativeHandle } from "react"
+import React, { useState, useCallback, useRef, forwardRef, useImperativeHandle, useEffect } from "react"
 import { View, useWindowDimensions, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, TextInput as NativeTextInput } from 'react-native'
 import { TextInput, HelperText, TouchableRipple } from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from "../constants"
@@ -43,6 +43,10 @@ const DropdownSelect = forwardRef((props, ref) => {
     const [visible, setVisible] = useState(false)
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState(COLORS.placeholder)
+
+    useEffect(() => {
+        filteredValuesRef.current = values
+    }, [values])
 
     const { height } = useWindowDimensions()
 

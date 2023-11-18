@@ -1,13 +1,14 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button, TouchableRipple, DataTable, Icon } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, HelperText, Icon } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import BouncyCheckbox from 'react-native-bouncy-checkbox'
 
 import { 
     LANGUAGES, 
@@ -15,7 +16,6 @@ import {
     BODY_TYPES,
     PUBIC_HAIR_VALUES,
     SEXUAL_ORIENTATION,
-    SERVICES,
     HAIR_COLORS,
     BREAST_SIZES,
     BREAST_TYPES,
@@ -24,7 +24,7 @@ import {
 import { MotiView } from 'moti'
 import { user } from '../redux/reducers/user'
 
-const HOURS = ['0.5 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours','3.5 hour','4 hours','4.5 hour','5 hours','5.5 hour','6 hours','6.5 hour','7 hours','7.5 hour','8 hours','8.5 hour','9 hours','9.5 hour','10 hours','10.5 hour','11 hours','11.5 hour','12 hours','12.5 hour','13 hours','13.5 hour','14 hours','14.5 hour','15 hours','15.5 hour','16 hours','16.5 hour','17 hours','17.5 hour','18 hours','18.5 hour','19 hours','19.5 hour','20 hours','20.5 hour','21 hours','21.5 hour','22 hours','22.5 hour','23 hours','23.5 hour','24 hours']
+const HOURS = ['0.5 hour','1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours','3.5 hour','4 hours','4.5 hour','5 hours','5.5 hour','6 hours','6.5 hour','7 hours','7.5 hour','8 hours','8.5 hour','9 hours','9.5 hour','10 hours','10.5 hour','11 hours','11.5 hour','12 hours','12.5 hour','13 hours','13.5 hour','14 hours','14.5 hour','15 hours','15.5 hour','16 hours','16.5 hour','17 hours','17.5 hour','18 hours','18.5 hour','19 hours','19.5 hour','20 hours','20.5 hour','21 hours','21.5 hour','22 hours','22.5 hour','23 hours','23.5 hour','24 hours']
 
 const LadySignup = ({ route }) => {
     const [data, setData] = useState({
@@ -49,13 +49,17 @@ const LadySignup = ({ route }) => {
         sexuality: '',
         services: [],
         currency: 'CZK',
-        prices: [{length: 1, incall: '', outcall: ''}]
+        prices: [{length: 1, incall: '', outcall: ''}], //{length: 1, incall: '', outcall: ''}
+        incall: false,
+        outcall: false
     })
+
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
     const [showLocationErrorMessages, setShowLocationErrorMessages] = useState(false)
     const [showServicesErrorMessages, setShowServicesErrorMessages] = useState(false)
     const [showPhotosErrorMessages, setShowPhotosErrorMessages] = useState(false)
+    const [showSelectServiceError, setShowSelectServiceError] = useState(false)
 
     const [servicesPickerVisible, setServicesPickerVisible] = useState(false)
 
@@ -67,6 +71,23 @@ const LadySignup = ({ route }) => {
     const viewPagerX = useRef(0)
     const currencyDropdownRef = useRef()
     const pricesDropdownPress = useRef()
+
+    useEffect(() => {
+        return 
+        if (setShowSelectServiceError && (
+            data.outcall || data.incall
+        )) {
+            setShowSelectServiceError(false)
+        }
+
+        if (!data.outcall && !data.incall && (data.services.length || data.prices.length)) {
+            setData(data => ({
+                ...data,
+                services: [],
+                prices: []
+            }))
+        }
+    }, [data.outcall, data.incall])
 
     const updateSecureTextEntry = () => {
         setData({
@@ -218,13 +239,28 @@ const LadySignup = ({ route }) => {
     }, [])
 
     const onAddServicePress = useCallback(() => {
+        if (!data.outcall && !data.incall) {
+            setShowSelectServiceError(true)
+            return
+        }
+
         setServicesPickerVisible(true)
-    }, [])
+    }, [data.incall, data.outcall])
+
+    const onAddNewPricePress = useCallback((val) => {
+        if (!data.outcall && !data.incall) {
+            setShowSelectServiceError(true)
+            return
+        }
+
+        pricesDropdownPress.current?.onDropdownPress()
+    }, [data.outcall, data.incall, pricesDropdownPress.current])
 
     const onAddNewPrice = useCallback((val) => {
         setData(data => ({
             ...data,
-            ['prices']: data.prices.concat({ length: Number(val.substring(0, val.indexOf('h') - 1)), incall: '', outcall: '' })
+            ['prices']: (data.prices.concat({ length: Number(val.substring(0, val.indexOf('h') - 1)), incall: '', outcall: '' }))
+                .sort((a, b) => a.length - b.length)
         }))
     }, [])
 
@@ -554,13 +590,47 @@ const LadySignup = ({ route }) => {
                     3. Services & Pricing
                 </Text>
 
-                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.x_small }}>
+                <View style={{ marginHorizontal: SPACING.x_large, flexDirection: 'row', marginTop: SPACING.xx_small }}>
+                    <BouncyCheckbox
+                        style={{ marginRight: SPACING.small }}
+                        disableBuiltInState
+                        isChecked={data.incall}
+                        onPress={() => onValueChange(!data.incall, 'incall')}
+                        size={normalize(21)}
+                        fillColor={COLORS.red}
+                        unfillColor="#FFFFFF"
+                        text="Incall"
+                        iconStyle={{ borderRadius: 3 }}
+                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                        textStyle={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                    />
+                    <BouncyCheckbox
+                        style={{ marginRight: SPACING.small }}
+                        disableBuiltInState
+                        isChecked={data.outcall}
+                        onPress={() => onValueChange(!data.outcall, 'outcall')}
+                        size={normalize(21)}
+                        fillColor={COLORS.red}
+                        unfillColor="#FFFFFF"
+                        text="Outcall"
+                        iconStyle={{ borderRadius: 3 }}
+                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                        textStyle={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                    />
+                </View>
+                {showSelectServiceError && <HelperText style={{ marginHorizontal: SPACING.x_large, marginTop: SPACING.xxx_small, padding: 0 }} type="error" visible>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
+                        Select at least one type of service
+                    </Text>
+                </HelperText>}
+
+                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium }}>
                     Services ({data.services.length})
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                     {data.services.map((service) => (
-                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredSecondaryRed} backgroundColor={COLORS.secondaryRed}>
+                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredSecondaryRed} backgroundColor={COLORS.red}>
                             <TouchableRipple
                                 onPress={() => onMultiPicklistChange(service, 'services')}
                                 style={styles.chip}
@@ -590,66 +660,95 @@ const LadySignup = ({ route }) => {
                     </Button>
                 </View>
 
-                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.small, marginTop: SPACING.medium, alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium, alignItems: 'center' }}>
                     <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                         Pricing
                     </Text>
 
                     <DropdownSelect
                         ref={currencyDropdownRef}
+                        text={data.currency}
                         values={CURRENCIES}
                         setText={(text) => onValueChange(text, 'currency')}
                     >
-                        <Button 
-                            icon="chevron-down" 
-                            labelStyle={{ fontStyle: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                            mode="text" 
-                            rippleColor="rgba(171, 94, 94, .1)"
-                            style={{ borderRadius: 10 }}
-                            contentStyle={{ flexDirection: 'row-reverse' }}
+                        <TouchableOpacity 
                             onPress={() => currencyDropdownRef.current?.onDropdownPress()}
+                            style={{ marginLeft: SPACING.xxx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
                         >
-                           {data.currency}
-                        </Button>
+                            <Text style={{ fontStyle: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                                {data.currency}
+                            </Text>
+                            <MaterialCommunityIcons style={{ marginLeft: 4, }} name="chevron-down" size={normalize(20)} color="white" />
+                        </TouchableOpacity>
                     </DropdownSelect>
                 </View>
-                <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
+                {data.prices.length > 0 && <View style={[styles.table, { marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }]}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                             <Text style={styles.tableHeaderText}>Length</Text>
                         </View>
                         {data.prices.map(price => (
-                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                            <View key={price.length} style={styles.column}>
                                 <Text style={styles.tableHeaderValue}>{price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}</Text>
-                            </HoverableView>
+                            </View>
                         ))}
                     </View>
-                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
-                            <Text style={styles.tableHeaderText}>Incall</Text>
+                   {data.incall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                            <Text style={styles.tableHeaderText}>Incall ({data.currency})</Text>
                         </View>
                         {data.prices.map(price => (
-                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>{price.incall}</Text>
-                            </HoverableView>
+                            <View key={price.length} style={{ padding: 4 }}>
+                                <TextInput
+                                    style={[styles.column, {
+                                        fontFamily: FONTS.regular,
+                                        fontSize: FONT_SIZES.medium,
+                                        outlineStyle: 'none',
+                                        color: '#FFF',
+                                        height: styles.column.height - 8,
+                                        borderColor: '#FFF',
+                                        borderWidth: 1,
+                                        borderRadius: 10
+                                    }]}
+                                    //onChangeText={setSearch}
+                                    value={price.incall}
+                                    placeholder={'Price for ' + price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}
+                                    placeholderTextColor={COLORS.placeholder}
+                                />
+                            </View>
                         ))}
-                    </View>
-                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.secondaryRed }]}>
-                            <Text style={styles.tableHeaderText}>Outcall</Text>
+                    </View>}
+                    {data.outcall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                            <Text style={styles.tableHeaderText}>Outcall ({data.currency})</Text>
                         </View>
                         {data.prices.map(price => (
-                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>{price.outcall}</Text>
-                            </HoverableView>
+                            <View key={price.length} style={{ padding: 4 }}>
+                                <TextInput
+                                    style={[styles.column, {
+                                        fontFamily: FONTS.regular,
+                                        fontSize: FONT_SIZES.medium,
+                                        outlineStyle: 'none',
+                                        color: '#FFF',
+                                        height: styles.column.height - 8,
+                                        borderColor: '#FFF',
+                                        borderWidth: 1,
+                                        borderRadius: 10
+                                    }]}
+                                    //onChangeText={setSearch}
+                                    value={price.outcall}
+                                    placeholder={'Price for ' + price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}
+                                    placeholderTextColor={COLORS.placeholder}
+                                />
+                            </View>
                         ))}
-                    </View>
-                </View>
+                    </View>}
+                </View>}
 
-                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small }}>
+                <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
                     <DropdownSelect
                         ref={pricesDropdownPress}
-                        values={HOURS}
+                        values={HOURS.filter(hour => !data.prices.some(price => price.length === Number(hour.substring(0, hour.indexOf('h') - 1))))}
                         setText={onAddNewPrice}
                     >
                         <Button
@@ -659,7 +758,7 @@ const LadySignup = ({ route }) => {
                             rippleColor="rgba(171, 94, 94, .1)"
                             icon="plus"
                             mode="outlined"
-                            onPress={() => pricesDropdownPress.current?.onDropdownPress()}
+                            onPress={onAddNewPricePress}
                         >
                             <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                                 Add price
@@ -669,7 +768,7 @@ const LadySignup = ({ route }) => {
                 </View>
             </>
         )
-    }, [data, showServicesErrorMessages, contentWidth])
+    }, [data, showServicesErrorMessages, contentWidth, showSelectServiceError])
 
     const renderLocationAndAvailability = useCallback(() => {
         return (
@@ -705,13 +804,10 @@ const LadySignup = ({ route }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
-            <View style={{ width: normalize(800), alignSelf: 'center', }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
-                    {/* Lady Sign up */}
+                    Lady Sign up
                 </Text>
-                {/* <View style={{ marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, }}>
-                    <ProgressBar progress={(index) / Object.keys(pages).length} color={COLORS.error} />
-                </View> */}
             </View>
             <MotiView
                 from={{
@@ -726,10 +822,10 @@ const LadySignup = ({ route }) => {
                     type: 'timing',
                     duration: 400,
                 }}
-                style={{ width: normalize(800), alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
+                style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    style={{ flex: 1, width: normalize(800), maxWidth: '100%', backgroundColor: COLORS.grey, borderRadius: 20 }}
+                    style={{ flex: 1, maxWidth: '100%', backgroundColor: COLORS.grey, borderRadius: 20 }}
                     contentContainerStyle={{ flexGrow: 1 }}
                     onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
                 >
@@ -807,7 +903,7 @@ const styles = StyleSheet.create({
     },
     table: {
         borderWidth: 1,
-        borderColor: COLORS.secondaryRed,
+        borderColor: COLORS.lightGrey,
         flexDirection: 'row',
         borderRadius: 10,
         overflow:'hidden'
@@ -823,6 +919,8 @@ const styles = StyleSheet.create({
         color: '#FFF'
     },
     column: {
-        padding: SPACING.xx_small
+        paddingHorizontal: SPACING.xx_small,
+        height: normalize(45),
+        justifyContent: 'center'
     }
 })
