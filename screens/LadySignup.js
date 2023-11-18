@@ -49,7 +49,7 @@ const LadySignup = ({ route }) => {
         sexuality: '',
         services: [],
         currency: 'CZK',
-        prices: [{length: 1, incall: '', outcall: ''}], //{length: 1, incall: '', outcall: ''}
+        prices: [], //{length: 1, incall: '', outcall: ''}
         incall: false,
         outcall: false
     })
@@ -73,7 +73,6 @@ const LadySignup = ({ route }) => {
     const pricesDropdownPress = useRef()
 
     useEffect(() => {
-        return 
         if (setShowSelectServiceError && (
             data.outcall || data.incall
         )) {
