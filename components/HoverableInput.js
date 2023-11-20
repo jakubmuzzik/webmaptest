@@ -40,10 +40,8 @@ const HoverableInput = ({
             onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
         >
             <TextInput
-                //label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
-                label={<Text style={[labelStyle, { marginHorizontal: 2, zIndex: 2  }]}>{label}</Text>}
+                label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
                 placeholder={placeholder}
-                placeholderTextColor={placeholderStyle.color}
                 textColor={textColor}
                 outlineColor={isHovered ? hoveredBorderColor : borderColor}
                 activeOutlineColor={errorMessage ? COLORS.error : isHovered || isFocused ? hoveredBorderColor: borderColor}
@@ -53,8 +51,8 @@ const HoverableInput = ({
                 mode={mode}
                 value={text}
                 onChangeText={text => setText(text)}
-                left={leftIconName && <TextInput.Icon color={textStyle.color} style={{ alignSelf: 'center', height: height }} size={normalize(height ? height / 2 :  20)} icon={leftIconName} onPress={onLeftIconPress ?? undefined} />}
-                right={rightIconName && <TextInput.Icon  color={textStyle.color}size={normalize(20)} icon={rightIconName} onPress={onRightIconPress ?? undefined} />}
+                left={leftIconName && <TextInput.Icon style={{ alignSelf: 'center', height: height }} size={normalize(height ? height / 2 :  20)} icon={leftIconName} onPress={onLeftIconPress ?? undefined} />}
+                right={rightIconName && <TextInput.Icon size={normalize(20)} icon={rightIconName} onPress={onRightIconPress ?? undefined} />}
                 contentStyle={[
                     text ? {...textStyle} : {...placeholderStyle}
                 ]}
@@ -65,7 +63,6 @@ const HoverableInput = ({
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 secureTextEntry={secureTextEntry}
-                theme={{ colors: { background: backgroundColor } }}
             />
             {errorMessage && <HelperText type="error" visible>
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>

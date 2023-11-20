@@ -134,7 +134,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                             </HoverableView>
 
                             {(filteredServicesRef.current.some(filteredService => SERVICES.includes(filteredService)) || !search) && <View style={styles.section}>
-                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Sexual</Text>
+                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Sexual services</Text>
                             </View>}
 
                             {filteredServicesRef.current.map(service => {
@@ -157,14 +157,14 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                                             text={service}
                                             iconStyle={{ borderRadius: 3 }}
                                             innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                            textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
                                         />
                                     </TouchableRipple>
                                 )
                             })}
 
                             {(filteredMassageServicesRef.current.some(filteredService => MASSAGE_SERVICES.includes(filteredService)) || !search) && <View style={styles.section}>
-                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Massage</Text>
+                                <Text style={{ textAlign: 'left', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>Massage services</Text>
                             </View>}
 
                             {filteredMassageServicesRef.current.map(service => {
@@ -174,7 +174,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                                         key={service}
                                         onPress={() => onSelect(service)}
                                         style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
-                                    //rippleColor="rgba(220, 46, 46, .32)"
+                                        rippleColor="rgba(220, 46, 46, .10)"
                                     >
                                         <BouncyCheckbox
                                             pointerEvents="none"
@@ -187,7 +187,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                                             text={service}
                                             iconStyle={{ borderRadius: 3 }}
                                             innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                            textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
                                         />
                                     </TouchableRipple>
                                 )
@@ -198,7 +198,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                             <Button
                                 labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                                 style={{ flexShrink: 1, borderRadius: 10 }}
-                                buttonColor={COLORS.red}
+                                buttonColor={COLORS.lightBlack}
                                 mode="contained"
                                 onPress={closeModal}
                             >

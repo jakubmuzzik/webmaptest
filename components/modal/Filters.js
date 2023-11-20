@@ -263,7 +263,7 @@ const Filters = forwardRef((props, ref) => {
                                             value: !filters.incall && !filters.outcall,
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: !filters.incall && !filters.outcall ? '#FFF' : '#000'}}>Both</Text>,
                                             onPress: () => setFilters(filters => ({...filters, outcall: false, incall: false})),
-                                            rippleColor:"rgba(220, 46, 46, .32)"
+                                            rippleColor: "rgba(220, 46, 46, .10)"
                                         },
                                         {
                                             style: {borderColor: COLORS.placeholder, backgroundColor: filters.outcall ? COLORS.red: 'transparent'},
@@ -271,7 +271,7 @@ const Filters = forwardRef((props, ref) => {
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.outcall ? '#FFF' : '#000'}}>Outcall</Text>,
                                             checkedColor: '#FFF',
                                             onPress: () => setFilters(filters => ({...filters, outcall: true, incall: false})),
-                                            rippleColor:"rgba(220, 46, 46, .32)",
+                                            rippleColor: "rgba(220, 46, 46, .10)",
                                         },
                                         { 
                                             style: {borderColor: COLORS.placeholder, backgroundColor: filters.incall ? COLORS.red: 'transparent', borderTopRightRadius: 10, borderBottomRightRadius: 10},
@@ -279,7 +279,7 @@ const Filters = forwardRef((props, ref) => {
                                             label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: filters.incall ? '#FFF' : '#000'}}>Incall</Text>,
                                             checkedColor: '#FFF',
                                             onPress: () => setFilters(filters => ({...filters, incall: true, outcall: false})),
-                                            rippleColor:"rgba(220, 46, 46, .32)",
+                                            rippleColor: "rgba(220, 46, 46, .10)",
                                         }
                                     ]}
                                 />
@@ -295,6 +295,7 @@ const Filters = forwardRef((props, ref) => {
                                             <Chip key={service}
                                                 style={{ marginRight: SPACING.xx_small, marginBottom: SPACING.xx_small, backgroundColor: selected ? COLORS.red : 'transparent' }}
                                                 mode="outlined"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                                 selectedColor={selected ? 'green' : '#000'}
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(service, 'services')}
@@ -338,7 +339,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(bodyType, 'bodyType')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {bodyType}
                                             </Chip>
@@ -359,7 +360,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(hairColor, 'hairColor')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {hairColor}
                                             </Chip>
@@ -380,7 +381,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(eyeColor, 'eyeColor')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {eyeColor}
                                             </Chip>
@@ -401,7 +402,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(pubicHair, 'pubicHair')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {pubicHair}
                                             </Chip>
@@ -422,7 +423,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(breastSize, 'breastSize')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {breastSize}
                                             </Chip>
@@ -443,7 +444,7 @@ const Filters = forwardRef((props, ref) => {
                                                 mode="outlined"
                                                 textStyle={{ fontFamily: selected ? FONTS.bold : FONTS.medium, fontSize: FONT_SIZES.medium, color: selected ? '#FFF' : '#000' }}
                                                 onPress={() => onMultiPicklistPress(breastType, 'breastType')}
-                                                rippleColor="rgba(220, 46, 46, .32)"
+                                                rippleColor= "rgba(220, 46, 46, .10)"
                                             >
                                                 {breastType}
                                             </Chip>
@@ -576,6 +577,7 @@ const Filters = forwardRef((props, ref) => {
                                 style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
                                 buttonColor="#FFF"
                                 mode="outlined"
+                                rippleColor='rgba(0,0,0,.1)'
                                 onPress={onClearFiltersPress}
                             >
                                 Clear all
@@ -584,7 +586,7 @@ const Filters = forwardRef((props, ref) => {
                             <Button
                                 labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                                 style={{ flexShrink: 1, borderRadius: 10 }}
-                                buttonColor={COLORS.red}
+                                buttonColor={COLORS.lightBlack}
                                 mode="contained"
                                 onPress={onApplyFiltersPress}
                             >

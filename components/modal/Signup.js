@@ -164,7 +164,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                         borderWidth: 1 
                     }}
                         onPress={() => setProfileType('member')}
-                        rippleColor="rgba(220, 46, 46, .32)"
+                        rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -187,7 +187,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                         borderWidth: 1 
                     }}
                         onPress={() => setProfileType('lady')}
-                        rippleColor="rgba(220, 46, 46, .32)"
+                        rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <>
                             <View>
@@ -234,7 +234,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableRipple style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: SPACING.x_small, marginRight: SPACING.x_small, borderRadius: 10 }}
                         onPress={() => setData({ ...data, gender: 'man' })}
-                        rippleColor="rgba(220, 46, 46, .32)"
+                        rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <Image
                             resizeMode='contain'
@@ -250,7 +250,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                     </TouchableRipple>
                     <TouchableRipple style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: SPACING.x_small, marginLeft: SPACING.x_small, borderRadius: 10 }}
                         onPress={() => setData({ ...data, gender: 'woman' })}
-                        rippleColor="rgba(220, 46, 46, .32)"
+                        rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <Image
                             resizeMode='contain'

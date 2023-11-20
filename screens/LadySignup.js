@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button, TouchableRipple, HelperText, Icon } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
@@ -50,8 +50,8 @@ const LadySignup = ({ route }) => {
         services: [],
         currency: 'CZK',
         prices: [], //{length: 1, incall: '', outcall: ''}
-        incall: false,
-        outcall: false
+        incall: true,
+        outcall: true
     })
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
@@ -59,7 +59,6 @@ const LadySignup = ({ route }) => {
     const [showLocationErrorMessages, setShowLocationErrorMessages] = useState(false)
     const [showServicesErrorMessages, setShowServicesErrorMessages] = useState(false)
     const [showPhotosErrorMessages, setShowPhotosErrorMessages] = useState(false)
-    const [showSelectServiceError, setShowSelectServiceError] = useState(false)
 
     const [servicesPickerVisible, setServicesPickerVisible] = useState(false)
 
@@ -71,22 +70,6 @@ const LadySignup = ({ route }) => {
     const viewPagerX = useRef(0)
     const currencyDropdownRef = useRef()
     const pricesDropdownPress = useRef()
-
-    useEffect(() => {
-        if (setShowSelectServiceError && (
-            data.outcall || data.incall
-        )) {
-            setShowSelectServiceError(false)
-        }
-
-        if (!data.outcall && !data.incall && (data.services.length || data.prices.length)) {
-            setData(data => ({
-                ...data,
-                services: [],
-                prices: []
-            }))
-        }
-    }, [data.outcall, data.incall])
 
     const updateSecureTextEntry = () => {
         setData({
@@ -238,22 +221,12 @@ const LadySignup = ({ route }) => {
     }, [])
 
     const onAddServicePress = useCallback(() => {
-        if (!data.outcall && !data.incall) {
-            setShowSelectServiceError(true)
-            return
-        }
-
         setServicesPickerVisible(true)
-    }, [data.incall, data.outcall])
+    }, [])
 
-    const onAddNewPricePress = useCallback((val) => {
-        if (!data.outcall && !data.incall) {
-            setShowSelectServiceError(true)
-            return
-        }
-
+    const onAddNewPricePress = useCallback(() => {
         pricesDropdownPress.current?.onDropdownPress()
-    }, [data.outcall, data.incall, pricesDropdownPress.current])
+    }, [pricesDropdownPress.current])
 
     const onAddNewPrice = useCallback((val) => {
         setData(data => ({
@@ -261,6 +234,21 @@ const LadySignup = ({ route }) => {
             ['prices']: (data.prices.concat({ length: Number(val.substring(0, val.indexOf('h') - 1)), incall: '', outcall: '' }))
                 .sort((a, b) => a.length - b.length)
         }))
+    }, [])
+
+    const onPriceDeletePress = useCallback((index) => {
+        setData(d => {
+            d.prices.splice(index, 1)
+            return {...d}
+        })
+    }, [])
+
+    const onPriceChange = useCallback((text, index, priceType) => {
+        //.replace(/[^0-9]/g, '')
+        setData(d => {
+            d.prices[index][priceType] = text.replace(/[^0-9]/g, '')
+            return {...d}
+        })
     }, [])
 
     const renderLoginInformation = useCallback(() => {
@@ -276,11 +264,10 @@ const LadySignup = ({ route }) => {
                         label="Name"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
-                        textColor='#FFF'
+                        textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, }}
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.name}
                         setText={(text) => onValueChange(text, 'name')}
@@ -292,11 +279,10 @@ const LadySignup = ({ route }) => {
                         label="Email"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
-                        textColor='#FFF'
+                        textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.email}
                         setText={(text) => onValueChange(text, 'email')}
@@ -311,11 +297,10 @@ const LadySignup = ({ route }) => {
                         label="Password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
-                        textColor='#FFF'
+                        textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.password}
                         setText={(text) => onValueChange(text, 'password')}
@@ -331,11 +316,10 @@ const LadySignup = ({ route }) => {
                         label="Confirm password"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
-                        textColor='#FFF'
+                        textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.confirmPassword}
                         setText={(text) => onValueChange(text, 'confirmPassword')}
@@ -361,14 +345,13 @@ const LadySignup = ({ route }) => {
                     <HoverableInput
                         placeholder="DD.MM.YYYY"
                         label="Date of birth"
-                        borderColor='#FFF'
+                        borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        textColor='#FFF'
-                        backgroundColor={COLORS.grey}
+                        textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, minWidth: 110 }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={getDateOfBirth()}
                         setText={(text) => onBirthdateChange(text)}
                         errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
@@ -378,12 +361,11 @@ const LadySignup = ({ route }) => {
                         placeholder="Select your sexuality"
                         label="Sexuality"
                         borderColor={COLORS.placeholder}
-                        backgroundColor={COLORS.grey}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.sexuality}
                         setText={(text) => onValueChange(text, 'sexuality')}
@@ -398,14 +380,13 @@ const LadySignup = ({ route }) => {
                         searchable
                         searchPlaceholder="Search nationality"
                         placeholder="Select your nationality"
-                        backgroundColor={COLORS.grey}
                         label="Nationality"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.nationality}
                         setText={(text) => onValueChange(text, 'nationality')}
@@ -418,14 +399,13 @@ const LadySignup = ({ route }) => {
                         searchable
                         searchPlaceholder="Search language"
                         placeholder="Select languages"
-                        backgroundColor={COLORS.grey}
                         label="Languages"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         text={data.languages.join(', ')}
                         setText={(text) => onMultiPicklistChange(text, 'languages')}
@@ -440,11 +420,10 @@ const LadySignup = ({ route }) => {
                         label="Height (cm)"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.height}
                         setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
@@ -457,10 +436,9 @@ const LadySignup = ({ route }) => {
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
-                        backgroundColor={COLORS.grey}
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.weight}
                         setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
@@ -475,11 +453,10 @@ const LadySignup = ({ route }) => {
                         label="Body type"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.bodyType}
                         setText={(text) => onValueChange(text, 'bodyType')}
@@ -492,11 +469,10 @@ const LadySignup = ({ route }) => {
                         label="Pubic hair"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.pubicHair}
                         setText={(text) => onValueChange(text, 'pubicHair')}
@@ -512,11 +488,10 @@ const LadySignup = ({ route }) => {
                         label="Breast size"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.breastSize}
                         setText={(text) => onValueChange(text, 'breastSize')}
@@ -529,11 +504,10 @@ const LadySignup = ({ route }) => {
                         label="Breast type"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.breastType}
                         setText={(text) => onValueChange(text, 'breastType')}
@@ -549,11 +523,10 @@ const LadySignup = ({ route }) => {
                         label="Hair color"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.hairColor}
                         setText={(text) => onValueChange(text, 'hairColor')}
@@ -566,11 +539,10 @@ const LadySignup = ({ route }) => {
                         label="Eye color"
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
-                        backgroundColor={COLORS.grey}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium  }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.eyeColor}
                         setText={(text) => onValueChange(text, 'eyeColor')}
@@ -589,53 +561,54 @@ const LadySignup = ({ route }) => {
                     3. Services & Pricing
                 </Text>
 
-                <View style={{ marginHorizontal: SPACING.x_large, flexDirection: 'row', marginTop: SPACING.xx_small }}>
-                    <BouncyCheckbox
-                        style={{ marginRight: SPACING.small }}
-                        disableBuiltInState
-                        isChecked={data.incall}
-                        onPress={() => onValueChange(!data.incall, 'incall')}
-                        size={normalize(21)}
-                        fillColor={COLORS.red}
-                        unfillColor="#FFFFFF"
-                        text="Incall"
-                        iconStyle={{ borderRadius: 3 }}
-                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                        textStyle={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
-                    />
-                    <BouncyCheckbox
-                        style={{ marginRight: SPACING.small }}
-                        disableBuiltInState
-                        isChecked={data.outcall}
-                        onPress={() => onValueChange(!data.outcall, 'outcall')}
-                        size={normalize(21)}
-                        fillColor={COLORS.red}
-                        unfillColor="#FFFFFF"
-                        text="Outcall"
-                        iconStyle={{ borderRadius: 3 }}
-                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                        textStyle={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
-                    />
-                </View>
-                {showSelectServiceError && <HelperText style={{ marginHorizontal: SPACING.x_large, marginTop: SPACING.xxx_small, padding: 0 }} type="error" visible>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
-                        Select at least one type of service
-                    </Text>
-                </HelperText>}
+                <Text style={{ marginTop: SPACING.x_small, marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                    Offering
+                </Text>
 
-                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium }}>
+                <SegmentedButtons
+                    style={{ marginHorizontal: SPACING.x_large}}
+                    onValueChange={() => null}
+                    theme={{ roundness: 1.5 }}
+                    buttons={[
+                        {
+                            style: { borderColor: COLORS.placeholder, backgroundColor: data.incall && data.outcall ? COLORS.red : 'transparent', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
+                            value: data.incall && data.outcall,
+                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: data.incall && data.outcall ? '#FFF' : '#000' }}>Both</Text>,
+                            onPress: () => setData(data => ({ ...data, outcall: true, incall: true })),
+                            rippleColor: "rgba(220, 46, 46, .10)"
+                        },
+                        {
+                            style: { borderColor: COLORS.placeholder, backgroundColor: data.outcall && !data.incall ? COLORS.red : 'transparent' },
+                            value: data.outcall && !data.incall,
+                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: data.outcall && !data.incall ? '#FFF' : '#000' }}>Outcall</Text>,
+                            checkedColor: '#FFF',
+                            onPress: () => setData(data => ({ ...data, outcall: true, incall: false })),
+                            rippleColor: "rgba(220, 46, 46, .10)"
+                        },
+                        {
+                            style: { borderColor: COLORS.placeholder, backgroundColor: data.incall && !data.outcall? COLORS.red : 'transparent', borderTopRightRadius: 10, borderBottomRightRadius: 10 },
+                            value: data.incall && !data.outcall,
+                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: data.incall && !data.outcall ? '#FFF' : '#000' }}>Incall</Text>,
+                            checkedColor: '#FFF',
+                            onPress: () => setData(data => ({ ...data, incall: true, outcall: false })),
+                            rippleColor: "rgba(220, 46, 46, .10)"
+                        }
+                    ]}
+                />
+
+                <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium }}>
                     Services ({data.services.length})
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                     {data.services.map((service) => (
-                        <HoverableView style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredSecondaryRed} backgroundColor={COLORS.red}>
+                        <HoverableView key={service} style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red}>
                             <TouchableRipple
                                 onPress={() => onMultiPicklistChange(service, 'services')}
                                 style={styles.chip}
                             >
                                 <>
-                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small, color: '#FFF' }}>{service}</Text>
+                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, marginRight: SPACING.xx_small, color: '#FFF' }}>{service}</Text>
                                     <Ionicons onPress={() => onMultiPicklistChange(service, 'services')} name="close" size={normalize(18)} color="white" />
                                 </>
                             </TouchableRipple>
@@ -645,22 +618,22 @@ const LadySignup = ({ route }) => {
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
                     <Button
-                        labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
-                        style={{ borderRadius: 10, borderColor: '#FFF' }}
+                        labelStyle={{ fontSize: normalize(20), color: '#000' }}
+                        style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
                         contentStyle={{ height: 35 }}
-                        rippleColor="rgba(171, 94, 94, .1)"
+                        rippleColor="rgba(0, 0, 0, .1)"
                         icon="plus"
                         mode="outlined"
                         onPress={onAddServicePress}
                     >
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}>
                             Add service
                         </Text>
                     </Button>
                 </View>
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium, alignItems: 'center' }}>
-                    <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                    <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                         Pricing
                     </Text>
 
@@ -674,10 +647,10 @@ const LadySignup = ({ route }) => {
                             onPress={() => currencyDropdownRef.current?.onDropdownPress()}
                             style={{ marginLeft: SPACING.xxx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
                         >
-                            <Text style={{ fontStyle: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}>
                                 {data.currency}
                             </Text>
-                            <MaterialCommunityIcons style={{ marginLeft: 4, }} name="chevron-down" size={normalize(20)} color="white" />
+                            <MaterialCommunityIcons style={{ marginLeft: 4, }} name="chevron-down" size={normalize(20)} color="black" />
                         </TouchableOpacity>
                     </DropdownSelect>
                 </View>
@@ -696,23 +669,22 @@ const LadySignup = ({ route }) => {
                         <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                             <Text style={styles.tableHeaderText}>Incall ({data.currency})</Text>
                         </View>
-                        {data.prices.map(price => (
+                        {data.prices.map((price, index) => (
                             <View key={price.length} style={{ padding: 4 }}>
                                 <TextInput
                                     style={[styles.column, {
                                         fontFamily: FONTS.regular,
                                         fontSize: FONT_SIZES.medium,
                                         outlineStyle: 'none',
-                                        color: '#FFF',
+                                        color: '#000',
                                         height: styles.column.height - 8,
-                                        borderColor: '#FFF',
+                                        borderColor: '#000',
                                         borderWidth: 1,
                                         borderRadius: 10
                                     }]}
-                                    //onChangeText={setSearch}
+                                    onChangeText={(text) => onPriceChange(text, index, 'incall')}
                                     value={price.incall}
-                                    placeholder={'Price for ' + price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}
-                                    placeholderTextColor={COLORS.placeholder}
+                                    placeholder='0'
                                 />
                             </View>
                         ))}
@@ -721,27 +693,41 @@ const LadySignup = ({ route }) => {
                         <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                             <Text style={styles.tableHeaderText}>Outcall ({data.currency})</Text>
                         </View>
-                        {data.prices.map(price => (
+                        {data.prices.map((price, index) => (
                             <View key={price.length} style={{ padding: 4 }}>
                                 <TextInput
                                     style={[styles.column, {
                                         fontFamily: FONTS.regular,
                                         fontSize: FONT_SIZES.medium,
                                         outlineStyle: 'none',
-                                        color: '#FFF',
+                                        color: '#000',
                                         height: styles.column.height - 8,
-                                        borderColor: '#FFF',
+                                        borderColor: '#000',
                                         borderWidth: 1,
                                         borderRadius: 10
                                     }]}
-                                    //onChangeText={setSearch}
+                                    onChangeText={(text) => onPriceChange(text, index, 'outcall')}
                                     value={price.outcall}
-                                    placeholder={'Price for ' + price.length + ((price['length'].toString()).includes('.') || price['length'] === 1 ? ' hour' : ' hours')}
-                                    placeholderTextColor={COLORS.placeholder}
+                                    placeholder='0'
                                 />
                             </View>
                         ))}
                     </View>}
+                    <View style={{ flexBasis: 45, flexShrink: 0, flexGrow: 0 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                            
+                        </View>
+                        {data.prices.map((price, index) => (
+                            <View key={price.length} style={{ alignItems: 'center', justifyContent: 'center', paddingRight: 4, height: normalize(45) }}>
+                                <IconButton
+                                    icon="delete-outline"
+                                    iconColor='black'
+                                    size={20}
+                                    onPress={() => onPriceDeletePress(index)}
+                                />
+                            </View>
+                        ))}
+                    </View>
                 </View>}
 
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
@@ -751,15 +737,15 @@ const LadySignup = ({ route }) => {
                         setText={onAddNewPrice}
                     >
                         <Button
-                            labelStyle={{ fontSize: normalize(20), color: '#FFF' }}
-                            style={{ borderRadius: 10, borderColor: '#FFF' }}
+                            labelStyle={{ fontSize: normalize(20), color: '#000' }}
+                            style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
                             contentStyle={{ height: 35 }}
-                            rippleColor="rgba(171, 94, 94, .1)"
+                            rippleColor="rgba(0, 0, 0, .1)"
                             icon="plus"
                             mode="outlined"
                             onPress={onAddNewPricePress}
                         >
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}>
                                 Add price
                             </Text>
                         </Button>
@@ -767,7 +753,7 @@ const LadySignup = ({ route }) => {
                 </View>
             </>
         )
-    }, [data, showServicesErrorMessages, contentWidth, showSelectServiceError])
+    }, [data, showServicesErrorMessages, contentWidth])
 
     const renderLocationAndAvailability = useCallback(() => {
         return (
@@ -788,7 +774,7 @@ const LadySignup = ({ route }) => {
     const pages = {
         'Login Information': renderServicesAndPricing,
         'Personal Details': renderPersonalDetails,
-        'Services & Pricing': renderLoginInformation,
+        'Services & Pricing': renderServicesAndPricing,
         'Location & Availability': renderLocationAndAvailability,
         'Upload Photos': renderUploadPhotos
     }
@@ -804,8 +790,8 @@ const LadySignup = ({ route }) => {
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
-                    Lady Sign up
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginTop: SPACING.small, color: '#FFF' }}>
+                    Lady sign up
                 </Text>
             </View>
             <MotiView
@@ -824,7 +810,7 @@ const LadySignup = ({ route }) => {
                 style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    style={{ flex: 1, maxWidth: '100%', backgroundColor: COLORS.grey, borderRadius: 20 }}
+                    style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20 }}
                     contentContainerStyle={{ flexGrow: 1 }}
                     onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
                 >
@@ -849,10 +835,10 @@ const LadySignup = ({ route }) => {
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.medium, }}>
                         {index === 0 ? <View /> : <Button
-                            labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
+                            labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
-                            buttonColor={COLORS.grey}
-                            rippleColor="rgba(76,76,76,.3)"
+                            //buttonColor={COLORS.grey}
+                            rippleColor="rgba(0,0,0,.1)"
                             mode="outlined"
                             onPress={paginateBack}
                         >
@@ -883,7 +869,7 @@ export default LadySignup
 
 const styles = StyleSheet.create({
     pageHeaderText: {
-        color: '#FFF', 
+        //color: '#FFF', 
         fontFamily: FONTS.bold, 
         fontSize: FONT_SIZES.x_large, 
         marginHorizontal: SPACING.x_large, 
@@ -915,7 +901,7 @@ const styles = StyleSheet.create({
     tableHeaderValue: { 
         fontFamily: FONTS.medium, 
         fontSize: FONT_SIZES.medium ,
-        color: '#FFF'
+        color: '#000'
     },
     column: {
         paddingHorizontal: SPACING.xx_small,
