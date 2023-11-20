@@ -562,7 +562,7 @@ const LadySignup = ({ route }) => {
                 </Text>
 
                 <Text style={{ marginTop: SPACING.x_small, marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
-                    Offering
+                    Available for:
                 </Text>
 
                 <SegmentedButtons
@@ -757,22 +757,22 @@ const LadySignup = ({ route }) => {
 
     const renderLocationAndAvailability = useCallback(() => {
         return (
-            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                4. Location & Availability
+            <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+                4. Location & Working Hours
             </Text>
         )
     }, [data, showLocationErrorMessages, contentWidth])
 
     const renderUploadPhotos = useCallback(() => {
         return (
-            <Text style={{ color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+            <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                 5. Upload Photos
             </Text>
         )
     }, [data, showPhotosErrorMessages, contentWidth])
 
     const pages = {
-        'Login Information': renderServicesAndPricing,
+        'Login Information': renderLoginInformation,
         'Personal Details': renderPersonalDetails,
         'Services & Pricing': renderServicesAndPricing,
         'Location & Availability': renderLocationAndAvailability,
