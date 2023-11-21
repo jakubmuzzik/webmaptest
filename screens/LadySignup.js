@@ -8,7 +8,7 @@ import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import { TabView } from 'react-native-tab-view'
 
 import { 
     LANGUAGES, 
@@ -22,7 +22,6 @@ import {
     EYE_COLORS
 } from '../labels'
 import { MotiView } from 'moti'
-import { user } from '../redux/reducers/user'
 
 const HOURS = ['0.5 hour','1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours','3.5 hour','4 hours','4.5 hour','5 hours','5.5 hour','6 hours','6.5 hour','7 hours','7.5 hour','8 hours','8.5 hour','9 hours','9.5 hour','10 hours','10.5 hour','11 hours','11.5 hour','12 hours','12.5 hour','13 hours','13.5 hour','14 hours','14.5 hour','15 hours','15.5 hour','16 hours','16.5 hour','17 hours','17.5 hour','18 hours','18.5 hour','19 hours','19.5 hour','20 hours','20.5 hour','21 hours','21.5 hour','22 hours','22.5 hour','23 hours','23.5 hour','24 hours']
 
@@ -65,9 +64,17 @@ const LadySignup = ({ route }) => {
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
+    const [contentHeight, setContentHeight] = useState('100%')
+    const [contentHeights, setContentHeights] = useState('100%')
 
-    const viewPagerRef = useRef()
-    const viewPagerX = useRef(0)
+    const [routes] = useState([
+        { key: 'Login Information', index: 0 },
+        { key: 'Personal Details', index: 1 },
+        { key: 'Services & Pricing', index: 2 },
+        { key: 'Location & Availability', index: 3 },
+        { key: 'Upload Photos', index: 4 }
+    ])
+
     const currencyDropdownRef = useRef()
     const pricesDropdownPress = useRef()
 
@@ -83,15 +90,6 @@ const LadySignup = ({ route }) => {
             ...data,
             confirmSecureTextEntry: !data.confirmSecureTextEntry
         })
-    }
-
-    const handleScroll = ({ nativeEvent }) => {
-        viewPagerX.current = nativeEvent.contentOffset.x
-        const newIndex = Math.ceil(viewPagerX.current / contentWidth)
-
-        if (newIndex != index) {
-            setIndex(newIndex)
-        }
     }
 
     const onMultiPicklistChange = useCallback((value, attribute) => {
@@ -178,11 +176,13 @@ const LadySignup = ({ route }) => {
     }
 
     const paginageNext = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        setIndex(index => index + 1)
+        setContentHeight(contentHeights[index + 1])
     }
 
     const paginateBack = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
+        setIndex(index => index - 1)
+        setContentHeight(contentHeights[index - 1])
     }
 
     const getDateOfBirth = useCallback(() => {
@@ -244,16 +244,19 @@ const LadySignup = ({ route }) => {
     }, [])
 
     const onPriceChange = useCallback((text, index, priceType) => {
-        //.replace(/[^0-9]/g, '')
         setData(d => {
             d.prices[index][priceType] = text.replace(/[^0-9]/g, '')
             return {...d}
         })
     }, [])
 
-    const renderLoginInformation = useCallback(() => {
+    const renderLoginInformation = useCallback((i) => {
         return (
-            <>
+            <ScrollView
+                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)} 
+                style={{ width: contentWidth, height: contentHeight }} 
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={styles.pageHeaderText}>
                     1. Login Information
                 </Text>
@@ -330,13 +333,17 @@ const LadySignup = ({ route }) => {
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
                 </View>
-            </>
+            </ScrollView>
         )
-    }, [showLocationErrorMessages, data, contentWidth])
+    }, [showLocationErrorMessages, data, contentWidth, contentHeight])
 
-    const renderPersonalDetails = useCallback(() => {
+    const renderPersonalDetails = useCallback((i) => {        
         return (
-            <>
+            <ScrollView
+                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)} 
+                style={{ width: contentWidth, height: contentHeight }} 
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={styles.pageHeaderText}>
                     2. Personal Details
                 </Text>
@@ -358,6 +365,7 @@ const LadySignup = ({ route }) => {
                     />
                     <DropdownSelect
                         values={SEXUAL_ORIENTATION}
+                        offsetX={contentWidth* Number(i)}
                         placeholder="Select your sexuality"
                         label="Sexuality"
                         borderColor={COLORS.placeholder}
@@ -377,6 +385,7 @@ const LadySignup = ({ route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
                         values={NATIONALITIES}
+                        offsetX={contentWidth*i}
                         searchable
                         searchPlaceholder="Search nationality"
                         placeholder="Select your nationality"
@@ -395,6 +404,7 @@ const LadySignup = ({ route }) => {
                     />
                     <DropdownSelect
                         values={LANGUAGES}
+                        offsetX={contentWidth*i}
                         multiselect
                         searchable
                         searchPlaceholder="Search language"
@@ -449,6 +459,7 @@ const LadySignup = ({ route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
                         values={BODY_TYPES}
+                        offsetX={contentWidth*i}
                         placeholder="Select your body type"
                         label="Body type"
                         borderColor={COLORS.placeholder}
@@ -465,6 +476,7 @@ const LadySignup = ({ route }) => {
                     />
                     <DropdownSelect
                         values={PUBIC_HAIR_VALUES}
+                        offsetX={contentWidth*i}
                         placeholder="Search your pubic hair"
                         label="Pubic hair"
                         borderColor={COLORS.placeholder}
@@ -484,6 +496,7 @@ const LadySignup = ({ route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
                         values={BREAST_SIZES}
+                        offsetX={contentWidth*i}
                         placeholder="Select your breast size"
                         label="Breast size"
                         borderColor={COLORS.placeholder}
@@ -500,6 +513,7 @@ const LadySignup = ({ route }) => {
                     />
                     <DropdownSelect
                         values={BREAST_TYPES}
+                        offsetX={contentWidth*i}
                         placeholder="Search your breast type"
                         label="Breast type"
                         borderColor={COLORS.placeholder}
@@ -519,6 +533,7 @@ const LadySignup = ({ route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                     <DropdownSelect
                         values={HAIR_COLORS}
+                        offsetX={contentWidth*i}
                         placeholder="Select your hair color"
                         label="Hair color"
                         borderColor={COLORS.placeholder}
@@ -535,6 +550,7 @@ const LadySignup = ({ route }) => {
                     />
                     <DropdownSelect
                         values={EYE_COLORS}
+                        offsetX={contentWidth*i}
                         placeholder="Search your eye color"
                         label="Eye color"
                         borderColor={COLORS.placeholder}
@@ -550,13 +566,17 @@ const LadySignup = ({ route }) => {
                         errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
                     />
                 </View>
-            </>
+            </ScrollView>
         )
-    }, [showPersonalDetailsErrorMessages, data, contentWidth])
+    }, [showPersonalDetailsErrorMessages, data, contentWidth, contentHeight])
 
-    const renderServicesAndPricing = useCallback(() => {
+    const renderServicesAndPricing = useCallback((i) => {
         return (
-            <>
+            <ScrollView
+                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
+                style={{ width: contentWidth, height: contentHeight }}
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={styles.pageHeaderText}>
                     3. Services & Pricing
                 </Text>
@@ -639,6 +659,7 @@ const LadySignup = ({ route }) => {
 
                     <DropdownSelect
                         ref={currencyDropdownRef}
+                        offsetX={contentWidth*i}
                         text={data.currency}
                         values={CURRENCIES}
                         setText={(text) => onValueChange(text, 'currency')}
@@ -733,6 +754,7 @@ const LadySignup = ({ route }) => {
                 <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
                     <DropdownSelect
                         ref={pricesDropdownPress}
+                        offsetX={contentWidth*i}
                         values={HOURS.filter(hour => !data.prices.some(price => price.length === Number(hour.substring(0, hour.indexOf('h') - 1))))}
                         setText={onAddNewPrice}
                     >
@@ -751,40 +773,63 @@ const LadySignup = ({ route }) => {
                         </Button>
                     </DropdownSelect>
                 </View>
-            </>
+            </ScrollView>
         )
     }, [data, showServicesErrorMessages, contentWidth])
 
-    const renderLocationAndAvailability = useCallback(() => {
+    const renderLocationAndAvailability = useCallback((i) => {
         return (
-            <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                4. Location & Working Hours
-            </Text>
+            <ScrollView
+                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
+                style={{ width: contentWidth, height: contentHeight }}
+                showsVerticalScrollIndicator={false}
+            >
+                <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+                    4. Location & Working Hours
+                </Text>
+            </ScrollView>
         )
     }, [data, showLocationErrorMessages, contentWidth])
 
-    const renderUploadPhotos = useCallback(() => {
+    const renderUploadPhotos = useCallback((i) => {
         return (
-            <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                5. Upload Photos
-            </Text>
+            <ScrollView
+                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
+                style={{ width: contentWidth, height: contentHeight }}
+                showsVerticalScrollIndicator={false}
+            >
+                <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+                    5. Upload Photos
+                </Text>
+            </ScrollView>
         )
     }, [data, showPhotosErrorMessages, contentWidth])
 
-    const pages = {
-        'Login Information': renderLoginInformation,
-        'Personal Details': renderPersonalDetails,
-        'Services & Pricing': renderServicesAndPricing,
-        'Location & Availability': renderLocationAndAvailability,
-        'Upload Photos': renderUploadPhotos
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'Login Information':
+                return renderLoginInformation(route.index)
+            case 'Personal Details':
+                return renderPersonalDetails(route.index)
+            case 'Services & Pricing':
+                return renderServicesAndPricing(route.index)
+            case 'Location & Availability':
+                return renderLocationAndAvailability(route.index)
+            case 'Upload Photos':
+                return renderUploadPhotos(route.index)
+        }
     }
 
-    const renderPage = ({ item }) => {
-        return (
-            <ScrollView style={{ width: contentWidth }} showsVerticalScrollIndicator={false}>
-                {pages[item]()}
-            </ScrollView>
-        )
+    const onContentSizeChanged = (height, i) => {
+        setContentHeights(heights => {
+            const h = [...heights]
+            h[i] = height
+            return h
+        })
+
+        if (i === index) {
+            setContentHeight(height)
+        }
     }
 
     return (
@@ -808,36 +853,26 @@ const LadySignup = ({ route }) => {
                     duration: 400,
                 }}
                 style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
+                <View
                     style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20 }}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+                    onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
                 >
                     <View style={{ marginBottom: SPACING.small, marginTop: SPACING.large, marginHorizontal: SPACING.x_large, }}>
-                        <ProgressBar progress={(index) / Object.keys(pages).length} color={COLORS.error} />
+                        <ProgressBar progress={(index) / Object.keys(routes).length} color={COLORS.error} />
                     </View>
 
-                    <FlatList
-                        ref={viewPagerRef}
-                        onScroll={handleScroll}
-                        style={{ flex: 1 }}
-                        data={Object.keys(pages)}
-                        renderItem={renderPage}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        bounces={false}
-                        pagingEnabled
-                        disableIntervalMomentum
-                        initialScrollIndex={0}
-                        scrollEnabled={false}
-                    />
+                    <TabView
+                        renderTabBar={props => null}
+                        navigationState={{ index, routes }}
+                        renderScene={renderScene}
+                        onIndexChange={setIndex}
+                        initialLayout={{ width: contentWidth }}
+                    />                    
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.medium, }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.small, }}>
                         {index === 0 ? <View /> : <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
-                            //buttonColor={COLORS.grey}
                             rippleColor="rgba(0,0,0,.1)"
                             mode="outlined"
                             onPress={paginateBack}
@@ -854,10 +889,10 @@ const LadySignup = ({ route }) => {
                             onPress={onNextPress}
                             loading={nextButtonIsLoading}
                         >
-                            {index === Object.keys(pages).length - 1 ? 'Sign up' : 'Next'}
+                            {index === Object.keys(routes).length - 1 ? 'Sign up' : 'Next'}
                         </Button>
                     </View>
-                </ScrollView>
+                </View>
 
                 <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />
             </MotiView>

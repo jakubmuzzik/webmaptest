@@ -33,7 +33,8 @@ const DropdownSelect = forwardRef((props, ref) => {
         leftIconName,
         rightIconName,
         renderInput,
-        children
+        children,
+        offsetX = 0
     } = props
     const dropdownRef = useRef()
     const filteredValuesRef = useRef(values)
@@ -62,9 +63,10 @@ const DropdownSelect = forwardRef((props, ref) => {
         dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
             //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
             //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
+            console.log(_px)
             setDropdownDesc({
                 //y: hasEnoughSpaceBelow ? py + h + 5 : undefined,
-                x: _px,
+                x: _px - offsetX,
                 width: _w,
                 //maxHeight,
                 py,

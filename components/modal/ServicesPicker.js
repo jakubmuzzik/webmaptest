@@ -144,7 +144,7 @@ const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
                                         key={service}
                                         onPress={() => onSelect(service)}
                                         style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
-                                        //rippleColor="rgba(220, 46, 46, .32)"
+                                        rippleColor="rgba(220, 46, 46, .10)"
                                     >
                                         <BouncyCheckbox
                                             pointerEvents="none"
