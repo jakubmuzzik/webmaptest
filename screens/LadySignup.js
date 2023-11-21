@@ -263,7 +263,7 @@ const LadySignup = ({ route }) => {
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.name}
@@ -278,7 +278,7 @@ const LadySignup = ({ route }) => {
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.email}
@@ -296,7 +296,7 @@ const LadySignup = ({ route }) => {
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.password}
@@ -315,7 +315,7 @@ const LadySignup = ({ route }) => {
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
                         containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
-                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                         text={data.confirmPassword}
@@ -347,7 +347,7 @@ const LadySignup = ({ route }) => {
                         borderColor={COLORS.placeholder}
                         hoveredBorderColor={COLORS.red}
                         textColor='#000'
-                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, minWidth: 110 }}
+                        containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
                         textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                         labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                         placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
