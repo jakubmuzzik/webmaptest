@@ -64,8 +64,6 @@ const LadySignup = ({ route }) => {
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
-    const [contentHeight, setContentHeight] = useState('100%')
-    const [contentHeights, setContentHeights] = useState('100%')
 
     const [routes] = useState([
         { key: 'Login Information', index: 0 },
@@ -177,12 +175,10 @@ const LadySignup = ({ route }) => {
 
     const paginageNext = () => {
         setIndex(index => index + 1)
-        setContentHeight(contentHeights[index + 1])
     }
 
     const paginateBack = () => {
         setIndex(index => index - 1)
-        setContentHeight(contentHeights[index - 1])
     }
 
     const getDateOfBirth = useCallback(() => {
@@ -253,8 +249,6 @@ const LadySignup = ({ route }) => {
     const renderLoginInformation = useCallback((i) => {
         return (
             <ScrollView
-                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)} 
-                style={{ width: contentWidth, height: contentHeight }} 
                 showsVerticalScrollIndicator={false}
             >
                 <Text style={styles.pageHeaderText}>
@@ -335,13 +329,11 @@ const LadySignup = ({ route }) => {
                 </View>
             </ScrollView>
         )
-    }, [showLocationErrorMessages, data, contentWidth, contentHeight])
+    }, [showLocationErrorMessages, data, contentWidth])
 
     const renderPersonalDetails = useCallback((i) => {        
         return (
             <ScrollView
-                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)} 
-                style={{ width: contentWidth, height: contentHeight }} 
                 showsVerticalScrollIndicator={false}
             >
                 <Text style={styles.pageHeaderText}>
@@ -568,13 +560,11 @@ const LadySignup = ({ route }) => {
                 </View>
             </ScrollView>
         )
-    }, [showPersonalDetailsErrorMessages, data, contentWidth, contentHeight])
+    }, [showPersonalDetailsErrorMessages, data, contentWidth])
 
     const renderServicesAndPricing = useCallback((i) => {
         return (
             <ScrollView
-                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
-                style={{ width: contentWidth, height: contentHeight }}
                 showsVerticalScrollIndicator={false}
             >
                 <Text style={styles.pageHeaderText}>
@@ -780,8 +770,6 @@ const LadySignup = ({ route }) => {
     const renderLocationAndAvailability = useCallback((i) => {
         return (
             <ScrollView
-                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
-                style={{ width: contentWidth, height: contentHeight }}
                 showsVerticalScrollIndicator={false}
             >
                 <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
@@ -794,8 +782,6 @@ const LadySignup = ({ route }) => {
     const renderUploadPhotos = useCallback((i) => {
         return (
             <ScrollView
-                onContentSizeChange={(width, height) => onContentSizeChanged(height, i)}
-                style={{ width: contentWidth, height: contentHeight }}
                 showsVerticalScrollIndicator={false}
             >
                 <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
@@ -817,18 +803,6 @@ const LadySignup = ({ route }) => {
                 return renderLocationAndAvailability(route.index)
             case 'Upload Photos':
                 return renderUploadPhotos(route.index)
-        }
-    }
-
-    const onContentSizeChanged = (height, i) => {
-        setContentHeights(heights => {
-            const h = [...heights]
-            h[i] = height
-            return h
-        })
-
-        if (i === index) {
-            setContentHeight(height)
         }
     }
 
@@ -863,6 +837,7 @@ const LadySignup = ({ route }) => {
 
                     <TabView
                         renderTabBar={props => null}
+                        swipeEnabled={false}
                         navigationState={{ index, routes }}
                         renderScene={renderScene}
                         onIndexChange={setIndex}
