@@ -9,6 +9,14 @@ import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { TabView } from 'react-native-tab-view'
+import Animated, {
+    Extrapolation,
+    interpolate,
+    useAnimatedScrollHandler,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming
+} from 'react-native-reanimated'
 
 import { 
     LANGUAGES, 
@@ -66,15 +74,29 @@ const LadySignup = ({ route }) => {
     const [contentWidth, setContentWidth] = useState(normalize(800))
 
     const [routes] = useState([
-        { key: 'Login Information', index: 0 },
-        { key: 'Personal Details', index: 1 },
-        { key: 'Services & Pricing', index: 2 },
-        { key: 'Location & Availability', index: 3 },
-        { key: 'Upload Photos', index: 4 }
+        { key: '1. Login Information', index: 0 },
+        { key: '2. Personal Details', index: 1 },
+        { key: '3. Services & Pricing', index: 2 },
+        { key: '4. Location & Availability', index: 3 },
+        { key: '5. Upload Photos', index: 4 }
     ])
+
+    const scrollY = useSharedValue(0)
+    const scrollHandler = useAnimatedScrollHandler((event) => {
+        scrollY.value = event.contentOffset.y
+    })
+
+    const modalHeaderTextStyles = useAnimatedStyle(() => {
+        return {
+            fontFamily: FONTS.medium,
+            fontSize: FONT_SIZES.large,
+            opacity: interpolate(scrollY.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
+        }
+    })
 
     const currencyDropdownRef = useRef()
     const pricesDropdownPress = useRef()
+    const scrollViewRef = useRef()
 
     const updateSecureTextEntry = () => {
         setData({
@@ -248,9 +270,7 @@ const LadySignup = ({ route }) => {
 
     const renderLoginInformation = useCallback((i) => {
         return (
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
+            <>
                 <Text style={styles.pageHeaderText}>
                     1. Login Information
                 </Text>
@@ -327,15 +347,13 @@ const LadySignup = ({ route }) => {
                         secureTextEntry={data.confirmSecureTextEntry}
                     />
                 </View>
-            </ScrollView>
+                </>
         )
     }, [showLocationErrorMessages, data, contentWidth])
 
     const renderPersonalDetails = useCallback((i) => {        
         return (
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
+            <>
                 <Text style={styles.pageHeaderText}>
                     2. Personal Details
                 </Text>
@@ -558,15 +576,13 @@ const LadySignup = ({ route }) => {
                         errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
                     />
                 </View>
-            </ScrollView>
+                </>
         )
     }, [showPersonalDetailsErrorMessages, data, contentWidth])
 
     const renderServicesAndPricing = useCallback((i) => {
         return (
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
+            <>
                 <Text style={styles.pageHeaderText}>
                     3. Services & Pricing
                 </Text>
@@ -763,55 +779,78 @@ const LadySignup = ({ route }) => {
                         </Button>
                     </DropdownSelect>
                 </View>
-            </ScrollView>
+                </>
         )
     }, [data, showServicesErrorMessages, contentWidth])
 
     const renderLocationAndAvailability = useCallback((i) => {
         return (
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
+            <>
                 <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                     4. Location & Working Hours
                 </Text>
-            </ScrollView>
+                </>
         )
     }, [data, showLocationErrorMessages, contentWidth])
 
     const renderUploadPhotos = useCallback((i) => {
         return (
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-            >
+            <>
                 <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
                     5. Upload Photos
                 </Text>
-            </ScrollView>
+                </>
         )
     }, [data, showPhotosErrorMessages, contentWidth])
 
+    const renderPage = (route, page) => {
+
+        return (
+            <>
+                <View style={styles.modal__header}>
+                    <Animated.Text style={modalHeaderTextStyles}>{route.key}</Animated.Text>
+                </View>
+                <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles]} />
+
+                <Animated.ScrollView ref={scrollViewRef} scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
+                    {page(index)}
+                </Animated.ScrollView>
+            </>
+        )
+
+        return (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
+                {page(route.index)}
+            </ScrollView>
+        )
+    }
+
     const renderScene = ({ route }) => {
         switch (route.key) {
-            case 'Login Information':
-                return renderLoginInformation(route.index)
-            case 'Personal Details':
-                return renderPersonalDetails(route.index)
-            case 'Services & Pricing':
-                return renderServicesAndPricing(route.index)
-            case 'Location & Availability':
-                return renderLocationAndAvailability(route.index)
-            case 'Upload Photos':
-                return renderUploadPhotos(route.index)
+            case '1. Login Information':
+                return renderPage(route, renderLoginInformation)
+            case '2. Personal Details':
+                return renderPage(route, renderPersonalDetails)
+            case '3. Services & Pricing':
+                return renderPage(route, renderServicesAndPricing)
+            case '4. Location & Availability':
+                return renderPage(route, renderLocationAndAvailability)
+            case '5. Upload Photos':
+                return renderPage(route, renderUploadPhotos)
         }
     }
+
+    const progress = (index) / Object.keys(routes).length
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginTop: SPACING.small, color: '#FFF' }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up
                 </Text>
+                <ProgressBar style={{ marginHorizontal: SPACING.x_large, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
             <MotiView
                 from={{
@@ -826,14 +865,14 @@ const LadySignup = ({ route }) => {
                     type: 'timing',
                     duration: 400,
                 }}
-                style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium, }}>
+                style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium }}>
                 <View
-                    style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20 }}
+                    style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20, overflow: 'hidden' }}
                     onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
                 >
-                    <View style={{ marginBottom: SPACING.small, marginTop: SPACING.large, marginHorizontal: SPACING.x_large, }}>
+                    {/* <View style={{ marginBottom: SPACING.small, marginTop: SPACING.large, marginHorizontal: SPACING.x_large, }}>
                         <ProgressBar progress={(index) / Object.keys(routes).length} color={COLORS.error} />
-                    </View>
+                    </View> */}
 
                     <TabView
                         renderTabBar={props => null}
@@ -844,7 +883,7 @@ const LadySignup = ({ route }) => {
                         initialLayout={{ width: contentWidth }}
                     />                    
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: SPACING.x_large, marginTop: SPACING.small, }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginTop: SPACING.small, }}>
                         {index === 0 ? <View /> : <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
@@ -857,7 +896,7 @@ const LadySignup = ({ route }) => {
 
                         <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
-                            style={{ flexShrink: 1, borderRadius: 10 }}
+                            style={{ flexShrink: 1, borderRadius: 10, marginBottom: SPACING.small }}
                             buttonColor={COLORS.red}
                             rippleColor="rgba(220, 46, 46, .16)"
                             mode="contained"
@@ -917,5 +956,30 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.xx_small,
         height: normalize(45),
         justifyContent: 'center'
-    }
+    },
+    modal__header: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        height: normalize(55),
+        //backgroundColor: '#FFF',
+        zIndex: 3,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modal__shadowHeader: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        height: normalize(55),
+        backgroundColor: '#FFF',
+        zIndex: 2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 5
+    },
 })
