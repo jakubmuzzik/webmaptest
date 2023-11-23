@@ -61,6 +61,7 @@ const LadySignup = ({ route }) => {
         incall: true,
         outcall: true,
         address: '',
+        addressTitle: '',
         hiddenAddress: false
     })
 
@@ -318,6 +319,14 @@ const LadySignup = ({ route }) => {
 
     const onSearchAddressPress = useCallback(() => {
         setAddressSearchVisible(true)
+    }, [])
+
+    const onAddressSelect = useCallback((value) => {
+        setData((data) => ({
+            ...data,
+            address: value,
+            addressTitle: value?.title
+        }))
     }, [])
 
     const renderLoginInformation = useCallback((i) => {
@@ -875,15 +884,13 @@ const LadySignup = ({ route }) => {
                                 label="Search address"
                                 borderColor={COLORS.placeholder}
                                 hoveredBorderColor={COLORS.red}
-                                //containerStyle={}
                                 textColor='#000'
                                 textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                                 labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                                 placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                text={data.address}
-                                setText={(text) => onValueChange(text, 'address')}
+                                text={data.addressTitle}
                                 leftIconName='map-marker-outline'
-                                errorMessage={showLocationErrorMessages && !data.address ? 'Enter your address' : undefined}
+                                errorMessage={showLocationErrorMessages && !data.addressTitle ? 'Enter your address' : undefined}
                             />
                         </TouchableOpacity>
                         <BouncyCheckbox
@@ -1007,7 +1014,7 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />
-                <AddressSearch visible={addressSearchVisible} setVisible={setAddressSearchVisible} onSelect={(address) => onValueChange(address, 'address')} route={route} />
+                <AddressSearch visible={addressSearchVisible} setVisible={setAddressSearchVisible} onSelect={onAddressSelect} route={route} />
             </MotiView>
         </View>
     )
