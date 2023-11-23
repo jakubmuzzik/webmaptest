@@ -14,9 +14,7 @@ import Animated, {
     interpolate,
     useAnimatedScrollHandler,
     useAnimatedStyle,
-    useSharedValue,
-    withTiming,
-    useAnimatedRef
+    useSharedValue
 } from 'react-native-reanimated'
 
 import {
@@ -31,6 +29,8 @@ import {
     EYE_COLORS
 } from '../labels'
 import { MotiView } from 'moti'
+import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import AddressSearch from '../components/modal/AddressSearch'
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
 
@@ -59,7 +59,9 @@ const LadySignup = ({ route }) => {
         currency: 'CZK',
         prices: [], //{length: 1, incall: '', outcall: ''}
         incall: true,
-        outcall: true
+        outcall: true,
+        address: '',
+        hiddenAddress: false
     })
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
@@ -69,6 +71,7 @@ const LadySignup = ({ route }) => {
     const [showPhotosErrorMessages, setShowPhotosErrorMessages] = useState(false)
 
     const [servicesPickerVisible, setServicesPickerVisible] = useState(false)
+    const [addressSearchVisible, setAddressSearchVisible] = useState(false)
 
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
@@ -78,7 +81,7 @@ const LadySignup = ({ route }) => {
         { key: '1. Login Information', index: 0 },
         { key: '2. Personal Details', index: 1 },
         { key: '3. Services & Pricing', index: 2 },
-        { key: '4. Location & Availability', index: 3 },
+        { key: '4. Address & Availability', index: 3 },
         { key: '5. Upload Photos', index: 4 }
     ])
 
@@ -311,6 +314,10 @@ const LadySignup = ({ route }) => {
             d.prices[index][priceType] = text.replace(/[^0-9]/g, '')
             return { ...d }
         })
+    }, [])
+
+    const onSearchAddressPress = useCallback(() => {
+        setAddressSearchVisible(true)
     }, [])
 
     const renderLoginInformation = useCallback((i) => {
@@ -850,13 +857,52 @@ const LadySignup = ({ route }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles4}>4. Location & Working Hours</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles4}>4. Address & Working Hours</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles4]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler4} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
-                    <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
-                        4. Location & Working Hours
+                    <Text style={[styles.pageHeaderText, { marginBottom: 0 }]}>
+                        4. Address & Working Hours
                     </Text>
+
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'center' }}>
+                        <TouchableOpacity
+                            onPress={onSearchAddressPress}
+                            style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large, }}>
+                            <HoverableInput
+                                pointerEventsDisabled
+                                placeholder="Search address"
+                                label="Search address"
+                                borderColor={COLORS.placeholder}
+                                hoveredBorderColor={COLORS.red}
+                                //containerStyle={}
+                                textColor='#000'
+                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                text={data.address}
+                                setText={(text) => onValueChange(text, 'address')}
+                                leftIconName='map-marker-outline'
+                                errorMessage={showLocationErrorMessages && !data.address ? 'Enter your address' : undefined}
+                            />
+                        </TouchableOpacity>
+                        <BouncyCheckbox
+                            onPress={() => setData({
+                                ...data,
+                                hiddenAddress: !data.hiddenAddress
+                            })}
+                            style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large }}
+                            disableBuiltInState
+                            isChecked={data.hiddenAddress}
+                            size={normalize(21)}
+                            fillColor={COLORS.red}
+                            unfillColor="#FFFFFF"
+                            text="Show only city"
+                            iconStyle={{ borderRadius: 3 }}
+                            innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                            textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                        />
+                    </View>
                 </Animated.ScrollView>
             </>
         )
@@ -870,7 +916,7 @@ const LadySignup = ({ route }) => {
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles5]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler5} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
-                    <Text style={{ marginHorizontal: SPACING.x_large, color: COLORS.lightBlack, fontFamily: FONTS.bold, fontSize: FONT_SIZES.x_large }}>
+                    <Text style={styles.pageHeaderText}>
                         5. Upload Photos
                     </Text>
                 </Animated.ScrollView>
@@ -882,12 +928,12 @@ const LadySignup = ({ route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1. Login Information':
-                return renderLoginInformation(route.index)
+                return renderLocationAndAvailability(route.index)//renderLoginInformation(route.index)
             case '2. Personal Details':
                 return renderPersonalDetails(route.index)
             case '3. Services & Pricing':
                 return renderServicesAndPricing(route.index)
-            case '4. Location & Availability':
+            case '4. Address & Availability':
                 return renderLocationAndAvailability(route.index)
             case '5. Upload Photos':
                 return renderUploadPhotos(route.index)
@@ -935,7 +981,7 @@ const LadySignup = ({ route }) => {
                         initialLayout={{ width: contentWidth }}
                     />
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginTop: SPACING.small, }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, }}>
                         {index === 0 ? <View /> : <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
@@ -948,7 +994,7 @@ const LadySignup = ({ route }) => {
 
                         <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
-                            style={{ flexShrink: 1, borderRadius: 10, marginBottom: SPACING.small }}
+                            style={{ flexShrink: 1, borderRadius: 10 }}
                             buttonColor={COLORS.red}
                             rippleColor="rgba(220, 46, 46, .16)"
                             mode="contained"
@@ -961,6 +1007,7 @@ const LadySignup = ({ route }) => {
                 </View>
 
                 <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />
+                <AddressSearch visible={addressSearchVisible} setVisible={setAddressSearchVisible} onSelect={(address) => onValueChange(address, 'address')} route={route} />
             </MotiView>
         </View>
     )

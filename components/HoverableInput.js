@@ -28,7 +28,8 @@ const HoverableInput = ({
     onRightIconPress,
     rightIconName,
     secureTextEntry=false,
-    height
+    height,
+    pointerEventsDisabled = false
 }) => {
     const [isHovered, setIsHovered] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
@@ -40,6 +41,7 @@ const HoverableInput = ({
             onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
         >
             <TextInput
+                pointerEvents={pointerEventsDisabled ? 'none' : undefined}
                 label={<View style={{ marginHorizontal: 2, zIndex: 2 }}><Text style={labelStyle}>{label}</Text></View>}
                 placeholder={placeholder}
                 textColor={textColor}
