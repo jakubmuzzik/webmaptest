@@ -30,12 +30,14 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
     }), [route.params])
 
     const searchTimeout = useRef()
+    const searchInputRef = useRef()
 
     useEffect(() => {
         if (visible) {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            searchInputRef.current.focus()
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -155,6 +157,7 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
                             <HoverableView style={{ ...styles.searchWrapper, borderRadius: 10, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.small }} hoveredBackgroundColor='#FFF' backgroundColor='#FFF' hoveredBorderColor={COLORS.red} borderColor={searchBorderColor} transitionDuration='0ms'>
                                 <Ionicons name="search" size={normalize(20)} color="black" />
                                 <TextInput
+                                    ref={searchInputRef}
                                     style={styles.citySearch}
                                     onChangeText={onSearch}
                                     value={search}
