@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.e9eff7c3.js",
-    "static/js/603.2fbc6056.js": "/webmaptest/static/js/603.2fbc6056.js",
+    "main.js": "/webmaptest/static/js/main.c1ec3530.js",
+    "static/js/603.16ba1d42.js": "/webmaptest/static/js/603.16ba1d42.js",
     "static/media/header_logo2.png": "/webmaptest/static/media/header_logo2.e402890e748e5a77f86a.png",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
@@ -26,6 +26,7 @@
     "static/media/logo-header.png": "/webmaptest/static/media/logo-header.6575dd315c027bd4e2bb.png",
     "static/media/us.png": "/webmaptest/static/media/us.fa44cd5298e756aadaac.png",
     "static/media/man.png": "/webmaptest/static/media/man.28ec5b21f8dfee4198ff.png",
+    "static/media/mikha.jpg": "/webmaptest/static/media/mikha.bfa1540a8c9dc3253e4b.jpg",
     "static/media/woman.png": "/webmaptest/static/media/woman.f2daa8fa94778d6a816b.png",
     "favicon.ico": "/webmaptest/favicon.ico",
     "static/media/EvilIcons.ttf": "/webmaptest/static/media/EvilIcons.699664b33ac2837d5bee.ttf",
@@ -36,11 +37,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.e9eff7c3.js.map": "/webmaptest/static/js/main.e9eff7c3.js.map",
-    "603.2fbc6056.js.map": "/webmaptest/static/js/603.2fbc6056.js.map"
+    "main.c1ec3530.js.map": "/webmaptest/static/js/main.c1ec3530.js.map",
+    "603.16ba1d42.js.map": "/webmaptest/static/js/603.16ba1d42.js.map"
   },
   "entrypoints": [
-    "static/js/603.2fbc6056.js",
-    "static/js/main.e9eff7c3.js"
+    "static/js/603.16ba1d42.js",
+    "static/js/main.c1ec3530.js"
   ]
 }
