@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
-import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons } from 'react-native-paper'
+import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
@@ -62,7 +62,9 @@ const LadySignup = ({ route }) => {
         outcall: true,
         address: '',
         addressTitle: '',
-        hiddenAddress: false
+        hiddenAddress: false,
+        description: '',
+        workingHours: [{ day: 'monday', from: '', until: '', enabled: true },{ day: 'tuesday', from: '', until: '', enabled: true },{ day: 'wednesday', from: '', until: '', enabled: true },{day: 'thursday', from: '', until: '', enabled: true },{day: 'friday', from: '', until: '', enabled: true },{day: 'saturday', from: '', until: '', enabled: true },{day: 'sunday', from: '', until: '', enabled: true }]
     })
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
@@ -184,7 +186,8 @@ const LadySignup = ({ route }) => {
 
         switch (index) {
             case 0:
-                return processLoginInformationPage()
+                //return processLoginInformationPage()
+                return processLocationAndAvailabilityPage()
             case 1:
                 return processPersonalDetailsPage()
             case 2:
@@ -233,6 +236,77 @@ const LadySignup = ({ route }) => {
     }
 
     const processLocationAndAvailabilityPage = () => {
+        let dataValid = true
+
+        if (!data.address) {
+            dataValid = false
+        }
+
+        const timeRegex = /^(?:[01]\d|2[0-3]):(?:[0-5]\d)$/
+        const workingHours = JSON.parse(JSON.stringify(data.workingHours))
+
+        workingHours.forEach(setup => {
+            if (!setup.from) {
+                setup.invalidFrom = 'Enter value in HH:mm format.'
+            } else {
+                setup.invalidFrom = false
+            }
+
+            if (!setup.until) {
+                setup.invalidUntil = 'Enter value in HH:mm format.'
+            } else {
+                setup.invalidUntil = false
+            }
+
+            if (setup.invalidFrom || setup.invalidUntil) {
+                dataValid = false
+                return
+            }
+
+            try {
+                let hours = parseInt(setup.from.split(':')[0], 10)
+                let minutes = parseInt(setup.from.split(':')[1], 10)
+
+                if (setup.day === 'monday') {
+                    console.log(hours)
+                    console.log(minutes)
+                }
+
+                if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                    setup.invalidFrom = false
+                } else {
+                    setup.invalidFrom = 'Hours must be between 0 and 23, and minutes between 0 and 59.'
+                }
+
+                hours = parseInt(setup.until.split(':')[0], 10)
+                minutes = parseInt(setup.until.split(':')[1], 10)
+
+                if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                    setup.invalidUntil = false
+                } else {
+                    setup.invalidUntil = 'Hours must be between 0 and 23, and minutes between 0 and 59.'
+                }
+            } catch(e) {
+                console.error(e)
+                dataValid = false
+            }
+
+            if (setup.invalidFrom || setup.invalidUntil) {
+                dataValid = false
+            }
+        })
+
+        if (!dataValid) {
+            setData(data => ({
+                ...data,
+                workingHours
+            }))
+            setShowLocationErrorMessages(true)
+            return
+        }
+
+        //TODO - if all valid - remove all valid like attributes
+
         paginageNext()
     }
 
@@ -313,6 +387,17 @@ const LadySignup = ({ route }) => {
     const onPriceChange = useCallback((text, index, priceType) => {
         setData(d => {
             d.prices[index][priceType] = text.replace(/[^0-9]/g, '')
+            return { ...d }
+        })
+    }, [])
+
+    const onWorkingHourChange = useCallback((value, index, attribute) => {
+        setData(d => {
+            d.workingHours[index][attribute] = value
+            if (attribute === 'enabled' && !value) {
+                d.workingHours[index].from = ''
+                d.workingHours[index].until = ''
+            }
             return { ...d }
         })
     }, [])
@@ -648,6 +733,26 @@ const LadySignup = ({ route }) => {
                             errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
                         />
                     </View>
+
+                    <View style={{ marginHorizontal: SPACING.x_large }}>
+                        <HoverableInput
+                            placeholder="Desribe yourself"
+                            multiline
+                            numberOfLines={5}
+                            label="Description"
+                            borderColor={COLORS.placeholder}
+                            hoveredBorderColor={COLORS.red}
+                            textColor='#000'
+                            containerStyle={{ marginTop: SPACING.xxx_small }}
+                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                            labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                            placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                            text={data.description}
+                            setText={(text) => onValueChange(text, 'description')}
+                            errorMessage={showPersonalDetailsErrorMessages && !data.description ? 'Desribe yourself' : undefined}
+                        />
+                    </View>
+                   
                 </Animated.ScrollView>
             </>
         )
@@ -785,11 +890,12 @@ const LadySignup = ({ route }) => {
                                             height: styles.column.height - 8,
                                             borderColor: '#000',
                                             borderWidth: 1,
-                                            borderRadius: 10
+                                            borderRadius: 5
                                         }]}
                                         onChangeText={(text) => onPriceChange(text, index, 'incall')}
                                         value={price.incall}
                                         placeholder='0'
+                                        placeholderTextColor="grey"
                                     />
                                 </View>
                             ))}
@@ -809,11 +915,12 @@ const LadySignup = ({ route }) => {
                                             height: styles.column.height - 8,
                                             borderColor: '#000',
                                             borderWidth: 1,
-                                            borderRadius: 10
+                                            borderRadius: 5
                                         }]}
                                         onChangeText={(text) => onPriceChange(text, index, 'outcall')}
                                         value={price.outcall}
                                         placeholder='0'
+                                        placeholderTextColor="grey"
                                     />
                                 </View>
                             ))}
@@ -910,6 +1017,249 @@ const LadySignup = ({ route }) => {
                             textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
                         />
                     </View>
+
+                    <Text style={{ marginTop: SPACING.small, marginBottom: SPACING.x_small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                        Working hours
+                    </Text>
+
+                    <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
+                        <View style={{ flexShrink: 1 }}>
+                            <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                                <Text style={styles.tableHeaderText}>Day</Text>
+                            </View>
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[0].enabled ? 'none' : 'line-through' }]}>Monday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[0].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 0, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[0].invalidFrom || data.workingHours[0].invalidUntil) && data.workingHours[0].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[1].enabled ? 'none' : 'line-through' }]}>Tuesday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[1].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 1, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[1].invalidFrom || data.workingHours[1].invalidUntil) && data.workingHours[1].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[2].enabled ? 'none' : 'line-through' }]}>Wednesday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[2].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 2, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[2].invalidFrom || data.workingHours[2].invalidUntil) && data.workingHours[2].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[3].enabled ? 'none' : 'line-through' }]}>Thursday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[3].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 3, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[3].invalidFrom || data.workingHours[3].invalidUntil) && data.workingHours[3].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[4].enabled ? 'none' : 'line-through' }]}>Friday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[4].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 4, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[4].invalidFrom || data.workingHours[4].invalidUntil) && data.workingHours[4].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[5].enabled ? 'none' : 'line-through' }]}>Saturday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[5].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 5, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[5].invalidFrom || data.workingHours[5].invalidUntil) && data.workingHours[5].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+                            
+                            <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
+                                <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[6].enabled ? 'none' : 'line-through' }]}>Sunday</Text>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
+                                    value={data.workingHours[6].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 6, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            {((data.workingHours[6].invalidFrom || data.workingHours[6].invalidUntil) && data.workingHours[6].enabled) && <HelperText type="error" visible>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
+                                    .
+                                </Text>
+                            </HelperText>}
+                        </View>
+                       <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                            <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                                <Text style={styles.tableHeaderText}>From</Text>
+                            </View>
+                            {data.workingHours.map((value, index) => (
+                                <View key={value.day} style={{ padding: 4, opacity: data.workingHours[index].enabled ? 1 : 0.3 }}>
+                                    <TextInput
+                                        style={[styles.column, {
+                                            fontFamily: FONTS.regular,
+                                            fontSize: FONT_SIZES.medium,
+                                            outlineStyle: 'none',
+                                            color: '#000',
+                                            height: styles.column.height - 8,
+                                            borderColor: data.workingHours[index].invalidFrom && data.workingHours[index].enabled ? COLORS.error : '#000',
+                                            borderWidth: 1,
+                                            borderRadius: 5
+                                        }]}
+                                        editable={data.workingHours[index].enabled}
+                                        onChangeText={(text) => onWorkingHourChange(text.replaceAll(' ', '').replace(/[^\d:]/g, ''), index, 'from')}
+                                        value={data.workingHours[index].from}
+                                        placeholder='HH:mm'
+                                        placeholderTextColor="grey"
+                                        maxLength={5}
+                                    />
+                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) && <HelperText type="error" visible>
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidFrom ? 1: 0 }}>
+                                            {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
+                                        </Text>
+                                    </HelperText>}
+                                </View>
+                            ))}
+                        </View>
+
+                        <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                            <View style={[styles.column, { backgroundColor: COLORS.lightGrey, flexShrink: 0 }]}>
+                                <Text style={styles.tableHeaderText}>Until</Text>
+                            </View>
+                            {data.workingHours.map((value, index) => (
+                                <View key={value.day} style={{ padding: 4, opacity: data.workingHours[index].enabled ? 1 : 0.3 }}>
+                                    <TextInput
+                                        style={[styles.column, {
+                                            fontFamily: FONTS.regular,
+                                            fontSize: FONT_SIZES.medium,
+                                            outlineStyle: 'none',
+                                            color: '#000',
+                                            height: styles.column.height - 8,
+                                            borderColor: data.workingHours[index].invalidUntil && data.workingHours[index].enabled ? COLORS.error : '#000',
+                                            borderWidth: 1,
+                                            borderRadius: 5
+                                        }]}
+                                        editable={data.workingHours[index].enabled}
+                                        onChangeText={(text) => onWorkingHourChange(text.replaceAll(' ', '').replace(/[^\d:]/g, ''), index, 'until')}
+                                        value={data.workingHours[index].until}
+                                        placeholder='HH:mm'
+                                        placeholderTextColor="grey"
+                                        maxLength={5}
+                                    />
+                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) && <HelperText type="error" visible>
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidUntil ? 1: 0 }}>
+                                            {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
+                                        </Text>
+                                    </HelperText>}
+                                </View>
+                            ))}
+                        </View>
+                        {/* <View style={{  }}>
+                            <View style={[styles.column, { backgroundColor: COLORS.lightGrey, paddingLeft: 2, paddingRight: SPACING.xx_small }]}>
+                                <Text style={styles.tableHeaderText}>Available</Text>
+                            </View>
+
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[0].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 0, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[1].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 1, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[2].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 2, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[3].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 3, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[4].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 4, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[5].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 5, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
+                                <Switch 
+                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                    value={data.workingHours[6].enabled}
+                                    onValueChange={(value) => onWorkingHourChange(value, 6, 'enabled')}
+                                    color={COLORS.red}
+                                />
+                            </View>
+                        </View> */}
+                    </View>
                 </Animated.ScrollView>
             </>
         )
@@ -953,7 +1303,7 @@ const LadySignup = ({ route }) => {
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, color: '#FFF' }}>
-                    Lady sign up
+                    {/* Lady sign up */}
                 </Text>
                 <ProgressBar style={{ marginHorizontal: SPACING.x_large, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
