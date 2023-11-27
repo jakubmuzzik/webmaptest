@@ -7,7 +7,7 @@ import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 import { TabView } from 'react-native-tab-view'
 import Animated, {
     Extrapolation,
@@ -68,7 +68,7 @@ const LadySignup = ({ route }) => {
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null]
+        images: [null, null, null, null, null, null, null, null, null]
     })
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
@@ -403,6 +403,9 @@ const LadySignup = ({ route }) => {
             try {
                 setData(d => {
                     d.images[index] = result.assets[0].uri
+                    if (d.images.every(image => image)) {
+                        d.images.push(null)
+                    }
                     return { ...d }
                 })
             } catch (e) {
@@ -1257,10 +1260,10 @@ const LadySignup = ({ route }) => {
                                         transition={200}
                                     />
                                     <IconButton
-                                        style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                         icon="delete-outline"
                                         iconColor='white'
-                                        size={20}
+                                        size={normalize(20)}
                                         onPress={() => onDeleteImagePress(0)}
                                     />
                                 </> :
@@ -1275,118 +1278,173 @@ const LadySignup = ({ route }) => {
                         </View>
                         <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
                             <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
-                                {data.images[1] ?
-                                    <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small}}>
-                                        <Image
-                                            style={{
-                                                flex: 1
-                                            }}
-                                            source={{ uri: data.images[1] }}
-                                            placeholder={blurhash}
-                                            contentFit="contain"
-                                            transition={200}
-                                        />
-                                        <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                            icon="delete-outline"
-                                            iconColor='white'
-                                            size={20}
-                                            onPress={() => onDeleteImagePress(1)}
-                                        />
-                                    </View> :
-                                    <TouchableRipple
-                                        onPress={() => onSelectImagePress(1)}
-                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small, }}
-                                    >
-                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                    </TouchableRipple>
-                                }
-                                {data.images[2] ?
-                                    <View style={{ flex: 1, aspectRatio: 3 / 4}}>
-                                        <Image
-                                            style={{
-                                                flex: 1,
-                                                borderTopRightRadius: 20,
-                                            }}
-                                            source={{ uri: data.images[2] }}
-                                            placeholder={blurhash}
-                                            contentFit="contain"
-                                            transition={200}
-                                        />
-                                        <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                            icon="delete-outline"
-                                            iconColor='white'
-                                            size={20}
-                                            onPress={() => onDeleteImagePress(2)}
-                                        />
-                                    </View> :
-                                    <TouchableRipple
-                                        onPress={() => onSelectImagePress(2)}
-                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderTopRightRadius: 20 }}
-                                    >
-                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                    </TouchableRipple>
-                                }
+
+                                <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                                    {data.images[1] ?
+                                        <>
+                                            <Image
+                                                style={{
+                                                    flex: 1
+                                                }}
+                                                source={{ uri: data.images[1] }}
+                                                placeholder={blurhash}
+                                                contentFit="contain"
+                                                transition={200}
+                                            />
+                                            <IconButton
+                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                                icon="delete-outline"
+                                                iconColor='white'
+                                                size={normalize(20)}
+                                                onPress={() => onDeleteImagePress(1)}
+                                            />
+                                        </> :
+
+                                        <TouchableRipple
+                                            onPress={() => onSelectImagePress(1)}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1 }}
+                                        >
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                        </TouchableRipple>
+
+                                    }
+                                </View>
+
+
+                                <View style={{ flex: 1, aspectRatio: 3 / 4 }}>
+                                    {data.images[2] ?
+                                        <>
+                                            <Image
+                                                style={{
+                                                    flex: 1,
+                                                    borderTopRightRadius: 20,
+                                                }}
+                                                source={{ uri: data.images[2] }}
+                                                placeholder={blurhash}
+                                                contentFit="contain"
+                                                transition={200}
+                                            />
+                                            <IconButton
+                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                                icon="delete-outline"
+                                                iconColor='white'
+                                                size={normalize(20)}
+                                                onPress={() => onDeleteImagePress(2)}
+                                            />
+                                        </> :
+
+                                        <TouchableRipple
+                                            onPress={() => onSelectImagePress(2)}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderTopRightRadius: 20 }}
+                                        >
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                        </TouchableRipple>
+
+                                    }
+                                </View>
                             </View>
                             <View style={{ flexDirection: 'row', flexGrow: 1 }}>
-                                {data.images[3] ?
-                                    <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small}}>
-                                        <Image
-                                            style={{
-                                                flex: 1,
-                                            }}
-                                            source={{ uri: data.images[3] }}
-                                            placeholder={blurhash}
-                                            contentFit="contain"
-                                            transition={200}
-                                        />
-                                        <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                            icon="delete-outline"
-                                            iconColor='white'
-                                            size={20}
-                                            onPress={() => onDeleteImagePress(3)}
-                                        />
-                                    </View> :
 
-                                    <TouchableRipple
-                                        onPress={() => onSelectImagePress(3)}
-                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small, }}
-                                    >
-                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                    </TouchableRipple>
-                                }
-                                {data.images[4] ?
-                                    <View style={{ flex: 1, aspectRatio: 3 / 4}}>
-                                        <Image
-                                            style={{
-                                                flex: 1,
-                                                borderBottomRightRadius: 20,
-                                            }}
-                                            source={{ uri: data.images[4] }}
-                                            placeholder={blurhash}
-                                            contentFit="contain"
-                                            transition={200}
-                                        />
-                                        <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                            icon="delete-outline"
-                                            iconColor='white'
-                                            size={20}
-                                            onPress={() => onDeleteImagePress(4)}
-                                        />
-                                    </View> :
-                                    <TouchableRipple
-                                        onPress={() => onSelectImagePress(4)}
-                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderBottomRightRadius: 20, }}
-                                    >
-                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                    </TouchableRipple>
-                                }
+                                <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                                    {data.images[3] ?
+                                        <>
+                                            <Image
+                                                style={{
+                                                    flex: 1,
+                                                }}
+                                                source={{ uri: data.images[3] }}
+                                                placeholder={blurhash}
+                                                contentFit="contain"
+                                                transition={200}
+                                            />
+                                            <IconButton
+                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                                icon="delete-outline"
+                                                iconColor='white'
+                                                size={normalize(20)}
+                                                onPress={() => onDeleteImagePress(3)}
+                                            />
+                                        </>
+                                        :
+                                        <TouchableRipple
+                                            onPress={() => onSelectImagePress(3)}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1 }}
+                                        >
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                        </TouchableRipple>
+                                    }
+                                </View>
+
+                                <View style={{ flex: 1, aspectRatio: 3 / 4 }}>
+                                    {data.images[4] ?
+                                        <>
+                                            <Image
+                                                style={{
+                                                    flex: 1,
+                                                    borderBottomRightRadius: 20,
+                                                }}
+                                                source={{ uri: data.images[4] }}
+                                                placeholder={blurhash}
+                                                contentFit="contain"
+                                                transition={200}
+                                            />
+                                            <IconButton
+                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                                icon="delete-outline"
+                                                iconColor='white'
+                                                size={normalize(20)}
+                                                onPress={() => onDeleteImagePress(4)}
+                                            />
+                                        </> :
+                                        <TouchableRipple
+                                            onPress={() => onSelectImagePress(4)}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderBottomRightRadius: 20, }}
+                                        >
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                        </TouchableRipple>
+                                    }
+                                </View>
                             </View>
                         </View>
                     </View>
+
+                    {data.images.length > 5 && <View style={{ marginTop: SPACING.x_small, flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
+                        {data.images.slice(5).map((image, index) =>
+                            <View key={image ?? Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 3)) / 4), aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                                {image ?
+                                    <React.Fragment>
+                                        <Image
+                                            style={{
+                                                flex: 1,
+                                                borderRadius: 20,
+                                            }}
+                                            source={{ uri: image }}
+                                            placeholder={blurhash}
+                                            contentFit="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                            icon="delete-outline"
+                                            iconColor='white'
+                                            size={normalize(20)}
+                                            onPress={() => onDeleteImagePress(index + 5)}
+                                        />
+                                    </React.Fragment> :
+                                    <TouchableRipple
+                                        onPress={() => onSelectImagePress(index + 5)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 20, }}
+                                    >
+                                        <>
+                                            <AntDesign name="plus" size={normalize(30)} color="black" />
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONTS.small }}>
+                                                Add more
+                                            </Text>
+                                        </>
+                                    </TouchableRipple>
+                                }
+                            </View>)}
+                    </View>}
                 </Animated.ScrollView>
             </>
 
