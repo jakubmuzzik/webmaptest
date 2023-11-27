@@ -78,11 +78,11 @@ const Profile = ({ route, client, navigation }) => {
                             />
                         </View>
                         <View style={{ flexDirection: 'column', width: isLargeScreen ? 400 : '50%', flexShrink: 1 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, width: '100%' }}>
+                            <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
                                 <Image
                                     style={{
                                         aspectRatio: 3 / 4,
-                                        width: '50%',
+                                        flex: 1,
                                         marginRight: SPACING.xxx_small,
                                     }}
                                     source={require('../assets/dummy_photo.png')}
@@ -93,7 +93,7 @@ const Profile = ({ route, client, navigation }) => {
                                 <Image
                                     style={{
                                         aspectRatio: 3 / 4,
-                                        width: '50%',
+                                        flex: 1,
                                         borderTopRightRadius: 20,
                                     }}
                                     source={require('../assets/dummy_photo.png')}
@@ -102,11 +102,11 @@ const Profile = ({ route, client, navigation }) => {
                                     transition={200}
                                 />
                             </View>
-                            <View style={{ flexDirection: 'row', width: '100%'  }}>
+                            <View style={{ flexDirection: 'row', flexGrow: 1  }}>
                                 <Image
                                     style={{
                                         aspectRatio: 3 / 4,
-                                        width: '50%',
+                                        flex: 1,
                                         marginRight: SPACING.xxx_small
                                     }}
                                     source={require('../assets/dummy_photo.png')}
@@ -117,7 +117,7 @@ const Profile = ({ route, client, navigation }) => {
                                 <Image
                                     style={{
                                         aspectRatio: 3 / 4,
-                                        width: '50%',
+                                        flex: 1,
                                         borderBottomRightRadius: 20,
                                     }}
                                     source={require('../assets/dummy_photo.png')}

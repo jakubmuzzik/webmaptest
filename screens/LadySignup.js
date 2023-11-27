@@ -29,8 +29,11 @@ import {
     EYE_COLORS
 } from '../labels'
 import { MotiView } from 'moti'
-import BouncyCheckbox from 'react-native-bouncy-checkbox'
+import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
+
+const blurhash =
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
 
@@ -64,7 +67,8 @@ const LadySignup = ({ route }) => {
         addressTitle: '',
         hiddenAddress: false,
         description: '',
-        workingHours: [{ day: 'monday', from: '', until: '', enabled: true },{ day: 'tuesday', from: '', until: '', enabled: true },{ day: 'wednesday', from: '', until: '', enabled: true },{day: 'thursday', from: '', until: '', enabled: true },{day: 'friday', from: '', until: '', enabled: true },{day: 'saturday', from: '', until: '', enabled: true },{day: 'sunday', from: '', until: '', enabled: true }]
+        workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
+        images: [null, null, null, null, null]
     })
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
@@ -267,7 +271,7 @@ const LadySignup = ({ route }) => {
                 } else {
                     setup.invalidUntil = 'Hours must be between 0 and 23, and minutes between 0 and 59.'
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e)
                 dataValid = false
             }
@@ -385,6 +389,33 @@ const LadySignup = ({ route }) => {
             address: value,
             addressTitle: value?.title
         }))
+    }, [])
+
+    const onSelectImagePress = useCallback(async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.7,
+        })
+
+        if (!result.canceled) {
+            try {
+                setData(d => {
+                    d.images[index] = result.assets[0].uri
+                    return { ...d }
+                })
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }, [])
+
+    const onDeleteImagePress = useCallback(async (index) => {
+        setData(d => {
+            d.images[index] = null
+            return { ...d }
+        })
     }, [])
 
     const paginageNext = () => {
@@ -754,7 +785,7 @@ const LadySignup = ({ route }) => {
                             errorMessage={showPersonalDetailsErrorMessages && !data.description ? 'Desribe yourself' : undefined}
                         />
                     </View>
-                   
+
                 </Animated.ScrollView>
             </>
         )
@@ -983,7 +1014,7 @@ const LadySignup = ({ route }) => {
                         4. Address & Working Hours
                     </Text>
 
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'flex-start' }}>
                         <TouchableOpacity
                             onPress={onSearchAddressPress}
                             style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large, }}>
@@ -1002,22 +1033,22 @@ const LadySignup = ({ route }) => {
                                 errorMessage={showLocationErrorMessages && !data.addressTitle ? 'Enter your address' : undefined}
                             />
                         </TouchableOpacity>
-                        <BouncyCheckbox
-                            onPress={() => setData({
-                                ...data,
-                                hiddenAddress: !data.hiddenAddress
-                            })}
-                            style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large }}
-                            disableBuiltInState
-                            isChecked={data.hiddenAddress}
-                            size={normalize(21)}
-                            fillColor={COLORS.red}
-                            unfillColor="#FFFFFF"
-                            text="Show only city"
-                            iconStyle={{ borderRadius: 3 }}
-                            innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                            textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
-                        />
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small, flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large }}>
+                            <View style={{ flex: 1, flexDirection: 'column', marginRight: SPACING.small }}>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>
+                                    Show your specific location
+                                </Text>
+                                <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2 }}>
+                                    If not selected, only city will be visible on your profile
+                                </Text>
+                            </View>
+                            <Switch value={data.hiddenAddress}
+                                onValueChange={(value) => setData({
+                                    ...data,
+                                    hiddenAddress: value
+                                })} color={COLORS.red}
+                            />
+                        </View>
                     </View>
 
                     <Text style={{ marginTop: SPACING.small, marginBottom: SPACING.x_small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
@@ -1031,7 +1062,7 @@ const LadySignup = ({ route }) => {
                             </View>
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[0].enabled ? 'none' : 'line-through' }]}>Monday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[0].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 0, 'enabled')}
@@ -1039,12 +1070,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[0].invalidFrom || data.workingHours[0].invalidUntil) && data.workingHours[0].enabled) &&
-                                <View style={{ height: data.workingHours[0].errorHeight }}/>
+                                <View style={{ height: data.workingHours[0].errorHeight }} />
                             }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[1].enabled ? 'none' : 'line-through' }]}>Tuesday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[1].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 1, 'enabled')}
@@ -1052,12 +1083,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[1].invalidFrom || data.workingHours[1].invalidUntil) && data.workingHours[1].enabled) &&
-                                <View style={{ height: data.workingHours[1].errorHeight }}/>
+                                <View style={{ height: data.workingHours[1].errorHeight }} />
                             }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[2].enabled ? 'none' : 'line-through' }]}>Wednesday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[2].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 2, 'enabled')}
@@ -1065,12 +1096,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[2].invalidFrom || data.workingHours[2].invalidUntil) && data.workingHours[2].enabled) &&
-                                <View style={{ height: data.workingHours[2].errorHeight }}/>
+                                <View style={{ height: data.workingHours[2].errorHeight }} />
                             }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[3].enabled ? 'none' : 'line-through' }]}>Thursday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[3].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 3, 'enabled')}
@@ -1078,12 +1109,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[3].invalidFrom || data.workingHours[3].invalidUntil) && data.workingHours[3].enabled) &&
-                                <View style={{ height: data.workingHours[3].errorHeight }}/>
+                                <View style={{ height: data.workingHours[3].errorHeight }} />
                             }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[4].enabled ? 'none' : 'line-through' }]}>Friday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[4].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 4, 'enabled')}
@@ -1091,12 +1122,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[4].invalidFrom || data.workingHours[4].invalidUntil) && data.workingHours[4].enabled) &&
-                                <View style={{ height: data.workingHours[4].errorHeight }}/>
+                                <View style={{ height: data.workingHours[4].errorHeight }} />
                             }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[5].enabled ? 'none' : 'line-through' }]}>Saturday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[5].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 5, 'enabled')}
@@ -1104,12 +1135,12 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[5].invalidFrom || data.workingHours[5].invalidUntil) && data.workingHours[5].enabled) &&
-                                <View style={{ height: data.workingHours[5].errorHeight }}/>
+                                <View style={{ height: data.workingHours[5].errorHeight }} />
                             }
-                            
+
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[6].enabled ? 'none' : 'line-through' }]}>Sunday</Text>
-                                <Switch 
+                                <Switch
                                     style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], marginLeft: SPACING.xxx_small }}
                                     value={data.workingHours[6].enabled}
                                     onValueChange={(value) => onWorkingHourChange(value, 6, 'enabled')}
@@ -1117,7 +1148,7 @@ const LadySignup = ({ route }) => {
                                 />
                             </View>
                             {((data.workingHours[6].invalidFrom || data.workingHours[6].invalidUntil) && data.workingHours[6].enabled) &&
-                                <View style={{ height: data.workingHours[6].errorHeight }}/>
+                                <View style={{ height: data.workingHours[6].errorHeight }} />
                             }
                         </View>
 
@@ -1197,6 +1228,7 @@ const LadySignup = ({ route }) => {
     }, [data, showLocationErrorMessages, contentWidth])
 
     const renderUploadPhotos = useCallback((i) => {
+
         return (
             <>
                 <View style={styles.modal__header}>
@@ -1208,7 +1240,159 @@ const LadySignup = ({ route }) => {
                         5. Upload Photos
                     </Text>
 
+                    <View style={{ marginTop: SPACING.x_small, flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
+                        <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
+                            {data.images[0] ?
+                                <>
+                                    <Image
+                                        style={{
+                                            aspectRatio: 3 / 4,
+                                            width: 'auto',
+                                            borderTopLeftRadius: 20,
+                                            borderBottomLeftRadius: 20
+                                        }}
+                                        source={{ uri: data.images[0] }}
+                                        placeholder={blurhash}
+                                        contentFit="contain"
+                                        transition={200}
+                                    />
+                                    <IconButton
+                                        style={{ position: 'absolute', top: 5, right: 5 }}
+                                        icon="delete-outline"
+                                        iconColor='black'
+                                        size={20}
+                                        onPress={() => onDeleteImagePress(0)}
+                                    />
+                                </> :
 
+                                <TouchableRipple
+                                    onPress={() => onSelectImagePress(0)}
+                                    style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
+                                >
+                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                </TouchableRipple>
+                            }
+                        </View>
+                        <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
+                            <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
+                                {data.images[1] ?
+                                    <>
+                                        <Image
+                                            style={{
+                                                aspectRatio: 3 / 4,
+                                                flex: 1,
+                                                marginRight: SPACING.xxx_small,
+                                            }}
+                                            source={{ uri: data.images[1] }}
+                                            placeholder={blurhash}
+                                            contentFit="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            icon="delete-outline"
+                                            iconColor='black'
+                                            size={20}
+                                            onPress={() => onDeleteImagePress(0)}
+                                        />
+                                    </> :
+                                    <TouchableRipple
+                                        onPress={() => onSelectImagePress(1)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small, }}
+                                    >
+                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                    </TouchableRipple>
+                                }
+                                {data.images[2] ?
+                                    <>
+                                        <Image
+                                            style={{
+                                                aspectRatio: 3 / 4,
+                                                flex: 1,
+                                                borderTopRightRadius: 20,
+                                            }}
+                                            source={{ uri: data.images[2] }}
+                                            placeholder={blurhash}
+                                            contentFit="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            icon="delete-outline"
+                                            iconColor='black'
+                                            size={20}
+                                            onPress={() => onDeleteImagePress(2)}
+                                        />
+                                    </> :
+                                    <TouchableRipple
+                                        onPress={() => onSelectImagePress(2)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderTopRightRadius: 20 }}
+                                    >
+                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                    </TouchableRipple>
+                                }
+                            </View>
+                            <View style={{ flexDirection: 'row', flexGrow: 1 }}>
+                                {data.images[3] ?
+                                    <>
+                                        <Image
+                                            style={{
+                                                aspectRatio: 3 / 4,
+                                                flex: 1,
+                                                marginRight: SPACING.xxx_small,
+                                            }}
+                                            source={{ uri: data.images[3] }}
+                                            placeholder={blurhash}
+                                            contentFit="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            icon="delete-outline"
+                                            iconColor='black'
+                                            size={20}
+                                            onPress={() => onDeleteImagePress(3)}
+                                        />
+                                    </> :
+
+                                    <TouchableRipple
+                                        onPress={() => onSelectImagePress(3)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small, }}
+                                    >
+                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                    </TouchableRipple>
+                                }
+                                {data.images[4] ?
+                                    <>
+                                        <Image
+                                            style={{
+                                                aspectRatio: 3 / 4,
+                                                flex: 1,
+                                                borderBottomRightRadius: 20,
+                                            }}
+                                            source={{ uri: data.images[4] }}
+                                            placeholder={blurhash}
+                                            contentFit="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            icon="delete-outline"
+                                            iconColor='black'
+                                            size={20}
+                                            onPress={() => onDeleteImagePress(4)}
+                                        />
+                                    </> :
+                                    <TouchableRipple
+                                        onPress={() => onSelectImagePress(4)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderBottomRightRadius: 20, }}
+                                    >
+                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                    </TouchableRipple>
+                                }
+                            </View>
+                        </View>
+                    </View>
                 </Animated.ScrollView>
             </>
 
