@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { View } from 'react-native'
 import {isBrowser } from 'react-device-detect'
 
@@ -23,4 +23,4 @@ const HoverableView = ({ children, style, hoveredBackgroundColor, backgroundColo
     )
 }
 
-export default HoverableView
+export default memo(HoverableView)

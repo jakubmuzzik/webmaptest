@@ -179,28 +179,6 @@ const LadySignup = ({ route }) => {
         }))
     }, [])
 
-    const onNextPress = () => {
-        if (nextButtonIsLoading) {
-            return
-        }
-
-        switch (index) {
-            case 0:
-                //return processLoginInformationPage()
-                return processLocationAndAvailabilityPage()
-            case 1:
-                return processPersonalDetailsPage()
-            case 2:
-                return processLocationAndAvailabilityPage()
-            case 3:
-                return processServicesAndPricingPage()
-            case 4:
-                return processUploadPhotosPage()
-            default:
-                return
-        }
-    }
-
     const processLoginInformationPage = () => {
         paginageNext()
         return
@@ -235,7 +213,10 @@ const LadySignup = ({ route }) => {
         paginageNext()
     }
 
-    const processLocationAndAvailabilityPage = () => {
+    const processLocationAndAvailabilityPage = useCallback(() => {
+        paginageNext()
+        return
+
         let dataValid = true
 
         if (!data.address) {
@@ -308,7 +289,7 @@ const LadySignup = ({ route }) => {
         //TODO - if all valid - remove all valid like attributes
 
         paginageNext()
-    }
+    }, [data])
 
     const processServicesAndPricingPage = () => {
         paginageNext()
@@ -316,14 +297,6 @@ const LadySignup = ({ route }) => {
 
     const processUploadPhotosPage = () => {
         paginageNext()
-    }
-
-    const paginageNext = () => {
-        setIndex(index => index + 1)
-    }
-
-    const paginateBack = () => {
-        setIndex(index => index - 1)
     }
 
     const getDateOfBirth = useCallback(() => {
@@ -413,6 +386,35 @@ const LadySignup = ({ route }) => {
             addressTitle: value?.title
         }))
     }, [])
+
+    const paginageNext = () => {
+        setIndex(index => index + 1)
+    }
+
+    const paginateBack = () => {
+        setIndex(index => index - 1)
+    }
+
+    const onNextPress = () => {
+        if (nextButtonIsLoading) {
+            return
+        }
+
+        switch (index) {
+            case 0:
+                return processLoginInformationPage()
+            case 1:
+                return processPersonalDetailsPage()
+            case 2:
+                return processServicesAndPricingPage()
+            case 3:
+                return processLocationAndAvailabilityPage()
+            case 4:
+                return processUploadPhotosPage()
+            default:
+                return
+        }
+    }
 
     const renderLoginInformation = useCallback((i) => {
         return (
@@ -1036,11 +1038,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[0].invalidFrom || data.workingHours[0].invalidUntil) && data.workingHours[0].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[0].invalidFrom || data.workingHours[0].invalidUntil) && data.workingHours[0].enabled) &&
+                                <View style={{ height: data.workingHours[0].errorHeight }}/>
+                            }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[1].enabled ? 'none' : 'line-through' }]}>Tuesday</Text>
@@ -1051,11 +1051,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[1].invalidFrom || data.workingHours[1].invalidUntil) && data.workingHours[1].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[1].invalidFrom || data.workingHours[1].invalidUntil) && data.workingHours[1].enabled) &&
+                                <View style={{ height: data.workingHours[1].errorHeight }}/>
+                            }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[2].enabled ? 'none' : 'line-through' }]}>Wednesday</Text>
@@ -1066,11 +1064,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[2].invalidFrom || data.workingHours[2].invalidUntil) && data.workingHours[2].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[2].invalidFrom || data.workingHours[2].invalidUntil) && data.workingHours[2].enabled) &&
+                                <View style={{ height: data.workingHours[2].errorHeight }}/>
+                            }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[3].enabled ? 'none' : 'line-through' }]}>Thursday</Text>
@@ -1081,11 +1077,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[3].invalidFrom || data.workingHours[3].invalidUntil) && data.workingHours[3].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[3].invalidFrom || data.workingHours[3].invalidUntil) && data.workingHours[3].enabled) &&
+                                <View style={{ height: data.workingHours[3].errorHeight }}/>
+                            }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[4].enabled ? 'none' : 'line-through' }]}>Friday</Text>
@@ -1096,11 +1090,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[4].invalidFrom || data.workingHours[4].invalidUntil) && data.workingHours[4].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[4].invalidFrom || data.workingHours[4].invalidUntil) && data.workingHours[4].enabled) &&
+                                <View style={{ height: data.workingHours[4].errorHeight }}/>
+                            }
 
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[5].enabled ? 'none' : 'line-through' }]}>Saturday</Text>
@@ -1111,11 +1103,9 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[5].invalidFrom || data.workingHours[5].invalidUntil) && data.workingHours[5].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[5].invalidFrom || data.workingHours[5].invalidUntil) && data.workingHours[5].enabled) &&
+                                <View style={{ height: data.workingHours[5].errorHeight }}/>
+                            }
                             
                             <View style={[styles.column, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }]}>
                                 <Text style={[styles.tableHeaderValue, { textDecorationLine: data.workingHours[6].enabled ? 'none' : 'line-through' }]}>Sunday</Text>
@@ -1126,13 +1116,12 @@ const LadySignup = ({ route }) => {
                                     color={COLORS.red}
                                 />
                             </View>
-                            {((data.workingHours[6].invalidFrom || data.workingHours[6].invalidUntil) && data.workingHours[6].enabled) && <HelperText type="error" visible>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: 0 }}>
-                                    .
-                                </Text>
-                            </HelperText>}
+                            {((data.workingHours[6].invalidFrom || data.workingHours[6].invalidUntil) && data.workingHours[6].enabled) &&
+                                <View style={{ height: data.workingHours[6].errorHeight }}/>
+                            }
                         </View>
-                       <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+
+                        <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                             <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                                 <Text style={styles.tableHeaderText}>From</Text>
                             </View>
@@ -1156,11 +1145,13 @@ const LadySignup = ({ route }) => {
                                         placeholderTextColor="grey"
                                         maxLength={5}
                                     />
-                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) && <HelperText type="error" visible>
-                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidFrom ? 1: 0 }}>
-                                            {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
-                                        </Text>
-                                    </HelperText>}
+                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) &&
+                                        <HelperText onLayout={(event) => onWorkingHourChange(event.nativeEvent.layout.height, index, 'errorHeight')} type="error" visible>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidFrom ? 1 : 0 }}>
+                                                {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
+                                            </Text>
+                                        </HelperText>
+                                    }
                                 </View>
                             ))}
                         </View>
@@ -1189,76 +1180,16 @@ const LadySignup = ({ route }) => {
                                         placeholderTextColor="grey"
                                         maxLength={5}
                                     />
-                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) && <HelperText type="error" visible>
-                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidUntil ? 1: 0 }}>
-                                            {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
-                                        </Text>
-                                    </HelperText>}
+                                    {((data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil) && data.workingHours[index].enabled) &&
+                                        <HelperText onLayout={(event) => onWorkingHourChange(event.nativeEvent.layout.height, index, 'errorHeight')} type="error" visible>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, opacity: data.workingHours[index].invalidUntil ? 1 : 0 }}>
+                                                {data.workingHours[index].invalidFrom || data.workingHours[index].invalidUntil}
+                                            </Text>
+                                        </HelperText>
+                                    }
                                 </View>
                             ))}
                         </View>
-                        {/* <View style={{  }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.lightGrey, paddingLeft: 2, paddingRight: SPACING.xx_small }]}>
-                                <Text style={styles.tableHeaderText}>Available</Text>
-                            </View>
-
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[0].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 0, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[1].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 1, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[2].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 2, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[3].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 3, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[4].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 4, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[5].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 5, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', height: normalize(45) }}>
-                                <Switch 
-                                    style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                    value={data.workingHours[6].enabled}
-                                    onValueChange={(value) => onWorkingHourChange(value, 6, 'enabled')}
-                                    color={COLORS.red}
-                                />
-                            </View>
-                        </View> */}
                     </View>
                 </Animated.ScrollView>
             </>
@@ -1276,6 +1207,8 @@ const LadySignup = ({ route }) => {
                     <Text style={styles.pageHeaderText}>
                         5. Upload Photos
                     </Text>
+
+
                 </Animated.ScrollView>
             </>
 
@@ -1285,7 +1218,7 @@ const LadySignup = ({ route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1. Login Information':
-                return renderLocationAndAvailability(route.index)//renderLoginInformation(route.index)
+                return renderUploadPhotos(route.index)//renderLoginInformation(route.index)
             case '2. Personal Details':
                 return renderPersonalDetails(route.index)
             case '3. Services & Pricing':

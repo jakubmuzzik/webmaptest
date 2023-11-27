@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, memo } from "react"
 import { View, Text } from 'react-native'
 import { TextInput, HelperText, Icon} from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES } from "../constants"
@@ -79,4 +79,4 @@ const HoverableInput = ({
     )
 }
 
-export default HoverableInput
+export default memo(HoverableInput)

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, forwardRef, useImperativeHandle, useEffect } from "react"
+import React, { useState, useCallback, useRef, forwardRef, useImperativeHandle, useEffect, memo } from "react"
 import { View, useWindowDimensions, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, TextInput as NativeTextInput } from 'react-native'
 import { TextInput, HelperText, TouchableRipple } from 'react-native-paper'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from "../constants"
@@ -235,7 +235,7 @@ const DropdownSelect = forwardRef((props, ref) => {
     )
 })
 
-export default DropdownSelect
+export default memo(DropdownSelect)
 
 const styles = StyleSheet.create({
     dropdownOverlay: {

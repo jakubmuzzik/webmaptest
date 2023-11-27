@@ -19,8 +19,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
-import { TouchableRipple, Button } from 'react-native-paper'
-import BouncyCheckbox from "react-native-bouncy-checkbox"
+import { TouchableRipple, ActivityIndicator } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
@@ -69,6 +68,7 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
         setSearch(query)
 
         if (!query || query.length < 2) {
+            clearTimeout(searchTimeout.current)
             setIsSearching(false)
             setResults([])
             return
@@ -127,6 +127,10 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
         }
     })
 
+    const onUseCurrentLocationPress = () => {
+
+    }
+
     return (
         <Modal transparent={true}
             visible={visible}
@@ -161,7 +165,7 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
                                     style={styles.citySearch}
                                     onChangeText={onSearch}
                                     value={search}
-                                    placeholder="Search..."
+                                    placeholder="Enter your address"
                                     placeholderTextColor="grey"
                                     onBlur={() => setSearchBorderColor(COLORS.placeholder)}
                                     onFocus={() => setSearchBorderColor(COLORS.red)}
@@ -169,10 +173,22 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
                                 <Ionicons onPress={() => onSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
                             </HoverableView>
 
-                            
-                            
+                            {!search && !isSearching && results.length === 0 && <TouchableRipple
+                                onPress={onUseCurrentLocationPress}
+                                style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, alignItems: 'center', flexDirection: 'row' }}
+                                rippleColor="rgba(220, 46, 46, .10)"
+                            >
+                                <>
+                                    <Ionicons name="navigate-circle-outline" size={normalize(24)} color="black" />
+                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, marginLeft: SPACING.xxx_small }}>
+                                        Use my current location
+                                    </Text>
+                                </>
+                            </TouchableRipple>}
 
-                            {results.map(address => {
+                            {isSearching && <ActivityIndicator style={{ marginTop: SPACING.small }} animating color={COLORS.red} />}
+
+                            {!isSearching && results.map(address => {
                                 return (
                                     <TouchableRipple
                                         key={address.id}
