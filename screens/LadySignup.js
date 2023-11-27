@@ -1257,9 +1257,9 @@ const LadySignup = ({ route }) => {
                                         transition={200}
                                     />
                                     <IconButton
-                                        style={{ position: 'absolute', top: 5, right: 5 }}
+                                        style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                         icon="delete-outline"
-                                        iconColor='black'
+                                        iconColor='white'
                                         size={20}
                                         onPress={() => onDeleteImagePress(0)}
                                     />
@@ -1276,12 +1276,10 @@ const LadySignup = ({ route }) => {
                         <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
                             <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
                                 {data.images[1] ?
-                                    <>
+                                    <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small}}>
                                         <Image
                                             style={{
-                                                aspectRatio: 3 / 4,
-                                                flex: 1,
-                                                marginRight: SPACING.xxx_small,
+                                                flex: 1
                                             }}
                                             source={{ uri: data.images[1] }}
                                             placeholder={blurhash}
@@ -1289,13 +1287,13 @@ const LadySignup = ({ route }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                             icon="delete-outline"
-                                            iconColor='black'
+                                            iconColor='white'
                                             size={20}
-                                            onPress={() => onDeleteImagePress(0)}
+                                            onPress={() => onDeleteImagePress(1)}
                                         />
-                                    </> :
+                                    </View> :
                                     <TouchableRipple
                                         onPress={() => onSelectImagePress(1)}
                                         style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small, }}
@@ -1304,10 +1302,9 @@ const LadySignup = ({ route }) => {
                                     </TouchableRipple>
                                 }
                                 {data.images[2] ?
-                                    <>
+                                    <View style={{ flex: 1, aspectRatio: 3 / 4}}>
                                         <Image
                                             style={{
-                                                aspectRatio: 3 / 4,
                                                 flex: 1,
                                                 borderTopRightRadius: 20,
                                             }}
@@ -1317,13 +1314,13 @@ const LadySignup = ({ route }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                             icon="delete-outline"
-                                            iconColor='black'
+                                            iconColor='white'
                                             size={20}
                                             onPress={() => onDeleteImagePress(2)}
                                         />
-                                    </> :
+                                    </View> :
                                     <TouchableRipple
                                         onPress={() => onSelectImagePress(2)}
                                         style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderTopRightRadius: 20 }}
@@ -1334,12 +1331,10 @@ const LadySignup = ({ route }) => {
                             </View>
                             <View style={{ flexDirection: 'row', flexGrow: 1 }}>
                                 {data.images[3] ?
-                                    <>
+                                    <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small}}>
                                         <Image
                                             style={{
-                                                aspectRatio: 3 / 4,
                                                 flex: 1,
-                                                marginRight: SPACING.xxx_small,
                                             }}
                                             source={{ uri: data.images[3] }}
                                             placeholder={blurhash}
@@ -1347,13 +1342,13 @@ const LadySignup = ({ route }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                             icon="delete-outline"
-                                            iconColor='black'
+                                            iconColor='white'
                                             size={20}
                                             onPress={() => onDeleteImagePress(3)}
                                         />
-                                    </> :
+                                    </View> :
 
                                     <TouchableRipple
                                         onPress={() => onSelectImagePress(3)}
@@ -1363,10 +1358,9 @@ const LadySignup = ({ route }) => {
                                     </TouchableRipple>
                                 }
                                 {data.images[4] ?
-                                    <>
+                                    <View style={{ flex: 1, aspectRatio: 3 / 4}}>
                                         <Image
                                             style={{
-                                                aspectRatio: 3 / 4,
                                                 flex: 1,
                                                 borderBottomRightRadius: 20,
                                             }}
@@ -1376,13 +1370,13 @@ const LadySignup = ({ route }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: 5, right: 5 }}
+                                            style={{ position: 'absolute', top: 5, right: 5, backgroundColor: 'rgba(40,40,40,0.9)' }}
                                             icon="delete-outline"
-                                            iconColor='black'
+                                            iconColor='white'
                                             size={20}
                                             onPress={() => onDeleteImagePress(4)}
                                         />
-                                    </> :
+                                    </View> :
                                     <TouchableRipple
                                         onPress={() => onSelectImagePress(4)}
                                         style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, aspectRatio: 3 / 4, borderBottomRightRadius: 20, }}
