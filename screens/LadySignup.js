@@ -68,7 +68,7 @@ const LadySignup = ({ route }) => {
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null, null]
+        images: [null, null, null, null, null]
     })
 
     const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
@@ -405,7 +405,7 @@ const LadySignup = ({ route }) => {
             try {
                 setData(d => {
                     d.images[index] = result.assets[0].uri
-                    if (d.images.every(image => image) || index > 4) {
+                    if ((d.images.every(image => image) || index > 4) && d.images.length < 16) {
                         d.images.push(null)
                     }
                     return { ...d }
@@ -418,7 +418,12 @@ const LadySignup = ({ route }) => {
 
     const onDeleteImagePress = useCallback(async (index) => {
         setData(d => {
-            d.images[index] = null
+            if (index > 4) {
+                d.images.splice(index, 1)
+            } else {
+                d.images[index] = null
+            }
+            
             return { ...d }
         })
     }, [])
@@ -1286,12 +1291,13 @@ const LadySignup = ({ route }) => {
                         <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
                             <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
 
-                                <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                                <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
                                     {data.images[1] ?
                                         <>
                                             <Image
                                                 style={{
-                                                    flex: 1
+                                                    flex: 1,
+                                                    aspectRatio: 3 / 4
                                                 }}
                                                 source={{ uri: data.images[1] }}
                                                 placeholder={blurhash}
@@ -1309,7 +1315,7 @@ const LadySignup = ({ route }) => {
 
                                         <TouchableRipple
                                             onPress={() => onSelectImagePress(1)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, width: 'auto' }}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1 }}
                                         >
                                             <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
@@ -1318,13 +1324,14 @@ const LadySignup = ({ route }) => {
                                 </View>
 
 
-                                <View style={{ flex: 1, aspectRatio: 3 / 4 }}>
+                                <View style={{ flex: 1 }}>
                                     {data.images[2] ?
                                         <>
                                             <Image
                                                 style={{
                                                     flex: 1,
                                                     borderTopRightRadius: 20,
+                                                    aspectRatio: 3 / 4
                                                 }}
                                                 source={{ uri: data.images[2] }}
                                                 placeholder={blurhash}
@@ -1342,7 +1349,7 @@ const LadySignup = ({ route }) => {
 
                                         <TouchableRipple
                                             onPress={() => onSelectImagePress(2)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', width: 'auto', justifyContent: 'center', aspectRatio: 3 / 4, borderTopRightRadius: 20, width: 'auto', }}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderTopRightRadius: 20, flex: 1, }}
                                         >
                                             <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
@@ -1352,12 +1359,13 @@ const LadySignup = ({ route }) => {
                             </View>
                             <View style={{ flexDirection: 'row', flexGrow: 1 }}>
 
-                                <View style={{ flex: 1, aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                                <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
                                     {data.images[3] ?
                                         <>
                                             <Image
                                                 style={{
                                                     flex: 1,
+                                                    aspectRatio: 3 / 4
                                                 }}
                                                 source={{ uri: data.images[3] }}
                                                 placeholder={blurhash}
@@ -1375,20 +1383,21 @@ const LadySignup = ({ route }) => {
                                         :
                                         <TouchableRipple
                                             onPress={() => onSelectImagePress(3)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, width: 'auto', }}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1, }}
                                         >
                                             <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
                                     }
                                 </View>
 
-                                <View style={{ flex: 1, aspectRatio: 3 / 4 }}>
+                                <View style={{ flex: 1}}>
                                     {data.images[4] ?
                                         <>
                                             <Image
                                                 style={{
                                                     flex: 1,
                                                     borderBottomRightRadius: 20,
+                                                    aspectRatio: 3 / 4 
                                                 }}
                                                 source={{ uri: data.images[4] }}
                                                 placeholder={blurhash}
@@ -1405,7 +1414,7 @@ const LadySignup = ({ route }) => {
                                         </> :
                                         <TouchableRipple
                                             onPress={() => onSelectImagePress(4)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderBottomRightRadius: 20, width: 'auto', }}
+                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderBottomRightRadius: 20, flex :1, }}
                                         >
                                             <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
