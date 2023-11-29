@@ -344,6 +344,14 @@ const LadySignup = ({ route }) => {
         setServicesPickerVisible(true)
     }, [])
 
+    const onTermsOfServicePress = useCallback(() => {
+
+    }, [])
+
+    const onPrivacyPolicyPress = useCallback(() => {
+
+    }, [])
+
     const onAddNewPricePress = useCallback(() => {
         pricesDropdownPress.current?.onDropdownPress()
     }, [pricesDropdownPress.current])
@@ -540,6 +548,12 @@ const LadySignup = ({ route }) => {
                             errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                             secureTextEntry={data.confirmSecureTextEntry}
                         />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
+                        <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
+                            By countinuing, you agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
+                        </Text>
                     </View>
                 </Animated.ScrollView>
             </>
@@ -782,6 +796,7 @@ const LadySignup = ({ route }) => {
                             placeholder="Desribe yourself"
                             multiline
                             numberOfLines={5}
+                            maxLength={1000}
                             label="Description"
                             borderColor={COLORS.placeholder}
                             hoveredBorderColor={COLORS.red}
@@ -795,7 +810,11 @@ const LadySignup = ({ route }) => {
                             errorMessage={showPersonalDetailsErrorMessages && !data.description ? 'Desribe yourself' : undefined}
                         />
                     </View>
-
+                    <View style={{ marginHorizontal: SPACING.x_large, marginTop: 3 }}>
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: 'grey' }}>
+                            {`${data.description.length}/1000`}
+                        </Text>
+                    </View>
                 </Animated.ScrollView>
             </>
         )
@@ -1487,7 +1506,7 @@ const LadySignup = ({ route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1. Login Information':
-                return renderUploadPhotos(route.index)//renderLoginInformation(route.index)
+                return renderLoginInformation(route.index)
             case '2. Personal Details':
                 return renderPersonalDetails(route.index)
             case '3. Services & Pricing':

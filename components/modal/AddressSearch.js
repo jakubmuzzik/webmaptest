@@ -20,6 +20,7 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import { TouchableRipple, ActivityIndicator } from 'react-native-paper'
+import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
@@ -84,7 +85,7 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
 
     const fetchAddresses = async (query) => {
         try {
-            const response = await fetch('https://ladiesforfun-dev-ed.develop.my.salesforce-sites.com/services/apexrest/geolocation?' + new URLSearchParams({
+            const response = await fetch('https://ladiesforfun-dev-ed.develop.my.salesforce-sites.com/services/apexrest/geocode?' + new URLSearchParams({
                 q: query
             }))
             const data = await response.json()
@@ -92,6 +93,26 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
             setResults(parsedData.items)
         } catch(e) {
             console.error('Error during address search: ', JSON.stringify(e))
+        } finally {
+            setIsSearching(false)
+        }
+    }
+
+    const onUseCurrentLocationPress = async () => {
+        try {
+            setIsSearching(true)
+            const { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Low
+            })
+
+            const response = await fetch('https://ladiesforfun-dev-ed.develop.my.salesforce-sites.com/services/apexrest/revgeocode?' + new URLSearchParams({
+                at: latitude+','+longitude
+            }))
+            const data = await response.json()
+            const parsedData = JSON.parse(data)
+            setResults(parsedData.items)
+        } catch(error) {
+            console.error(error)
         } finally {
             setIsSearching(false)
         }
@@ -126,10 +147,6 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
             transform: [{ translateY: translateY.value }]
         }
     })
-
-    const onUseCurrentLocationPress = () => {
-
-    }
 
     return (
         <Modal transparent={true}

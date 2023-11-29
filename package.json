@@ -52,7 +52,8 @@
     "react-native-web-maps": "^0.3.0",
     "react-redux": "^8.1.2",
     "redux-thunk": "^2.4.2",
-    "expo-image-picker": "~14.3.2"
+    "expo-image-picker": "~14.3.2",
+    "expo-location": "~16.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
