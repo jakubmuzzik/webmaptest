@@ -68,7 +68,7 @@ const LadySignup = ({ route }) => {
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null]
+        images: [null, null, null, null, null, null]
     })
 
     const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
@@ -405,7 +405,7 @@ const LadySignup = ({ route }) => {
             try {
                 setData(d => {
                     d.images[index] = result.assets[0].uri
-                    if ((d.images.every(image => image) || index > 4) && d.images.length < 16) {
+                    if (index > 4 && d.images.length < 16) {
                         d.images.push(null)
                     }
                     return { ...d }
@@ -1242,7 +1242,7 @@ const LadySignup = ({ route }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles5}>5. Upload Photos</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles5}>5. Photos & Videos</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles5]} />
                 <Animated.ScrollView 
@@ -1252,7 +1252,14 @@ const LadySignup = ({ route }) => {
                     style={{ flex: 1 }} 
                     contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={styles.pageHeaderText}>
-                        5. Upload Photos
+                        5. Photos & Videos
+                    </Text>
+
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large }}>
+                        Add at least 5 cover photos
+                    </Text>
+                    <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large }}>
+                        These photos will be prominently displayed on your profile page
                     </Text>
 
                     <View style={{ marginTop: SPACING.x_small, flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
@@ -1424,15 +1431,24 @@ const LadySignup = ({ route }) => {
                         </View>
                     </View>
 
-                    {data.images.length > 5 && <View style={{ marginTop: SPACING.x_small, flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large,  marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small, }}>
+                        Add additional photos or videos
+                    </Text>
+                    <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small }}>
+                        Visitors can explore these assets by clicking the 'View All' button on your profile
+                    </Text>
+
+                    {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                         {data.images.slice(5).map((image, index) =>
-                            <View key={image ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 3)) / 4), aspectRatio: 3 / 4, marginRight: SPACING.xxx_small }}>
+                            <View key={image ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small }}>
                                 {image ?
                                     <React.Fragment>
                                         <Image
                                             style={{
                                                 flex: 1,
+                                                //width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3),
                                                 borderRadius: 20,
+                                                aspectRatio: 1 / 1
                                             }}
                                             source={{ uri: image }}
                                             placeholder={blurhash}
@@ -1449,7 +1465,7 @@ const LadySignup = ({ route }) => {
                                     </React.Fragment> :
                                     <TouchableRipple
                                         onPress={() => onSelectImagePress(index + 5)}
-                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 20, }}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 20, aspectRatio: 1 / 1 }}
                                     >
                                         <>
                                             <AntDesign name="plus" size={normalize(30)} color="black" />
