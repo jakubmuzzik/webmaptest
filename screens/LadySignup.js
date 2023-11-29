@@ -1275,7 +1275,7 @@ const LadySignup = ({ route }) => {
                                         }}
                                         source={{ uri: data.images[0] }}
                                         placeholder={blurhash}
-                                        contentFit="contain"
+                                        resizeMode="cover"
                                         transition={200}
                                     />
                                     <IconButton
@@ -1308,7 +1308,7 @@ const LadySignup = ({ route }) => {
                                                 }}
                                                 source={{ uri: data.images[1] }}
                                                 placeholder={blurhash}
-                                                contentFit="contain"
+                                                resizeMode="cover"
                                                 transition={200}
                                             />
                                             <IconButton
@@ -1342,7 +1342,7 @@ const LadySignup = ({ route }) => {
                                                 }}
                                                 source={{ uri: data.images[2] }}
                                                 placeholder={blurhash}
-                                                contentFit="contain"
+                                                resizeMode="cover"
                                                 transition={200}
                                             />
                                             <IconButton
@@ -1376,7 +1376,7 @@ const LadySignup = ({ route }) => {
                                                 }}
                                                 source={{ uri: data.images[3] }}
                                                 placeholder={blurhash}
-                                                contentFit="contain"
+                                                resizeMode="cover"
                                                 transition={200}
                                             />
                                             <IconButton
@@ -1408,7 +1408,7 @@ const LadySignup = ({ route }) => {
                                                 }}
                                                 source={{ uri: data.images[4] }}
                                                 placeholder={blurhash}
-                                                contentFit="contain"
+                                                resizeMode="cover"
                                                 transition={200}
                                             />
                                             <IconButton
@@ -1440,19 +1440,20 @@ const LadySignup = ({ route }) => {
 
                     {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                         {data.images.slice(5).map((image, index) =>
-                            <View key={image ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small }}>
+                            <View key={image ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                                 {image ?
                                     <React.Fragment>
                                         <Image
                                             style={{
                                                 flex: 1,
-                                                //width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3),
                                                 borderRadius: 20,
-                                                aspectRatio: 1 / 1
+                                                aspectRatio: 1 / 1,
+                                                borderWidth: 1,
+                                                borderColor: 'rgba(28,27,31,0.16)'
                                             }}
                                             source={{ uri: image }}
                                             placeholder={blurhash}
-                                            contentFit="contain"
+                                            resizeMode="contain"
                                             transition={200}
                                         />
                                         <IconButton

@@ -73,7 +73,7 @@ const Profile = ({ route, client, navigation }) => {
                                 }}
                                 source={require('../assets/dummy_photo.png')}
                                 placeholder={blurhash}
-                                contentFit="contain"
+                                resizeMode="cover"
                                 transition={200}
                             />
                         </View>
@@ -87,7 +87,7 @@ const Profile = ({ route, client, navigation }) => {
                                     }}
                                     source={require('../assets/dummy_photo.png')}
                                     placeholder={blurhash}
-                                    contentFit="contain"
+                                    resizeMode="cover"
                                     transition={200}
                                 />
                                 <Image
@@ -98,7 +98,7 @@ const Profile = ({ route, client, navigation }) => {
                                     }}
                                     source={require('../assets/dummy_photo.png')}
                                     placeholder={blurhash}
-                                    contentFit="contain"
+                                    contentFit="cover"
                                     transition={200}
                                 />
                             </View>
@@ -111,7 +111,7 @@ const Profile = ({ route, client, navigation }) => {
                                     }}
                                     source={require('../assets/dummy_photo.png')}
                                     placeholder={blurhash}
-                                    contentFit="contain"
+                                    resizeMode="cover"
                                     transition={200}
                                 />
                                 <Image
@@ -122,7 +122,7 @@ const Profile = ({ route, client, navigation }) => {
                                     }}
                                     source={require('../assets/dummy_photo.png')}
                                     placeholder={blurhash}
-                                    contentFit="contain"
+                                    resizeMode="cover"
                                     transition={200}
                                 />
                             </View>

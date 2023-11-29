@@ -55,7 +55,7 @@ const ProfilePhotosList = ({ navigation, route }) => {
                                 }}
                                 source={photo}
                                 placeholder={blurhash}
-                                contentFit="contain"
+                                resizeMode="contain"
                                 transition={200}
                             />
                         </HoverableView>

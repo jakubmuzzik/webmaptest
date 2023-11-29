@@ -59,7 +59,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
                 }}
                 source={item}
                 placeholder={blurhash}
-                contentFit="cover"
+                resizeMode="cover"
                 transition={200}
                 alt={client.name}
             />

@@ -16,7 +16,7 @@ const renderItem = ({
         <Image
             source={item}
             style={StyleSheet.absoluteFillObject}
-            contentFit="contain"
+            resizeMode="contain"
             onLoad={(e) => {
                 const { width, height } = e.source
                 setImageDimensions({ width, height })

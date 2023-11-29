@@ -237,7 +237,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                         rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <Image
-                            resizeMode='contain'
+                            resizeMode="contain"
                             source={require('../../assets/images/man.png')}
                             style={[
                                 {
@@ -253,7 +253,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
                         rippleColor="rgba(220, 46, 46, .10)"
                     >
                         <Image
-                            resizeMode='contain'
+                            resizeMode="contain"
                             source={require('../../assets/images/woman.png')}
                             style={[
                                 {

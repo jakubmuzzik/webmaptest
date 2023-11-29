@@ -199,7 +199,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
         return (
             <>
                 <Image
-                    resizeMode='contain'
+                    resizeMode="contain"
                     source={require('../../assets/images/padlock-icon.png')}
                     style={{ width: contentWidth * 0.18, height: contentWidth * 0.18, alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
                 />

@@ -145,7 +145,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
 
                             {(filteredCitiesRef.current.some(filteredCity => CZECH_CITIES.includes(filteredCity)) || !citySearch) && <View style={styles.countrySection}>
                                 <Image
-                                    resizeMode='contain'
+                                    resizeMode="contain"
                                     source={require('../../assets/images/flags/cz.png')}
                                     style={styles.countrySection__image}
                                 />

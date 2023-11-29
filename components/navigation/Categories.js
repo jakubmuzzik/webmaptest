@@ -167,7 +167,7 @@ const Categories = ({ route, navigation }) => {
                 <HoverableView hoveredBackgroundColor={COLORS.lightGrey} style={{ justifyContent: 'center', alignItems: 'flex-end', borderWidth: 2, borderRadius: 15, borderColor: filtersCount > 0 ? COLORS.red :COLORS.hoveredLightGrey, marginRight: SPACING.page_horizontal }}>
                     <TouchableOpacity onPress={onFiltersPress} style={{ paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Image
-                            resizeMode='contain'
+                            resizeMode="contain"
                             source={require('../../assets/icons/filter.svg')}
                             tintColor='#FFF'
                             style={{
