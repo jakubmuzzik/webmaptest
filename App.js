@@ -51,7 +51,7 @@ const linking = {
           Explore: ''
         },
       },*/
-      Home: '',
+      Home: 'home',
       Chat: 'chat',
       Favourites: 'favourites',
       //Esc: "/esc/:city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
@@ -60,8 +60,9 @@ const linking = {
       //Clu: "/clu/:city?",
       Profile: "/profile/:id",
       Explore: {
+        path: '',
         screens: {
-          Esc: "/esc/:city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
+          Esc: ":city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
           Pri: "/pri/:city?",
           Mas: "/mas/:city?",
           Clu: "/clu/:city?"
@@ -140,7 +141,7 @@ export default function App() {
   }
 
   const onBottomScreenPress = (screen) => {
-    navigationRef.current.dispatch(StackActions.push(screen))
+    navigationRef.current.navigate(screen)
   }
 
   if (isLoading) {
@@ -158,7 +159,7 @@ export default function App() {
           <Stack.Navigator screenOptions={{
             header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
             //animationEnabled: true,
-            cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60: 0 }
+            cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60: 0 }
           }}>
             <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />
             <Stack.Screen name="Home" component={Home} initialParams={{}} />
