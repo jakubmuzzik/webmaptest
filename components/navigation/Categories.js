@@ -9,6 +9,7 @@ import { Link } from '@react-navigation/native'
 import { SUPPORTED_LANGUAGES } from '../../constants'
 import { CZECH_CITIES, CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
 import { Badge } from 'react-native-paper'
+import { StackActions } from '@react-navigation/native'
 
 import HoverableView from '../../components/HoverableView'
 import Filters from '../modal/Filters'
@@ -101,7 +102,7 @@ const Categories = ({ route, navigation }) => {
                 <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'flex-start' }}>
                     <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.small }}>
                         {/* <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}> */}
-                        <Link to={{ screen: 'Esc', params: { ...stripEmptyParams(params) } }}>
+                        <Link to={{ screen: 'Esc', params: { ...stripEmptyParams(params) } }} action={StackActions.push('Esc', { ...stripEmptyParams(params) })}>
                             <View style={[styles.categoryContainer, route.name === 'Esc' ? styles.selectedCategoryContainer : {}]}>
                                 <Entypo name="mask" size={normalize(26)} color={route.name === 'Esc' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Esc' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
@@ -109,7 +110,7 @@ const Categories = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     {/* <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Pri', params: { ...stripEmptyParams(params) } }}>
+                        <Link to={{ screen: 'Pri', params: { ...stripEmptyParams(params) } }} action={StackActions.push('Pri', { ...stripEmptyParams(params) })}>
                             <View style={[styles.categoryContainer, route.name === 'Pri' ? styles.selectedCategoryContainer : {}]}>
                                 <AntDesign name="github" size={normalize(26)} color={route.name === 'Pri' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Pri' ? COLORS.red : COLORS.placeholder }}>Pri</Text>
@@ -117,7 +118,7 @@ const Categories = ({ route, navigation }) => {
                         </Link>
                     </HoverableView> */}
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Mas', params: { ...stripEmptyParams(params) } }}>
+                        <Link to={{ screen: 'Mas', params: { ...stripEmptyParams(params) } }} action={StackActions.push('Mas', { ...stripEmptyParams(params) })}>
                             <View style={[styles.categoryContainer, route.name === 'Mas' ? styles.selectedCategoryContainer : {}]}>
                                 <FontAwesome5 name="person-booth" size={normalize(26)} color={route.name === 'Mas' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Mas' ? COLORS.red : COLORS.placeholder }}>Mas</Text>
@@ -125,7 +126,7 @@ const Categories = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Clu', params: { ...stripEmptyParams(params) } }}>
+                        <Link to={{ screen: 'Clu', params: { ...stripEmptyParams(params) } }} action={StackActions.push('Clu', { ...stripEmptyParams(params) })}>
                             <View style={[styles.categoryContainer, route.name === 'Clu' ? styles.selectedCategoryContainer : {}]}>
                                 <MaterialIcons name="meeting-room" size={normalize(26)} color={route.name === 'Clu' ? COLORS.red : COLORS.placeholder} />
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Clu' ? COLORS.red : COLORS.placeholder }}>Clu</Text>
