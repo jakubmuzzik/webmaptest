@@ -1542,7 +1542,7 @@ const LadySignup = ({ route }) => {
                                 transform: [{ scale: 1 }],
                             }}
                             transition={{
-                                delay: 80,
+                                delay: 50,
                             }}
                         >
                             <Image
@@ -1554,7 +1554,7 @@ const LadySignup = ({ route }) => {
                         </View>
                     
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
-                        Thank you for completing your registration!
+                        {`Thank you ${data.name} for completing your registration!`}
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
