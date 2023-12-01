@@ -22,6 +22,7 @@ import {
 import HoverableInput from '../HoverableInput'
 import { stripEmptyParams } from '../../utils'
 import { TouchableRipple, Button, HelperText } from 'react-native-paper'
+import { StackActions } from '@react-navigation/native'
 
 const window = Dimensions.get('window')
 
@@ -103,7 +104,8 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
             viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
         } else if (profileType === 'lady') {
             closeModal()
-            navigation.navigate('lady-signup', { ...stripEmptyParams(params) })
+            navigation.dispatch(StackActions.push('lady-signup', { ...stripEmptyParams(params) }))
+            //navigation.navigate('lady-signup', { ...stripEmptyParams(params) })
         }
     }
 
@@ -214,7 +216,7 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
 
                 <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
                     Already have an Account?
-                    <Text onPress={onLoginPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Log in</Text>
+                    <Text onPress={onLoginPress} style={{ marginLeft: SPACING.xxx_small, color: 'blue' }}>Log in</Text>
                 </Text>
             </>
         )

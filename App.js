@@ -52,7 +52,7 @@ const linking = {
           Explore: ''
         },
       },*/
-      Home: 'home',
+      //Home: 'home',
       Chat: 'chat',
       Favourites: 'favourites',
       //Esc: '',//":city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
@@ -146,7 +146,8 @@ export default function App() {
   }
 
   const onBottomScreenPress = (screen) => {
-    navigationRef.current.navigate(screen)
+    //navigationRef.current.navigate(screen)
+    navigationRef.current.dispatch(StackActions.push(screen))
   }
 
   if (isLoading) {
@@ -167,7 +168,7 @@ export default function App() {
             cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60: 0 },
           }}>
             <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />
-            <Stack.Screen name="Home" component={Home} initialParams={{}} />
+            {/* <Stack.Screen name="Home" component={Home} initialParams={{}} /> */}
             {/* <Stack.Screen name="Esc" component={Esc} initialParams={{}} />
             <Stack.Screen name="Pri" component={Pri} initialParams={{}} />
             <Stack.Screen name="Mas" component={Mas} initialParams={{}} />
@@ -199,7 +200,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={Esc} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={Explore} initialParams={{}} />
 
             <Stack.Group
               screenOptions={{
@@ -220,9 +221,9 @@ export default function App() {
         <View style={{ position: 'absolute', bottom:0, height: 60, width: '100%', backgroundColor: COLORS.lightGrey, flexDirection: 'row' }}>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            onPress={() => onBottomScreenPress('Esc')}
+            onPress={() => onBottomScreenPress('Explore')}
           >
-            <Ionicons name="search-outline" size={24} color={EXPLORE_SCREENS.includes(state) ? COLORS.red : COLORS.placeholder} />
+            <Ionicons name="search-outline" size={24} color={state === 'Explore'  ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}

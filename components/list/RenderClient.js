@@ -9,6 +9,8 @@ import { useRoute } from '@react-navigation/native'
 import { useLinkProps } from '@react-navigation/native'
 import { isBrowser } from 'react-device-detect'
 
+import { StackActions } from '@react-navigation/native'
+
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
@@ -25,7 +27,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
         language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : ''
     }), [route.params])
 
-    const { onPress, ...props } = useLinkProps({ to: { screen: 'Profile', params: { ...stripEmptyParams(params), id: client.id } } })
+    const { onPress, ...props } = useLinkProps({ to: { screen: 'Profile', params: { ...stripEmptyParams(params), id: client.id } }, action: StackActions.push('Profile', { ...stripEmptyParams(params), id: client.id }) })
 
     const onNextPress = (event) => {
         event.preventDefault()

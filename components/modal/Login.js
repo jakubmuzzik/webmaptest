@@ -172,7 +172,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
                     errorMessage={showErrorMessages && !data.password ? 'Enter your Password' : undefined}
                 />
 
-                <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.linkColor }}>
+                <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: 'blue' }}>
                     Forgot Password?
                 </Text>
 
@@ -189,7 +189,7 @@ const Login = ({ visible, setVisible, route, onSignUpPress }) => {
 
                 <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
                     Don't have an Account?
-                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: COLORS.linkColor }}>Sign up</Text>
+                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: 'blue' }}>Sign up</Text>
                 </Text>
             </>
         )

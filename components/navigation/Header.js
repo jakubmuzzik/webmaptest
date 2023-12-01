@@ -38,6 +38,8 @@ import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
 
+import { StackActions } from '@react-navigation/native'
+
 const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu', 'NotFound', 'Explore'
 ]
@@ -49,8 +51,11 @@ const Header = ({ route, navigation }) => {
     }), [route.params])
 
     const logoNav = useMemo(() => ({
-        screen: 'Home',
-        params: params.language ? { language: params.language } : {}
+        to: {
+            screen: 'Explore',
+            params: params.language ? { language: params.language } : {}
+        },
+        action: StackActions.push('Explore', params.language ? { language: params.language } : {} )
     }), [route.params])
 
     const csLanguageNav = useMemo(() => ({
@@ -74,7 +79,7 @@ const Header = ({ route, navigation }) => {
         SIGN_UP
     ]), [params.language])
 
-    const { onPress: onLogoPress, ...logoNavProps } = useLinkProps({ to: logoNav })
+    const { onPress: onLogoPress, ...logoNavProps } = useLinkProps(logoNav)
     const { onPress: onCSPress, ...csNavProps } = useLinkProps({ to: csLanguageNav })
     const { onPress: onENPress, ...enNavProps } = useLinkProps({ to: enLanguageNav })
 
