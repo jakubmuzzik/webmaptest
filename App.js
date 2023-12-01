@@ -12,10 +12,8 @@ const Stack = createStackNavigator()
 
 import LadySignup from './screens/LadySignup'
 import Home from './screens/Home'
-import Main from './navigations/Main'
 import NotFound from './screens/NotFound'
 import Header from './components/navigation/Header'
-import Explore from './screens/Explore'
 import Pri from './screens/Pri'
 import Esc from './screens/Esc'
 import Clu from './screens/Clu'
@@ -178,7 +176,6 @@ export default function App() {
             <Stack.Screen name="Account" component={Account} initialParams={{}} />
             <Stack.Screen name="Chat" component={Chat} initialParams={{}} />
             <Stack.Screen name="Favourites" component={Favourites} initialParams={{}} />
-            {/* <Stack.Screen name="Explore" component={Explore} initialParams={{}} /> */}
             <Stack.Screen
               name="Photos"
               component={ProfilePhotosList}
@@ -200,7 +197,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={Explore} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={ExploreStack} initialParams={{}} />
 
             <Stack.Group
               screenOptions={{
