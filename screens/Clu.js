@@ -34,8 +34,8 @@ const Clu = ({ navigation, route }) => {
 
     const cardWidth = useMemo(() => {
         const isXSmallScreen = contentWidth < 300
-        const isSmallScreen = contentWidth >= 300 && contentWidth < SMALL_SCREEN_THRESHOLD
-        const isMediumScreen = contentWidth >= SMALL_SCREEN_THRESHOLD && contentWidth < 750
+        const isSmallScreen = contentWidth >= 300 && contentWidth < 550
+        const isMediumScreen = contentWidth >= 550 && contentWidth < 750
         const isXMediumScreen = contentWidth >= 750 && contentWidth < 960
         const isLargeScreen = contentWidth >= 960 && contentWidth < 1300
 
@@ -59,7 +59,7 @@ const Clu = ({ navigation, route }) => {
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
                     speed={2}
-                    width='100%'
+                    width={cardWidth}
                     style={{ aspectRatio: 3/4, borderRadius: 20 }}
                     backgroundColor={COLORS.grey}
                     foregroundColor={COLORS.lightGrey}

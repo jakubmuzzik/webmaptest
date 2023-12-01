@@ -29,12 +29,13 @@ import Favourites from './screens/Favourites'
 
 import { StackActions } from '@react-navigation/native'
 
-import { COLORS, SMALL_SCREEN_THRESHOLD } from './constants'
+import { COLORS, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
 
 import ExploreStack from './navigations/ExploreStack'
 
 import { enableLegacyWebImplementation } from 'react-native-gesture-handler'
 import { TouchableRipple } from 'react-native-paper'
+import { normalize } from './utils'
 //enableLegacyWebImplementation(true)
 
 const linking = {
@@ -54,10 +55,10 @@ const linking = {
       Home: 'home',
       Chat: 'chat',
       Favourites: 'favourites',
-      //Esc: "/esc/:city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
-      //Pri: "/pri/:city?",
-      //Mas: "/mas/:city?",
-      //Clu: "/clu/:city?",
+      //Esc: '',//":city?/:minAge?/:maxAge?/:minHeight?/:maxHeight?/:minWeight?/:maxWeight?/:onlyVerified?/:onlyIndependent?/:onlyPremium?/:services?/:outcall?/:incall?/:bodyType?/:hairColor?/:eyeColor?/:pubicHair?/:breastSize?/:breastType?/:language?/:nationality?/:sexualOrientation?",
+      //Pri: 'pri',//"/pri/:city?",
+      //Mas: 'mas',//"/mas/:city?",
+      //Clu: 'clu',//"/clu/:city?",
       Profile: "/profile/:id",
       Explore: {
         path: '',
@@ -92,7 +93,11 @@ const linking = {
       NotFound: "*",
     }
   },
-};
+}
+
+const EXPLORE_SCREENS = [
+  'Esc', 'Pri', 'Mas', 'Clu'
+]
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -155,11 +160,11 @@ export default function App() {
   return (
     <>
       <Provider store={store}>
-        <NavigationContainer ref={navigationRef} linking={linking}>
+        <NavigationContainer ref={navigationRef} linking={linking} theme={{ colors: { background: COLORS.lightBlack } }}>
           <Stack.Navigator screenOptions={{
             header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
-            //animationEnabled: true,
-            cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60: 0 }
+            animationEnabled: true,
+            cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60: 0 },
           }}>
             <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />
             <Stack.Screen name="Home" component={Home} initialParams={{}} />
@@ -194,7 +199,7 @@ export default function App() {
               options={{
                 headerShown: false
               }} /> */}
-            <Stack.Screen name="NotFound" component={ExploreStack} initialParams={{}} />
+            <Stack.Screen name="NotFound" component={Esc} initialParams={{}} />
 
             <Stack.Group
               screenOptions={{
@@ -215,25 +220,25 @@ export default function App() {
         <View style={{ position: 'absolute', bottom:0, height: 60, width: '100%', backgroundColor: COLORS.lightGrey, flexDirection: 'row' }}>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            onPressOut={() => onBottomScreenPress('Explore')}
+            onPress={() => onBottomScreenPress('Esc')}
           >
-            <Ionicons name="search-outline" size={24} color={state === 'Explore' ? COLORS.red : COLORS.placeholder} />
+            <Ionicons name="search-outline" size={24} color={EXPLORE_SCREENS.includes(state) ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            onPressOut={() => onBottomScreenPress('Favourites')}
+            onPress={() => onBottomScreenPress('Favourites')}
           >
             <Ionicons name="heart-outline" size={24} color={state === 'Favourites' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            onPressOut={() => onBottomScreenPress('Chat')}
+            onPress={() => onBottomScreenPress('Chat')}
           >
             <Ionicons name="chatbox-outline" size={24} color={state === 'Chat' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
           <TouchableRipple 
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-            onPressOut={() => onBottomScreenPress('Account')}
+            onPress={() => onBottomScreenPress('Account')}
           >
             <Ionicons name="person-outline" size={24} color={state === 'Account' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>

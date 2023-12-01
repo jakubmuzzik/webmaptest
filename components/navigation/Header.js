@@ -121,7 +121,7 @@ const Header = ({ route, navigation }) => {
             loginButtonsRef.current.measure((_fx, _fy, _w, h, _px, py) => {
                 setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
             })
-        } else if (userDropdownRef.current){
+        } else if (userDropdownRef.current) {
             userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
                 setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
             })
@@ -163,13 +163,13 @@ const Header = ({ route, navigation }) => {
                     onPress={() => setUserDropdownVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <MotiView 
-                            from={{ 
-                                opacity: 0, 
+                        <MotiView
+                            from={{
+                                opacity: 0,
                                 transform: [{ scaleY: 0.8 }, { translateY: -10 }],
                             }}
-                            animate={{ 
-                                opacity: 1, 
+                            animate={{
+                                opacity: 1,
                                 transform: [{ scaleY: 1 }, { translateY: 0 }],
                             }}
                             transition={{
@@ -185,8 +185,8 @@ const Header = ({ route, navigation }) => {
                                     <LinearGradient
                                         colors={[COLORS.red, COLORS.darkRed]}
                                         style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                        //start={{ x: 0, y: 0.5 }}
-                                        //end={{ x: 1, y: 0.5 }}
+                                    //start={{ x: 0, y: 0.5 }}
+                                    //end={{ x: 1, y: 0.5 }}
                                     />
                                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                                         {labels.SIGN_UP}
@@ -225,13 +225,13 @@ const Header = ({ route, navigation }) => {
                     onPress={() => setLanguageDropdownVisible(false)}
                 >
                     <TouchableWithoutFeedback>
-                        <MotiView 
-                            from={{ 
-                                opacity: 0, 
+                        <MotiView
+                            from={{
+                                opacity: 0,
                                 transform: [{ scaleY: 0.8 }, { translateY: -10 }],
                             }}
-                            animate={{ 
-                                opacity: 1, 
+                            animate={{
+                                opacity: 1,
                                 transform: [{ scaleY: 1 }, { translateY: 0 }],
                             }}
                             transition={{
@@ -319,8 +319,8 @@ const Header = ({ route, navigation }) => {
                             <LinearGradient
                                 colors={[COLORS.red, COLORS.darkRed]}
                                 style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                //start={{ x: 0, y: 0.5 }}
-                                //end={{ x: 1, y: 0.5 }}
+                            //start={{ x: 0, y: 0.5 }}
+                            //end={{ x: 1, y: 0.5 }}
                             />
                             <TouchableOpacity onPress={onSignUpPress} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
                                 <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign up</Text>
@@ -365,35 +365,39 @@ const Header = ({ route, navigation }) => {
 
     return (
         <>
-            <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
-                <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
-                    {renderLeftHeader()}
-                </View>
-                {!isSmallScreen && <View style={styles.headerMiddle}>
-                    <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
-                        <Ionicons name="search" size={normalize(20)} color="white" />
-                        <TextInput
-                            style={styles.search}
-                            onChangeText={setSearch}
-                            value={search}
-                            placeholder={labels.SEARCH}
-                            placeholderTextColor={COLORS.placeholder}
-                            onBlur={() => setSearchBorderColor('transparent')}
-                            onFocus={() => setSearchBorderColor(COLORS.red)}
-                            onSubmitEditing={onSearchSubmit}
-                        />
-                        <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
-                    </HoverableView>
-                </View>}
-                <View style={isSmallScreen ? styles.headerRightSmall : styles.headerRightLarge}>
-                    {renderRightHeader()}
-                    {rendeLanguageDropdown()}
-                    {renderUserDropdown()}
+            {/* <View style={{ width: '100%', height: normalize(70) + (SCREENS_WITH_CITY_SELECTION.includes(route.name) ? normalize(70) : 0), backgroundColor: COLORS.lightBlack }}></View> */}
+            {/* <View style={{ position: 'fixed', width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}> */}
+                <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
+                    <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
+                        {renderLeftHeader()}
+                    </View>
+                    {!isSmallScreen && <View style={styles.headerMiddle}>
+                        <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
+                            <Ionicons name="search" size={normalize(20)} color="white" />
+                            <TextInput
+                                style={styles.search}
+                                onChangeText={setSearch}
+                                value={search}
+                                placeholder={labels.SEARCH}
+                                placeholderTextColor={COLORS.placeholder}
+                                onBlur={() => setSearchBorderColor('transparent')}
+                                onFocus={() => setSearchBorderColor(COLORS.red)}
+                                onSubmitEditing={onSearchSubmit}
+                            />
+                            <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
+                        </HoverableView>
+                    </View>}
+                    <View style={isSmallScreen ? styles.headerRightSmall : styles.headerRightLarge}>
+                        {renderRightHeader()}
+                        {rendeLanguageDropdown()}
+                        {renderUserDropdown()}
+                    </View>
+
+                    {renderSeoContent()}
                 </View>
 
-                {renderSeoContent()}
-            </View>
-            {/* {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />} */}
+                {/* {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />} */}
+            {/* </View> */}
 
             <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} route={route} />
             <Signup visible={signUpVisible} navigation={navigation} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
@@ -405,6 +409,9 @@ export default memo(Header)
 
 const styles = StyleSheet.create({
     headerSmall: {
+        //position: 'fixed',
+        //width: '100%',
+       // height: '50%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -414,6 +421,9 @@ const styles = StyleSheet.create({
         height: normalize(70)
     },
     headerLarge: {
+        //position: 'fixed',
+        //width: '100%',
+        //height: '50%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -421,6 +431,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.page_horizontal,
         paddingVertical: SPACING.x_small,
         backgroundColor: COLORS.grey,
+        //height: normalize(70)
     },
     headerLeftSmall: {
         flexGrow: 0,

@@ -50,7 +50,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
     }
 
     const renderImage = useCallback(({ item }) => (
-        <View style={{ height: (width / 3) * 4, width: width + 1 }}>
+        <View style={{ height: (width / 3) * 4, width: Math.ceil(width) }}>
             <Image
                 style={{
                     flex: 1,

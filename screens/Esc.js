@@ -60,6 +60,7 @@ const Esc = ({ navigation, route }) => {
                 <ContentLoader
                     speed={2}
                     width={cardWidth}
+                    //width='100%'
                     style={{ aspectRatio: 3/4, borderRadius: 20 }}
                     backgroundColor={COLORS.grey}
                     foregroundColor={COLORS.lightGrey}

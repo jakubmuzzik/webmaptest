@@ -91,7 +91,8 @@ const LadySignup = ({ route }) => {
         { key: '2. Personal Details', index: 1 },
         { key: '3. Services & Pricing', index: 2 },
         { key: '4. Address & Availability', index: 3 },
-        { key: '5. Upload Photos', index: 4 }
+        { key: '5. Upload Photos', index: 4 },
+        { key: '6. Registration Completed', inde: 5 }
     ])
 
     const scrollYLoginInformation = useSharedValue(0)
@@ -99,6 +100,7 @@ const LadySignup = ({ route }) => {
     const scrollYSericesAndPricing = useSharedValue(0)
     const scrollYLocationAndAvailability = useSharedValue(0)
     const scrollYUploadPhotos = useSharedValue(0)
+    const scrollYRegistrationCompleted = useSharedValue(0)
 
     const scrollHandler1 = useAnimatedScrollHandler((event) => {
         scrollYLoginInformation.value = event.contentOffset.y
@@ -114,6 +116,9 @@ const LadySignup = ({ route }) => {
     })
     const scrollHandler5 = useAnimatedScrollHandler((event) => {
         scrollYUploadPhotos.value = event.contentOffset.y
+    })
+    const scrollHandler6 = useAnimatedScrollHandler((event) => {
+        scrollYRegistrationCompleted.value = event.contentOffset.y
     })
 
     const modalHeaderTextStyles1 = useAnimatedStyle(() => {
@@ -149,6 +154,13 @@ const LadySignup = ({ route }) => {
             fontFamily: FONTS.medium,
             fontSize: FONT_SIZES.large,
             opacity: interpolate(scrollYUploadPhotos.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
+        }
+    })
+    const modalHeaderTextStyles6 = useAnimatedStyle(() => {
+        return {
+            fontFamily: FONTS.medium,
+            fontSize: FONT_SIZES.large,
+            opacity: interpolate(scrollYRegistrationCompleted.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
         }
     })
 
@@ -1503,6 +1515,56 @@ const LadySignup = ({ route }) => {
         )
     }, [data, showPhotosErrorMessages, contentWidth, photosContentWidth])
 
+    const renderRegistrationCompleted = useCallback(() => {
+        return (
+            <>
+                <View style={styles.modal__header}>
+                    <Animated.Text style={modalHeaderTextStyles6}>Registration completed</Animated.Text>
+                </View>
+                <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles6]} />
+                <Animated.ScrollView
+                    scrollEventThrottle={1}
+                    onScroll={scrollHandler6}
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large, alignItems: 'center' }}
+                >
+                    <Text style={[styles.pageHeaderText,{ textAlign: 'center' }]}>
+                        Registration completed
+                    </Text>
+                    
+                    <View style={{ height: 100, width: 100, marginVertical: SPACING.medium  }}>
+                        {index === 5 && <MotiView
+                            style={{ flex: 1 }}
+                            from={{
+                                transform: [{ scale: 0 }]
+                            }}
+                            animate={{
+                                transform: [{ scale: 1 }],
+                            }}
+                            transition={{
+                                delay: 80,
+                            }}
+                        >
+                            <Image
+                                    resizeMode='contain'
+                                    source={require('../assets/completed.svg')}
+                                    style={{ width: '100%', height: '100%'}}
+                                />
+                            </MotiView>}
+                        </View>
+                    
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
+                        Thank you for completing your registration!
+                    </Text>
+
+                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
+                        Our team will review your profile shortly, and once approved, you'll receive a confirmation email to: {data.email}
+                    </Text>
+                </Animated.ScrollView>
+            </>
+        )
+    }, [index, data])
+
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1. Login Information':
@@ -1515,16 +1577,18 @@ const LadySignup = ({ route }) => {
                 return renderLocationAndAvailability(route.index)
             case '5. Upload Photos':
                 return renderUploadPhotos(route.index)
+            case '6. Registration Completed':
+                return renderRegistrationCompleted()
         }
     }
 
-    const progress = (index) / Object.keys(routes).length
+    const progress = (index) / (Object.keys(routes).length - 1)
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, color: '#FFF' }}>
-                    {/* Lady sign up */}
+                    Lady sign up
                 </Text>
                 <ProgressBar style={{ marginHorizontal: SPACING.x_large, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
@@ -1559,7 +1623,7 @@ const LadySignup = ({ route }) => {
                         initialLayout={{ width: contentWidth }}
                     />
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, }}>
+                    {index !== 5 && <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, }}>
                         {index === 0 ? <View /> : <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
@@ -1579,9 +1643,9 @@ const LadySignup = ({ route }) => {
                             onPress={onNextPress}
                             loading={nextButtonIsLoading}
                         >
-                            {index === Object.keys(routes).length - 1 ? 'Sign up' : 'Next'}
+                            {index === Object.keys(routes).length - 2 ? 'Sign up' : 'Next'}
                         </Button>
-                    </View>
+                    </View>}
                 </View>
 
                 <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />

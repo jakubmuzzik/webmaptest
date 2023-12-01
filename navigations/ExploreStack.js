@@ -6,6 +6,7 @@ import Esc from '../screens/Esc'
 import Pri from '../screens/Pri'
 import Mas from '../screens/Mas'
 import Clu from '../screens/Clu'
+import Header from '../components/navigation/Header'
 
 const Stack = createStackNavigator()
 
@@ -16,7 +17,10 @@ const ExploreStack = ({ route, navigation }) => {
 
     return (
         <Stack.Navigator screenOptions={{
-            header: ({ navigation, route }) => <Categories navigation={navigation} route={route} />
+            headerTransparent: false,
+            header: ({ navigation, route }) => <Categories navigation={navigation} route={route} />,
+            animationEnabled: true
+            //header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
           }}>
             <Stack.Screen 
                 name="Esc" 
