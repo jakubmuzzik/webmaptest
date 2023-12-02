@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
 import { Button } from 'react-native-paper'
 import { normalize } from '../utils'
@@ -32,38 +32,43 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ flex: 1, paddingHorizontal: SPACING.page_horizontal, paddingVertical: SPACING.large  }}>
-             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', marginBottom: SPACING.large }}>
-                Account
-            </Text>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarLabelStyle: { fontFamily: FONTS.medium, fontSize: FONTS.medium },
-                    tabBarItemStyle: { width: 'auto' },
-                    tabBarStyle: { backgroundColor: 'transparent' },
-                    tabBarIndicatorStyle: { backgroundColor: COLORS.red },
-                }}
-            >
-                <Tab.Screen
-                    name="PersonalDetails"
-                    component={PersonalDetails}
-                    initialParams={{}}
-                    options={{
-                        title: 'Personal Details',
-                        tabBarLabel: ({ focused, color }) => <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : COLORS.placeholder }}>Personal Details</Text>
+        <ScrollView style={{ paddingTop: SPACING.large }} contentContainerStyle={{ paddingBottom: SPACING.medium }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large }}>
+                    Account
+                </Text>
+
+                <Tab.Navigator
+                    screenOptions={{
+                        tabBarLabelStyle: { fontFamily: FONTS.medium, fontSize: FONTS.medium },
+                        tabBarItemStyle: { width: 'auto' },
+                        tabBarStyle: { backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%', },
+                        tabBarIndicatorStyle: { backgroundColor: COLORS.red },
+                        tabBarScrollEnabled: true
                     }}
-                />
-                <Tab.Screen
-                    name="Photos"
-                    component={Photos}
-                    initialParams={{}}
-                    options={{
-                        title: 'Photos',
-                        tabBarLabel: ({ focused, color }) => <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : COLORS.placeholder }}>Photos</Text>
-                    }}
-                />
-            </Tab.Navigator>
-        </View>
+                    style={{}}
+                >
+                    <Tab.Screen
+                        name="PersonalDetails"
+                        component={PersonalDetails}
+                        initialParams={{}}
+                        options={{
+                            title: 'Personal Details',
+                            tabBarLabel: ({ focused, color }) => <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : COLORS.placeholder }}>Personal Details</Text>
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Photos1"
+                        component={Photos}
+                        initialParams={{}}
+                        options={{
+                            title: 'Photos',
+                            tabBarLabel: ({ focused, color }) => <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : COLORS.placeholder }}>Photos</Text>
+                        }}
+                    />
+                </Tab.Navigator>
+            </View>
+        </ScrollView>
     )
 }
 

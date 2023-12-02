@@ -34,7 +34,7 @@ const PersonalDetails = ({ navigation, route }) => {
     }, [])
 
     return (
-        <ScrollView style={{ width: 700, maxWidth: '100%' }}>
+        <>
             <View style={styles.section}>
                 <Text style={styles.sectionHeaderText}>
                     About
@@ -341,7 +341,7 @@ const PersonalDetails = ({ navigation, route }) => {
                     </HoverableView>
                 </View>
             </View>
-        </ScrollView>
+        </>
     )
 }
 
