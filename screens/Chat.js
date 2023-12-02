@@ -5,7 +5,7 @@ import SignUpOrLogin from './SignUpOrLogin'
 
 const Chat = ({ navigation, route }) => {
 
-    if (true) {
+    if (false) {
         return <SignUpOrLogin navigation={navigation} route={route}/>
     }
 

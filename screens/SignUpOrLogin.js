@@ -44,7 +44,7 @@ const SignUpOrLogin = ({ navigation, route }) => {
                         //buttonColor={COLORS.red}
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="outlined"
-                        onPress={onSignUpPress}
+                        onPress={onLoginPress}
                     >
                         Log in
                     </Button>

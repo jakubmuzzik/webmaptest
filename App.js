@@ -67,7 +67,13 @@ const linking = {
           Clu: "/clu/:city?"
         }
       },
-      Account: 'account-settings',
+      Account: {
+        path: 'me',
+        screens: {
+          PersonalDetails: 'personal-details',
+          Photos: 'photos'
+        }
+      },
       Photos: {
         path: "/photos/:id/:photos?",
         parse: {
