@@ -322,25 +322,6 @@ const PersonalDetails = ({ navigation, route }) => {
                     </MapView>
                 </View>
             </View>
-
-            <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
-                        Reviews
-                    </Text>
-                    <HoverableView style={{ borderRadius: 10, borderWidth: 0, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }} hoveredBackgroundColor={COLORS.red} backgroundColor={COLORS.red} hoveredOpacity={0.8}>
-                        <LinearGradient
-                            colors={[COLORS.red, COLORS.darkRed]}
-                            style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                        //start={{ x: 0, y: 0.5 }}
-                        //end={{ x: 1, y: 0.5 }}
-                        />
-                        <TouchableOpacity style={{ flex: 1, paddingHorizontal: SPACING.small, justifyContent: 'center' }}>
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONTS.bold, color: '#FFF' }}>Add Review</Text>
-                        </TouchableOpacity>
-                    </HoverableView>
-                </View>
-            </View>
         </>
     )
 }

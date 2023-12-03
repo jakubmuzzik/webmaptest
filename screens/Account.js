@@ -32,7 +32,7 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <ScrollView style={{ paddingTop: SPACING.large }} contentContainerStyle={{ paddingBottom: SPACING.medium }}>
+        <ScrollView style={{ paddingTop: SPACING.large, marginHorizontal: SPACING.medium }} contentContainerStyle={{ paddingBottom: SPACING.medium }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large }}>
                     Account
@@ -46,7 +46,7 @@ const Account = ({ navigation, route }) => {
                         tabBarIndicatorStyle: { backgroundColor: COLORS.red },
                         tabBarScrollEnabled: true
                     }}
-                    style={{}}
+                    style={{ }}
                 >
                     <Tab.Screen
                         name="PersonalDetails"
@@ -58,7 +58,7 @@ const Account = ({ navigation, route }) => {
                         }}
                     />
                     <Tab.Screen
-                        name="Photos1"
+                        name="Photos"
                         component={Photos}
                         initialParams={{}}
                         options={{

@@ -1587,10 +1587,10 @@ const LadySignup = ({ route }) => {
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, color: '#FFF' }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up
                 </Text>
-                <ProgressBar style={{ marginHorizontal: SPACING.x_large, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
+                <ProgressBar style={{ marginHorizontal: SPACING.medium, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
             <MotiView
                 from={{
