@@ -573,7 +573,7 @@ const Filters = forwardRef((props, ref) => {
 
                         <View style={{ borderTopWidth: 1, borderTopColor: COLORS.placeholder, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Button
-                                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightBlack, textDecorationLine: 'underline' }}
+                                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightBlack }}
                                 style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
                                 buttonColor="#FFF"
                                 mode="outlined"

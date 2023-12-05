@@ -51,7 +51,7 @@ export const COLORS = {
     grey: '#323232',
     lightBlack: '#161616',
     red: '#c91e1e',//'#dc2e2e',
-    secondaryRed: '#ab5e5e',
+    secondaryRed: '#e89492',
     hoveredSecondaryRed: '#b66c6c',
     lightRed: '#D9534F',
     hoveredRed: '#bc2020',

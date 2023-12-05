@@ -885,7 +885,7 @@ const LadySignup = ({ route }) => {
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                         {data.services.map((service) => (
-                            <HoverableView key={service} style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 10, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red}>
+                            <HoverableView key={service} style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 20, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red}>
                                 <TouchableRipple
                                     onPress={() => onMultiPicklistChange(service, 'services')}
                                     style={styles.chip}

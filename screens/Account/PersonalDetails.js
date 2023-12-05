@@ -2,17 +2,21 @@ import React, { useState, useCallback, useRef, useMemo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS } from '../../constants'
-import { LinearGradient } from 'expo-linear-gradient'
+import { Button } from 'react-native-paper'
 
 import HoverableView from '../../components/HoverableView'
 import MapView from "@teovilla/react-native-web-maps"
 
+import AboutEditor from '../../components/modal/AboutEditor'
 
 const PersonalDetails = ({ navigation, route }) => {
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
     const [region, setRegion] = useState(null)
+
+    const [aboutEditorVisible, setAboutEditorVisible] = useState(false)
+    const [personalDetailsEditorVisible, setPersonalDetailsEditorVisible] = useState(false)
 
     const mapRef = useRef()
 
@@ -23,6 +27,30 @@ const PersonalDetails = ({ navigation, route }) => {
         if (count >= 5 || isNaN(count)) {
             setShowTextTriggeringButton(true)
         }
+    }, [])
+
+    const onAboutEditPress = useCallback(() => {
+        setAboutEditorVisible(true)
+    }, [])
+
+    const onPersonalDetailsEditPress = useCallback(() => {
+
+    }, [])
+
+    const onPricesEditPress = useCallback(() => {
+
+    }, [])
+
+    const onServicesEditPress = useCallback(() => {
+
+    }, [])
+
+    const onWorkingHoursEditPress = useCallback(() => {
+
+    }, [])
+
+    const onAddressEditPress = useCallback(() => {
+
     }, [])
 
     const loadingMapFallback = useMemo(() => {
@@ -36,10 +64,21 @@ const PersonalDetails = ({ navigation, route }) => {
     return (
         <>
             <View style={styles.section}>
-                <Text style={styles.sectionHeaderText}>
-                    About
-                </Text>
-                <Text style={{ marginTop: SPACING.small, color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        About
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onAboutEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <Text style={{ color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
                     onLayout={onTextLayout}
                     numberOfLines={moreTextShown ? undefined : 5}
                 >
@@ -59,10 +98,21 @@ const PersonalDetails = ({ navigation, route }) => {
             </View>
 
             <View style={[styles.section, { paddingHorizontal: 0 }]}>
-                <Text style={[styles.sectionHeaderText, { marginLeft: SPACING.small }]}>
-                    Personal Details
-                </Text>
-                <View style={{ marginTop: SPACING.small, flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <View style={[styles.sectionHeader, { marginHorizontal: SPACING.small }]}>
+                    <Text style={styles.sectionHeaderText}>
+                        Personal Details
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onPersonalDetailsEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.attributeName}>Age</Text>
@@ -127,49 +177,25 @@ const PersonalDetails = ({ navigation, route }) => {
                             <Text style={styles.attributeValue}>Blonde</Text>
                         </View>
                     </View>
-                    {/* <View style={{ width: 160 }}>
-                                        <Text style={styles.attributeName}>Age:</Text>
-                                        <Text style={styles.attributeName}>Sexual Orientation:</Text>
-                                        <Text style={styles.attributeName}>Weight: </Text>
-                                        <Text style={styles.attributeName}>Height: </Text>
-                                        <Text style={styles.attributeName}>Tits: </Text>
-                                        <Text style={styles.attributeName}>Body Type: </Text>
-                                    </View>
-                                    <View>
-                                        <Text style={styles.attributeValue}>26</Text>
-                                        <Text style={styles.attributeValue}>Bisexual</Text>
-                                        <Text style={styles.attributeValue}>56 kg</Text>
-                                        <Text style={styles.attributeValue}>160 cm</Text>
-                                        <Text style={styles.attributeValue}>B</Text>
-                                        <Text style={styles.attributeValue}>Slim</Text>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row' }}>
-                                    <View style={{ width: 160 }}>
-                                        <Text style={styles.attributeName}>Pubic Hair: </Text>
-                                        <Text style={styles.attributeName}>Eyes: </Text>
-                                        <Text style={styles.attributeName}>Hair: </Text>
-                                        <Text style={styles.attributeName}>Languages: </Text>
-                                        <Text style={styles.attributeName}>Nationality: </Text>
-                                        <Text style={styles.attributeName}>Smoker: </Text>
-                                    </View>
-                                    <View>
-                                        <Text style={styles.attributeValue}>Shaved</Text>
-                                        <Text style={styles.attributeValue}>Green</Text>
-                                        <Text style={styles.attributeValue}>Blonde</Text>
-                                        <Text style={styles.attributeValue}>Czech, English</Text>
-                                        <Text style={styles.attributeValue}>Czech</Text>
-                                        <Text style={styles.attributeValue}>Sometimes</Text>
-                                    </View>
-                                </View> */}
                 </View>
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionHeaderText}>
-                    Prices
-                </Text>
-                <View style={[styles.table, { marginTop: SPACING.small, }]}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        Prices
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onPricesEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <View style={styles.table}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
                             <Text style={styles.tableHeaderText}>Length</Text>
@@ -207,10 +233,21 @@ const PersonalDetails = ({ navigation, route }) => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionHeaderText}>
-                    Services
-                </Text>
-                <View style={{ marginTop: SPACING.small, flexDirection: 'row', flexWrap: 'wrap' }}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        Services
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onServicesEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     <View style={styles.chip}>
                         <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 1</Text>
@@ -247,10 +284,21 @@ const PersonalDetails = ({ navigation, route }) => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionHeaderText}>
-                    Working Hours
-                </Text>
-                <View style={[styles.table, { marginTop: SPACING.small, }]}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        Working Hours
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onWorkingHoursEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <View style={styles.table}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
                             <Text style={styles.tableHeaderText}>Day</Text>
@@ -307,10 +355,21 @@ const PersonalDetails = ({ navigation, route }) => {
             </View>
 
             <View style={styles.section}>
-                <Text style={styles.sectionHeaderText}>
-                    Location
-                </Text>
-                <View style={{ marginTop: SPACING.small, width: '100%', height: 400 }}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        Address
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onAddressEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+                <View style={{ width: '100%', height: 400 }}>
                     <MapView
                         ref={mapRef}
                         provider="google"
@@ -322,6 +381,8 @@ const PersonalDetails = ({ navigation, route }) => {
                     </MapView>
                 </View>
             </View>
+
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} route={route} about="mock about" />
         </>
     )
 }
@@ -397,12 +458,12 @@ const styles = StyleSheet.create({
     sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: SPACING.small,
+        marginBottom: SPACING.small
     },
     sectionHeaderText: { 
         color: '#FFF', 
         fontFamily: FONTS.bold, 
-        fontSize: FONT_SIZES.h3,
+        fontSize: FONT_SIZES.h3
     },
     attributeName: {
         color: '#FFF',

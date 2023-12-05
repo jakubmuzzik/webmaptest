@@ -5,7 +5,7 @@ import SignUpOrLogin from './SignUpOrLogin'
 
 const Favourites = ({ navigation, route }) => {
 
-    if (false) {
+    if (true) {
         return <SignUpOrLogin navigation={navigation} route={route}/>
     }
 
