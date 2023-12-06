@@ -10,8 +10,8 @@ import SignUpOrLogin from './SignUpOrLogin'
 
 const Tab = createMaterialTopTabNavigator()
 
-import PersonalDetails from './Account/PersonalDetails'
-import Photos from './Account/Photos'
+import PersonalDetails from './account/PersonalDetails'
+import Photos from './account/Photos'
 
 const Account = ({ navigation, route }) => {
     const [loginVisible, setLoginVisible] = useState(false)

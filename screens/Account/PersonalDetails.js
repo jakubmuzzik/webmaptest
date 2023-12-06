@@ -7,9 +7,65 @@ import { Button } from 'react-native-paper'
 import HoverableView from '../../components/HoverableView'
 import MapView from "@teovilla/react-native-web-maps"
 
-import AboutEditor from '../../components/modal/AboutEditor'
+import AboutEditor from '../../components/modal/account/AboutEditor'
+import PersonalDetailsEditor from '../../components/modal/account/PersonalDetailsEditor'
+import PricingEditor from '../../components/modal/account/PricingEditor'
 
 const PersonalDetails = ({ navigation, route }) => {
+    const [data, setData] = useState({
+        gender: '',
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        secureTextEntry: true,
+        confirmSecureTextEntry: true,
+        nationality: '',
+        languages: [],
+        hairColor: '',
+        eyeColor: '',
+        breastSize: '',
+        breastType: '',
+        bodyType: '',
+        pubicHair: '',
+        weight: '',
+        height: '',
+        dateOfBirth: '',
+        sexuality: '',
+        services: [],
+        currency: 'CZK',
+        prices: [], //{length: 1, incall: '', outcall: ''}
+        incall: true,
+        outcall: true,
+        address: '',
+        addressTitle: '',
+        hiddenAddress: false,
+        description: 'mock description',
+        workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
+        images: [null, null, null, null, null, null]
+    })
+
+    const personalDetails = useMemo(() => ({
+        nationality: data.nationality,
+        languages: data.languages,
+        hairColor: data.hairColor,
+        eyeColor: data.eyeColor,
+        breastSize: data.breastSize,
+        breastType: data.breastType,
+        bodyType: data.bodyType,
+        pubicHair: data.pubicHair,
+        weight: data.weight,
+        height: data.height,
+        dateOfBirth: data.dateOfBirth,
+        sexuality: data.sexuality
+    }), [data])
+
+    const pricing = useMemo(() => ({
+        prices: data.prices,
+        currency: data.currency,
+        outcall: data.outcall,
+        incall: data.incall
+    }), [data])
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
@@ -17,41 +73,42 @@ const PersonalDetails = ({ navigation, route }) => {
 
     const [aboutEditorVisible, setAboutEditorVisible] = useState(false)
     const [personalDetailsEditorVisible, setPersonalDetailsEditorVisible] = useState(false)
+    const [pricingEditorVisible, setPricingEditorVisible] = useState(false)
 
     const mapRef = useRef()
 
-    const onTextLayout = useCallback((e) => {
+    const onTextLayout = (e) => {
         const element = e.nativeEvent.target
         const count = Math.floor(e.nativeEvent.layout.height / getComputedStyle(element).lineHeight.replace('px', ''))
 
         if (count >= 5 || isNaN(count)) {
             setShowTextTriggeringButton(true)
         }
-    }, [])
+    }
 
-    const onAboutEditPress = useCallback(() => {
+    const onAboutEditPress = () => {
         setAboutEditorVisible(true)
-    }, [])
+    }
 
-    const onPersonalDetailsEditPress = useCallback(() => {
+    const onPersonalDetailsEditPress = () => {
+        setPersonalDetailsEditorVisible(true)
+    }
 
-    }, [])
+    const onPricesEditPress = () => {
+        setPricingEditorVisible(true)
+    }
 
-    const onPricesEditPress = useCallback(() => {
+    const onServicesEditPress = () => {
 
-    }, [])
+    }
 
-    const onServicesEditPress = useCallback(() => {
+    const onWorkingHoursEditPress = () => {
 
-    }, [])
+    }
 
-    const onWorkingHoursEditPress = useCallback(() => {
+    const onAddressEditPress = () => {
 
-    }, [])
-
-    const onAddressEditPress = useCallback(() => {
-
-    }, [])
+    }
 
     const loadingMapFallback = useMemo(() => {
         return (
@@ -120,19 +177,19 @@ const PersonalDetails = ({ navigation, route }) => {
                             <Text style={styles.attributeValue}>26</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Sexual Orientation</Text>
+                            <Text style={styles.attributeName}>Sexual orientation</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Bisexual</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Languages</Text>
-                            <View style={styles.attributeDivider}></View>
-                            <Text style={styles.attributeValue}>Czech, English</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.attributeName}>Nationality</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Czech</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.attributeName}>Languages</Text>
+                            <View style={styles.attributeDivider}></View>
+                            <Text style={styles.attributeValue}>Czech, English</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.attributeName}>Height</Text>
@@ -147,34 +204,34 @@ const PersonalDetails = ({ navigation, route }) => {
                     </View>
                     <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Body Type</Text>
+                            <Text style={styles.attributeName}>Body type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Slim</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Pubic Hair</Text>
+                            <Text style={styles.attributeName}>Pubic hair</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Shaved</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast Size</Text>
+                            <Text style={styles.attributeName}>Breast size</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>B</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast Type</Text>
+                            <Text style={styles.attributeName}>Breast type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Natural</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Eyes</Text>
-                            <View style={styles.attributeDivider}></View>
-                            <Text style={styles.attributeValue}>Green</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Hair</Text>
+                            <Text style={styles.attributeName}>Hair color</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Blonde</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={styles.attributeName}>Eye color</Text>
+                            <View style={styles.attributeDivider}></View>
+                            <Text style={styles.attributeValue}>Green</Text>
                         </View>
                     </View>
                 </View>
@@ -183,7 +240,7 @@ const PersonalDetails = ({ navigation, route }) => {
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionHeaderText}>
-                        Prices
+                        Pricing
                     </Text>
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
@@ -382,7 +439,9 @@ const PersonalDetails = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} route={route} about="mock about" />
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} route={route} about={data.description} />
+            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} route={route} personalDetails={personalDetails} />
+            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} route={route} pricing={pricing} />
         </>
     )
 }

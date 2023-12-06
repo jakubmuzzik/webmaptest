@@ -172,19 +172,19 @@ const Profile = ({ route, client, navigation }) => {
                                         <Text style={styles.attributeValue}>26</Text>
                                     </View>
                                      <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Sexual Orientation</Text>
+                                        <Text style={styles.attributeName}>Sexual orientation</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Bisexual</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Languages</Text>
-                                        <View style={styles.attributeDivider}></View>
-                                        <Text style={styles.attributeValue}>Czech, English</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={styles.attributeName}>Nationality</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Czech</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.attributeName}>Languages</Text>
+                                        <View style={styles.attributeDivider}></View>
+                                        <Text style={styles.attributeValue}>Czech, English</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={styles.attributeName}>Height</Text>
@@ -199,34 +199,34 @@ const Profile = ({ route, client, navigation }) => {
                                 </View>
                                 <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Body Type</Text>
+                                        <Text style={styles.attributeName}>Body type</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Slim</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Pubic Hair</Text>
+                                        <Text style={styles.attributeName}>Pubic hair</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Shaved</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Breast Size</Text>
+                                        <Text style={styles.attributeName}>Breast size</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>B</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Breast Type</Text>
+                                        <Text style={styles.attributeName}>Breast type</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Natural</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Eyes</Text>
-                                        <View style={styles.attributeDivider}></View>
-                                        <Text style={styles.attributeValue}>Green</Text>
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Text style={styles.attributeName}>Hair</Text>
+                                        <Text style={styles.attributeName}>Hair color</Text>
                                         <View style={styles.attributeDivider}></View>
                                         <Text style={styles.attributeValue}>Blonde</Text>
+                                    </View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.attributeName}>Eye color</Text>
+                                        <View style={styles.attributeDivider}></View>
+                                        <Text style={styles.attributeValue}>Green</Text>
                                     </View>
                                 </View>
                                 {/* <View style={{ width: 160 }}>
@@ -269,7 +269,7 @@ const Profile = ({ route, client, navigation }) => {
 
                         <View style={styles.section}>
                             <Text style={styles.sectionHeaderText}>
-                                Prices
+                                Pricing
                             </Text>
                             <View style={[styles.table, { marginTop: SPACING.small, }]}>
                                 <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>

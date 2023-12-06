@@ -16,7 +16,7 @@ export const stripDefaultFilters = (defaultFilters, filters) => {
 export const deepClone = (data) => JSON.parse(JSON.stringify(data))
 
 //HELPER FUNCTIONS
-const isArrayEqual = (array1, array2) => array1.length === array2.length && array1.every((value, index) => value === array2[index])
+const isArrayEqual = (array1, array2) => array1.length === array2.length && array1.every((value, index) => areValuesEqual(value,array2[index]))
 
 const areDatesEqual = (date1, date2) => date1.getTime() === date2.getTime()
 
@@ -35,7 +35,7 @@ const areObjectsEqual = (object1, object2) => {
 }
 
 //if same -> return true
-const areValuesEqual = (val1, val2) => {
+export const areValuesEqual = (val1, val2) => {
   return typeof val1 === 'object' ? 
     (
       val1 instanceof Date ? areDatesEqual(val1, val2) 

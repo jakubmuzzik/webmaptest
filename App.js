@@ -27,13 +27,16 @@ import Favourites from './screens/Favourites'
 
 import { StackActions } from '@react-navigation/native'
 
-import { COLORS, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
+import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
 
 import ExploreStack from './navigations/ExploreStack'
 
 import { enableLegacyWebImplementation } from 'react-native-gesture-handler'
 import { TouchableRipple } from 'react-native-paper'
 import { normalize } from './utils'
+
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
+
 //enableLegacyWebImplementation(true)
 
 const linking = {
@@ -98,6 +101,63 @@ const linking = {
     }
   },
 }
+
+const toastConfig = {
+  /*
+    Overwrite 'success' type,
+    by modifying the existing `BaseToast` component
+  */
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: 'rgb(31,199,10)' }}
+      //contentContainerStyle={{ paddingVertical: 15 }}
+      text1Style={{
+        fontSize: FONT_SIZES.large,
+        fontStyle: FONTS.bold,
+      }}
+      text2Style={{
+        fontSize: FONT_SIZES.medium,
+        fontStyle: FONTS.bold  ,
+        color: '#000'      ,
+      }}
+      text2NumberOfLines={2}
+    />
+  ),
+  /*
+    Overwrite 'error' type,
+    by modifying the existing `ErrorToast` component
+  */
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      style={{ borderLeftColor: COLORS.error }}
+      text1Style={{
+        fontSize: FONT_SIZES.medium,
+        fontStyle: FONTS.bold
+      }}
+      text2Style={{
+        fontSize: FONT_SIZES.small,
+        fontStyle: FONTS.bold,
+        color: '#000' 
+      }}
+      text2NumberOfLines={2}
+    />
+  ),
+  /*
+    Or create a completely new type - `tomatoToast`,
+    building the layout from scratch.
+
+    I can consume any custom `props` I want.
+    They will be passed when calling the `show` method (see below)
+  */
+  tomatoToast: ({ text1, props }) => (
+    <View style={{ height: 60, width: '100%', backgroundColor: 'tomato' }}>
+      <Text>{text1}</Text>
+      <Text>{props.uuid}</Text>
+    </View>
+  )
+};
 
 const EXPLORE_SCREENS = [
   'Esc', 'Pri', 'Mas', 'Clu'
@@ -169,7 +229,7 @@ export default function App() {
           <Stack.Navigator screenOptions={{
             header: ({ navigation, route }) => <Header language='en' navigation={navigation} route={route} />,
             animationEnabled: true,
-            cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60: 0 },
+            cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60 : 0 },
           }}>
             <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />
             {/* <Stack.Screen name="Home" component={Home} initialParams={{}} /> */}
@@ -221,26 +281,26 @@ export default function App() {
       </Provider>
 
       {isSmalScreen && (
-        <View style={{ position: 'absolute', bottom:0, height: 60, width: '100%', backgroundColor: COLORS.lightGrey, flexDirection: 'row' }}>
-          <TouchableRipple 
+        <View style={{ position: 'absolute', bottom: 0, height: 60, width: '100%', backgroundColor: COLORS.lightGrey, flexDirection: 'row' }}>
+          <TouchableRipple
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => onBottomScreenPress('Explore')}
           >
-            <Ionicons name="search-outline" size={24} color={state === 'Explore'  ? COLORS.red : COLORS.placeholder} />
+            <Ionicons name="search-outline" size={24} color={state === 'Explore' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
-          <TouchableRipple 
+          <TouchableRipple
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => onBottomScreenPress('Favourites')}
           >
             <Ionicons name="heart-outline" size={24} color={state === 'Favourites' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
-          <TouchableRipple 
+          <TouchableRipple
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => onBottomScreenPress('Chat')}
           >
             <Ionicons name="chatbox-outline" size={24} color={state === 'Chat' ? COLORS.red : COLORS.placeholder} />
           </TouchableRipple>
-          <TouchableRipple 
+          <TouchableRipple
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => onBottomScreenPress('Account')}
           >
@@ -248,6 +308,8 @@ export default function App() {
           </TouchableRipple>
         </View>
       )}
+
+      <Toast config={toastConfig}/>
     </>
   )
 }

@@ -63,7 +63,8 @@ export const COLORS = {
     error: '#ff190c',
     linkColor: '#0077cc',
     lightPurple: '#cfbcff',
-    purple: '#6152bb'
+    purple: '#6152bb',
+    darkestBlue: '#05375a',
 }
 
 export const FONT_SIZES = {

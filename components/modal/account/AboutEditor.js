@@ -9,9 +9,9 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import HoverableView from '../HoverableView'
-import HoverableInput from '../HoverableInput'
-import { normalize } from '../../utils'
+import HoverableView from '../../HoverableView'
+import HoverableInput from '../../HoverableInput'
+import { normalize } from '../../../utils'
 import {
     COLORS,
     FONTS,
@@ -19,9 +19,10 @@ import {
     SPACING,
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
-} from '../../constants'
+} from '../../../constants'
 
 import { Button } from 'react-native-paper'
+import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
@@ -30,6 +31,7 @@ const AboutEditor = ({ visible, setVisible, route, about }) => {
         language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
     }), [route.params])
 
+    const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)
     const [changedAbout, setChangedAbout] = useState(about)
 
@@ -69,8 +71,19 @@ const AboutEditor = ({ visible, setVisible, route, about }) => {
         setChangedAbout(about)
     }
 
-    const onSavePress = () => {
+    const onSavePress = async () => {
+        setIsSaving(true)
+        //todo add try catch, call firebase, update redux state if success
+        setTimeout(() => {
+            setIsSaving(false)
+            closeModal()
 
+            Toast.show({
+                type: 'success',
+                text1: 'Success!',
+                text2: 'Your Description was changed successfully.'
+            })
+        }, 1000)
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -159,6 +172,8 @@ const AboutEditor = ({ visible, setVisible, route, about }) => {
                                 buttonColor={COLORS.lightBlack}
                                 mode="contained"
                                 onPress={onSavePress}
+                                loading={isSaving}
+                                disabled={isSaving || about === changedAbout}
                             >
                                 Save
                             </Button>
