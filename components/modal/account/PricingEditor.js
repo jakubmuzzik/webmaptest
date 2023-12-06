@@ -291,7 +291,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
                                 >
                                     <Button
                                         labelStyle={{ fontSize: normalize(20), color: '#000' }}
-                                        style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
+                                        //style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
                                         contentStyle={{ height: 35 }}
                                         rippleColor="rgba(0, 0, 0, .1)"
                                         icon="plus"

@@ -902,7 +902,7 @@ const LadySignup = ({ route }) => {
                     <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
                         <Button
                             labelStyle={{ fontSize: normalize(20), color: '#000' }}
-                            style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
+                            //style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
                             contentStyle={{ height: 35 }}
                             rippleColor="rgba(0, 0, 0, .1)"
                             icon="plus"
@@ -1025,7 +1025,7 @@ const LadySignup = ({ route }) => {
                         >
                             <Button
                                 labelStyle={{ fontSize: normalize(20), color: '#000' }}
-                                style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
+                                //style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
                                 contentStyle={{ height: 35 }}
                                 rippleColor="rgba(0, 0, 0, .1)"
                                 icon="plus"
