@@ -52,10 +52,10 @@ const Header = ({ route, navigation }) => {
 
     const logoNav = useMemo(() => ({
         to: {
-            screen: 'Explore',
+            screen: 'Esc',
             params: params.language ? { language: params.language } : {}
         },
-        action: StackActions.push('Explore', params.language ? { language: params.language } : {} )
+        action: StackActions.push('Esc', params.language ? { language: params.language } : {} )
     }), [route.params])
 
     const csLanguageNav = useMemo(() => ({
@@ -370,7 +370,7 @@ const Header = ({ route, navigation }) => {
 
     return (
         <>
-            {/* <View style={{ width: '100%', height: normalize(70) + (SCREENS_WITH_CITY_SELECTION.includes(route.name) ? normalize(70) : 0), backgroundColor: COLORS.lightBlack }}></View> */}
+            {/* <View style={{ width: '100%', height: normalize(70) + (SCREENS_WITH_CITY_SELECTION.includes(route.name) ? normalize(70) : 0), backgroundColor: COLORS.lightBlack }}> */}
             {/* <View style={{ position: 'fixed', width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}> */}
                 <View style={isSmallScreen ? styles.headerSmall : styles.headerLarge}>
                     <View style={isSmallScreen ? styles.headerLeftSmall : styles.headerLeftLarge}>
@@ -415,8 +415,8 @@ export default memo(Header)
 const styles = StyleSheet.create({
     headerSmall: {
         //position: 'fixed',
-        //width: '100%',
-       // height: '50%',
+        width: '100%',
+        //height: '50%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     },
     headerLarge: {
         //position: 'fixed',
-        //width: '100%',
+        width: '100%',
         //height: '50%',
         display: 'flex',
         flexDirection: 'row',
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.page_horizontal,
         paddingVertical: SPACING.x_small,
         backgroundColor: COLORS.grey,
-        //height: normalize(70)
+        height: normalize(70)
     },
     headerLeftSmall: {
         flexGrow: 0,

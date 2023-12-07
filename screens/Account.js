@@ -32,7 +32,7 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <ScrollView style={{ paddingTop: SPACING.large, marginHorizontal: SPACING.medium }} contentContainerStyle={{ paddingBottom: SPACING.medium }}>
+        <View style={{ paddingTop: SPACING.large, paddingBottom: SPACING.medium, marginTop: normalize(70), marginHorizontal: SPACING.medium }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large }}>
                     Account
@@ -68,7 +68,7 @@ const Account = ({ navigation, route }) => {
                     />
                 </Tab.Navigator>
             </View>
-        </ScrollView>
+        </View>
     )
 }
 

@@ -10,6 +10,7 @@ import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { CZECH_CITIES } from '../labels'
 import RenderClient from '../components/list/RenderClient'
+import { normalize } from '../utils'
 
 const {
     width: INITIAL_SCREEN_WIDTH
@@ -72,7 +73,7 @@ const Clu = ({ navigation, route }) => {
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack, paddingHorizontal: SPACING.page_horizontal - SPACING.large }} 
-            contentContainerStyle={{ paddingTop: SPACING.large }}
+            contentContainerStyle={{ paddingTop: SPACING.large + normalize(70) + normalize(70) }}
             onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
         >
             <View style={{ marginLeft: SPACING.large }}>

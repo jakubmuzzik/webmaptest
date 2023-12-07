@@ -1585,7 +1585,7 @@ const LadySignup = ({ route }) => {
     const progress = (index) / (Object.keys(routes).length - 1)
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up

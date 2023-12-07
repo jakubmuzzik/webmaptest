@@ -16,6 +16,7 @@ const {
 } = Dimensions.get('window')
 
 import { MOCK_DATA } from '../constants'
+import { normalize } from '../utils'
 
 const Esc = ({ navigation, route }) => {
     const params = useMemo(() => ({
@@ -73,8 +74,9 @@ const Esc = ({ navigation, route }) => {
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack, paddingHorizontal: SPACING.page_horizontal - SPACING.large }} 
-            contentContainerStyle={{ paddingTop: SPACING.large }}
+            contentContainerStyle={{ paddingTop: SPACING.large + normalize(70) + normalize(70) }}
             onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+            //onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>

@@ -46,18 +46,6 @@ const Profile = ({ route, client, navigation }) => {
         );
     }, [])
 
-    const Wrapper = useCallback(({ children }) => {
-        return isLargeScreen ? (
-            <View style={styles.containerLarge}>
-                {children}
-            </View>
-        ) : (
-            <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack }} contentContainerStyle={styles.containerSmall}>
-                {children}
-            </ScrollView>
-        )
-    }, [isLargeScreen])
-
     const renderContent = () => {
         return (
             <View style={isLargeScreen ? styles.contentLarge : styles.contentSmall}>
@@ -516,10 +504,10 @@ const Profile = ({ route, client, navigation }) => {
     }
 
     return (
-        <Wrapper>
-            {isLargeScreen ? renderContent() : renderCard()}       
-            {isLargeScreen ? renderCard() : renderContent()}
-        </Wrapper>
+        <View style={[isLargeScreen ? styles.containerLarge : styles.containerSmall, { marginTop: normalize(70) }]}>
+            {renderContent()}
+            {renderCard()}
+        </View>
     )
 }
 
@@ -532,12 +520,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         backgroundColor: COLORS.lightBlack, 
         justifyContent: 'center',
-        overflowY: 'scroll'
+        //overflowY: 'scroll',
+        //marginTop: normalize(70)
     },
     containerSmall: { 
         flex: 1, 
         paddingHorizontal: SPACING.large, 
-        flexDirection: 'column'
+        flexDirection: 'column-reverse',
+        //marginTop: normalize(70)
     },
     contentLarge: { 
         flexShrink: 1, 
