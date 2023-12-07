@@ -106,7 +106,7 @@ const toastConfig = {
   success: (props) => (
     <BaseToast
       {...props}
-      style={{ borderLeftColor: 'rgb(31,199,10)', width: 'fit-content', maxWidth: '80%' }}
+      style={{ borderLeftColor: 'rgb(31,199,10)', /*width: 'fit-content', maxWidth: '80%'*/ }} // this width setup didn't work on mobile
       //contentContainerStyle={{ paddingVertical: 15 }}
       text1Style={{
         fontSize: FONT_SIZES.large,
