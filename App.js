@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import * as Font from 'expo-font'
-import { StyleSheet, View, useWindowDimensions } from 'react-native'
+import { StyleSheet, View, StatusBar } from 'react-native'
 import { Provider } from 'react-redux'
 import initStore from './redux/store'
 const store = initStore()
 
+//import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
 
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
 
-import Main from './components/navigation/Main'
+import Main from './navigations/Main'
 
 //enableLegacyWebImplementation(true)
 
@@ -86,8 +87,14 @@ export default function App() {
 
   return (
     <>
+      <StatusBar
+        animated={true}
+        backgroundColor="#161616"
+        barStyle='dark-content'
+        translucent
+      />
       <Provider store={store}>
-        <SafeAreaProvider>
+        <SafeAreaProvider style={{ backgroundColor: COLORS.lightBlack, overscrollBehavior: 'none' }}>
           <Main />
         </SafeAreaProvider>
       </Provider>

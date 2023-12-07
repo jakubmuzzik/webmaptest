@@ -6,29 +6,29 @@ import { Ionicons } from '@expo/vector-icons'
 import { createStackNavigator } from '@react-navigation/stack'
 const Stack = createStackNavigator()
 
-import LadySignup from '../../screens/LadySignup'
-import Home from '../../screens/Home'
-import NotFound from '../../screens/NotFound'
-import Header from '../../components/navigation/Header'
-import Pri from '../../screens/Pri'
-import Esc from '../../screens/Esc'
-import Clu from '../../screens/Clu'
-import Mas from '../../screens/Mas'
-import Profile from '../../screens/Profile'
-import ProfilePhotosList from '../../screens/ProfilePhotosList'
-import PhotoGallery from '../../screens/PhotoGallery'
-import Account from '../../screens/Account'
-import Chat from '../../screens/Chat'
-import Favourites from '../../screens/Favourites'
-import Categories from '../../components/navigation/Categories'
+import LadySignup from '../screens/LadySignup'
+import Home from '../screens/Home'
+import NotFound from '../screens/NotFound'
+import Header from '../components/navigation/Header'
+import Pri from '../screens/Pri'
+import Esc from '../screens/Esc'
+import Clu from '../screens/Clu'
+import Mas from '../screens/Mas'
+import Profile from '../screens/Profile'
+import ProfilePhotosList from '../screens/ProfilePhotosList'
+import PhotoGallery from '../screens/PhotoGallery'
+import Account from '../screens/Account'
+import Chat from '../screens/Chat'
+import Favourites from '../screens/Favourites'
+import Categories from '../components/navigation/Categories'
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { StackActions } from '@react-navigation/native'
 
-import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../../constants'
+import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
 
-import ExploreStack from '../../navigations/ExploreStack'
+import ExploreStack from '../navigations/ExploreStack'
 
 import { TouchableRipple } from 'react-native-paper'
 
@@ -140,7 +140,7 @@ export default function Main() {
                       },
                     }),*/
                     //animationEnabled: true,
-                    cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 },
+                    cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, overscrollBehavior: 'none' },
                 }}>
 
                     <Stack.Group
