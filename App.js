@@ -94,7 +94,7 @@ export default function App() {
         translucent
       />
       <Provider store={store}>
-        <SafeAreaProvider style={{ backgroundColor: COLORS.lightBlack, overscrollBehavior: 'none' }}>
+        <SafeAreaProvider style={{ backgroundColor: COLORS.lightBlack,/* overscrollBehavior: 'none'*/ }}>
           <Main />
         </SafeAreaProvider>
       </Provider>
