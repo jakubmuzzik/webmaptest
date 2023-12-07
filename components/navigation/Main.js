@@ -145,7 +145,7 @@ export default function Main() {
 
                     <Stack.Group
                         screenOptions={{
-                            cardStyle: { flex: 1 }
+                            cardStyle: { flex: 1, paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }
                         }}
                     >
                         <Stack.Screen name="lady-signup" component={LadySignup} initialParams={{}} />

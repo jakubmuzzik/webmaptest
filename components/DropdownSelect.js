@@ -34,8 +34,10 @@ const DropdownSelect = forwardRef((props, ref) => {
         rightIconName,
         renderInput,
         children,
-        offsetX = 0
+        offsetX = 0,
+        containerRef
     } = props
+
     const dropdownRef = useRef()
     const filteredValuesRef = useRef(values)
 
@@ -60,19 +62,40 @@ const DropdownSelect = forwardRef((props, ref) => {
     }
 
     const onDropdownPress = () => {
-        dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-            //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
-            //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
-            setDropdownDesc({
-                //y: hasEnoughSpaceBelow ? py + h + 5 : undefined,
-                x: _px - offsetX,
-                width: _w,
-                //maxHeight,
-                py,
-                h
+        if (containerRef?.current) {
+            dropdownRef.current.measureLayout(
+                containerRef.current,
+                (left, top, width, height) => {
+                    console.log(left, top, width, height);
+                    //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
+                    //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
+                    setDropdownDesc({
+                        //y: hasEnoughSpaceBelow ? py + h + 5 : undefined,
+                        x: left - offsetX,
+                        width: width,
+                        //maxHeight,
+                        py: top,
+                        h: height
+                    })
+                    setVisible(true)
+                },
+            )
+        } else {
+            dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
+                console.log(_fx, _fy, _w, h, _px, py)
+                //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
+                //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
+                setDropdownDesc({
+                    //y: hasEnoughSpaceBelow ? py + h + 5 : undefined,
+                    x: _px - offsetX,
+                    width: _w,
+                    //maxHeight,
+                    py,
+                    h
+                })
+                setVisible(true)
             })
-            setVisible(true)
-        })
+        }       
     }
 
     useImperativeHandle(ref, () => ({

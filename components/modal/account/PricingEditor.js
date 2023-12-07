@@ -54,6 +54,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
 
     const currencyDropdownRef = useRef()
     const pricesDropdownPress = useRef()
+    const containerRef = useRef()
 
     const scrollY = useSharedValue(0)
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -156,7 +157,8 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
     })
 
     return (
-        <Modal transparent={true}
+        <Modal ref={containerRef}
+            transparent={true}
             visible={visible}
             animationType="fade">
             <TouchableOpacity
@@ -190,6 +192,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
                                 </Text>
                                 <DropdownSelect
                                     ref={currencyDropdownRef}
+                                    containerRef={containerRef}
                                     text={changedPricing.currency}
                                     values={CURRENCIES}
                                     setText={(text) => onValueChange(text, 'currency')}
@@ -286,6 +289,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
                             <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginTop: SPACING.xx_small }}>
                                 <DropdownSelect
                                     ref={pricesDropdownPress}
+                                    containerRef={containerRef}
                                     values={HOURS.filter(hour => !changedPricing.prices.some(price => price.length === Number(hour.substring(0, hour.indexOf('h') - 1))))}
                                     setText={onAddNewPrice}
                                 >

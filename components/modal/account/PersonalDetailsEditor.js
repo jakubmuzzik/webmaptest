@@ -50,6 +50,8 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
     const [changedPersonalDetails, setChangedPersonalDetails] = useState(personalDetails)
     const [isChanged, setIsChanged] = useState(false)
 
+    const containerRef = useRef()
+
     useEffect(() => {
         if (visible) {
             translateY.value = withTiming(0, {
@@ -172,7 +174,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
     })
 
     return (
-        <Modal transparent={true}
+        <Modal ref={containerRef} transparent={true}
             visible={visible}
             animationType="fade">
             <TouchableOpacity
@@ -216,6 +218,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
                                     errorMessage={showErrorMessage && !changedPersonalDetails.dateOfBirth ? 'Enter your date of birth' : showErrorMessage && changedPersonalDetails.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
                                 />
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={SEXUAL_ORIENTATION}
                                     placeholder="Select your sexuality"
                                     label="Sexuality"
@@ -235,6 +238,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={NATIONALITIES}
                                     searchable
                                     searchPlaceholder="Search nationality"
@@ -253,6 +257,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
                                     errorMessage={showErrorMessage && !changedPersonalDetails.nationality ? 'Select your nationality' : undefined}
                                 />
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={LANGUAGES}
                                     multiselect
                                     searchable
@@ -307,6 +312,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={BODY_TYPES}
                                     placeholder="Select your body type"
                                     label="Body type"
@@ -323,6 +329,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
                                     errorMessage={showErrorMessage && !changedPersonalDetails.bodyType ? 'Select your body type' : undefined}
                                 />
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={PUBIC_HAIR_VALUES}
                                     placeholder="Search your pubic hair"
                                     label="Pubic hair"
@@ -342,6 +349,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={BREAST_SIZES}
                                     placeholder="Select your breast size"
                                     label="Breast size"
@@ -358,6 +366,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
                                     errorMessage={showErrorMessage && !changedPersonalDetails.breastSize ? 'Select your breast size' : undefined}
                                 />
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={BREAST_TYPES}
                                     placeholder="Search your breast type"
                                     label="Breast type"
@@ -377,6 +386,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
 
                             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={HAIR_COLORS}
                                     placeholder="Select your hair color"
                                     label="Hair color"
@@ -393,6 +403,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
                                     errorMessage={showErrorMessage && !changedPersonalDetails.hairColor ? 'Select your hair color' : undefined}
                                 />
                                 <DropdownSelect
+                                    containerRef={containerRef}
                                     values={EYE_COLORS}
                                     placeholder="Search your eye color"
                                     label="Eye color"
