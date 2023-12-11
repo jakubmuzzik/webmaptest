@@ -10,6 +10,9 @@ import MapView from "@teovilla/react-native-web-maps"
 import AboutEditor from '../../components/modal/account/AboutEditor'
 import PersonalDetailsEditor from '../../components/modal/account/PersonalDetailsEditor'
 import PricingEditor from '../../components/modal/account/PricingEditor'
+import ServicesEditor from '../../components/modal/account/ServicesEditor'
+import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEditor'
+import AddressEditor from '../../components/modal/account/AddressEditor'
 
 const PersonalDetails = ({ navigation, route }) => {
     const [data, setData] = useState({
@@ -37,7 +40,7 @@ const PersonalDetails = ({ navigation, route }) => {
         prices: [], //{length: 1, incall: '', outcall: ''}
         incall: true,
         outcall: true,
-        address: '',
+        address: {title: 'Thamova 681/32 Karlin'},
         addressTitle: '',
         hiddenAddress: false,
         description: 'mock description',
@@ -67,6 +70,11 @@ const PersonalDetails = ({ navigation, route }) => {
         incall: data.incall
     }), [data])
 
+    const address = useMemo(() => ({
+        ...data.address,
+        hiddenAddress: data.hiddenAddress
+    }), [data])
+
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
     const [region, setRegion] = useState(null)
@@ -74,6 +82,9 @@ const PersonalDetails = ({ navigation, route }) => {
     const [aboutEditorVisible, setAboutEditorVisible] = useState(false)
     const [personalDetailsEditorVisible, setPersonalDetailsEditorVisible] = useState(false)
     const [pricingEditorVisible, setPricingEditorVisible] = useState(false)
+    const [servicesEditorVisible, setServicesEditorVisible] = useState(false)
+    const [workingHoursEditorVisible, setWorkingHoursEditorVisible] = useState(false)
+    const [addressEditorVisible, setAddressEditorVisible] = useState(false)
 
     const mapRef = useRef()
 
@@ -99,15 +110,15 @@ const PersonalDetails = ({ navigation, route }) => {
     }
 
     const onServicesEditPress = () => {
-
+        setServicesEditorVisible(true)
     }
 
     const onWorkingHoursEditPress = () => {
-
+        setWorkingHoursEditorVisible(true)
     }
 
     const onAddressEditPress = () => {
-
+        setAddressEditorVisible(true)
     }
 
     const loadingMapFallback = useMemo(() => {
@@ -442,6 +453,9 @@ const PersonalDetails = ({ navigation, route }) => {
             <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} route={route} about={data.description} />
             <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} route={route} personalDetails={personalDetails} />
             <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} route={route} pricing={pricing} />
+            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} route={route} services={data.services} />
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} route={route} workingHours={data.workingHours} />
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} route={route} address={address} />
         </>
     )
 }

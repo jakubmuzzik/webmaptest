@@ -257,33 +257,6 @@ const styles = StyleSheet.create({
         outlineStyle: 'none',
         color: '#000'
     },
-    countrySection: {
-        marginVertical: SPACING.xx_small,
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    countrySection__text: {
-        fontFamily: FONTS.medium,
-        fontSize: FONT_SIZES.large
-    },
-    countrySection__image: {
-        width: SPACING.small,
-        height: SPACING.x_small,
-        marginRight: SPACING.xx_small,
-        marginLeft: SPACING.small
-    },
-    service: {
-        fontFamily: FONTS.regular,
-        fontSize: FONT_SIZES.medium
-    },
-    serviceContainer: {
-        flexDirection: 'row',
-        paddingHorizontal: SPACING.small,
-        width: '100%', 
-        paddingVertical: SPACING.xx_small, 
-        paddingLeft: SPACING.xx_small, 
-        alignItems: 'center'
-    },
     section: {
         paddingVertical: SPACING.xx_small,
         paddingHorizontal: SPACING.small,

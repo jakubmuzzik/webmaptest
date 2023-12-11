@@ -210,7 +210,7 @@ const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
                                     <TouchableRipple
                                         key={address.id}
                                         onPress={() => onAddressSelect(address)}
-                                        style={{ paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row' }}
+                                        style={{ paddingVertical: SPACING.xx_small, marginHorizontal: SPACING.medium, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', overflow: 'hidden' }}
                                         rippleColor="rgba(220, 46, 46, .10)"
                                     >
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>

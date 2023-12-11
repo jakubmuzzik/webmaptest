@@ -23,7 +23,7 @@ import {
     CURRENCIES
 } from '../../../constants'
 
-import { Button, IconButton } from 'react-native-paper'
+import { Button, IconButton, HelperText } from 'react-native-paper'
 import Toast from 'react-native-toast-message'
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
@@ -77,6 +77,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
         })
         setVisible(false)
         setChangedPricing(pricing)
+        setIsChanged(false)
     }
 
     const onSavePress = async () => {
@@ -89,7 +90,7 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
             Toast.show({
                 type: 'success',
                 text1: 'Success!',
-                text2: 'Your Personal Details were changed successfully.'
+                text2: 'Your Pricing was changed successfully.'
             })
         }, 1000)
     }
@@ -208,6 +209,14 @@ const PricingEditor = ({ visible, setVisible, route, pricing }) => {
                                     </TouchableOpacity>
                                 </DropdownSelect>
                             </View>
+                            {changedPricing.prices.length === 0 && showErrorMessage &&
+                                <HelperText type="error" visible style={{ marginHorizontal: SPACING.small, padding: 0 }}>
+                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.error }}>
+                                        Define your pricing
+                                    </Text>
+                                </HelperText>
+                            }
+
                             {changedPricing.prices.length > 0 && <View style={[styles.table, { marginHorizontal: SPACING.small, marginBottom: SPACING.xx_small }]}>
                                 <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                                     <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>

@@ -85,6 +85,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) 
         })
         setVisible(false)
         setChangedPersonalDetails(personalDetails)
+        setIsChanged(false)
     }
 
     const onSavePress = async () => {

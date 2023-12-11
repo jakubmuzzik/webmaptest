@@ -883,6 +883,14 @@ const LadySignup = ({ route }) => {
                         Services ({data.services.length})
                     </Text>
 
+                    {data.services.length === 0 && showServicesErrorMessages &&
+                        <HelperText type="error" visible style={{ marginHorizontal: SPACING.x_large, padding: 0 }}>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.error }}>
+                                Add your services.
+                            </Text>
+                        </HelperText>
+                    }
+
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: SPACING.x_large }}>
                         {data.services.map((service) => (
                             <HoverableView key={service} style={{ flexDirection: 'row', overflow: 'hidden', borderRadius: 20, marginRight: SPACING.xxx_small, marginBottom: SPACING.xx_small, }} hoveredBackgroundColor={COLORS.hoveredRed} backgroundColor={COLORS.red}>
@@ -938,8 +946,15 @@ const LadySignup = ({ route }) => {
                             </TouchableOpacity>
                         </DropdownSelect>
                     </View>
+                    {data.prices.length === 0 && showServicesErrorMessages &&
+                        <HelperText type="error" visible style={{ marginHorizontal: SPACING.x_large, padding: 0 }}>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.error }}>
+                                Define your pricing
+                            </Text>
+                        </HelperText>
+                    }
                     {data.prices.length > 0 && <View style={[styles.table, { marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small }]}>
-                        <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={ { flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                             <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                                 <Text style={styles.tableHeaderText}>Length</Text>
                             </View>

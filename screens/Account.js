@@ -44,7 +44,8 @@ const Account = ({ navigation, route }) => {
                         tabBarItemStyle: { width: 'auto' },
                         tabBarStyle: { backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%', },
                         tabBarIndicatorStyle: { backgroundColor: COLORS.red },
-                        tabBarScrollEnabled: true
+                        tabBarScrollEnabled: true,
+                        swipeEnabled: false
                     }}
                     style={{ }}
                 >
