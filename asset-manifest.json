@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.896640f9.js",
+    "main.js": "/webmaptest/static/js/main.442f345a.js",
     "static/js/422.6eead8b5.js": "/webmaptest/static/js/422.6eead8b5.js",
     "static/media/header_logo2.png": "/webmaptest/static/media/header_logo2.e402890e748e5a77f86a.png",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
@@ -27,6 +27,7 @@
     "static/media/us.png": "/webmaptest/static/media/us.fa44cd5298e756aadaac.png",
     "static/media/man.png": "/webmaptest/static/media/man.28ec5b21f8dfee4198ff.png",
     "static/media/woman.png": "/webmaptest/static/media/woman.f2daa8fa94778d6a816b.png",
+    "static/media/sport_marker.png": "/webmaptest/static/media/sport_marker.09c0c18baddb657f70ef.png",
     "favicon.ico": "/webmaptest/favicon.ico",
     "static/media/EvilIcons.ttf": "/webmaptest/static/media/EvilIcons.699664b33ac2837d5bee.ttf",
     "static/media/cz.png": "/webmaptest/static/media/cz.4c6cfc79c62bbbd9ad57.png",
@@ -36,11 +37,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.896640f9.js.map": "/webmaptest/static/js/main.896640f9.js.map",
+    "main.442f345a.js.map": "/webmaptest/static/js/main.442f345a.js.map",
     "422.6eead8b5.js.map": "/webmaptest/static/js/422.6eead8b5.js.map"
   },
   "entrypoints": [
     "static/js/422.6eead8b5.js",
-    "static/js/main.896640f9.js"
+    "static/js/main.442f345a.js"
   ]
 }
