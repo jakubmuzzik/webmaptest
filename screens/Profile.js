@@ -405,8 +405,9 @@ const Profile = ({ route, client, navigation }) => {
                                     ref={mapRef}
                                     provider="google"
                                     style={{ flex: 1 }}
-                                    onRegionChange={setRegion}
-                                    loadingFallback={loadingMapFallback}
+                                    googleMapsApiKey="AIzaSyCA1Gw6tQbTOm9ME6Ru0nulUNFAOotVY3s"
+                                    //onRegionChange={setRegion}
+                                    //loadingFallback={loadingMapFallback}
                                 >
 
                                 </MapView>

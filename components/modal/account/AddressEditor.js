@@ -159,7 +159,7 @@ const AddressEditor = ({ visible, setVisible, route, address }) => {
         try {
             setIsSearching(true)
             const { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Low
+                accuracy: Location.Accuracy.High
             })
 
             const response = await fetch('https://ladiesforfun-dev-ed.develop.my.salesforce-sites.com/services/apexrest/revgeocode?' + new URLSearchParams({
@@ -180,7 +180,8 @@ const AddressEditor = ({ visible, setVisible, route, address }) => {
             return
         }
 
-        setChangedAddress(data => ({ ...a, hiddenAddress: data.hiddenAddress }))
+        const { title, id, address, position } = a
+        setChangedAddress(data => ({ title, id, ...address, ...position, hiddenAddress: data.hiddenAddress }))
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {

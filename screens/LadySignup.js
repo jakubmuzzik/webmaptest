@@ -64,7 +64,6 @@ const LadySignup = ({ route }) => {
         incall: true,
         outcall: true,
         address: '',
-        addressTitle: '',
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
@@ -406,10 +405,10 @@ const LadySignup = ({ route }) => {
     }, [])
 
     const onAddressSelect = useCallback((value) => {
+        const { title, id, address, position } = value
         setData((data) => ({
             ...data,
-            address: value,
-            addressTitle: value?.title
+            address: { title, id, ...address, ...position }
         }))
     }, [])
 
@@ -1084,9 +1083,9 @@ const LadySignup = ({ route }) => {
                                 textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                                 labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                                 placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                                text={data.addressTitle}
+                                text={data.address?.addressTitle}
                                 leftIconName='map-marker-outline'
-                                errorMessage={showLocationErrorMessages && !data.addressTitle ? 'Enter your address' : undefined}
+                                errorMessage={showLocationErrorMessages && !data.address?.addressTitle ? 'Enter your address' : undefined}
                             />
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small, flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.x_small, marginRight: SPACING.x_large }}>

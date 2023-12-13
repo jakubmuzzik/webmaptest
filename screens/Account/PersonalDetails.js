@@ -1,11 +1,14 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Svg, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS } from '../../constants'
 import { Button } from 'react-native-paper'
+import { normalize } from '../../utils'
 
 import HoverableView from '../../components/HoverableView'
-import MapView from "@teovilla/react-native-web-maps"
+//import MapView, { Marker, ClusterProps, MarkerClusterer } from "@teovilla/react-native-web-maps"
+import MapView, { Marker, Callout } from 'react-native-maps'
+//import { Image } from 'expo-image'
 
 import AboutEditor from '../../components/modal/account/AboutEditor'
 import PersonalDetailsEditor from '../../components/modal/account/PersonalDetailsEditor'
@@ -13,6 +16,11 @@ import PricingEditor from '../../components/modal/account/PricingEditor'
 import ServicesEditor from '../../components/modal/account/ServicesEditor'
 import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEditor'
 import AddressEditor from '../../components/modal/account/AddressEditor'
+
+const LOCATION_LATITUDE_DELTA = 0.9735111002971948 // default value just for map init -> later is used minLatitudeDelta.current
+const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km 
+const INITIAL_LATITUDE = 50.0646126
+const INITIAL_LONGITUDE = 14.3729754
 
 const PersonalDetails = ({ navigation, route }) => {
     const [data, setData] = useState({
@@ -41,7 +49,6 @@ const PersonalDetails = ({ navigation, route }) => {
         incall: true,
         outcall: true,
         address: {title: 'Thamova 681/32 Karlin'},
-        addressTitle: '',
         hiddenAddress: false,
         description: 'mock description',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
@@ -77,7 +84,6 @@ const PersonalDetails = ({ navigation, route }) => {
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
-    const [region, setRegion] = useState(null)
 
     const [aboutEditorVisible, setAboutEditorVisible] = useState(false)
     const [personalDetailsEditorVisible, setPersonalDetailsEditorVisible] = useState(false)
@@ -440,12 +446,43 @@ const PersonalDetails = ({ navigation, route }) => {
                 <View style={{ width: '100%', height: 400 }}>
                     <MapView
                         ref={mapRef}
+                        googleMapsApiKey="AIzaSyCA1Gw6tQbTOm9ME6Ru0nulUNFAOotVY3s"
                         provider="google"
                         style={{ flex: 1 }}
-                        onRegionChange={setRegion}
+                        animationEnabled
+                        zoomTapEnabled
                         loadingFallback={loadingMapFallback}
+                        initialCamera={{
+                            center: {
+                                latitude: 50.09148,
+                                longitude: 14.45501,
+                            },
+                            zoom: 13,
+                        }}
                     >
-
+                        <Marker
+                            coordinate={{
+                                latitude: '50.09148',
+                                longitude: '14.45501'
+                            }}
+                            title={data.name}
+                            tracksViewChanges={false}
+                            key={123}
+                            zIndex={2}
+                        >
+                            <Image
+                                key={122}
+                                source={require('../../assets/sport_marker.png')}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    position: 'absolute',
+                                    top: -30,
+                                    left: -15
+                                }}
+                                resizeMode="contain"
+                            />
+                        </Marker>
                     </MapView>
                 </View>
             </View>

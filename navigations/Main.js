@@ -140,7 +140,7 @@ export default function Main() {
                       },
                     }),*/
                     //animationEnabled: true,
-                    cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, overscrollBehavior: 'none' },
+                    cardStyle: { /*flex: 1,*/ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, /*overscrollBehavior: 'none'*/ },
                 }}>
 
                     <Stack.Group
