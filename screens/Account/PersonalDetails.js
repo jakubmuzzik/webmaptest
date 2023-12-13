@@ -466,12 +466,8 @@ const PersonalDetails = ({ navigation, route }) => {
                                 longitude: '14.45501'
                             }}
                             title={data.name}
-                            tracksViewChanges={false}
-                            key={123}
-                            zIndex={2}
                         >
                             <Image
-                                key={122}
                                 source={require('../../assets/sport_marker.png')}
                                 style={{
                                     width: 30,

@@ -24,7 +24,7 @@ const Mas = ({ navigation, route }) => {
         city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
     }), [route.params])
 
-    const [contentWidth, setContentWidth] = useState(INITIAL_SCREEN_WIDTH)
+    const [contentWidth, setContentWidth] = useState()
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const Mas = ({ navigation, route }) => {
             contentContainerStyle={{ paddingTop: SPACING.large + normalize(70) + normalize(70) }}
             onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
         >
-            <View style={{ marginLeft: SPACING.large }}>
+            {contentWidth && <View style={{ marginLeft: SPACING.large }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
                     {`Mas ${params.city ? 'in ' + params.city : ''} • Discover 212 ...`}
                 </Text>
@@ -84,7 +84,7 @@ const Mas = ({ navigation, route }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
                 </View>
-            </View>
+            </View>}
         </ScrollView>
     )
 }
