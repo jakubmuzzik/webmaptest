@@ -26,10 +26,7 @@ import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const AboutEditor = ({ visible, setVisible, route, about }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
+const AboutEditor = ({ visible, setVisible, about }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)

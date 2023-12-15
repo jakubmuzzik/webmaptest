@@ -31,10 +31,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
 
-const ServicesEditor = ({ visible, setVisible, route, services }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
+const ServicesEditor = ({ visible, setVisible, services }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [changedServices, setChangedServices] = useState(services)

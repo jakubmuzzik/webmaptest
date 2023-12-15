@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize } from '../../utils'
+import { normalize, getParam } from '../../utils'
 import {
     COLORS,
     FONTS,
@@ -23,12 +23,16 @@ import HoverableInput from '../HoverableInput'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Button } from 'react-native-paper'
 
+import { useSearchParams } from 'react-router-dom'
+
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, route, onSignUpPress }) => {
+const Login = ({ visible, setVisible, onSignUpPress }) => {
+    const [searchParams] = useSearchParams()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE,
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
 
     const [data, setData] = useState({
         email: '',

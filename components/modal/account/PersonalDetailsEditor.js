@@ -39,11 +39,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const PersonalDetailsEditor = ({ visible, setVisible, route, personalDetails }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
-
+const PersonalDetailsEditor = ({ visible, setVisible, personalDetails }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)
     const [contentWidth, setContentWidth] = useState(false)

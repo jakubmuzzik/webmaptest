@@ -22,7 +22,7 @@ const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ navigation, route }) => {
+const PersonalDetails = ({ route }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -483,12 +483,12 @@ const PersonalDetails = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} route={route} about={data.description} />
-            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} route={route} personalDetails={personalDetails} />
-            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} route={route} pricing={pricing} />
-            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} route={route} services={data.services} />
-            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} route={route} workingHours={data.workingHours} />
-            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} route={route} address={address} />
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={data.description} />
+            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} />
+            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} />
+            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} />
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} />
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} />
         </>
     )
 }

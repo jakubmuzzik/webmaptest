@@ -2,32 +2,28 @@ import React, { memo, useState, useRef, useMemo, useCallback } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING, isSmallScreen, SUPPORTED_LANGUAGES } from "../../constants"
-import { normalize, stripEmptyParams } from "../../utils"
+import { normalize, stripEmptyParams, getParam } from "../../utils"
 import { Image } from 'expo-image'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
-import { useRoute } from '@react-navigation/native'
-import { useLinkProps } from '@react-navigation/native'
 import { isBrowser } from 'react-device-detect'
 
-import { StackActions } from '@react-navigation/native'
+import { useSearchParams, Link } from 'react-router-dom'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const RenderClient = ({ client, width, showPrice = true }) => {
+    const [searchParams] = useSearchParams()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
     const [index, setIndex] = useState(0)
     const [isHovered, setIsHovered] = useState(false)
 
     const carouselRef = useRef()
     const carouselX = useRef(0)
-
-    const route = useRoute()
-
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : ''
-    }), [route.params])
-
-    const { onPress, ...props } = useLinkProps({ to: { screen: 'Profile', params: { ...stripEmptyParams(params), id: client.id } }, action: StackActions.push('Profile', { ...stripEmptyParams(params), id: client.id }) })
 
     const onNextPress = (event) => {
         event.preventDefault()
@@ -70,120 +66,120 @@ const RenderClient = ({ client, width, showPrice = true }) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1 }}
-                onClick={onPress}
-                onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
-                onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
-                {...props}
-            >
-                <View style={{ borderRadius: 20, overflow: 'hidden' }}>
-                    <FlatList
-                        ref={carouselRef}
-                        style={{ flex: 1 }}
-                        data={client.images}
-                        renderItem={renderImage}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        bounces={false}
-                        pagingEnabled
-                        disableIntervalMomentum
-                        initialScrollIndex={0}
-                        onScroll={handleScroll}
-                    />
-                </View>
-
-                <View style={{
-                    position: 'absolute',
-                    opacity: isHovered && !isSmallScreen && index !== 0 ? 0.7 : 0,
-                    transitionDuration: '150ms',
-                    left: 10,
-                    top: 0,
-                    bottom: 0,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <MaterialIcons onPress={onPrevPress}
-                        style={{
-                            borderRadius: 25,
-                            backgroundColor: '#FFF',
-                            padding: 3,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 4,
-                            },
-                            shadowOpacity: 0.32,
-                            shadowRadius: 5.46,
-                            elevation: 9,
-                        }}
-                        name="keyboard-arrow-left"
-                        size={25}
-                        color={COLORS.lightBlack}
-                    />
-                </View>
-                <View style={{
-                    position: 'absolute',
-                    opacity: isHovered && !isSmallScreen && index !== client.images.length - 1 ? 0.7 : 0,
-                    transitionDuration: '150ms',
-                    right: 10,
-                    top: 0,
-                    bottom: 0,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <MaterialIcons onPress={onNextPress}
-                        style={{
-                            borderRadius: 25,
-                            backgroundColor: '#FFF',
-                            padding: 3,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 4,
-                            },
-                            shadowOpacity: 0.32,
-                            shadowRadius: 5.46,
-                            elevation: 9,
-                        }}
-                        name="keyboard-arrow-right"
-                        size={25}
-                        color={COLORS.lightBlack}
-                    />
-                </View>
-
-                <View style={{ position: 'absolute', bottom: normalize(20), left: 0, right: 0 }}>
-                    <View style={{ alignSelf: 'center' }}>
-                        <AnimatedDotsCarousel
-                            length={client.images.length}
-                            currentIndex={index}
-                            maxIndicators={4}
-                            interpolateOpacityAndColor={true}
-                            activeIndicatorConfig={{
-                                color: COLORS.red,
-                                margin: 3,
-                                opacity: 1,
-                                size: 7,
-                            }}
-                            inactiveIndicatorConfig={{
-                                color: 'white',
-                                margin: 3,
-                                opacity: 0.5,
-                                size: 7,
-                            }}
-                            decreasingDots={[
-                                {
-                                    config: { color: 'white', margin: 3, opacity: 0.5, size: 5 },
-                                    quantity: 1,
-                                },
-                                {
-                                    config: { color: 'white', margin: 3, opacity: 0.5, size: 4 },
-                                    quantity: 1,
-                                },
-                            ]}
+            <Link to={{ pathname: '/profile/' + client.id, search: new URLSearchParams(stripEmptyParams(params)).toString() }} >
+                <View style={{ flex: 1 }}
+                    onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
+                    onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
+                >
+                    <View style={{ borderRadius: 20, overflow: 'hidden' }}>
+                        <FlatList
+                            ref={carouselRef}
+                            style={{ flex: 1 }}
+                            data={client.images}
+                            renderItem={renderImage}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            bounces={false}
+                            pagingEnabled
+                            disableIntervalMomentum
+                            initialScrollIndex={0}
+                            onScroll={handleScroll}
                         />
                     </View>
+
+                    <View style={{
+                        position: 'absolute',
+                        opacity: isHovered && !isSmallScreen && index !== 0 ? 0.7 : 0,
+                        transitionDuration: '150ms',
+                        left: 10,
+                        top: 0,
+                        bottom: 0,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <MaterialIcons onPress={onPrevPress}
+                            style={{
+                                borderRadius: 25,
+                                backgroundColor: '#FFF',
+                                padding: 3,
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 4,
+                                },
+                                shadowOpacity: 0.32,
+                                shadowRadius: 5.46,
+                                elevation: 9,
+                            }}
+                            name="keyboard-arrow-left"
+                            size={25}
+                            color={COLORS.lightBlack}
+                        />
+                    </View>
+                    <View style={{
+                        position: 'absolute',
+                        opacity: isHovered && !isSmallScreen && index !== client.images.length - 1 ? 0.7 : 0,
+                        transitionDuration: '150ms',
+                        right: 10,
+                        top: 0,
+                        bottom: 0,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <MaterialIcons onPress={onNextPress}
+                            style={{
+                                borderRadius: 25,
+                                backgroundColor: '#FFF',
+                                padding: 3,
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 4,
+                                },
+                                shadowOpacity: 0.32,
+                                shadowRadius: 5.46,
+                                elevation: 9,
+                            }}
+                            name="keyboard-arrow-right"
+                            size={25}
+                            color={COLORS.lightBlack}
+                        />
+                    </View>
+
+                    <View style={{ position: 'absolute', bottom: normalize(20), left: 0, right: 0 }}>
+                        <View style={{ alignSelf: 'center' }}>
+                            <AnimatedDotsCarousel
+                                length={client.images.length}
+                                currentIndex={index}
+                                maxIndicators={4}
+                                interpolateOpacityAndColor={true}
+                                activeIndicatorConfig={{
+                                    color: COLORS.red,
+                                    margin: 3,
+                                    opacity: 1,
+                                    size: 7,
+                                }}
+                                inactiveIndicatorConfig={{
+                                    color: 'white',
+                                    margin: 3,
+                                    opacity: 0.5,
+                                    size: 7,
+                                }}
+                                decreasingDots={[
+                                    {
+                                        config: { color: 'white', margin: 3, opacity: 0.5, size: 5 },
+                                        quantity: 1,
+                                    },
+                                    {
+                                        config: { color: 'white', margin: 3, opacity: 0.5, size: 4 },
+                                        quantity: 1,
+                                    },
+                                ]}
+                            />
+                        </View>
+                    </View>
                 </View>
-            </View>
+            </Link>
 
             <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginTop: SPACING.x_small }}>
                 {client.name}

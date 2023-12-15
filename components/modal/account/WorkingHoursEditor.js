@@ -26,11 +26,7 @@ import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const WorkingHoursEditor = ({ visible, setVisible, route, workingHours }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
-
+const WorkingHoursEditor = ({ visible, setVisible, workingHours }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedWorkingHours, setChangedWorkingHours] = useState(workingHours)

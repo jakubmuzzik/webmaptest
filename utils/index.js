@@ -13,6 +13,17 @@ export const stripDefaultFilters = (defaultFilters, filters) => {
   return Object.keys(filters).reduce((out, filter) => areValuesEqual(filters[filter], defaultFilters[filter]) ? out : {...out, [filter]: filters[filter]}, {})
 }
 
+export const getParam = (supportedValues, param, fallbackValue) => {
+  const decodedParam = decodeURIComponent(param)
+
+  if (!decodedParam) {
+    return fallbackValue
+  }
+
+  const paramValid = supportedValues.some(value => value.toLowerCase() === decodedParam.toLocaleLowerCase())
+  return paramValid ? decodedParam : fallbackValue
+}
+
 export const deepClone = (data) => JSON.parse(JSON.stringify(data))
 
 //HELPER FUNCTIONS

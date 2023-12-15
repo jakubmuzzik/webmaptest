@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize } from '../../utils'
+import { normalize, getParam } from '../../utils'
 import {
     CZECH_CITIES,
     CZECH,
@@ -32,12 +32,7 @@ import RenderCity from '../list/RenderCity'
 
 const window = Dimensions.get('window')
 
-const CityPicker = ({ visible, setVisible, route }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE,
-        city: route.params.city
-    }), [route.params])
-
+const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) => {
     useEffect(() => {
         if (visible) {
             translateY.value = withTiming(0, {
@@ -151,7 +146,7 @@ const CityPicker = ({ visible, setVisible, route }) => {
                                 />
                                 <Text style={styles.countrySection__text}>{labels.CZECH}</Text>
                             </View>}
-                            {filteredCitiesRef.current.map(city => <RenderCity key={city} route={route} city={city} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                            {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} searchParams={searchParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                         </Animated.ScrollView>
                     </Animated.View>
                 </TouchableWithoutFeedback>

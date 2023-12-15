@@ -66,7 +66,6 @@ const DropdownSelect = forwardRef((props, ref) => {
             dropdownRef.current.measureLayout(
                 containerRef.current,
                 (left, top, width, height) => {
-                    console.log(left, top, width, height);
                     //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
                     //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
                     setDropdownDesc({
@@ -82,7 +81,6 @@ const DropdownSelect = forwardRef((props, ref) => {
             )
         } else {
             dropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-                console.log(_fx, _fy, _w, h, _px, py)
                 //const hasEnoughSpaceBelow = (height - (py + h + 5)) > 200
                 //const maxHeight = hasEnoughSpaceBelow ? height - (py + h + 5) : 350
                 setDropdownDesc({

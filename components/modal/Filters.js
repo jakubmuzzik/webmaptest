@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, Entypo } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize, deepClone, stripEmptyParams, stripDefaultFilters } from '../../utils'
+import { normalize, getParam, stripEmptyParams, stripDefaultFilters } from '../../utils'
 import {
     COLORS,
     FONTS,
@@ -36,6 +36,8 @@ import {
 import { Switch, Chip, SegmentedButtons, Button } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import Slider from '../Slider'
+
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 
 const window = Dimensions.get('window')
 
@@ -68,15 +70,14 @@ const DEFAULT_FILTERS = {
 }
 
 const Filters = forwardRef((props, ref) => {
-    const { visible, setVisible, route, navigation } = props
+    const { visible, setVisible, params } = props
 
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : '',
-    }), [route.params])
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+    const location = useLocation()
 
     const filterParams = useMemo(() => {
-        const ageRangeParam = decodeURIComponent(route.params.ageRange)?.split(',')
+        const ageRangeParam = decodeURIComponent(searchParams.get('ageRange'))?.split(',')
         let ageRange = undefined
         if(Array.isArray(ageRangeParam) && ageRangeParam.length === 2) {
             ageRange = []
@@ -84,7 +85,7 @@ const Filters = forwardRef((props, ref) => {
             ageRange[1] = !isNaN(ageRangeParam[1]) && ageRangeParam[1] > ageRange[0] && ageRangeParam[1] <= MAX_AGE ? ageRangeParam[1] : MAX_AGE
         }
 
-        const heightRangeParam = decodeURIComponent(route.params.heightRange)?.split(',')
+        const heightRangeParam = decodeURIComponent(searchParams.get('heightRange'))?.split(',')
         let heightRange = undefined
         if(Array.isArray(heightRangeParam) && heightRangeParam.length === 2) {
             heightRange = []
@@ -92,7 +93,7 @@ const Filters = forwardRef((props, ref) => {
             heightRange[1] = !isNaN(heightRangeParam[1]) && heightRangeParam[1] > heightRange[0] && heightRangeParam[1] <= MAX_HEIGHT ? heightRangeParam[1] : MAX_HEIGHT
         }
 
-        const weightRangeParam = decodeURIComponent(route.params.weightRange)?.split(',')
+        const weightRangeParam = decodeURIComponent(searchParams.get('weightRange'))?.split(',')
         let weightRange = undefined
         if(Array.isArray(weightRangeParam) && weightRangeParam.length === 2) {
             weightRange = []
@@ -100,26 +101,28 @@ const Filters = forwardRef((props, ref) => {
             weightRange[1] = !isNaN(weightRangeParam[1]) && weightRangeParam[1] > weightRange[0] && weightRangeParam[1] <= MAX_WEIGHT ? weightRangeParam[1] : MAX_WEIGHT
         }
 
+        const isBoolean = (value) => value === 'true' || value === 'false'
+
         return stripEmptyParams({
             ageRange,
             heightRange,
             weightRange,
-            onlyVerified: typeof route.params.onlyVerified === 'boolean' ? route.params.onlyVerified : undefined,
-            onlyIndependent: typeof route.params.onlyIndependent === 'boolean' ? route.params.onlyIndependent : undefined,
-            outcall: typeof route.params.outcall === 'boolean' ? route.params.outcall : undefined,
-            incall: typeof route.params.incall === 'boolean' ? route.params.incall : undefined,
-            services: route.params.services ? decodeURIComponent(route.params.services).split(',').filter(val => SERVICES.includes(val)) : undefined,
-            bodyType: route.params.bodyType ? decodeURIComponent(route.params.bodyType).split(',').filter(val => BODY_TYPES.includes(val)) : undefined,
-            hairColor: route.params.hairColor ? decodeURIComponent(route.params.hairColor).split(',').filter(val => HAIR_COLORS.includes(val)) : undefined,
-            eyeColor: route.params.eyeColor ? decodeURIComponent(route.params.eyeColor).split(',').filter(val => EYE_COLORS.includes(val)) : undefined,
-            pubicHair: route.params.pubicHair ? decodeURIComponent(route.params.pubicHair).split(',').filter(val => PUBIC_HAIR_VALUES.includes(val)) : undefined,
-            breastSize: route.params.breastSize ? decodeURIComponent(route.params.breastSize).split(',').filter(val => BREAST_SIZES.includes(val)) : undefined,
-            breastType: route.params.breastType ? decodeURIComponent(route.params.breastType).split(',').filter(val => BREAST_TYPES.includes(val)) : undefined,
-            speaks: route.params.speaks ? decodeURIComponent(route.params.speaks).split(',').filter(val => LANGUAGES.includes(val)) : undefined,
-            nationality: route.params.nationality ? decodeURIComponent(route.params.nationality).split(',').filter(val => NATIONALITIES.includes(val)) : undefined,
-            sexualOrientation: route.params.sexualOrientation ? decodeURIComponent(route.params.sexualOrientation).split(',').filter(val => SEXUAL_ORIENTATION.includes(val)) : undefined
+            onlyVerified: isBoolean(searchParams.get('onlyVerified')) ? Boolean(searchParams.get('onlyVerified')) : undefined,
+            onlyIndependent: isBoolean(searchParams.get('onlyIndependent')) ? Boolean(searchParams.get('onlyIndependent')) : undefined,
+            outcall: isBoolean(searchParams.get('outcall')) ? Boolean(searchParams.get('outcall')) : undefined,
+            incall: isBoolean(searchParams.get('incall')) ? Boolean(searchParams.get('incall')) : undefined,
+            services: searchParams.get('services') ? decodeURIComponent(searchParams.get('services')).split(',').filter(val => SERVICES.includes(val)) : undefined,
+            bodyType: searchParams.get('bodyType') ? decodeURIComponent(searchParams.get('bodyType')).split(',').filter(val => BODY_TYPES.includes(val)) : undefined,
+            hairColor: searchParams.get('hairColor') ? decodeURIComponent(searchParams.get('hairColor')).split(',').filter(val => HAIR_COLORS.includes(val)) : undefined,
+            eyeColor: searchParams.get('eyeColor') ? decodeURIComponent(searchParams.get('eyeColor')).split(',').filter(val => EYE_COLORS.includes(val)) : undefined,
+            pubicHair: searchParams.get('pubicHair') ? decodeURIComponent(searchParams.get('pubicHair')).split(',').filter(val => PUBIC_HAIR_VALUES.includes(val)) : undefined,
+            breastSize: searchParams.get('breastSize') ? decodeURIComponent(searchParams.get('breastSize')).split(',').filter(val => BREAST_SIZES.includes(val)) : undefined,
+            breastType: searchParams.get('breastType') ? decodeURIComponent(searchParams.get('breastType')).split(',').filter(val => BREAST_TYPES.includes(val)) : undefined,
+            speaks: searchParams.get('speaks') ? decodeURIComponent(searchParams.get('speaks')).split(',').filter(val => LANGUAGES.includes(val)) : undefined,
+            nationality: searchParams.get('nationality') ? decodeURIComponent(searchParams.get('nationality')).split(',').filter(val => NATIONALITIES.includes(val)) : undefined,
+            sexualOrientation: searchParams.get('sexualOrientation') ? decodeURIComponent(searchParams.get('sexualOrientation')).split(',').filter(val => SEXUAL_ORIENTATION.includes(val)) : undefined
         })
-    }, [route.params])
+    }, [searchParams])
 
     useImperativeHandle(ref, () => ({
         filterParams
@@ -198,17 +201,20 @@ const Filters = forwardRef((props, ref) => {
         setFilters(DEFAULT_FILTERS)
     }, [])
 
-    const onApplyFiltersPress = useCallback(() => {
-        navigation.navigate(route.name, { 
-            ...stripEmptyParams(params),
-            ...stripDefaultFilters(DEFAULT_FILTERS, filters)
-        }) 
+    const onApplyFiltersPress = () => {
+        navigate({
+            pathname: location.pathname,
+            search: new URLSearchParams({ 
+                ...stripEmptyParams(params),
+                ...stripDefaultFilters(DEFAULT_FILTERS, filters)
+            }).toString() 
+        })
 
         translateY.value = withTiming(window.height, {
             useNativeDriver: true
         })
         setVisible(false)
-    }, [filters, route])
+    }
 
     const onMultiPicklistPress = useCallback((value, filterName) => {
         setFilters(filters => ({

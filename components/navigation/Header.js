@@ -10,7 +10,6 @@ import {
     TouchableWithoutFeedback,
     useWindowDimensions
 } from 'react-native'
-import { useLinkProps, Link } from '@react-navigation/native'
 import {
     COLORS,
     FONTS,
@@ -29,7 +28,7 @@ import {
     SIGN_UP,
     translateLabels
 } from '../../labels'
-import { stripEmptyParams } from '../../utils'
+import { stripEmptyParams, getParam } from '../../utils'
 import { MotiView } from 'moti'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
@@ -38,50 +37,26 @@ import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
 
-import { StackActions } from '@react-navigation/native'
+import { useSearchParams, Link, useLocation } from 'react-router-dom'
 
 const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu', 'NotFound', 'Explore'
 ]
 
-const Header = ({ route, navigation }) => {
+const Header = ({ }) => {
+    const [searchParams] = useSearchParams()
+    const location = useLocation()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
+    }), [searchParams])
 
-    const logoNav = useMemo(() => ({
-        to: {
-            screen: 'Esc',
-            params: params.language ? { language: params.language } : {}
-        },
-        action: StackActions.push('Esc', params.language ? { language: params.language } : {} )
-    }), [route.params])
-
-    const csLanguageNav = useMemo(() => ({
-        screen: route.name,
-        params: { ...route.params, language: 'cs' }
-    }), [route])
-
-    const enLanguageNav = useMemo(() => ({
-        screen: route.name,
-        params: { ...route.params, language: 'en' }
-    }), [route])
-
-    const citiesNavigations = useMemo(() => CZECH_CITIES.map(city => ({
-        screen: route.name,
-        params: { ...route.params, city }
-    })), [route])
-
-    const labels = useMemo(() => translateLabels(route.params.language, [
+    const labels = useMemo(() => translateLabels(params.language, [
         SEARCH,
         SIGN_IN,
         SIGN_UP
     ]), [params.language])
-
-    const { onPress: onLogoPress, ...logoNavProps } = useLinkProps(logoNav)
-    const { onPress: onCSPress, ...csNavProps } = useLinkProps({ to: csLanguageNav })
-    const { onPress: onENPress, ...enNavProps } = useLinkProps({ to: enLanguageNav })
 
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState('transparent')
@@ -93,13 +68,15 @@ const Header = ({ route, navigation }) => {
     const [signUpVisible, setSignUpVisible] = useState(false)
 
     const userDropdownRef = useRef()
+    const userDropdownModalRef = useRef()
     const languageDropdownRef = useRef()
+    const languageDropdownModalRef = useRef()
     const loginButtonsRef = useRef()
 
     //close modals when changing language, city etc...
     useEffect(() => {
         setLanguageDropdownVisible(false)
-    }, [route.params])
+    }, [searchParams])
 
     const { width } = useWindowDimensions()
     const isSmallScreen = width < SMALL_SCREEN_THRESHOLD
@@ -118,9 +95,12 @@ const Header = ({ route, navigation }) => {
     }, [languageDropdownVisible, isLargeScreen, isSmallScreen])
 
     const openLanguageDropdown = () => {
-        languageDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-            setDropdownTop(py + h + 10)
-        })
+        languageDropdownRef.current.measureLayout(
+            languageDropdownModalRef.current,
+            (left, top, width, height) => {
+                setDropdownTop(top + height + 20)
+            },
+        )
 
         if (isLargeScreen) {
             loginButtonsRef.current.measure((_fx, _fy, _w, h, _px, py) => {
@@ -138,9 +118,12 @@ const Header = ({ route, navigation }) => {
     }
 
     const openUserDropdown = () => {
-        userDropdownRef.current.measure((_fx, _fy, _w, h, _px, py) => {
-            setDropdownTop(py + h + 10)
-        })
+        userDropdownRef.current.measureLayout(
+            userDropdownModalRef.current,
+            (left, top, width, height) => {
+                setDropdownTop(top + height + 20)
+            },
+        )
         setUserDropdownVisible(true)
     }
 
@@ -214,17 +197,17 @@ const Header = ({ route, navigation }) => {
         )
     }, [userDropdownVisible, dropdownTop])
 
-    const renderSeoContent = useCallback(() => (
+    const renderSeoContent = () => (
         <>
-            <View {...csNavProps} onClick={onCSPress}></View>
-            <View {...enNavProps} onClick={onENPress}></View>
-            {citiesNavigations.map(cityNavigation => <Link key={cityNavigation.params.city} to={cityNavigation} />)}
+            <Link to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'cs' })).toString() }} />
+            <Link to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'en' })).toString() }} />
+            {/* {CZECH_CITIES.map(city => <Link key={city} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, city })).toString() }} />)} */}
         </>
-    ), [citiesNavigations])
+    )
 
     const rendeLanguageDropdown = useCallback(() => {
         return (
-            <Modal visible={languageDropdownVisible} transparent animationType="none">
+            <Modal ref={languageDropdownModalRef} visible={languageDropdownVisible} transparent animationType="none">
                 <TouchableOpacity
                     style={styles.dropdownOverlay}
                     onPress={() => setLanguageDropdownVisible(false)}
@@ -246,43 +229,43 @@ const Header = ({ route, navigation }) => {
                             style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, marginRight: 0, overflow: 'hidden' }]}
                         >
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <View {...csNavProps} style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
-                                    onClick={onCSPress}
-                                >
-                                    <Image
-                                        resizeMode='contain'
-                                        source={require('../../assets/images/flags/cz.png')}
-                                        style={{
-                                            width: SPACING.small,
-                                            height: SPACING.x_small,
-                                            marginRight: SPACING.xx_small,
-                                        }}
-                                    />
-                                    <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>Čeština</Text>
-                                </View>
+                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'cs' })).toString() }}>
+                                    <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}>
+                                        <Image
+                                            resizeMode='contain'
+                                            source={require('../../assets/images/flags/cz.png')}
+                                            style={{
+                                                width: SPACING.small,
+                                                height: SPACING.x_small,
+                                                marginRight: SPACING.xx_small,
+                                            }}
+                                        />
+                                        <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>Čeština</Text>
+                                    </View>
+                                </Link>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}
-                                    {...enNavProps} onClick={onENPress}
-                                >
-                                    <Image
-                                        resizeMode='contain'
-                                        source={require('../../assets/images/flags/us.png')}
-                                        style={{
-                                            width: SPACING.small,
-                                            height: SPACING.x_small,
-                                            marginRight: SPACING.xx_small,
-                                        }}
-                                    />
-                                    <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>English</Text>
-                                </View>
+                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'en' })).toString() }} >
+                                    <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}>
+                                        <Image
+                                            resizeMode='contain'
+                                            source={require('../../assets/images/flags/us.png')}
+                                            style={{
+                                                width: SPACING.small,
+                                                height: SPACING.x_small,
+                                                marginRight: SPACING.xx_small,
+                                            }}
+                                        />
+                                        <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium }}>English</Text>
+                                    </View>
+                                </Link>
                             </HoverableView>
                         </MotiView>
                     </TouchableWithoutFeedback>
                 </TouchableOpacity>
             </Modal>
         )
-    }, [languageDropdownVisible, languageDropdownRight, dropdownTop, userDropdownRef, params.language])
+    }, [languageDropdownVisible, languageDropdownRight, dropdownTop, userDropdownRef, languageDropdownModalRef, params.language])
 
     const renderRightHeader = useCallback(() => {
         return isSmallScreen ? (
@@ -349,24 +332,24 @@ const Header = ({ route, navigation }) => {
         )
     }, [isSmallScreen, isLargeScreen, search, params.language, searchBorderColor, languageDropdownVisible, userDropdownVisible])
 
-    const renderLeftHeader = useCallback(() => (
+    const renderLeftHeader = () => (
         <>
             <View
-                onClick={onLogoPress}
                 style={{ height: normalize(50), justifyContent: 'center', marginRight: SPACING.x_small }}
-                {...logoNavProps}
             >
-                <Image
-                    resizeMode='contain'
-                    source={require('../../assets/images/logo-header.png')}
-                    style={{
-                        height: normalize(32),
-                        width: normalize(102)
-                    }}
-                />
+                <Link to={{ pathname: '/', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                    <Image
+                        resizeMode='contain'
+                        source={require('../../assets/images/logo-header.png')}
+                        style={{
+                            height: normalize(32),
+                            width: normalize(102)
+                        }}
+                    />
+                </Link>
             </View>
         </>
-    ), [isSmallScreen, isLargeScreen, route])
+    )
 
     return (
         <>
@@ -404,8 +387,8 @@ const Header = ({ route, navigation }) => {
                 {/* {SCREENS_WITH_CITY_SELECTION.includes(route.name) && <Categories navigation={navigation} route={route} />} */}
             {/* </View> */}
 
-            <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} route={route} />
-            <Signup visible={signUpVisible} navigation={navigation} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
+            <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} />
+            <Signup visible={signUpVisible} setVisible={setSignUpVisible} onLoginPress={onLoginPress} />
         </>
     )
 }

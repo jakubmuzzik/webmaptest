@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize } from '../../utils'
+import { normalize, getParam } from '../../utils'
 import {
     COLORS,
     FONTS,
@@ -22,12 +22,16 @@ import {
 import { TouchableRipple, ActivityIndicator } from 'react-native-paper'
 import * as Location from 'expo-location'
 
+import { useSearchParams } from 'react-router-dom'
+
 const window = Dimensions.get('window')
 
-const AddressSearch = ({ visible, setVisible, route, onSelect }) => {
+const AddressSearch = ({ visible, setVisible, onSelect }) => {
+    const [searchParams] = useSearchParams()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
 
     const searchTimeout = useRef()
     const searchInputRef = useRef()

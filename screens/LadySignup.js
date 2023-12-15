@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { View, Text, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
 import { normalize } from '../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
@@ -32,12 +32,14 @@ import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
 
+const { height } = Dimensions.get('window')
+
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
 
-const LadySignup = ({ route }) => {
+const LadySignup = ({ }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -1599,7 +1601,7 @@ const LadySignup = ({ route }) => {
     const progress = (index) / (Object.keys(routes).length - 1)
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
+        <View style={{ height: '100%', backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up
@@ -1662,8 +1664,8 @@ const LadySignup = ({ route }) => {
                     </View>}
                 </View>
 
-                <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} route={route} />
-                <AddressSearch visible={addressSearchVisible} setVisible={setAddressSearchVisible} onSelect={onAddressSelect} route={route} />
+                <ServicesPicker visible={servicesPickerVisible} setVisible={setServicesPickerVisible} services={data.services} onSelect={(service) => onMultiPicklistChange(service, 'services')} />
+                <AddressSearch visible={addressSearchVisible} setVisible={setAddressSearchVisible} onSelect={onAddressSelect} />
             </MotiView>
         </View>
     )

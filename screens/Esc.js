@@ -16,13 +16,17 @@ const {
 } = Dimensions.get('window')
 
 import { MOCK_DATA } from '../constants'
-import { normalize } from '../utils'
+import { normalize, getParam } from '../utils'
 
-const Esc = ({ navigation, route }) => {
+import { useSearchParams } from 'react-router-dom'
+
+const Esc = ({ }) => {
+    const [searchParams] = useSearchParams()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
+    }), [searchParams])
 
     const [contentWidth, setContentWidth] = useState()
     const [isLoading, setIsLoading] = useState(true)

@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize } from '../../utils'
+import { normalize, getParam } from '../../utils'
 import {
     SERVICES,
     MASSAGE_SERVICES
@@ -25,13 +25,16 @@ import {
 } from '../../constants'
 import { TouchableRipple, Button } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
+import { useSearchParams } from 'react-router-dom'
 
 const window = Dimensions.get('window')
 
-const ServicesPicker = ({ visible, setVisible, route, services, onSelect }) => {
+const ServicesPicker = ({ visible, setVisible, services, onSelect }) => {
+    const [searchParams] = useSearchParams()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
 
     useEffect(() => {
         if (visible) {

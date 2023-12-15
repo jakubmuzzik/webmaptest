@@ -1,7 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native'
-import { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, useWindowDimensions } from 'react-native'
+import { useState, useMemo, useRef } from 'react'
+import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { normalize } from '../utils'
 
 import { createStackNavigator } from '@react-navigation/stack'
 const Stack = createStackNavigator()
@@ -21,16 +22,22 @@ import Account from '../screens/Account'
 import Chat from '../screens/Chat'
 import Favourites from '../screens/Favourites'
 import Categories from '../components/navigation/Categories'
+import MobileFooter from './MobileFooter'
+import SignUpOrLogin from '../screens/SignUpOrLogin'
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { StackActions } from '@react-navigation/native'
-
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
 
-import ExploreStack from '../navigations/ExploreStack'
 
 import { TouchableRipple } from 'react-native-paper'
+
+//import { NativeRouter, Route, Routes } from 'react-router-native'
+import Explore from './Explore'
+
+import { BrowserRouter, Routes, Route, Link, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+
+const { height } = Dimensions.get('window')
 
 const linking = {
     prefixes: ['https://jakubmuzzik.github.io/webmaptest'],
@@ -97,6 +104,7 @@ const linking = {
 
 export default function Main() {
     const [state, setState] = useState()
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     const insets = useSafeAreaInsets()
 
@@ -105,25 +113,116 @@ export default function Main() {
     const { width } = useWindowDimensions()
     const isSmalScreen = width < SMALL_SCREEN_THRESHOLD
 
-    useEffect(() => {
-        if (!navigationRef.current) {
-            return
-        }
+    const router = createBrowserRouter(createRoutesFromElements(
+        <>
+            <Route path='/' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
 
-        //initial state
-        setState(navigationRef.current.getRootState().routes[0].name)
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                        <Explore />
+                    </View>
 
-        const unsubscribe = navigationRef.current.addListener('state', (e) => {
-            setState(e.data.state.routes[e.data.state.routes.length - 1].name)
-        })
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } >
+                <Route index element={<Esc />} />
+                <Route path='/mas' element={<Mas />} />
+                <Route path='/clu' element={<Clu />} />
+            </Route>
 
-        return unsubscribe
-    }, [navigationRef.current])
+            <Route path='/profile/:id' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+                    
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                        <Profile />
+                    </View>
 
-    const onBottomScreenPress = (screen) => {
-        //navigationRef.current.navigate(screen)
-        navigationRef.current.dispatch(StackActions.push(screen))
-    }
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } />
+
+            <Route path='/favourites' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                        {isLoggedIn ? <Favourites /> : <SignUpOrLogin />}
+                    </View>
+
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } />
+
+            <Route path='/chat' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                        {isLoggedIn ? <Chat /> : <SignUpOrLogin />}
+                    </View>
+
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } />
+
+            <Route path='/me' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                        {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
+                    </View>
+
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } />
+
+            <Route path='/lady-signup' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: height - normalize(70) }}>
+                        <LadySignup />
+                    </View>
+
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } />
+
+            {/* <Route path='*' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                        <NotFound />
+                    </View>
+
+                    {isSmalScreen && <MobileFooter />}
+                </>
+            } /> */}
+
+        </>
+    ))
+
+    return (
+        <RouterProvider router={router} />
+    )
 
     return (
         <>

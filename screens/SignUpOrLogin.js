@@ -7,7 +7,7 @@ import { normalize } from '../utils'
 import Login from '../components/modal/Login'
 import Signup from '../components/modal/Signup'
 
-const SignUpOrLogin = ({ navigation, route }) => {
+const SignUpOrLogin = ({ }) => {
     const [loginVisible, setLoginVisible] = useState(false)
     const [signUpVisible, setSignUpVisible] = useState(false)
 
@@ -23,7 +23,7 @@ const SignUpOrLogin = ({ navigation, route }) => {
 
     return (
         <>
-            <View style={{ marginTop: normalize(70), flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
+            <View style={{ marginTop: normalize(70), height: '100%', alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
                 <View style={{ flexDirection: 'column' }}>
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF', width: '100%' }}>Sign up or Log in</Text>
 
@@ -51,8 +51,8 @@ const SignUpOrLogin = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} route={route} />
-            <Signup visible={signUpVisible} navigation={navigation} setVisible={setSignUpVisible} onLoginPress={onLoginPress} route={route} />
+            <Login visible={loginVisible} setVisible={setLoginVisible} onSignUpPress={onSignUpPress} />
+            <Signup visible={signUpVisible} setVisible={setSignUpVisible} onLoginPress={onLoginPress} />
         </>
     )
 }

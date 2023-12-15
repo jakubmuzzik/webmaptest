@@ -10,7 +10,7 @@ import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { CZECH_CITIES } from '../labels'
 import RenderClient from '../components/list/RenderClient'
-import { normalize } from '../utils'
+import { normalize, getParam } from '../utils'
 
 const {
     width: INITIAL_SCREEN_WIDTH
@@ -18,11 +18,15 @@ const {
 
 import { MOCK_DATA } from '../constants'
 
-const Clu = ({ navigation, route }) => {
+import { useSearchParams } from 'react-router-dom'
+
+const Clu = ({  }) => {
+    const [searchParams] = useSearchParams()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
+    }), [searchParams])
 
     const [contentWidth, setContentWidth] = useState()
     const [isLoading, setIsLoading] = useState(true)

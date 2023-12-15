@@ -20,16 +20,20 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
-import { stripEmptyParams } from '../../utils'
+import { stripEmptyParams, getParam } from '../../utils'
 import { TouchableRipple, Button, HelperText } from 'react-native-paper'
-import { StackActions } from '@react-navigation/native'
 
 const window = Dimensions.get('window')
 
-const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
+import { useSearchParams, useNavigate } from 'react-router-dom'
+
+const Signup = ({ visible, setVisible, onLoginPress }) => {
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-    }), [route.params])
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
 
     const [data, setData] = useState({
         gender: '',
@@ -104,8 +108,10 @@ const Signup = ({ visible, setVisible, route, onLoginPress, navigation }) => {
             viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
         } else if (profileType === 'lady') {
             closeModal()
-            navigation.dispatch(StackActions.push('lady-signup', { ...stripEmptyParams(params) }))
-            //navigation.navigate('lady-signup', { ...stripEmptyParams(params) })
+            navigate({
+                pathname: '/lady-signup',
+                search: new URLSearchParams(stripEmptyParams(params)).toString() 
+            })
         }
     }
 

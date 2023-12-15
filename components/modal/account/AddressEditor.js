@@ -30,11 +30,7 @@ import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
-const AddressEditor = ({ visible, setVisible, route, address }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
-
+const AddressEditor = ({ visible, setVisible, address }) => {
     const [routes] = useState([
         { key: '1' },
         { key: '2' }

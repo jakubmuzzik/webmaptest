@@ -3,23 +3,20 @@ import { StyleSheet, TouchableOpacity, Text, View } from "react-native"
 import HoverableView from "../HoverableView"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING } from "../../constants"
-import { normalize } from "../../utils"
-import { useLinkProps, Link } from "@react-navigation/native"
+import { normalize, stripEmptyParams } from "../../utils"
+import { Link } from 'react-router-dom'
 
-const RenderCity = ({ city, iconName, iconColor, route }) => {
-    const cityNav = useMemo(() => ({
-        screen: route.name,
-        params: { ...route.params, city }
-    }), [route])
-
-    const { onPress: onNavPress, ...props } = useLinkProps({ to: cityNav })
+const RenderCity = ({ city, iconName, iconColor, routeName, searchParams }) => {
+    searchParams.set('city', city)
 
     return (
         <HoverableView key={city} style={styles.cityContainer} hoveredBackgroundColor={COLORS.hoveredWhite} backgroundColor='#FFF' transitionDuration='0ms'>
-            <View onClick={onNavPress} {...props} style={{ flexDirection: 'row', width: '100%', paddingVertical: SPACING.xx_small, paddingLeft: SPACING.xx_small, alignItems: 'center' }}>
-                <MaterialIcons style={{ paddingRight: SPACING.xx_small }} name={iconName} size={normalize(24)} color={iconColor} />
-                <Text style={styles.city}>{city}</Text>
-            </View>
+            <Link style={{ textDecoration: 'none', width: '100%' }} to={{ pathname: routeName, search: searchParams.toString() }} >
+                <View style={{ flexDirection: 'row', flex: 1, paddingVertical: SPACING.xx_small, paddingLeft: SPACING.xx_small, alignItems: 'center' }}>
+                    <MaterialIcons style={{ paddingRight: SPACING.xx_small }} name={iconName} size={normalize(24)} color={iconColor} />
+                    <Text style={styles.city}>{city}</Text>
+                </View>
+            </Link>
         </HoverableView>
     )
 }

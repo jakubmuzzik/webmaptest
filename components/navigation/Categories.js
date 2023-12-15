@@ -4,24 +4,29 @@ import { AntDesign, Entypo, FontAwesome5, MaterialIcons, Ionicons } from '@expo/
 import { COLORS, FONT_SIZES, FONTS, SPACING, SMALL_SCREEN_THRESHOLD, LARGE_SCREEN_THRESHOLD } from '../../constants'
 import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
-import { normalize, stripEmptyParams } from '../../utils'
-import { Link } from '@react-navigation/native'
+import { normalize, stripEmptyParams, getParam } from '../../utils'
 import { SUPPORTED_LANGUAGES } from '../../constants'
 import { CZECH_CITIES, CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
 import { Badge } from 'react-native-paper'
-import { StackActions } from '@react-navigation/native'
 
 import HoverableView from '../../components/HoverableView'
 import Filters from '../modal/Filters'
 import CityPicker from '../modal/CityPicker'
 
-const Categories = ({ route, navigation }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
-    }), [route.params])
+import { Link, useSearchParams, useLocation } from 'react-router-dom'
 
-    const labels = useMemo(() => translateLabels(route.params.language, [
+const Categories = ({ }) => {
+    const [searchParams] = useSearchParams()
+
+    let location = useLocation()
+    const routeName = location.pathname.substring(1)
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
+    }), [searchParams])
+
+    const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
         CITY,
         SELECT_CITY,
@@ -38,7 +43,7 @@ const Categories = ({ route, navigation }) => {
         if (filtersRef.current) {
             setFiltersCount(Object.keys(filtersRef.current.filterParams).length)
         }
-    }, [route.params])
+    }, [params])
 
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
@@ -102,34 +107,34 @@ const Categories = ({ route, navigation }) => {
                 <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'flex-start' }}>
                     <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.small }}>
                         {/* <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}> */}
-                        <Link to={{ screen: 'Esc', params: { ...stripEmptyParams(params) } }} action={StackActions.replace('Esc', {  ...stripEmptyParams(params) })}>
-                            <View style={[styles.categoryContainer, route.name === 'Esc' ? styles.selectedCategoryContainer : {}]}>
-                                <Entypo name="mask" size={normalize(26)} color={route.name === 'Esc' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Esc' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
+                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                            <View style={[styles.categoryContainer, routeName === '' ? styles.selectedCategoryContainer : {}]}>
+                                <Entypo name="mask" size={normalize(26)} color={routeName === '' ? COLORS.red : COLORS.placeholder} />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === '' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
                             </View>
                         </Link>  
                     </HoverableView>
                     {/* <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
                         <Link to={{ screen: 'Pri', params: { ...stripEmptyParams(params) } }} action={StackActions.replace('Pri', {  ...stripEmptyParams(params) })}>
-                            <View style={[styles.categoryContainer, route.name === 'Pri' ? styles.selectedCategoryContainer : {}]}>
-                                <AntDesign name="github" size={normalize(26)} color={route.name === 'Pri' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Pri' ? COLORS.red : COLORS.placeholder }}>Pri</Text>
+                            <View style={[styles.categoryContainer, routeName === 'Pri' ? styles.selectedCategoryContainer : {}]}>
+                                <AntDesign name="github" size={normalize(26)} color={routeName === 'Pri' ? COLORS.red : COLORS.placeholder} />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'Pri' ? COLORS.red : COLORS.placeholder }}>Pri</Text>
                             </View>
                         </Link>
                     </HoverableView> */}
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Mas', params: { ...stripEmptyParams(params) } }} action={StackActions.replace('Mas', {  ...stripEmptyParams(params) })}>
-                            <View style={[styles.categoryContainer, route.name === 'Mas' ? styles.selectedCategoryContainer : {}]}>
-                                <FontAwesome5 name="person-booth" size={normalize(26)} color={route.name === 'Mas' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Mas' ? COLORS.red : COLORS.placeholder }}>Mas</Text>
+                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/mas', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                            <View style={[styles.categoryContainer, routeName === 'mas' ? styles.selectedCategoryContainer : {}]}>
+                                <FontAwesome5 name="person-booth" size={normalize(26)} color={routeName === 'mas' ? COLORS.red : COLORS.placeholder} />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'mas' ? COLORS.red : COLORS.placeholder }}>Mas</Text>
                             </View>
                         </Link>
                     </HoverableView>
                     <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Clu', params: { ...stripEmptyParams(params) } }} action={StackActions.replace('Clu', {  ...stripEmptyParams(params) })}>
-                            <View style={[styles.categoryContainer, route.name === 'Clu' ? styles.selectedCategoryContainer : {}]}>
-                                <MaterialIcons name="meeting-room" size={normalize(26)} color={route.name === 'Clu' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: route.name === 'Clu' ? COLORS.red : COLORS.placeholder }}>Clu</Text>
+                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/clu', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                            <View style={[styles.categoryContainer, routeName === 'clu' ? styles.selectedCategoryContainer : {}]}>
+                                <MaterialIcons name="meeting-room" size={normalize(26)} color={routeName === 'clu' ? COLORS.red : COLORS.placeholder} />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'clu' ? COLORS.red : COLORS.placeholder }}>Clu</Text>
                             </View>
                         </Link>
                     </HoverableView>
@@ -186,8 +191,8 @@ const Categories = ({ route, navigation }) => {
                 </HoverableView>
             </View>
 
-            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} route={route} navigation={navigation} />
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={route} />
+            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} params={params} />
+            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} searchParams={searchParams} params={params} routeName={routeName} />
         </View>
     )
 }

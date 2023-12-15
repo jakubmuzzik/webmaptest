@@ -9,16 +9,18 @@ import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from "../components/HoverableView"
 import MapView from "@teovilla/react-native-web-maps"
 
+import { useParams } from 'react-router-dom'
+
 const images = [require('../assets/dummy_photo.png'), require('../assets/dummy_photo.png'), require('../assets/dummy_photo.png')]
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const Profile = ({ route, client, navigation }) => {
-    const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
-        id: route.params.id
-    }), [route.params])
+    // const params = useMemo(() => ({
+    //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
+    //     id: route.params.id
+    // }), [route.params])
 
     const { width } = useWindowDimensions()
     const isLargeScreen = width > LARGE_SCREEN_THRESHOLD
@@ -116,12 +118,12 @@ const Profile = ({ route, client, navigation }) => {
                             </View>
                         </View>
 
-                        <Link to={{ screen: 'Photos', params: { ...stripEmptyParams(params), photos: images } }} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
+                        {/* <Link to={{ screen: 'Photos', params: { ...stripEmptyParams(params), photos: images } }} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
                             <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                                 <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
                                 <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> Show all photos (+4)</Text>
                             </View>
-                        </Link>
+                        </Link> */}
                     </View>
 
                     <View style={{ maxWidth: isLargeScreen ? 800 + SPACING.xxx_small : '100%', width: 'inherit', marginVertical: isLargeScreen ? SPACING.large : 0 }}>
