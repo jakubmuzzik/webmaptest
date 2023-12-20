@@ -20,8 +20,8 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Button } from 'react-native-paper'
+import { TabView } from 'react-native-tab-view'
 
 import { useSearchParams } from 'react-router-dom'
 
@@ -34,6 +34,11 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
     }), [searchParams])
 
+    const [routes] = useState([
+        { key: '1' },
+        { key: '2' }
+    ])
+
     const [data, setData] = useState({
         email: '',
         password: '',
@@ -41,11 +46,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         secureTextEntry: true
     })
     const [showErrorMessages, setShowErrorMessages] = useState(false)
-    const [contentWidth, setContentWidth] = useState(normalize(500))
     const [index, setIndex] = useState(0)
-
-    const viewPagerRef = useRef()
-    const viewPagerX = useRef(0)
 
     useEffect(() => {
         if (visible) {
@@ -59,18 +60,30 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         }
     }, [visible])
 
-    const scrollY = useSharedValue(0)
-    const scrollHandler = useAnimatedScrollHandler((event) => {
-        scrollY.value = event.contentOffset.y
+    const scrollY1 = useSharedValue(0)
+    const scrollY2 = useSharedValue(0)
+
+    const scrollHandler1 = useAnimatedScrollHandler((event) => {
+        scrollY1.value = event.contentOffset.y
+    })
+    const scrollHandler2 = useAnimatedScrollHandler((event) => {
+        scrollY2.value = event.contentOffset.y
     })
 
     const translateY = useSharedValue(window.height)
 
-    const modalHeaderTextStyles = useAnimatedStyle(() => {
+    const modalHeaderTextStyles1 = useAnimatedStyle(() => {
         return {
             fontFamily: FONTS.medium,
             fontSize: FONT_SIZES.large,
-            opacity: interpolate(scrollY.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
+            opacity: interpolate(scrollY1.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
+        }
+    })
+    const modalHeaderTextStyles2 = useAnimatedStyle(() => {
+        return {
+            fontFamily: FONTS.medium,
+            fontSize: FONT_SIZES.large,
+            opacity: interpolate(scrollY2.value, [0, 30, 50], [0, 0.8, 1], Extrapolation.CLAMP),
         }
     })
 
@@ -81,7 +94,6 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         setVisible(false)
         setShowErrorMessages(false)
         setIndex(0)
-        viewPagerX.current = 0
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -105,11 +117,11 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     }
 
     const onForgotPasswordPress = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) + 1) * contentWidth, animated: true })
+        setIndex(1)
     }
 
     const onGoBackPress = () => {
-        viewPagerRef.current.scrollToOffset({ offset: (Math.floor(viewPagerX.current / contentWidth) - 1) * contentWidth, animated: true })
+        setIndex(0)
     }
 
     const onLoginPress = () => {
@@ -126,75 +138,81 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         }
     }
 
-    const handleScroll = ({ nativeEvent }) => {
-        viewPagerX.current = nativeEvent.contentOffset.x
-        const newIndex = Math.floor(viewPagerX.current / contentWidth)
-
-        if (newIndex != index) {
-            setIndex(newIndex)
-        }
-    }
-
     const renderLoginPage = () => {
         return (
             <>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginBottom: SPACING.medium }}>
-                    Log in
-                </Text>
+                <View style={styles.modal__header}>
+                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
+                    <View style={{ flexShrink: 1, flexGrow: 0 }}>
+                        <Animated.Text style={modalHeaderTextStyles1}>Sign up</Animated.Text>
+                    </View>
+                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
+                        <HoverableView style={{ marginRight: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                            <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
+                        </HoverableView>
+                    </View>
+                </View>
+                <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles1]} />
 
-                <HoverableInput
-                    placeholder="Enter your email"
-                    label="Email"
-                    borderColor={COLORS.placeholder}
-                    hoveredBorderColor={COLORS.red}
-                    textColor='#000'
-                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.email}
-                    setText={(text) => setData({ ...data, ['email']: text })}
-                    leftIconName="email-outline"
-                    errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
-                />
+                <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler1} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingHorizontal: SPACING.small }}>
+                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginBottom: SPACING.medium }}>
+                        Log in
+                    </Text>
 
-                <HoverableInput
-                    containerStyle={{ marginTop: SPACING.xxx_small }}
-                    placeholder="Enter your password"
-                    label="Password"
-                    borderColor={COLORS.placeholder}
-                    hoveredBorderColor={COLORS.red}
-                    textColor='#000'
-                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.password}
-                    setText={(text) => setData({ ...data, ['password']: text })}
-                    leftIconName="lock-outline"
-                    rightIconName={data.secureTextEntry ? 'eye-off': 'eye'}
-                    onRightIconPress={updateSecureTextEntry}
-                    secureTextEntry={data.secureTextEntry}
-                    errorMessage={showErrorMessages && !data.password ? 'Enter your Password' : undefined}
-                />
+                    <HoverableInput
+                        placeholder="Enter your email"
+                        label="Email"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.email}
+                        setText={(text) => setData({ ...data, ['email']: text })}
+                        leftIconName="email-outline"
+                        errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
+                    />
 
-                <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: 'blue' }}>
-                    Forgot Password?
-                </Text>
+                    <HoverableInput
+                        containerStyle={{ marginTop: SPACING.xxx_small }}
+                        placeholder="Enter your password"
+                        label="Password"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.password}
+                        setText={(text) => setData({ ...data, ['password']: text })}
+                        leftIconName="lock-outline"
+                        rightIconName={data.secureTextEntry ? 'eye-off' : 'eye'}
+                        onRightIconPress={updateSecureTextEntry}
+                        secureTextEntry={data.secureTextEntry}
+                        errorMessage={showErrorMessages && !data.password ? 'Enter your Password' : undefined}
+                    />
 
-                <Button
-                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
-                    buttonColor={COLORS.red}
-                    rippleColor="rgba(220, 46, 46, .16)"
-                    mode="contained"
-                    onPress={onLoginPress}
-                >
-                    Log in
-                </Button>
+                    <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: 'blue' }}>
+                        Forgot Password?
+                    </Text>
 
-                <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
-                    Don't have an Account?
-                    <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: 'blue' }}>Sign up</Text>
-                </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                        buttonColor={COLORS.red}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                        mode="contained"
+                        onPress={onLoginPress}
+                    >
+                        Log in
+                    </Button>
+
+                    <Text style={{ alignSelf: 'center', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: COLORS.lightBlack }}>
+                        Don't have an Account?
+                        <Text onPress={onSignUpPress} style={{ marginLeft: SPACING.xxx_small, color: 'blue' }}>Sign up</Text>
+                    </Text>
+                </Animated.ScrollView>
             </>
         )
     }
@@ -202,59 +220,74 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     const renderForgotPasswordPage = () => {
         return (
             <>
-                <Image
-                    resizeMode="contain"
-                    source={require('../../assets/images/padlock-icon.png')}
-                    style={{ width: contentWidth * 0.18, height: contentWidth * 0.18, alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
-                />
+                <View style={styles.modal__header}>
+                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}>
+                        <HoverableView style={{ marginLeft: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                            <Ionicons onPress={() => setIndex(0)} name="arrow-back" size={normalize(25)} color="black" />
+                        </HoverableView>
+                    </View>
+                    <View style={{ flexShrink: 1, flexGrow: 0 }}>
+                        <Animated.Text style={modalHeaderTextStyles2}>Sign up</Animated.Text>
+                    </View>
+                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
+                        <HoverableView style={{ marginRight: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                            <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
+                        </HoverableView>
+                    </View>
+                </View>
+                <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles2]} />
 
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.large, textAlign: 'center' }}>
-                    Forgot your password?
-                </Text>
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, paddingTop: SPACING.small, textAlign: 'center', marginBottom: SPACING.medium }}>
-                    Enter your email and we will send you the instructions to reset your password.
-                </Text>
+                <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler2} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingHorizontal: SPACING.small }}>
+                    <Image
+                        resizeMode="contain"
+                        source={require('../../assets/images/padlock-icon.png')}
+                        style={{ width: contentWidth * 0.18, height: contentWidth * 0.18, alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
+                    />
 
-                <HoverableInput
-                    placeholder="Enter your email"
-                    label="Email"
-                    borderColor={COLORS.placeholder}
-                    hoveredBorderColor={COLORS.red}
-                    textColor='#000'
-                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
-                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
-                    text={data.emailForReset}
-                    setText={(text) => setData({ ...data, ['emailForReset']: text })}
-                    leftIconName="email-outline"
-                    errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Your Email' : undefined}
-                />
+                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.large, textAlign: 'center' }}>
+                        Forgot your password?
+                    </Text>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, paddingTop: SPACING.small, textAlign: 'center', marginBottom: SPACING.medium }}>
+                        Enter your email and we will send you the instructions to reset your password.
+                    </Text>
 
-                <Button
-                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                    style={{ marginTop: SPACING.medium, borderRadius: 10 }}
-                    buttonColor={COLORS.red}
-                    rippleColor="rgba(220, 46, 46, .16)"
-                    mode="contained"
-                    onPress={onResetPasswordPress}
-                >
-                    Reset password
-                </Button>
+                    <HoverableInput
+                        placeholder="Enter your email"
+                        label="Email"
+                        borderColor={COLORS.placeholder}
+                        hoveredBorderColor={COLORS.red}
+                        textColor='#000'
+                        textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                        labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                        text={data.emailForReset}
+                        setText={(text) => setData({ ...data, ['emailForReset']: text })}
+                        leftIconName="email-outline"
+                        errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Your Email' : undefined}
+                    />
+
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                        buttonColor={COLORS.red}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                        mode="contained"
+                        onPress={onResetPasswordPress}
+                    >
+                        Reset password
+                    </Button>
+                </Animated.ScrollView>
             </>
         )
     }
 
-    const pages = {
-        'login': renderLoginPage,
-        'forgowPassword': renderForgotPasswordPage,
-    }
-
-    const renderPage = ({ item }) => {
-        return (
-            <ScrollView showsVerticalScrollIndicator={false} style={{ width: contentWidth, paddingHorizontal: SPACING.small }}>
-                {pages[item]()}
-            </ScrollView>
-        )
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case '1':
+                return renderLoginPage()
+            case '2':
+                return renderForgotPasswordPage()
+        }
     }
 
     return (
@@ -268,46 +301,14 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
             >
                 <TouchableWithoutFeedback>
                     <Animated.View style={modalContainerStyles}>
-                        <View style={styles.modal__header}>
-                            <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}>
-                                {index === 1 && (
-                                    <HoverableView style={{ marginLeft: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
-                                        <Ionicons onPress={onGoBackPress} name="arrow-back" size={normalize(25)} color="black" />
-                                    </HoverableView>
-                                )}
-                            </View>
-                            <View style={{ flexShrink: 1, flexGrow: 0 }}>
-                                <Animated.Text style={modalHeaderTextStyles}>{index === 0 ? 'Log in': 'Forgot Password'}</Animated.Text>
-                            </View>
-                            <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
-                                <HoverableView style={{ marginRight: SPACING.medium, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
-                                    <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
-                                </HoverableView>
-                            </View>
-                        </View>
-                        <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles]} />
-
-                        <Animated.ScrollView scrollEventThrottle={1} 
-                            onScroll={scrollHandler} 
-                            style={{ flex: 1, zIndex: 1 }} 
-                            contentContainerStyle={{ paddingBottom: SPACING.small }}
-                            onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
-                        >
-                            <FlatList 
-                                ref={viewPagerRef}
-                                onScroll={handleScroll}
-                                style={{ flex: 1 }}
-                                data={Object.keys(pages)}
-                                renderItem={renderPage}
-                                horizontal
-                                showsHorizontalScrollIndicator={false}
-                                bounces={false}
-                                pagingEnabled
-                                disableIntervalMomentum
-                                initialScrollIndex={0}
-                                scrollEnabled={false}
-                            />
-                        </Animated.ScrollView>
+                        <TabView
+                            renderTabBar={props => null}
+                            swipeEnabled={false}
+                            navigationState={{ index, routes }}
+                            renderScene={renderScene}
+                            onIndexChange={setIndex}
+                        //initialLayout={{ width: contentWidth }}
+                        />
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>

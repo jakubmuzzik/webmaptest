@@ -29,6 +29,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
 
+import { BlurView } from 'expo-blur'
 
 import { TouchableRipple } from 'react-native-paper'
 
@@ -121,7 +122,7 @@ export default function Main() {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         <Explore />
                     </View>
 
@@ -139,7 +140,7 @@ export default function Main() {
                         <Header />
                     </View>
                     
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         <Profile />
                     </View>
 
@@ -153,7 +154,7 @@ export default function Main() {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         {isLoggedIn ? <Favourites /> : <SignUpOrLogin />}
                     </View>
 
@@ -167,7 +168,7 @@ export default function Main() {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         {isLoggedIn ? <Chat /> : <SignUpOrLogin />}
                     </View>
 
@@ -181,7 +182,7 @@ export default function Main() {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: isLoggedIn ? undefined : height - normalize(70) }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
                     </View>
 
@@ -203,19 +204,19 @@ export default function Main() {
                 </>
             } />
 
-            {/* <Route path='*' element={
+            <Route path='*' element={
                 <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0 }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
                         <NotFound />
                     </View>
 
                     {isSmalScreen && <MobileFooter />}
                 </>
-            } /> */}
+            } />
 
         </>
     ))

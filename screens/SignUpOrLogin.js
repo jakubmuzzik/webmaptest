@@ -23,7 +23,7 @@ const SignUpOrLogin = ({ }) => {
 
     return (
         <>
-            <View style={{ marginTop: normalize(70), height: '100%', alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
+            <View style={{ marginTop: normalize(70), flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
                 <View style={{ flexDirection: 'column' }}>
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF', width: '100%' }}>Sign up or Log in</Text>
 

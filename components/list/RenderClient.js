@@ -37,7 +37,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
 
     const handleScroll = ({ nativeEvent }) => {
         carouselX.current = nativeEvent.contentOffset.x
-        const newIndex = Math.floor(carouselX.current / width)
+        const newIndex = Math.round(carouselX.current / width)
         if (newIndex < 0 || newIndex > client.images.length - 1) {
             return
         }

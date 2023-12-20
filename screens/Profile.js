@@ -1,8 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from "react"
-import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, ScrollView } from "react-native"
+import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, Modal, ScrollView } from "react-native"
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD } from "../constants"
 import { normalize, stripEmptyParams } from "../utils"
-import { Link } from '@react-navigation/native'
 import { Image } from 'expo-image'
 import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, MaterialCommunityIcons, EvilIcons, Entypo } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -30,6 +29,7 @@ const Profile = ({ route, client, navigation }) => {
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
     const [region, setRegion] = useState(null)
+    const [photosModalVisible, setPhotosModalVisible] = useState(false)
 
     const onTextLayout = useCallback((e) => {
         const element = e.nativeEvent.target
@@ -118,15 +118,15 @@ const Profile = ({ route, client, navigation }) => {
                             </View>
                         </View>
 
-                        {/* <Link to={{ screen: 'Photos', params: { ...stripEmptyParams(params), photos: images } }} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small }}>
-                            <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                            {/* <View style={{  }}> */}
                                 <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
                                 <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> Show all photos (+4)</Text>
-                            </View>
-                        </Link> */}
+                            {/* </View> */}
+                        </TouchableOpacity>
                     </View>
 
-                    <View style={{ maxWidth: isLargeScreen ? 800 + SPACING.xxx_small : '100%', width: 'inherit', marginVertical: isLargeScreen ? SPACING.large : 0 }}>
+                    <View style={{ maxWidth: isLargeScreen ? 800 + SPACING.xxx_small : '100%', width: 'inherit' }}>
                         <View style={styles.section}>
                             <Text style={styles.sectionHeaderText}>
                                 About
@@ -507,10 +507,48 @@ const Profile = ({ route, client, navigation }) => {
     }
 
     return (
-        <View style={[isLargeScreen ? styles.containerLarge : styles.containerSmall, { marginTop: normalize(70) }]}>
-            {renderContent()}
-            {renderCard()}
-        </View>
+        <>
+            <View style={[isLargeScreen ? styles.containerLarge : styles.containerSmall, { marginTop: normalize(70) }]}>
+                {renderContent()}
+                {renderCard()}
+            </View>
+            <Modal visible={photosModalVisible} animationType="slide">
+                <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
+                    <View style={{ height: 60, backgroundColor: COLORS.grey, justifyContent: 'center' }}>
+                        <Ionicons onPress={() => setPhotosModalVisible(false)} name="close" size={25} color="white" style={{ marginLeft: SPACING.medium }} />
+                    </View>
+
+                    <ScrollView contentContainerStyle={{ padding: SPACING.medium, paddingBottom: 0, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Image
+                            style={{
+                                //flex: 1, 
+                                width: '100%',
+                                height: 300,
+                                marginBottom: SPACING.medium
+                                //aspectRatio: 1
+                            }}
+                            source={require('../assets/dummy_photo.png')}
+                            placeholder={blurhash}
+                            resizeMode="contain"
+                            transition={200}
+                        />
+                        <Image
+                            style={{
+                                //flex: 1, 
+                                width: '100%',
+                                height: 300,
+                                marginBottom: SPACING.medium
+                                //aspectRatio: 1
+                            }}
+                            source="https://picsum.photos/seed/696/3000/2000"
+                            placeholder={blurhash}
+                            resizeMode="contain"
+                            transition={200}
+                        />
+                    </ScrollView>
+                </View>
+            </Modal>
+        </>
     )
 }
 
