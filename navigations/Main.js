@@ -113,7 +113,7 @@ const Main = ({ scrollDisabled }) => {
 
     const navigationRef = useRef()
 
-    const { width } = useWindowDimensions()
+    const { width, height } = useWindowDimensions()
     const isSmalScreen = width < SMALL_SCREEN_THRESHOLD
 
     const router = createBrowserRouter(createRoutesFromElements(
@@ -223,7 +223,7 @@ const Main = ({ scrollDisabled }) => {
     ))
 
     return (
-        <View style={{ height: scrollDisabled ? height: undefined }}>
+        <View style={scrollDisabled ? { height, overflow: 'hidden' }: {}}>
             <RouterProvider router={router} />
         </View>
     )
