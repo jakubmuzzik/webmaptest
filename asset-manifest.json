@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.d5aa9e5b.js",
-    "static/js/558.b7b0cf68.js": "/webmaptest/static/js/558.b7b0cf68.js",
+    "main.js": "/webmaptest/static/js/main.5738a343.js",
+    "static/js/300.32917542.js": "/webmaptest/static/js/300.32917542.js",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
     "static/media/MaterialIcons.ttf": "/webmaptest/static/media/MaterialIcons.120b4c7bbd155bd0a04d.ttf",
@@ -16,6 +16,7 @@
     "static/media/Entypo.ttf": "/webmaptest/static/media/Entypo.fc6169344c041cffcdae.ttf",
     "static/media/dummy_photo.png": "/webmaptest/static/media/dummy_photo.aa962d803f130c31e5d7.png",
     "static/media/Feather.ttf": "/webmaptest/static/media/Feather.0f5d9cede2e831f3fc80.ttf",
+    "static/media/CATEGORY4.png": "/webmaptest/static/media/CATEGORY4.26331dd0ba3561672a08.png",
     "static/media/Octicons.ttf": "/webmaptest/static/media/Octicons.6b742a230954dc640ba2.ttf",
     "static/media/FontAwesome5_Regular.ttf": "/webmaptest/static/media/FontAwesome5_Regular.1017bce89c72f95bcf8e.ttf",
     "static/media/logo-header.png": "/webmaptest/static/media/logo-header.6575dd315c027bd4e2bb.png",
@@ -32,11 +33,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.d5aa9e5b.js.map": "/webmaptest/static/js/main.d5aa9e5b.js.map",
-    "558.b7b0cf68.js.map": "/webmaptest/static/js/558.b7b0cf68.js.map"
+    "main.5738a343.js.map": "/webmaptest/static/js/main.5738a343.js.map",
+    "300.32917542.js.map": "/webmaptest/static/js/300.32917542.js.map"
   },
   "entrypoints": [
-    "static/js/558.b7b0cf68.js",
-    "static/js/main.d5aa9e5b.js"
+    "static/js/300.32917542.js",
+    "static/js/main.5738a343.js"
   ]
 }
