@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from "react"
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react"
 import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, Modal, ScrollView } from "react-native"
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD } from "../constants"
 import { normalize, stripEmptyParams } from "../utils"
@@ -7,6 +7,8 @@ import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, Mate
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from "../components/HoverableView"
 import MapView from "@teovilla/react-native-web-maps"
+import { connect } from 'react-redux'
+import { updateScrollDisabled } from "../redux/actions"
 
 import { useParams } from 'react-router-dom'
 
@@ -15,7 +17,7 @@ const images = [require('../assets/dummy_photo.png'), require('../assets/dummy_p
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Profile = ({ route, client, navigation }) => {
+const Profile = ({ updateScrollDisabled }) => {
     // const params = useMemo(() => ({
     //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     //     id: route.params.id
@@ -30,6 +32,11 @@ const Profile = ({ route, client, navigation }) => {
     const [moreTextShown, setMoreTextShown] = useState(false)
     const [region, setRegion] = useState(null)
     const [photosModalVisible, setPhotosModalVisible] = useState(false)
+
+    const closeModal = () => {
+        updateScrollDisabled(false)
+        setPhotosModalVisible(false)
+    }
 
     const onTextLayout = useCallback((e) => {
         const element = e.nativeEvent.target
@@ -512,10 +519,11 @@ const Profile = ({ route, client, navigation }) => {
                 {renderContent()}
                 {renderCard()}
             </View>
-            <Modal visible={photosModalVisible} animationType="slide">
+
+            <Modal visible={photosModalVisible} animationType="slide" onShow={() => updateScrollDisabled(true)}>
                 <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
                     <View style={{ height: 60, backgroundColor: COLORS.grey, justifyContent: 'center' }}>
-                        <Ionicons onPress={() => setPhotosModalVisible(false)} name="close" size={25} color="white" style={{ marginLeft: SPACING.medium }} />
+                        <Ionicons onPress={closeModal} name="close" size={25} color="white" style={{ marginLeft: SPACING.medium, alignSelf: 'flex-start' }} />
                     </View>
 
                     <ScrollView contentContainerStyle={{ padding: SPACING.medium, paddingBottom: 0, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
@@ -537,7 +545,8 @@ const Profile = ({ route, client, navigation }) => {
                                 //flex: 1, 
                                 width: '100%',
                                 height: 300,
-                                marginBottom: SPACING.medium
+                                marginBottom: SPACING.medium,
+                                backgroundColor: '#0553',
                                 //aspectRatio: 1
                             }}
                             source="https://picsum.photos/seed/696/3000/2000"
@@ -552,7 +561,7 @@ const Profile = ({ route, client, navigation }) => {
     )
 }
 
-export default Profile
+export default connect(null, { updateScrollDisabled })(Profile)
 
 const styles = StyleSheet.create({
     containerLarge: { 
@@ -575,7 +584,7 @@ const styles = StyleSheet.create({
         flexGrow: 1, 
         alignItems: 'flex-end', 
         marginRight: SPACING.x_large, 
-        paddingVertical: SPACING.large 
+        paddingVertical: SPACING.large
     },
     contentSmall: {
         paddingVertical: SPACING.large ,

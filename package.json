@@ -26,6 +26,7 @@
     "@shopify/flash-list": "1.4.3",
     "@teovilla/react-native-web-maps": "^0.9.3",
     "expo": "~49.0.7",
+    "expo-blur": "~12.4.1",
     "expo-font": "~11.4.0",
     "expo-image": "~1.3.4",
     "expo-image-picker": "~14.3.2",
@@ -58,8 +59,7 @@
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.21.0",
     "react-router-native": "^6.20.1",
-    "redux-thunk": "^2.4.2",
-    "expo-blur": "~12.4.1"
+    "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

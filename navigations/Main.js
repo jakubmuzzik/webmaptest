@@ -4,6 +4,8 @@ import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { normalize } from '../utils'
 
+import { connect } from 'react-redux'
+
 import { createStackNavigator } from '@react-navigation/stack'
 const Stack = createStackNavigator()
 
@@ -103,7 +105,7 @@ const linking = {
     },
 }
 
-export default function Main() {
+const Main = ({ scrollDisabled }) => {
     const [state, setState] = useState()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -217,12 +219,13 @@ export default function Main() {
                     {isSmalScreen && <MobileFooter />}
                 </>
             } />
-
         </>
     ))
 
     return (
-        <RouterProvider router={router} />
+        <View style={{ height: scrollDisabled ? height: undefined }}>
+            <RouterProvider router={router} />
+        </View>
     )
 
     return (
@@ -341,3 +344,9 @@ export default function Main() {
         </>
     )
 }
+
+const mapStateToProps = (store) => ({
+    scrollDisabled: store.appState.scrollDisabled
+})
+
+export default connect(mapStateToProps)(Main)
