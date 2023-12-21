@@ -33,9 +33,17 @@ const Account = ({ navigation, route }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'personalDetails':
-                return <PersonalDetails />
+                return (
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <PersonalDetails />
+                    </View>
+                )
             case 'photos':
-                return <Photos />
+                return (
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Photos />
+                    </View>
+                )
             default:
                 return null
         }
@@ -45,7 +53,7 @@ const Account = ({ navigation, route }) => {
         <TabBar
             {...props}
             indicatorStyle={{ backgroundColor: 'red' }}
-            style={{ backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%' }}
+            style={{ backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}
             tabStyle={{ width: 'auto' }}
             scrollEnabled={true}
             renderLabel={({ route, focused, color }) => (
@@ -57,20 +65,20 @@ const Account = ({ navigation, route }) => {
     )
 
     return (
-        <View style={{ paddingTop: SPACING.large, paddingBottom: SPACING.medium, marginTop: normalize(70), paddingHorizontal: SPACING.medium, backgroundColor: COLORS.lightBlack }}>
-            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large }}>
+        <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large, marginTop: SPACING.medium }}>
                     Account
                 </Text>
-
-                <TabView
-                    renderTabBar={renderTabBar}
-                    swipeEnabled={false}
-                    navigationState={{ index, routes }}
-                    renderScene={renderScene}
-                    onIndexChange={setIndex}
-                />
             </View>
+
+            <TabView
+                renderTabBar={renderTabBar}
+                swipeEnabled={false}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+            />
         </View>
     )
 }

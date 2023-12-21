@@ -8,7 +8,7 @@ import { TouchableRipple } from 'react-native-paper'
 
 const PhotosList = ({ onAssetPress }) => {
     return (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: SPACING.medium, paddingBottom: 0, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
+        <View style={{ padding: SPACING.medium, paddingBottom: 0, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
             <HoverableView hoveredOpacity={0.9} style={{ height: 300, width: '100%', marginBottom: SPACING.medium }}>
                 <TouchableRipple onPress={() => onAssetPress(0)} style={{ flex: 1 }}>
                     <Image
@@ -33,7 +33,7 @@ const PhotosList = ({ onAssetPress }) => {
                     />
                 </TouchableRipple>
             </HoverableView>
-        </ScrollView>
+        </View>
     )
 }
 

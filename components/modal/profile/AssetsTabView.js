@@ -70,15 +70,17 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
                 <Ionicons onPress={onClosePress} name="close" size={25} color="white" style={{ marginRight: SPACING.medium, alignSelf: 'flex-end' }} />
             </View>
 
-            <TabView
-                renderTabBar={renderTabBar}
-                swipeEnabled={false}
-                navigationState={{ index: assetsIndex, routes: assetRoutes }}
-                renderScene={renderAssetsScene}
-                onIndexChange={setAssetsIndex}
-                lazy
-                renderLazyPlaceholder={renderLazyPlaceholder}
-            />
+            <ScrollView>
+                <TabView
+                    renderTabBar={renderTabBar}
+                    swipeEnabled={false}
+                    navigationState={{ index: assetsIndex, routes: assetRoutes }}
+                    renderScene={renderAssetsScene}
+                    onIndexChange={setAssetsIndex}
+                    lazy
+                    renderLazyPlaceholder={renderLazyPlaceholder}
+                />
+            </ScrollView>
         </>
     )
 
