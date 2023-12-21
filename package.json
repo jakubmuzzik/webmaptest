@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^19.0.0",
+    "@fanchenbao/react-native-scroll-indicator": "^0.2.2",
     "@georstat/react-native-image-gallery": "^1.1.0",
     "@react-native-assets/slider": "^7.0.5",
     "@react-navigation/bottom-tabs": "^6.5.8",

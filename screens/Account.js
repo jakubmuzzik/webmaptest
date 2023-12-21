@@ -46,9 +46,13 @@ const Account = ({ navigation, route }) => {
             {...props}
             indicatorStyle={{ backgroundColor: 'red' }}
             style={{ backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%' }}
-            labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}
             tabStyle={{ width: 'auto' }}
             scrollEnabled={true}
+            renderLabel={({ route, focused, color }) => (
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
+                    {route.title}
+                </Text>
+            )}
         />
     )
 

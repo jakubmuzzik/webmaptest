@@ -7,8 +7,7 @@ import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, Mate
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from "../components/HoverableView"
 import MapView from "@teovilla/react-native-web-maps"
-import { connect } from 'react-redux'
-import { updateScrollDisabled } from "../redux/actions"
+import AssetsTabView from "../components/modal/profile/AssetsTabView"
 
 import { useParams } from 'react-router-dom'
 
@@ -17,7 +16,7 @@ const images = [require('../assets/dummy_photo.png'), require('../assets/dummy_p
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Profile = ({ updateScrollDisabled }) => {
+const Profile = ({  }) => {
     // const params = useMemo(() => ({
     //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     //     id: route.params.id
@@ -34,7 +33,6 @@ const Profile = ({ updateScrollDisabled }) => {
     const [photosModalVisible, setPhotosModalVisible] = useState(false)
 
     const closeModal = () => {
-        updateScrollDisabled(false)
         setPhotosModalVisible(false)
     }
 
@@ -128,7 +126,7 @@ const Profile = ({ updateScrollDisabled }) => {
                         <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                             {/* <View style={{  }}> */}
                                 <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
-                                <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> Show all photos (+4)</Text>
+                                <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> Show all assets</Text>
                             {/* </View> */}
                         </TouchableOpacity>
                     </View>
@@ -520,48 +518,12 @@ const Profile = ({ updateScrollDisabled }) => {
                 {renderCard()}
             </View>
 
-            <Modal visible={photosModalVisible} animationType="slide" onShow={() => updateScrollDisabled(true)}>
-                <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
-                    <View style={{ height: 60, backgroundColor: COLORS.grey, justifyContent: 'center' }}>
-                        <Ionicons onPress={closeModal} name="close" size={25} color="white" style={{ marginLeft: SPACING.medium, alignSelf: 'flex-start' }} />
-                    </View>
-
-                    <ScrollView contentContainerStyle={{ padding: SPACING.medium, paddingBottom: 0, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Image
-                            style={{
-                                //flex: 1, 
-                                width: '100%',
-                                height: 300,
-                                marginBottom: SPACING.medium
-                                //aspectRatio: 1
-                            }}
-                            source={require('../assets/dummy_photo.png')}
-                            placeholder={blurhash}
-                            resizeMode="contain"
-                            transition={200}
-                        />
-                        <Image
-                            style={{
-                                //flex: 1, 
-                                width: '100%',
-                                height: 300,
-                                marginBottom: SPACING.medium,
-                                backgroundColor: '#0553',
-                                //aspectRatio: 1
-                            }}
-                            source="https://picsum.photos/seed/696/3000/2000"
-                            placeholder={blurhash}
-                            resizeMode="contain"
-                            transition={200}
-                        />
-                    </ScrollView>
-                </View>
-            </Modal>
+            <AssetsTabView visible={photosModalVisible} photos={['1', '2']} videos={['2']} closeModal={closeModal} />
         </>
     )
 }
 
-export default connect(null, { updateScrollDisabled })(Profile)
+export default Profile
 
 const styles = StyleSheet.create({
     containerLarge: { 
