@@ -54,3 +54,39 @@ export const areValuesEqual = (val1, val2) => {
       : areObjectsEqual(val1, val2)
     ) : val1 === val2
 }
+
+export const generateThumbnailFromLocalURI = (uri, time) => {
+  return new Promise((resolve, reject) => {
+      const video = document.createElement("video");
+      video.src = uri;
+      video.crossOrigin = "anonymous";
+      video.addEventListener("loadeddata", () => {
+          try {
+              video.currentTime = time;
+          } catch (e) {
+              console.log(e)
+              reject(e);
+          }
+      });
+
+      video.addEventListener("seeked", () => {
+          try {
+              const canvas = document.createElement("canvas");
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              const ctx = canvas.getContext("2d");
+              if (ctx) {
+                  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                  const imageUrl = canvas.toDataURL();
+                  resolve(imageUrl);
+              } else {
+                  reject(new Error("Failed to get canvas context"));
+              }
+          } catch (e) {
+              reject(e);
+              console.log(e)
+          }
+      });
+      video.load();
+  });
+}

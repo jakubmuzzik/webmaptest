@@ -9,12 +9,13 @@ import HoverableView from "../components/HoverableView"
 import MapView from "@teovilla/react-native-web-maps"
 import AssetsTabView from "../components/modal/profile/AssetsTabView"
 
-import { useParams } from 'react-router-dom'
-
-const images = [require('../assets/dummy_photo.png'), require('../assets/dummy_photo.png'), require('../assets/dummy_photo.png')]
+import { useParams, useLocation } from 'react-router-dom'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
+
+const photos = [require('../assets/dummy_photo.png'), 'https://picsum.photos/seed/696/3000/2000', require('../assets/CATEGORY4.png')]
+const videos = [require('../assets/dummy_photo.png'), 'https://picsum.photos/seed/696/3000/2000']
 
 const Profile = ({  }) => {
     // const params = useMemo(() => ({
@@ -518,7 +519,7 @@ const Profile = ({  }) => {
                 {renderCard()}
             </View>
 
-            <AssetsTabView visible={photosModalVisible} photos={['1', '2']} videos={['2']} closeModal={closeModal} />
+            <AssetsTabView visible={photosModalVisible} photos={photos} videos={videos} closeModal={closeModal} />
         </>
     )
 }

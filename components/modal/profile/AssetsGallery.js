@@ -5,8 +5,7 @@ import { stripEmptyParams } from '../../../utils'
 import Gallery from 'react-native-awesome-gallery'
 import { Image } from 'expo-image'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-
-const images = [require('../../../assets/dummy_photo.png'), require('../../../assets/dummy_photo.png'), require('../../../assets/dummy_photo.png')]
+import { Video, ResizeMode } from 'expo-av'
 
 const renderItem = ({
     item,
@@ -22,10 +21,10 @@ const renderItem = ({
                 setImageDimensions({ width, height })
             }}
         />
-    );
+    )
 }
 
-const AssetsGallery = ({ assets, pressedAssetIndex, setPressedAssetIndex, onClosePress }) => {
+const AssetsGallery = ({ assets, pressedAssetIndex, goBackPress, onClosePress }) => {
     // const params = useMemo(() => ({
     //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     //     id: route.params.id
@@ -43,13 +42,9 @@ const AssetsGallery = ({ assets, pressedAssetIndex, setPressedAssetIndex, onClos
         }
     }, [pressedAssetIndex])
 
-    const goBack = () => {
-        setPressedAssetIndex(undefined)
-    }
-
     const onNextPress = () => {
         gallery.current?.setIndex(
-            index === images.length - 1
+            index === assets.length - 1
                 ? 0
                 : index + 1,
             true
@@ -59,7 +54,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex, setPressedAssetIndex, onClos
     const onPrevPress = () => {
         gallery.current?.setIndex(
             index === 0
-                ? images.length - 1
+                ? assets.length - 1
                 : index - 1,
             true
         )
@@ -75,10 +70,10 @@ const AssetsGallery = ({ assets, pressedAssetIndex, setPressedAssetIndex, onClos
                 alignItems: 'center',
                 zIndex: 3
             }}>
-                <Ionicons name="arrow-back" size={25} color='#FFF' onPress={goBack} style={{ marginLeft: SPACING.medium }} />
+                <Ionicons name="arrow-back" size={25} color='#FFF' onPress={goBackPress} style={{ marginLeft: SPACING.medium }} />
                 <View>
                     {assets && <Text style={styles.headerText}>
-                        {index + 1} of {images.length}
+                        {index + 1} of {assets.length}
                     </Text>}
                 </View>
                 <Ionicons name="close" size={25} color='#FFF' style={{ marginRight: SPACING.medium }} onPress={onClosePress} />
@@ -90,18 +85,18 @@ const AssetsGallery = ({ assets, pressedAssetIndex, setPressedAssetIndex, onClos
                         style={{ backgroundColor: COLORS.lightBlack, marginTop: 40 }}
                         containerDimensions={{ width, height: height - 60 * 2 - 40 * 2 }}
                         ref={gallery}
-                        data={images}
+                        data={assets}
                         keyExtractor={(item, index) => item + index}
                         renderItem={renderItem}
                         initialIndex={index}
                         numToRender={3}
                         doubleTapInterval={150}
                         onIndexChange={(index) => setIndex(index)}
-                        onSwipeToClose={goBack}
+                        onSwipeToClose={goBackPress}
                         loop
                         onScaleEnd={(scale) => {
                             if (scale < 0.8) {
-                                goBack()
+                                goBackPress()
                             }
                         }}
                     />

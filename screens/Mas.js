@@ -12,10 +12,6 @@ import { CZECH_CITIES } from '../labels'
 import RenderClient from '../components/list/RenderClient'
 import { normalize, getParam } from '../utils'
 
-const {
-    width: INITIAL_SCREEN_WIDTH
-} = Dimensions.get('window')
-
 import { MOCK_DATA } from '../constants'
 
 import { useSearchParams } from 'react-router-dom'
@@ -28,7 +24,7 @@ const Mas = ({  }) => {
         city: getParam(CZECH_CITIES, searchParams.get('city'), '')
     }), [searchParams])
 
-    const [contentWidth, setContentWidth] = useState()
+    const [contentWidth, setContentWidth] = useState(document.body.scrollWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -76,11 +72,10 @@ const Mas = ({  }) => {
     }, [cardWidth])
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack, paddingHorizontal: SPACING.page_horizontal - SPACING.large }} 
-            contentContainerStyle={{ paddingTop: SPACING.large + normalize(70) + normalize(70) }}
-            onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large + normalize(70) + normalize(70) }} 
+            onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            {contentWidth && <View style={{ marginLeft: SPACING.large }}>
+           <View style={{ marginLeft: SPACING.large }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
                     {`Mas ${params.city ? 'in ' + params.city : ''} • Discover 212 ...`}
                 </Text>
@@ -88,8 +83,8 @@ const Mas = ({  }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
                 </View>
-            </View>}
-        </ScrollView>
+            </View>
+        </View>
     )
 }
 

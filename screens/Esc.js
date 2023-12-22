@@ -11,14 +11,12 @@ import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_L
 import { CZECH_CITIES } from '../labels'
 import RenderClient from '../components/list/RenderClient'
 
-const {
-    width: INITIAL_SCREEN_WIDTH
-} = Dimensions.get('window')
-
 import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'
 
 import { useSearchParams } from 'react-router-dom'
+
+const { height, width } = Dimensions.get('window')
 
 const Esc = ({ }) => {
     const [searchParams] = useSearchParams()
@@ -28,7 +26,7 @@ const Esc = ({ }) => {
         city: getParam(CZECH_CITIES, searchParams.get('city'), '')
     }), [searchParams])
 
-    const [contentWidth, setContentWidth] = useState()
+    const [contentWidth, setContentWidth] = useState(document.body.scrollWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -77,12 +75,10 @@ const Esc = ({ }) => {
     }, [cardWidth])
 
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: COLORS.lightBlack, paddingHorizontal: SPACING.page_horizontal - SPACING.large }} 
-            contentContainerStyle={{ paddingTop: SPACING.large + normalize(70) + normalize(70) }}
-            onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
-            //onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large + normalize(70) + normalize(70) }} 
+            onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            {contentWidth && <View style={{ marginLeft: SPACING.large }}>
+            <View style={{ marginLeft: SPACING.large }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
                     {params.city ? 'Esc ' + params.city : 'All esc'} • Discover 212 ...
                 </Text>
@@ -90,8 +86,8 @@ const Esc = ({ }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
                 </View>
-            </View>}
-        </ScrollView>
+            </View>
+        </View>
     )
 }
 

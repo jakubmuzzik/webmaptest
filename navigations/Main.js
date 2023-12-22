@@ -1,12 +1,14 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize } from '../utils'
 
 import { connect } from 'react-redux'
+import { updateScrollDisabled } from '../redux/actions'
 
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
 import Header from '../components/navigation/Header'
+import Categories from '../components/navigation/Categories'
 import Pri from '../screens/Pri'
 import Esc from '../screens/Esc'
 import Clu from '../screens/Clu'
@@ -26,7 +28,7 @@ import Explore from './Explore'
 
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
 
-const Main = ({ scrollDisabled }) => {
+const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     const insets = useSafeAreaInsets()
@@ -140,8 +142,14 @@ const Main = ({ scrollDisabled }) => {
         </>
     ))
 
+    router.subscribe(() => {
+        if (scrollDisabled) {
+            setTimeout(() => updateScrollDisabled(false))
+        }
+    })
+
     return (
-        <View style={scrollDisabled ? { height, overflow: 'hidden' }: {}}>
+        <View style={scrollDisabled ? { height, overflow: 'hidden' }: {flex:1}}>
             <RouterProvider router={router} />
         </View>
     )
@@ -151,4 +159,4 @@ const mapStateToProps = (store) => ({
     scrollDisabled: store.appState.scrollDisabled
 })
 
-export default connect(mapStateToProps)(Main)
+export default connect(mapStateToProps, { updateScrollDisabled })(Main)

@@ -8,6 +8,7 @@ import { normalize } from '../../../utils'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import PhotosList from './PhotosList'
+import VideosList from './VideosList'
 import { ActivityIndicator } from 'react-native-paper'
 import AssetsGallery from './AssetsGallery'
 
@@ -15,8 +16,8 @@ const { width, height } = Dimensions.get('window')
 
 const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled, closeModal }) => {
     const [pagesIndex, setPagesIndex] = useState(0)
-    const [assetsIndex, setAssetsIndex] = useState(0)
-    const [pressedAssetIndex, setPressedAssetIndex] = useState()
+    const [tabsIndex, setTabsIndex] = useState(0)
+    const [pressedImageIndex, setPressedImageIndex] = useState()
     const [pagesRoutes] = useState([
         { key: 'Assets', title: 'Assets' },
         { key: 'Gallery', title: 'Gallery' },
@@ -26,25 +27,27 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
         { key: 'Videos', title: 'Videos', length: videos.length },
     ].filter(r => r.length))
 
-    useEffect(() => {
-        if (isNaN(pressedAssetIndex)) {
-            setPagesIndex(0)
-        } else {
-            setPagesIndex(1)
-        }
-    }, [pressedAssetIndex])
-
     const onClosePress = () => {
         updateScrollDisabled()
         closeModal()
         setPagesIndex(0)
-        setAssetsIndex(0)
-        setPressedAssetIndex(undefined)
+        setTabsIndex(0)
+        setPressedImageIndex(undefined)
+    }
+
+    const goBackPress = () => {
+        setPagesIndex(0)
+        setPressedImageIndex(undefined)
+    }
+
+    const onImagePress = (index) => {
+        setPressedImageIndex(index)
+        setPagesIndex(1)
     }
 
     const renderLazyPlaceholder = () => (
-        <View style={{ width, justifyContent: 'center', alignItems: 'center', marginTop: height / 4 }}>
-            <ActivityIndicator animating color={COLORS.red} />
+        <View style={{ width, alignItems: 'center', marginTop: 70 }}>
+            <ActivityIndicator animating color={COLORS.red} size={30}/>
         </View>
     )
 
@@ -70,17 +73,15 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
                 <Ionicons onPress={onClosePress} name="close" size={25} color="white" style={{ marginRight: SPACING.medium, alignSelf: 'flex-end' }} />
             </View>
 
-            <ScrollView>
-                <TabView
-                    renderTabBar={renderTabBar}
-                    swipeEnabled={false}
-                    navigationState={{ index: assetsIndex, routes: assetRoutes }}
-                    renderScene={renderAssetsScene}
-                    onIndexChange={setAssetsIndex}
-                    lazy
-                    renderLazyPlaceholder={renderLazyPlaceholder}
-                />
-            </ScrollView>
+            <TabView
+                renderTabBar={renderTabBar}
+                swipeEnabled={false}
+                navigationState={{ index: tabsIndex, routes: assetRoutes }}
+                renderScene={renderAssetsScene}
+                onIndexChange={setTabsIndex}
+                lazy
+                renderLazyPlaceholder={renderLazyPlaceholder}
+            />
         </>
     )
 
@@ -89,7 +90,7 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
             case 'Assets':
                 return renderAssetsPage()
             case 'Gallery':
-                return <AssetsGallery pressedAssetIndex={pressedAssetIndex} setPressedAssetIndex={setPressedAssetIndex} onClosePress={onClosePress} assets={[]} />
+                return <AssetsGallery pressedAssetIndex={pressedImageIndex} goBackPress={goBackPress} onClosePress={onClosePress} assets={photos} />
             default:
                 return null
         }
@@ -98,9 +99,9 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
     const renderAssetsScene = ({ route }) => {
         switch (route.key) {
             case 'Photos':
-                return <PhotosList onAssetPress={setPressedAssetIndex} />
+                return <PhotosList onImagePress={onImagePress} photos={photos} />
             case 'Videos':
-                return null
+                return <VideosList videos={videos} />
             default:
                 return null
         }

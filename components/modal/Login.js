@@ -241,7 +241,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                     <Image
                         resizeMode="contain"
                         source={require('../../assets/images/padlock-icon.png')}
-                        style={{ width: contentWidth * 0.18, height: contentWidth * 0.18, alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
+                        style={{ width: '18%', height: '18%', alignSelf: 'center', marginTop: SPACING.xxxx_large, }}
                     />
 
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.large, textAlign: 'center' }}>
