@@ -20,7 +20,7 @@ const Pri = ({ navigation, route }) => {
         city: CZECH_CITIES.includes(decodeURIComponent(route.params.city)) ? decodeURIComponent(route.params.city) : ''
     }), [route.params])
 
-    const [contentWidth, setContentWidth] = useState(document.body.scrollWidth - (SPACING.page_horizontal - SPACING.large) * 2)
+    const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {

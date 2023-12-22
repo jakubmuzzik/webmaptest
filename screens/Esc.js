@@ -26,7 +26,7 @@ const Esc = ({ }) => {
         city: getParam(CZECH_CITIES, searchParams.get('city'), '')
     }), [searchParams])
 
-    const [contentWidth, setContentWidth] = useState(document.body.scrollWidth - (SPACING.page_horizontal - SPACING.large) * 2)
+    const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
