@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
 import { Button } from 'react-native-paper'
 import { normalize } from '../utils'
@@ -34,13 +34,13 @@ const Account = ({ navigation, route }) => {
         switch (route.key) {
             case 'personalDetails':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
                         <PersonalDetails />
                     </View>
                 )
             case 'photos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
                         <Photos />
                     </View>
                 )
@@ -52,8 +52,8 @@ const Account = ({ navigation, route }) => {
     const renderTabBar = (props) => (
         <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: 'red' }}
-            style={{ backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}
+            indicatorStyle={{ backgroundColor: 'red', left: SPACING.medium }}
+            style={{ backgroundColor: 'transparent', width: normalize(850), maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.medium }}
             tabStyle={{ width: 'auto' }}
             scrollEnabled={true}
             renderLabel={({ route, focused, color }) => (
@@ -66,8 +66,8 @@ const Account = ({ navigation, route }) => {
 
     return (
         <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
-            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', marginBottom: SPACING.large, marginTop: SPACING.medium }}>
+            <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF' }}>
                     Account
                 </Text>
             </View>
@@ -78,6 +78,11 @@ const Account = ({ navigation, route }) => {
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
+                sceneContainerStyle={{ 
+                    width: normalize(850), maxWidth: '100%', alignSelf: 'center',
+                    paddingHorizontal: SPACING.medium
+                }}
+
             />
         </View>
     )
