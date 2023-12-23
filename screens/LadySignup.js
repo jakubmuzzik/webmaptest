@@ -72,7 +72,7 @@ const LadySignup = ({ }) => {
         images: [null, null, null, null, null, null]
     })
 
-    const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
+    const [photosContentWidth, setPhotosContentWidth] = useState(normalize(850))
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -85,7 +85,7 @@ const LadySignup = ({ }) => {
 
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
-    const [contentWidth, setContentWidth] = useState(normalize(800))
+    const [contentWidth, setContentWidth] = useState(normalize(850))
 
     const [routes] = useState([
         { key: '1. Login Information', index: 0 },
@@ -1602,7 +1602,7 @@ const LadySignup = ({ }) => {
 
     return (
         <View style={{ height: '100%', backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
-            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
+            <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up
                 </Text>
@@ -1621,7 +1621,7 @@ const LadySignup = ({ }) => {
                     type: 'timing',
                     duration: 400,
                 }}
-                style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium }}>
+                style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium }}>
                 <View
                     style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20, overflow: 'hidden' }}
                     onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}

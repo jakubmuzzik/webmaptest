@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
-import { Button } from 'react-native-paper'
+import { ActivityIndicator } from 'react-native-paper'
 import { normalize } from '../utils'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
@@ -31,7 +31,17 @@ const Account = ({ navigation, route }) => {
         setSignUpVisible(true)
     }
 
+    const renderLazyPlaceholder = () => (
+        <View style={{ alignSelf: 'center', marginTop: SPACING.xx_large }}>
+            <ActivityIndicator animating color={COLORS.red} size={30}/>
+        </View>
+    )
+
     const renderScene = ({ route }) => {
+        if (Math.abs(index - routes.indexOf(route)) > 0) {
+            return <View />
+        }
+
         switch (route.key) {
             case 'personalDetails':
                 return (
@@ -68,6 +78,7 @@ const Account = ({ navigation, route }) => {
                     {route.title}
                 </Text>
             )}
+            onTabPress={(props) => setIndex(routes.indexOf(props.route))}
         />
     )
 
@@ -86,10 +97,14 @@ const Account = ({ navigation, route }) => {
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 sceneContainerStyle={{ 
-                    width: normalize(850), maxWidth: '100%', alignSelf: 'center',
+                    width: normalize(850), 
+                    maxWidth: '100%', 
+                    alignSelf: 'center',
                     paddingHorizontal: SPACING.medium
                 }}
                 initialLayout={{ width: Dimensions.get('window').width }}
+                lazy={({ route }) => route.key === 'photos'}
+                renderLazyPlaceholder={renderLazyPlaceholder}       
             />
         </View>
     )

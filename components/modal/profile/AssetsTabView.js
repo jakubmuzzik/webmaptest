@@ -46,7 +46,7 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
     }
 
     const renderLazyPlaceholder = () => (
-        <View style={{ width, alignItems: 'center', marginTop: 70 }}>
+        <View style={{ alignSelf: 'center', marginTop: SPACING.xx_large }}>
             <ActivityIndicator animating color={COLORS.red} size={30}/>
         </View>
     )
