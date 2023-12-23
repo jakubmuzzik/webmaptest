@@ -18,6 +18,7 @@ const Account = ({ navigation, route }) => {
     const [routes] = useState([
         { key: 'personalDetails', title: 'Personal Details' },
         { key: 'photos', title: 'Photos' },
+        { key: 'settings', title: 'Settings' },
     ])
 
     const onLoginPress = () => {
@@ -42,6 +43,12 @@ const Account = ({ navigation, route }) => {
                 return (
                     <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
                         <Photos />
+                    </View>
+                )
+            case 'settings':
+                return (
+                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
+                        
                     </View>
                 )
             default:
@@ -82,7 +89,7 @@ const Account = ({ navigation, route }) => {
                     width: normalize(850), maxWidth: '100%', alignSelf: 'center',
                     paddingHorizontal: SPACING.medium
                 }}
-
+                initialLayout={{ width: Dimensions.get('window').width }}
             />
         </View>
     )
