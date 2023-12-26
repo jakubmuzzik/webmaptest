@@ -10,6 +10,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 
 import PersonalDetails from './account/PersonalDetails'
 import Photos from './account/Photos'
+import Settings from './Account/Settings'
 
 const Account = ({ navigation, route }) => {
     const [loginVisible, setLoginVisible] = useState(false)
@@ -58,7 +59,7 @@ const Account = ({ navigation, route }) => {
             case 'settings':
                 return (
                     <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
-                        
+                        <Settings />
                     </View>
                 )
             default:

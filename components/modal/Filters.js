@@ -535,6 +535,7 @@ const Filters = forwardRef((props, ref) => {
                                                     iconStyle={{ borderRadius: 3 }}
                                                     innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
                                                     textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                                    textContainerStyle={{ flexShrink: 1 }}
                                                     onPress={() => onMultiPicklistPress(nationality, 'nationality')}
                                                 />
                                             </View>
@@ -564,6 +565,7 @@ const Filters = forwardRef((props, ref) => {
                                                 iconStyle={{ borderColor: COLORS.red, borderRadius: 3 }}
                                                 innerIconStyle={{ borderWidth: 2,  borderRadius: 3 }}
                                                 textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                                textContainerStyle={{ flexShrink: 1 }}
                                                 onPress={() => onMultiPicklistPress(speaks, 'speaks')}
                                             />
                                         </View>

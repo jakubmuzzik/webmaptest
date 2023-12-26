@@ -118,7 +118,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: height - normalize(70) }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: document.body.clientHeight - normalize(70) }}>
                         <LadySignup />
                     </View>
 

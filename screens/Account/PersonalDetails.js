@@ -428,7 +428,7 @@ const PersonalDetails = ({ route }) => {
                 </View>
             </View>
 
-            <View style={styles.section}>
+            <View style={[styles.section, { marginBottom: SPACING.medium }]}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionHeaderText}>
                         Address

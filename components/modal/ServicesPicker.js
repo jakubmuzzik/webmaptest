@@ -161,6 +161,7 @@ const ServicesPicker = ({ visible, setVisible, services, onSelect }) => {
                                             iconStyle={{ borderRadius: 3 }}
                                             innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
                                             textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                            textContainerStyle={{ flexShrink: 1 }}
                                         />
                                     </TouchableRipple>
                                 )
@@ -191,6 +192,7 @@ const ServicesPicker = ({ visible, setVisible, services, onSelect }) => {
                                             iconStyle={{ borderRadius: 3 }}
                                             innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
                                             textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textDecorationLine: "none" }}
+                                            textContainerStyle={{ flexShrink: 1 }}
                                         />
                                     </TouchableRipple>
                                 )

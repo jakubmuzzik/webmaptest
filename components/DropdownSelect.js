@@ -180,6 +180,7 @@ const DropdownSelect = forwardRef((props, ref) => {
                                                 iconStyle={{ borderRadius: 3 }}
                                                 innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
                                                 textStyle={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textDecorationLine: "none" }}
+                                                textContainerStyle={{ flexShrink: 1 }}
                                             />
                                         </TouchableRipple>
                                     ) : (
