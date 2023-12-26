@@ -43,33 +43,45 @@ const Settings = () => {
         <>
             <View style={styles.container}>
                 <View style={styles.row}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                        Name
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="badge-account-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                            Name
+                        </Text>
+                    </View>
                     <Text onPress={onNameEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
                         {data.name}
                     </Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                        Email
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="email-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                            Email
+                        </Text>
+                    </View>
                     <Text onPress={onEmailEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
                         {data.email}
                     </Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                        Password
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="lock-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                            Password
+                        </Text>
+                    </View>
                     <Text onPress={onPasswordEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
                         Change
                     </Text>
                 </View>
                 <View style={styles.row}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                        Delete account
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="delete-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                            Delete account
+                        </Text>
+                    </View>
                     <Text onPress={onDeleteAccountPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightRed }}>
                         Delete
                     </Text>
