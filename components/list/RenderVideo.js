@@ -76,8 +76,26 @@ const RenderVideo = ({ video }) => {
                 }}
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
+                usePoster={showPoster && !isBrowser}
+                PosterComponent={() => (
+                    <ImageBackground
+                        source={thumbnail}
+                        style={{
+                            width: '100%',
+                            height: undefined,
+                            aspectRatio: aspectRatio,
+                            top: 0,
+                            position: 'absolute',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }} >
+                            <TouchableOpacity activeOpacity={0.8} onPress={onPlayPress}>
+                                <Ionicons name="ios-play-circle-sharp" size={75} color="black" />
+                            </TouchableOpacity>
+                    </ImageBackground>
+                )}
             />
-            {!isBrowser && showPoster && (
+            {/* {!isBrowser && showPoster && (
                 <ImageBackground
                     source={thumbnail}
                     style={{
@@ -93,7 +111,7 @@ const RenderVideo = ({ video }) => {
                             <Ionicons name="ios-play-circle-sharp" size={70} color="black" />
                         </TouchableOpacity>
                 </ImageBackground>
-            )}
+            )} */}
         </MotiView>
     )
 }

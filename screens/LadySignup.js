@@ -1429,12 +1429,7 @@ const LadySignup = ({ }) => {
                                     onPress={() => onSelectImagePress(0)}
                                     style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
                                 >
-                                     <>
-                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                        <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                            Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
-                                        </Text>
-                                    </>
+                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                 </TouchableRipple>
                             }
                         </View>
@@ -1467,12 +1462,7 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(1)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1 }}
                                         >
-                                             <>
-                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
-                                                </Text>
-                                            </>
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
 
                                     }
@@ -1506,12 +1496,7 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(2)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderTopRightRadius: 20, flex: 1, }}
                                         >
-                                             <>
-                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
-                                                </Text>
-                                            </>
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
 
                                     }
@@ -1545,12 +1530,7 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(3)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1, }}
                                         >
-                                             <>
-                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
-                                                </Text>
-                                            </>
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
                                     }
                                 </View>
@@ -1581,12 +1561,7 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(4)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderBottomRightRadius: 20, flex :1, }}
                                         >
-                                            <>
-                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
-                                                </Text>
-                                            </>
+                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
                                         </TouchableRipple>
                                     }
                                 </View>
@@ -1633,12 +1608,12 @@ const LadySignup = ({ }) => {
                                     >
                                         <>
                                             <AntDesign name="plus" size={normalize(30)} color="black" />
-                                            {/* <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>
                                                 Add more
-                                            </Text> */}
-                                            <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
                                             </Text>
+                                            {/* <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                            </Text> */}
                                         </>
                                     </TouchableRipple>
                                 }
@@ -1684,9 +1659,12 @@ const LadySignup = ({ }) => {
                                     >
                                         <>
                                             <AntDesign name="videocamera" size={normalize(30)} color="black" />
-                                            <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
-                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_VIDEO_SIZE_MB}MB</Text>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>
+                                                Add video
                                             </Text>
+                                            {/* <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_VIDEO_SIZE_MB}MB</Text>
+                                            </Text> */}
                                         </>
                                     </TouchableRipple>
                                 }
