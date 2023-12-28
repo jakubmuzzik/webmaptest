@@ -32,6 +32,7 @@ const Account = ({ navigation, route }) => {
         setSignUpVisible(true)
     }
 
+    //todo - this is used only for photos tab - implement skeleton loading
     const renderLazyPlaceholder = () => (
         <View style={{ alignSelf: 'center', marginTop: SPACING.xx_large }}>
             <ActivityIndicator animating color={COLORS.red} size={30}/>
@@ -40,7 +41,7 @@ const Account = ({ navigation, route }) => {
 
     const renderScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
-            return <View />
+            //return <View />
         }
 
         switch (route.key) {
@@ -79,7 +80,7 @@ const Account = ({ navigation, route }) => {
                     {route.title}
                 </Text>
             )}
-            onTabPress={(props) => setIndex(routes.indexOf(props.route))}
+            //onTabPress={(props) => setIndex(routes.indexOf(props.route))}
         />
     )
 
