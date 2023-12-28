@@ -17,8 +17,8 @@ const Account = ({ navigation, route }) => {
     const [signUpVisible, setSignUpVisible] = useState(false)
     const [index, setIndex] = useState(0)
     const [routes] = useState([
-        { key: 'personalDetails', title: 'Personal Details' },
-        { key: 'photos', title: 'Photos' },
+        { key: 'profileInformation', title: 'Profile information' },
+        { key: 'photosAndVideos', title: 'Photos & Videos' },
         { key: 'settings', title: 'Settings' },
     ])
 
@@ -44,13 +44,13 @@ const Account = ({ navigation, route }) => {
         }
 
         switch (route.key) {
-            case 'personalDetails':
+            case 'profileInformation':
                 return (
                     <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
                         <PersonalDetails />
                     </View>
                 )
-            case 'photos':
+            case 'photosAndVideos':
                 return (
                     <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
                         <Photos />
@@ -104,7 +104,7 @@ const Account = ({ navigation, route }) => {
                     paddingHorizontal: SPACING.medium
                 }}
                 initialLayout={{ width: Dimensions.get('window').width }}
-                lazy={({ route }) => route.key === 'photos'}
+                lazy={({ route }) => route.key === 'photosAndVideos'}
                 renderLazyPlaceholder={renderLazyPlaceholder}       
             />
         </View>

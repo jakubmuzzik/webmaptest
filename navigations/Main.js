@@ -28,6 +28,8 @@ import Explore from './Explore'
 
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
 
+const { height: initialHeight } = Dimensions.get('window')
+
 const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -118,7 +120,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: document.body.clientHeight - normalize(70) }}>
+                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: initialHeight - normalize(70) }}>
                         <LadySignup />
                     </View>
 

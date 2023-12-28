@@ -35,21 +35,21 @@ const PhotoGallery = ({ navigation, route }) => {
 
     const gallery = useRef()
 
-    const [photos, setPhotos] = useState(route.params.photos)
+    const [images, setImages] = useState(route.params.images)
     const [index, setIndex] = useState(route.params.index ?? 0)
 
     useEffect(() => {
-        if (!photos) {
-            //TODO - load photos from database
-            setPhotos(images)
+        if (!images) {
+            //TODO - load images from database
+            setImages(images)
         }
-    }, [photos])
+    }, [images])
 
     const goBack = () => {
         if (navigation.canGoBack()) {
             navigation.goBack()
         } else {
-            navigation.navigate('Photos', { ...stripEmptyParams(params), photos })
+            navigation.navigate('Photos', { ...stripEmptyParams(params), images })
         }
     }
 
@@ -83,20 +83,20 @@ const PhotoGallery = ({ navigation, route }) => {
             }}>
                 <Ionicons name="close" size={25} color='#FFF' onPress={goBack} style={{ marginLeft: SPACING.medium }} />
                 <View>
-                    {photos && <Text style={styles.headerText}>
+                    {images && <Text style={styles.headerText}>
                         {index + 1} of {images.length}
                     </Text>}
                 </View>
                 <Ionicons name="close" size={25} color='#FFF' style={{ opacity: 0, marginRight: SPACING.medium }} />
             </View>
 
-            {photos && (
+            {images && (
                 <>
                     <Gallery
                         style={{ backgroundColor: COLORS.lightBlack, marginTop: 40 }}
                         containerDimensions={{ width, height: height - 60 * 2 - 40 * 2 }}
                         ref={gallery}
-                        data={photos}
+                        data={images}
                         keyExtractor={(item, index) => item + index}
                         renderItem={renderItem}
                         initialIndex={index}

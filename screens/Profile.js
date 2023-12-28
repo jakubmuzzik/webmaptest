@@ -14,7 +14,7 @@ import { useParams, useLocation } from 'react-router-dom'
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const photos = [require('../assets/dummy_photo.png'), 'https://picsum.photos/seed/696/3000/2000', require('../assets/CATEGORY4.png')]
+const images = [require('../assets/dummy_photo.png'), 'https://picsum.photos/seed/696/3000/2000', require('../assets/CATEGORY4.png')]
 const videos = [require('../assets/dummy_photo.png'), 'https://picsum.photos/seed/696/3000/2000']
 
 const Profile = ({  }) => {
@@ -127,7 +127,7 @@ const Profile = ({  }) => {
                         <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ position: 'absolute', bottom: normalize(20), right: normalize(20), borderRadius: 10, backgroundColor: COLORS.grey, borderWidth: 1, paddingHorizontal: SPACING.xx_small, paddingVertical: SPACING.xxx_small, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                             {/* <View style={{  }}> */}
                                 <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
-                                <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> Show all assets</Text>
+                                <Text style={{ fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: '#FFF' }}> View all assets</Text>
                             {/* </View> */}
                         </TouchableOpacity>
                     </View>
@@ -519,7 +519,7 @@ const Profile = ({  }) => {
                 {renderCard()}
             </View>
 
-            <AssetsTabView visible={photosModalVisible} photos={photos} videos={videos} closeModal={closeModal} />
+            <AssetsTabView visible={photosModalVisible} images={images} videos={videos} closeModal={closeModal} />
         </>
     )
 }

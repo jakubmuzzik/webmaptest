@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Text, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
-import { normalize } from '../utils'
+import { normalize, generateThumbnailFromLocalURI } from '../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
@@ -31,6 +31,7 @@ import {
 import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
+import Toast from 'react-native-toast-message'
 
 const { height } = Dimensions.get('window')
 
@@ -38,6 +39,20 @@ const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
+
+const MAX_PHOTO_SIZE_MB = 2
+const MAX_VIDEO_SIZE_MB = 10
+const MAX_VIDEOS = 5
+const MAX_PHOTOS = 15
+
+const getDataType = (uri) => {
+    const parts = uri.split(',')
+    return parts[0].split('/')[0].split(':')[1]
+}
+
+const getFileSizeInMb = (uri) => {
+    return (uri.length * (3 / 4) - 2) / (1024 * 1024)
+}
 
 const LadySignup = ({ }) => {
     const [data, setData] = useState({
@@ -69,7 +84,8 @@ const LadySignup = ({ }) => {
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null, null]
+        images: [null, null, null, null, null, null],
+        videos: [null]
     })
 
     const [photosContentWidth, setPhotosContentWidth] = useState(normalize(850))
@@ -414,19 +430,40 @@ const LadySignup = ({ }) => {
         }))
     }, [])
 
-    const onSelectImagePress = useCallback(async (index) => {
+    const onSelectImagePress = async (index) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.7,
+            base64: true,
+            //aspect: [4, 3],
+            quality: 1,
         })
 
         if (!result.canceled) {
             try {
+                const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
+                if (fileSizeMb > MAX_PHOTO_SIZE_MB) {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'File Size Error',
+                        text2:`Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
+                    })
+                    return
+                }
+
+                const dataType = getDataType(result.assets[0].uri)
+                if (dataType !== 'image') {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Invalid File Type',
+                        text2:`Please upload a supported file type.`
+                    })
+                    return
+                }
+
                 setData(d => {
                     d.images[index] = result.assets[0].uri
-                    if (index > 4 && d.images.length < 16) {
+                    if (index > 4 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
                     return { ...d }
@@ -435,9 +472,55 @@ const LadySignup = ({ }) => {
                 console.error(e)
             }
         }
-    }, [])
+    }
 
-    const onDeleteImagePress = useCallback(async (index) => {
+    const onSelectVideoPress = async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+            allowsEditing: true,
+            base64: true,
+            quality: 1,
+        })
+
+        if (!result.canceled) {
+            try {
+                const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
+                if (fileSizeMb > MAX_VIDEO_SIZE_MB) {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'File Size Error',
+                        text2:`Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
+                    })
+                    return
+                }
+
+                const dataType = getDataType(result.assets[0].uri)
+                if (dataType !== 'video') {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Invalid File Type',
+                        text2:`Please upload a supported file type.`
+                    })
+                    return
+                }
+
+                const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
+
+                setData(d => {
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri}
+                    if (d.videos.length < MAX_VIDEOS) {
+                        d.videos.push(null)
+                    }
+                    //TODO - generate thumbnail
+                    return { ...d }
+                })
+            } catch (e) {
+                console.error(e)
+            }
+        }
+    }
+
+    const onDeleteImagePress = async (index) => {
         setData(d => {
             if (index > 4) {
                 d.images.splice(index, 1)
@@ -447,7 +530,15 @@ const LadySignup = ({ }) => {
             
             return { ...d }
         })
-    }, [])
+    }
+
+    const onDeleteVideoPress = async (index) => {
+        setData(d => {
+            d.videos.splice(index, 1)
+            
+            return { ...d }
+        })
+    }
 
     const paginageNext = () => {
         setIndex(index => index + 1)
@@ -845,7 +936,7 @@ const LadySignup = ({ }) => {
                         3. Services & Pricing
                     </Text>
 
-                    <Text style={{ marginTop: SPACING.x_small, marginBottom: SPACING.small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                    <Text style={{ marginTop: SPACING.xx_small, marginBottom: SPACING.xx_small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                         Available for:
                     </Text>
 
@@ -880,7 +971,7 @@ const LadySignup = ({ }) => {
                         ]}
                     />
 
-                    <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium }}>
+                    <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginBottom: SPACING.xx_small, marginTop: SPACING.medium }}>
                         Services ({data.services.length})
                     </Text>
 
@@ -908,7 +999,7 @@ const LadySignup = ({ }) => {
                         ))}
                     </View>
 
-                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
+                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
                         <Button
                             labelStyle={{ fontSize: normalize(20), color: '#000' }}
                             //style={{ borderRadius: 10, borderColor: '#000', borderWidth: 2 }}
@@ -924,7 +1015,7 @@ const LadySignup = ({ }) => {
                         </Button>
                     </View>
 
-                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginTop: SPACING.medium, alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small, marginBottom: SPACING.xx_small, marginTop: SPACING.medium, alignItems: 'center' }}>
                         <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                             Pricing
                         </Text>
@@ -1032,7 +1123,7 @@ const LadySignup = ({ }) => {
                         </View>
                     </View>}
 
-                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small }}>
+                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
                         <DropdownSelect
                             ref={pricesDropdownPress}
                             offsetX={contentWidth * i}
@@ -1302,7 +1393,7 @@ const LadySignup = ({ }) => {
                         5. Photos & Videos
                     </Text>
 
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large }}>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginTop: SPACING.xx_small, }}>
                         Add at least 5 cover photos
                     </Text>
                     <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large }}>
@@ -1338,7 +1429,12 @@ const LadySignup = ({ }) => {
                                     onPress={() => onSelectImagePress(0)}
                                     style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
                                 >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                     <>
+                                        <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                        <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                            Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                        </Text>
+                                    </>
                                 </TouchableRipple>
                             }
                         </View>
@@ -1371,7 +1467,12 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(1)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1 }}
                                         >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                             <>
+                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                                </Text>
+                                            </>
                                         </TouchableRipple>
 
                                     }
@@ -1405,7 +1506,12 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(2)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderTopRightRadius: 20, flex: 1, }}
                                         >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                             <>
+                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                                </Text>
+                                            </>
                                         </TouchableRipple>
 
                                     }
@@ -1439,7 +1545,12 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(3)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1, }}
                                         >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                             <>
+                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                                </Text>
+                                            </>
                                         </TouchableRipple>
                                     }
                                 </View>
@@ -1470,7 +1581,12 @@ const LadySignup = ({ }) => {
                                             onPress={() => onSelectImagePress(4)}
                                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderBottomRightRadius: 20, flex :1, }}
                                         >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                            <>
+                                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                                                <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                    Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
+                                                </Text>
+                                            </>
                                         </TouchableRipple>
                                     }
                                 </View>
@@ -1478,11 +1594,11 @@ const LadySignup = ({ }) => {
                         </View>
                     </View>
 
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large,  marginHorizontal: SPACING.x_large, marginTop: SPACING.x_small, }}>
-                        Add additional photos or videos
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginTop: SPACING.medium }}>
+                        Add additional photos
                     </Text>
                     <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small }}>
-                        Visitors can explore these assets by clicking the 'View All' button on your profile
+                        Visitors can explore these photos by clicking the 'View All' button on your profile
                     </Text>
 
                     {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
@@ -1517,14 +1633,65 @@ const LadySignup = ({ }) => {
                                     >
                                         <>
                                             <AntDesign name="plus" size={normalize(30)} color="black" />
-                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>
+                                            {/* <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>
                                                 Add more
+                                            </Text> */}
+                                            <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_PHOTO_SIZE_MB}MB</Text>
                                             </Text>
                                         </>
                                     </TouchableRipple>
                                 }
                             </View>)}
                     </View>}
+
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large,  marginHorizontal: SPACING.x_large, marginTop: SPACING.medium - SPACING.xxx_small, }}>
+                        Add videos
+                    </Text>
+                    <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small }}>
+                        Visitors can explore these videos by clicking the 'View All' button on your profile
+                    </Text>
+
+                    <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
+                        {data.videos.map((video, index) =>
+                            <View key={video ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
+                                {video ?
+                                    <React.Fragment>
+                                        <Image
+                                            style={{
+                                                flex: 1,
+                                                borderRadius: 20,
+                                                aspectRatio: 1 / 1,
+                                                borderWidth: 1,
+                                                borderColor: 'rgba(28,27,31,0.16)'
+                                            }}
+                                            source={{ uri: video.thumbnail }}
+                                            placeholder={blurhash}
+                                            resizeMode="contain"
+                                            transition={200}
+                                        />
+                                        <IconButton
+                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                            icon="delete-outline"
+                                            iconColor='white'
+                                            size={normalize(20)}
+                                            onPress={() => onDeleteVideoPress(index)}
+                                        />
+                                    </React.Fragment> :
+                                    <TouchableRipple
+                                        onPress={() => onSelectVideoPress(index)}
+                                        style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 20, aspectRatio: 1 / 1 }}
+                                    >
+                                        <>
+                                            <AntDesign name="videocamera" size={normalize(30)} color="black" />
+                                            <Text style={{ fontFamily: FONTS.light, fontSize: FONT_SIZES.small }}>
+                                                Max file size: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{MAX_VIDEO_SIZE_MB}MB</Text>
+                                            </Text>
+                                        </>
+                                    </TouchableRipple>
+                                }
+                            </View>)}
+                    </View>
                 </Animated.ScrollView>
             </>
 

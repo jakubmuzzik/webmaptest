@@ -14,7 +14,7 @@ import AssetsGallery from './AssetsGallery'
 
 const { width, height } = Dimensions.get('window')
 
-const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled, closeModal }) => {
+const AssetsTabView = ({ images = [], videos = [], visible, updateScrollDisabled, closeModal }) => {
     const [pagesIndex, setPagesIndex] = useState(0)
     const [tabsIndex, setTabsIndex] = useState(0)
     const [pressedImageIndex, setPressedImageIndex] = useState()
@@ -23,7 +23,7 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
         { key: 'Gallery', title: 'Gallery' },
     ])
     const [assetRoutes] = useState([
-        { key: 'Photos', title: 'Photos', length: photos.length },
+        { key: 'Photos', title: 'Photos', length: images.length },
         { key: 'Videos', title: 'Videos', length: videos.length },
     ].filter(r => r.length))
 
@@ -90,7 +90,7 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
             case 'Assets':
                 return renderAssetsPage()
             case 'Gallery':
-                return <AssetsGallery pressedAssetIndex={pressedImageIndex} goBackPress={goBackPress} onClosePress={onClosePress} assets={photos} />
+                return <AssetsGallery pressedAssetIndex={pressedImageIndex} goBackPress={goBackPress} onClosePress={onClosePress} assets={images} />
             default:
                 return null
         }
@@ -99,7 +99,7 @@ const AssetsTabView = ({ photos = [], videos = [], visible, updateScrollDisabled
     const renderAssetsScene = ({ route }) => {
         switch (route.key) {
             case 'Photos':
-                return <PhotosList onImagePress={onImagePress} photos={photos} />
+                return <PhotosList onImagePress={onImagePress} images={images} />
             case 'Videos':
                 return <VideosList videos={videos} />
             default:
