@@ -6,8 +6,8 @@ import { Video, ResizeMode } from 'expo-av'
 import { generateThumbnailFromLocalURI } from '../../utils'
 import { isBrowser } from 'react-device-detect'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { IconButton } from 'react-native-paper'
-import { COLORS } from '../../constants'
+import { ActivityIndicator } from 'react-native-paper'
+import { COLORS, SPACING } from '../../constants'
 
 const RenderVideo = ({ video }) => {
     const [thumbnail, setThumbnail] = useState()
@@ -24,7 +24,7 @@ const RenderVideo = ({ video }) => {
         try {
             //todo - get and save thumbnail aspect ratio when uploading video instead
             const thumbnailUrl = await generateThumbnailFromLocalURI(require('../../assets/big_buck_bunny.mp4'), 0)
-            setThumbnail(thumbnailUrl)
+            //setThumbnail(thumbnailUrl)
             RNImage.getSize(thumbnailUrl, (width, height) => { 
                 setAspectRatio(width / height)
             })
@@ -40,7 +40,7 @@ const RenderVideo = ({ video }) => {
 
     if (!aspectRatio) {
         return (
-            null
+            <ActivityIndicator style={{ margin: SPACING.large, alignSelf: 'center' }} animating color={COLORS.red} />
         )
     }
 
@@ -76,28 +76,10 @@ const RenderVideo = ({ video }) => {
                 }}
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
-                usePoster={showPoster && !isBrowser}
-                PosterComponent={() => (
-                    <ImageBackground
-                        source={thumbnail}
-                        style={{
-                            width: '100%',
-                            height: undefined,
-                            aspectRatio: aspectRatio,
-                            top: 0,
-                            position: 'absolute',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }} >
-                            <TouchableOpacity activeOpacity={0.8} onPress={onPlayPress}>
-                                <Ionicons name="ios-play-circle-sharp" size={75} color="black" />
-                            </TouchableOpacity>
-                    </ImageBackground>
-                )}
             />
-            {/* {!isBrowser && showPoster && (
+            {!isBrowser && showPoster && (
                 <ImageBackground
-                    source={thumbnail}
+                    source={require('../../assets/dummy_photo.png')}
                     style={{
                         width: '100%',
                         height: undefined,
@@ -111,7 +93,7 @@ const RenderVideo = ({ video }) => {
                             <Ionicons name="ios-play-circle-sharp" size={70} color="black" />
                         </TouchableOpacity>
                 </ImageBackground>
-            )} */}
+            )}
         </MotiView>
     )
 }
