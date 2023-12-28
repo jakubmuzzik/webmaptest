@@ -605,13 +605,13 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.h3,
     },
     attributeName: {
-        color: '#FFF',
-        fontFamily: FONTS.light,
+        color: 'rgba(255,255,255,0.8)',
+        fontFamily: FONTS.medium,
         fontSize: FONT_SIZES.medium
     },
     attributeValue: {
         color: '#FFF',
-        fontFamily: FONTS.medium,
+        fontFamily: FONTS.bold,
         fontSize: FONT_SIZES.medium
     },
     attributeDivider: {
