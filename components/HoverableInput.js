@@ -32,7 +32,8 @@ const HoverableInput = ({
     pointerEventsDisabled = false,
     multiline=false,
     numberOfLines=1,
-    maxLength
+    maxLength,
+    numeric=false
 }) => {
     const [isHovered, setIsHovered] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
@@ -71,6 +72,7 @@ const HoverableInput = ({
                 multiline={multiline}
                 numberOfLines={numberOfLines}
                 maxLength={maxLength}
+                keyboardType= {numeric ? 'numeric' : undefined}
             />
             {errorMessage && <HelperText type="error" visible>
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>

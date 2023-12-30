@@ -1,7 +1,7 @@
 import React, { memo, useState, useRef, useMemo, useCallback } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons'
-import { COLORS, FONTS, FONT_SIZES, SPACING, isSmallScreen, SUPPORTED_LANGUAGES } from "../../constants"
+import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES } from "../../constants"
 import { normalize, stripEmptyParams, getParam } from "../../utils"
 import { Image } from 'expo-image'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
@@ -87,64 +87,66 @@ const RenderClient = ({ client, width, showPrice = true }) => {
                         />
                     </View>
 
-                    <View style={{
-                        position: 'absolute',
-                        opacity: isHovered && !isSmallScreen && index !== 0 ? 0.7 : 0,
-                        transitionDuration: '150ms',
-                        left: 10,
-                        top: 0,
-                        bottom: 0,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <MaterialIcons onPress={onPrevPress}
-                            style={{
-                                borderRadius: 25,
-                                backgroundColor: '#FFF',
-                                padding: 3,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 4,
-                                },
-                                shadowOpacity: 0.32,
-                                shadowRadius: 5.46,
-                                elevation: 9,
-                            }}
-                            name="keyboard-arrow-left"
-                            size={25}
-                            color={COLORS.lightBlack}
-                        />
-                    </View>
-                    <View style={{
-                        position: 'absolute',
-                        opacity: isHovered && !isSmallScreen && index !== client.images.length - 1 ? 0.7 : 0,
-                        transitionDuration: '150ms',
-                        right: 10,
-                        top: 0,
-                        bottom: 0,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <MaterialIcons onPress={onNextPress}
-                            style={{
-                                borderRadius: 25,
-                                backgroundColor: '#FFF',
-                                padding: 3,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 4,
-                                },
-                                shadowOpacity: 0.32,
-                                shadowRadius: 5.46,
-                                elevation: 9,
-                            }}
-                            name="keyboard-arrow-right"
-                            size={25}
-                            color={COLORS.lightBlack}
-                        />
-                    </View>
+                    {isBrowser && <>
+                        <View style={{
+                            position: 'absolute',
+                            opacity: isHovered && index !== 0 ? 0.7 : 0,
+                            transitionDuration: '150ms',
+                            left: 10,
+                            top: 0,
+                            bottom: 0,
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <MaterialIcons onPress={onPrevPress}
+                                style={{
+                                    borderRadius: 25,
+                                    backgroundColor: '#FFF',
+                                    padding: 3,
+                                    shadowColor: "#000",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 4,
+                                    },
+                                    shadowOpacity: 0.32,
+                                    shadowRadius: 5.46,
+                                    elevation: 9,
+                                }}
+                                name="keyboard-arrow-left"
+                                size={25}
+                                color={COLORS.lightBlack}
+                            />
+                        </View>
+                        <View style={{
+                            position: 'absolute',
+                            opacity: isHovered && index !== client.images.length - 1 ? 0.7 : 0,
+                            transitionDuration: '150ms',
+                            right: 10,
+                            top: 0,
+                            bottom: 0,
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <MaterialIcons onPress={onNextPress}
+                                style={{
+                                    borderRadius: 25,
+                                    backgroundColor: '#FFF',
+                                    padding: 3,
+                                    shadowColor: "#000",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 4,
+                                    },
+                                    shadowOpacity: 0.32,
+                                    shadowRadius: 5.46,
+                                    elevation: 9,
+                                }}
+                                name="keyboard-arrow-right"
+                                size={25}
+                                color={COLORS.lightBlack}
+                            />
+                        </View>
+                    </>}
 
                     <View style={{ position: 'absolute', bottom: normalize(20), left: 0, right: 0 }}>
                         <View style={{ alignSelf: 'center' }}>

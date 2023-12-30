@@ -1,11 +1,16 @@
 import React, { useMemo, useState, useEffect, useRef, memo } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView } from 'react-native'
 import { COLORS, SPACING, SUPPORTED_LANGUAGES } from '../../../constants'
 import { stripEmptyParams } from '../../../utils'
 import Gallery from 'react-native-awesome-gallery'
 import { Image } from 'expo-image'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { Video, ResizeMode } from 'expo-av'
+
+const MAX_IMAGE_SIZE = 130
+
+const blurhash =
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const renderItem = ({
     item,
@@ -24,7 +29,7 @@ const renderItem = ({
     )
 }
 
-const AssetsGallery = ({ assets, pressedAssetIndex, goBackPress, onClosePress }) => {
+const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
     // const params = useMemo(() => ({
     //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     //     id: route.params.id
@@ -35,12 +40,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex, goBackPress, onClosePress })
     const gallery = useRef()
 
     const [index, setIndex] = useState(pressedAssetIndex)
-
-    useEffect(() => {        
-        if (!isNaN(pressedAssetIndex)) {
-            gallery.current?.setIndex(pressedAssetIndex)
-        }
-    }, [pressedAssetIndex])
+    const [galleryHeight, setGalleryHeight] = useState()
 
     const onNextPress = () => {
         gallery.current?.setIndex(
@@ -60,82 +60,86 @@ const AssetsGallery = ({ assets, pressedAssetIndex, goBackPress, onClosePress })
         )
     }
 
+    const baseImageWidth = width < 800 ? width : 800
+    const dynamicImageSize = baseImageWidth / 4
+
     return (
-        <View style={{ flex: 1, overflow: 'hidden', backgroundColor: COLORS.lightBlack }}>
-            <View style={{
-                height: 60,
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                zIndex: 3
-            }}>
-                <Ionicons name="arrow-back" size={25} color='#FFF' onPress={goBackPress} style={{ marginLeft: SPACING.medium }} />
-                <View>
-                    {assets && <Text style={styles.headerText}>
-                        {index + 1} of {assets.length}
-                    </Text>}
-                </View>
-                <Ionicons name="close" size={25} color='#FFF' style={{ marginRight: SPACING.medium }} onPress={onClosePress} />
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
+            <View style={{ flex: 1 }} onLayout={(event) => setGalleryHeight(event.nativeEvent.layout.height)}>
+                <Gallery
+                    style={{ backgroundColor: COLORS.lightBlack, marginTop: 10, marginHorizontal: SPACING.medium }}
+                    containerDimensions={{ width: width - SPACING.medium - SPACING.medium, height: '100%' }}
+                    ref={gallery}
+                    data={assets}
+                    keyExtractor={(item, index) => item + index}
+                    renderItem={renderItem}
+                    initialIndex={index}
+                    numToRender={3}
+                    doubleTapInterval={150}
+                    onIndexChange={(index) => setIndex(index)}
+                    loop
+                />
+            </View>
+            
+
+            <View style={{ width: 800, maxWidth: '100%', alignSelf: 'center' }}>
+                <ScrollView horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', margin: SPACING.small, }}>
+                    {assets.map((asset, assetIndex) => (
+                        <TouchableOpacity key={asset} onPress={() => gallery.current?.setIndex(assetIndex, true)} activeOpacity={1}>
+                            <Image
+                                style={{
+                                    width: dynamicImageSize,
+                                    height: dynamicImageSize,
+                                    maxHeight: MAX_IMAGE_SIZE,
+                                    maxWidth: MAX_IMAGE_SIZE,
+                                    marginRight: assetIndex + 1 === assets.length ? 0 : SPACING.small,
+                                    opacity: assetIndex === index ? 1 : 0.75,
+                                    borderRadius: 5
+                                }}
+                                source={asset}
+                                resizeMode='cover'
+                                placeholder={blurhash}
+                                transition={200}
+                            />
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
             </View>
 
-            {assets && (
-                <>
-                    <Gallery
-                        style={{ backgroundColor: COLORS.lightBlack, marginTop: 40 }}
-                        containerDimensions={{ width, height: height - 60 * 2 - 40 * 2 }}
-                        ref={gallery}
-                        data={assets}
-                        keyExtractor={(item, index) => item + index}
-                        renderItem={renderItem}
-                        initialIndex={index}
-                        numToRender={3}
-                        doubleTapInterval={150}
-                        onIndexChange={(index) => setIndex(index)}
-                        onSwipeToClose={goBackPress}
-                        loop
-                        onScaleEnd={(scale) => {
-                            if (scale < 0.8) {
-                                goBackPress()
-                            }
+            {galleryHeight &&
+                <><View style={{
+                    position: 'absolute',
+                    opacity: 0.7,
+                    left: SPACING.xx_large,
+                    top: galleryHeight / 2 - 17.5,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <MaterialIcons onPress={onPrevPress}
+                        style={{
+                            borderRadius: 35,
+                            backgroundColor: '#FFF',
+                            padding: 3,
+                            shadowColor: "#000",
+                            shadowOffset: {
+                                width: 0,
+                                height: 4,
+                            },
+                            shadowOpacity: 0.32,
+                            shadowRadius: 5.46,
+                            elevation: 9,
                         }}
+                        name="keyboard-arrow-left"
+                        size={35}
+                        color={COLORS.lightBlack}
                     />
-
-                    <View style={{
-                        position: 'absolute',
-                        opacity: 0.7,
-                        left: SPACING.xx_large,
-                        top: 0,
-                        bottom: 0,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <MaterialIcons onPress={onPrevPress}
-                            style={{
-                                borderRadius: 35,
-                                backgroundColor: '#FFF',
-                                padding: 3,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 4,
-                                },
-                                shadowOpacity: 0.32,
-                                shadowRadius: 5.46,
-                                elevation: 9,
-                            }}
-                            name="keyboard-arrow-left"
-                            size={35}
-                            color={COLORS.lightBlack}
-                        />
-                    </View>
+                </View>
 
                     <View style={{
                         position: 'absolute',
                         opacity: 0.7,
                         right: SPACING.xx_large,
-                        top: 0,
-                        bottom: 0,
+                        top: galleryHeight / 2 - 17.5,
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
@@ -158,8 +162,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex, goBackPress, onClosePress })
                             color={COLORS.lightBlack}
                         />
                     </View>
-                </>
-            )}
+                </>}
         </View>
     )
 }

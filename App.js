@@ -56,6 +56,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    //document.addEventListener("scroll", (event) => console.log('scroll'));
     init()
   }, [])
 

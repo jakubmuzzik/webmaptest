@@ -46,9 +46,10 @@ export const FONTS = {
 }
 
 export const COLORS = {
-    lightGrey: '#404040',
-    hoveredLightGrey: '#4c4c4c',
-    grey: '#323232',
+    lightGrey: '#323232',//'#404040',
+    darkGrey: '#1F1F1F',
+    hoveredLightGrey: '#404040',//'#4c4c4c',
+    grey: '#1F1F1F',//'#323232',
     lightBlack: '#161616',
     red: '#c91e1e',//'#dc2e2e',
     secondaryRed: '#e89492',

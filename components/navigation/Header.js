@@ -10,6 +10,7 @@ import {
     TouchableWithoutFeedback,
     useWindowDimensions
 } from 'react-native'
+import {Picker} from '@react-native-picker/picker'
 import {
     COLORS,
     FONTS,
@@ -37,7 +38,7 @@ import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
 
-import { useSearchParams, Link, useLocation } from 'react-router-dom'
+import { useSearchParams, Link, useLocation, useNavigate } from 'react-router-dom'
 
 const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu', 'NotFound', 'Explore'
@@ -46,6 +47,7 @@ const SCREENS_WITH_CITY_SELECTION = [
 const Header = ({ }) => {
     const [searchParams] = useSearchParams()
     const location = useLocation()
+    const navigate = useNavigate()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
@@ -143,7 +145,7 @@ const Header = ({ }) => {
         }
     }
 
-    const renderUserDropdown = useCallback(() => {
+    const renderUserDropdown = () => {
         return (
             <Modal visible={userDropdownVisible} transparent animationType="none">
                 <TouchableOpacity
@@ -170,12 +172,6 @@ const Header = ({ }) => {
                                 <TouchableOpacity onPress={onSignUpPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
                                     activeOpacity={0.8}
                                 >
-                                    <LinearGradient
-                                        colors={[COLORS.red, COLORS.darkRed]}
-                                        style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}
-                                    //start={{ x: 0, y: 0.5 }}
-                                    //end={{ x: 1, y: 0.5 }}
-                                    />
                                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                                         {labels.SIGN_UP}
                                     </Text>
@@ -190,12 +186,37 @@ const Header = ({ }) => {
                                     </Text>
                                 </TouchableOpacity>
                             </HoverableView>
+
+                            {isSmallScreen && (
+                                <>
+                                    <View style={{ marginVertical: 2, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)' }} />
+
+                                    <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
+                                            Language:
+                                        </Text>
+                                        <Picker
+                                            selectedValue={params.language ?? DEFAULT_LANGUAGE}
+                                            onValueChange={(itemValue, itemIndex) => navigate({
+                                                pathname: location.pathname,
+                                                search: new URLSearchParams(stripEmptyParams({ ...params, language: itemValue })).toString()
+                                            })
+                                            }
+                                            fontFamily={FONTS.bold}
+                                            style={{ borderWidth: 0, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, outlineStyle: 'none' }}
+                                        >
+                                            <Picker.Item label="Čeština" value="cs" />
+                                            <Picker.Item label="English" value="en" />
+                                        </Picker>
+                                    </HoverableView>
+                                </>
+                            )}
                         </MotiView>
                     </TouchableWithoutFeedback>
                 </TouchableOpacity>
             </Modal>
         )
-    }, [userDropdownVisible, dropdownTop])
+    }
 
     const renderSeoContent = () => (
         <>
@@ -284,11 +305,10 @@ const Header = ({ }) => {
                     />
                     <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
                 </HoverableView>
-                <HoverableView hoveredOpacity={0.8} style={{ borderRadius: 20, justifyContent: 'center', marginLeft: SPACING.xx_small }}>
-                    <TouchableOpacity ref={languageDropdownRef} onPress={toggleLanguageDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
-                        <MaterialIcons style={{ paddingRight: SPACING.xxx_small }} name="language" size={normalize(20)} color="white" />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase() : DEFAULT_LANGUAGE.toUpperCase()}</Text>
-                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="keyboard-arrow-down" size={normalize(20)} color='#FFF' />
+                <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
+                    <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
+                        <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
+                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="menu" size={normalize(20)} color="white" />
                     </TouchableOpacity>
                 </HoverableView>
             </>

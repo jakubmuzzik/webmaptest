@@ -20,23 +20,19 @@ import Favourites from '../screens/Favourites'
 import MobileFooter from './MobileFooter'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
 
 import Explore from './Explore'
 
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+import Profile2 from '../screens/Profile2'
 
 const { height: initialHeight } = Dimensions.get('window')
 
 const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-    const insets = useSafeAreaInsets()
-
-    const { width, height } = useWindowDimensions()
-    const isSmalScreen = width < SMALL_SCREEN_THRESHOLD
+    const { height } = useWindowDimensions()
 
     const router = createBrowserRouter(createRoutesFromElements(
         <>
@@ -46,11 +42,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
+                    <View style={{ flex: 1 }}>
                         <Explore />
                     </View>
-
-                    {isSmalScreen && <MobileFooter />}
                 </>
             } >
                 <Route index element={<Esc />} />
@@ -64,11 +58,21 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
                     
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
+                    <View style={{ flex: 1 }}>
                         <Profile />
                     </View>
+                </>
+            } />
 
-                    {isSmalScreen && <MobileFooter />}
+            <Route path='/profile2/:id' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ flex: 1 }}>
+                        <Profile2 />
+                    </View>
                 </>
             } />
 
@@ -78,11 +82,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
+                    <View>
                         {isLoggedIn ? <Favourites /> : <SignUpOrLogin />}
                     </View>
-
-                    {isSmalScreen && <MobileFooter />}
                 </>
             } />
 
@@ -91,12 +93,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
-
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
+                    <View style={{ flex: 1 }}>
                         {isLoggedIn ? <Chat /> : <SignUpOrLogin />}
                     </View>
-
-                    {isSmalScreen && <MobileFooter />}
                 </>
             } />
 
@@ -106,11 +105,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
-                        {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
-                    </View>
-
-                    {isSmalScreen && <MobileFooter />}
+                    {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
                 </>
             } />
 
@@ -120,11 +115,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, height: initialHeight - normalize(70) }}>
+                    <View style={{ height: initialHeight - normalize(70) }}>
                         <LadySignup />
                     </View>
-
-                    {isSmalScreen && <MobileFooter />}
                 </>
             } />
 
@@ -134,11 +127,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ paddingBottom: isSmalScreen ? 60 + insets.bottom : 0, flex: 1 }}>
+                    <View style={{ flex: 1 }}>
                         <NotFound />
                     </View>
-
-                    {isSmalScreen && <MobileFooter />}
                 </>
             } />
         </>

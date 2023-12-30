@@ -7,14 +7,13 @@ import { updateScrollDisabled } from "../../../redux/actions"
 import { normalize } from '../../../utils'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
-import PhotosList from './PhotosList'
 import VideosList from './VideosList'
 import { ActivityIndicator } from 'react-native-paper'
 import AssetsGallery from './AssetsGallery'
 
 const { width, height } = Dimensions.get('window')
 
-const AssetsTabView = ({ images = [], videos = [], visible, updateScrollDisabled, closeModal }) => {
+const AssetsTabView = ({ images = [], videos = [], visible, updateScrollDisabled, closeModal, pressedAssetIndex=0 }) => {
     const [pagesIndex, setPagesIndex] = useState(0)
     const [tabsIndex, setTabsIndex] = useState(0)
     const [pressedImageIndex, setPressedImageIndex] = useState()
@@ -52,54 +51,33 @@ const AssetsTabView = ({ images = [], videos = [], visible, updateScrollDisabled
     )
 
     const renderTabBar = (props) => (
-        <TabBar
-            {...props}
-            indicatorStyle={{ backgroundColor: 'red' }}
-            style={{ backgroundColor: 'transparent', maxWidth: '100%', alignSelf: 'center', alignItems: 'center', width: 'auto' }}
-            tabStyle={{ width: 'auto' }}
-            scrollEnabled={true}
-            renderLabel={({ route, focused, color }) => (
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
-                    {route.title} <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>({route.length})</Text>
-                </Text>
-            )}
-            gap={SPACING.medium}
-        />
-    )
-
-    const renderAssetsPage = () => (
-        <>
-            <View style={{ height: 60, backgroundColor: COLORS.grey, justifyContent: 'center' }}>
+        <View style={{ flexDirection: 'row', paddingVertical: 5 }}>
+            <View style={{ flexBasis: 30, flexGrow: 1, flexShrink: 0 }}></View>
+            <View style={{ flexShrink: 1, flexGrow: 0 }}>
+                <TabBar
+                    {...props}
+                    indicatorStyle={{ backgroundColor: 'red' }}
+                    style={{ backgroundColor: 'transparent', maxWidth: '100%', alignSelf: 'center', alignItems: 'center', width: 'auto' }}
+                    tabStyle={{ width: 'auto' }}
+                    scrollEnabled={true}
+                    renderLabel={({ route, focused, color }) => (
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
+                            {route.title} <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>({route.length})</Text>
+                        </Text>
+                    )}
+                    gap={SPACING.medium}
+                />
+            </View>
+            <View style={{ flexBasis: 30, flexGrow: 1, flexShrink: 0, justifyContent: 'center' }}>
                 <Ionicons onPress={onClosePress} name="close" size={25} color="white" style={{ marginRight: SPACING.medium, alignSelf: 'flex-end' }} />
             </View>
-
-            <TabView
-                renderTabBar={renderTabBar}
-                swipeEnabled={false}
-                navigationState={{ index: tabsIndex, routes: assetRoutes }}
-                renderScene={renderAssetsScene}
-                onIndexChange={setTabsIndex}
-                lazy
-                renderLazyPlaceholder={renderLazyPlaceholder}
-            />
-        </>
+        </View>
     )
-
-    const renderPagesScene = ({ route }) => {
-        switch (route.key) {
-            case 'Assets':
-                return renderAssetsPage()
-            case 'Gallery':
-                return <AssetsGallery pressedAssetIndex={pressedImageIndex} goBackPress={goBackPress} onClosePress={onClosePress} assets={images} />
-            default:
-                return null
-        }
-    }
 
     const renderAssetsScene = ({ route }) => {
         switch (route.key) {
             case 'Photos':
-                return <PhotosList onImagePress={onImagePress} images={images} />
+                return <AssetsGallery pressedAssetIndex={pressedAssetIndex} assets={images} />
             case 'Videos':
                 return <VideosList videos={videos} />
             default:
@@ -111,11 +89,11 @@ const AssetsTabView = ({ images = [], videos = [], visible, updateScrollDisabled
         <Modal visible={visible} animationType="slide" onShow={() => updateScrollDisabled(true)}>
             <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
                 <TabView
-                    renderTabBar={props => null}
+                    renderTabBar={renderTabBar}
                     swipeEnabled={false}
-                    navigationState={{ index: pagesIndex, routes: pagesRoutes }}
-                    renderScene={renderPagesScene}
-                    onIndexChange={setPagesIndex}
+                    navigationState={{ index: tabsIndex, routes: assetRoutes }}
+                    renderScene={renderAssetsScene}
+                    onIndexChange={setTabsIndex}
                     lazy
                     renderLazyPlaceholder={renderLazyPlaceholder}
                 />

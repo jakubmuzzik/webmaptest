@@ -40,7 +40,7 @@ const blurhash =
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
 
-const MAX_PHOTO_SIZE_MB = 2
+const MAX_PHOTO_SIZE_MB = 5
 const MAX_VIDEO_SIZE_MB = 10
 const MAX_VIDEOS = 5
 const MAX_PHOTOS = 15
@@ -88,7 +88,7 @@ const LadySignup = ({ }) => {
         videos: [null]
     })
 
-    const [photosContentWidth, setPhotosContentWidth] = useState(normalize(850))
+    const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
 
     const [showLoginInfoErrorMessages, setShowLoginInfoErrorMessages] = useState(false)
     const [showPersonalDetailsErrorMessages, setShowPersonalDetailsErrorMessages] = useState(false)
@@ -101,7 +101,7 @@ const LadySignup = ({ }) => {
 
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
-    const [contentWidth, setContentWidth] = useState(normalize(850))
+    const [contentWidth, setContentWidth] = useState(normalize(800))
 
     const [routes] = useState([
         { key: '1. Login Information', index: 0 },
@@ -436,7 +436,7 @@ const LadySignup = ({ }) => {
             allowsEditing: true,
             base64: true,
             //aspect: [4, 3],
-            quality: 1,
+            quality: 0.8,
         })
 
         if (!result.canceled) {
@@ -479,7 +479,7 @@ const LadySignup = ({ }) => {
             mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
             base64: true,
-            quality: 1,
+            quality: 0.8,
         })
 
         if (!result.canceled) {
@@ -511,7 +511,6 @@ const LadySignup = ({ }) => {
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }
-                    //TODO - generate thumbnail
                     return { ...d }
                 })
             } catch (e) {
@@ -766,6 +765,7 @@ const LadySignup = ({ }) => {
                             text={data.height}
                             setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
                             errorMessage={showPersonalDetailsErrorMessages && !data.height ? 'Enter your height' : undefined}
+                            numeric={true}
                         />
 
                         <HoverableInput
@@ -781,6 +781,7 @@ const LadySignup = ({ }) => {
                             text={data.weight}
                             setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
                             errorMessage={showPersonalDetailsErrorMessages && !data.weight ? 'Enter your weight' : undefined}
+                            numeric={true}
                         />
                     </View>
 
@@ -1077,6 +1078,7 @@ const LadySignup = ({ }) => {
                                         value={price.incall}
                                         placeholder='0'
                                         placeholderTextColor="grey"
+                                        keyboardType='numeric'
                                     />
                                 </View>
                             ))}
@@ -1102,6 +1104,7 @@ const LadySignup = ({ }) => {
                                         value={price.outcall}
                                         placeholder='0'
                                         placeholderTextColor="grey"
+                                        keyboardType='numeric'
                                     />
                                 </View>
                             ))}
@@ -1747,7 +1750,7 @@ const LadySignup = ({ }) => {
 
     return (
         <View style={{ height: '100%', backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
-            <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     Lady sign up
                 </Text>
@@ -1766,7 +1769,7 @@ const LadySignup = ({ }) => {
                     type: 'timing',
                     duration: 400,
                 }}
-                style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium }}>
+                style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', flex: 1, backgroundColor: COLORS.lightBlack, alignItems: 'center', justifyContent: 'center', padding: SPACING.medium }}>
                 <View
                     style={{ flex: 1, maxWidth: '100%', backgroundColor: '#FFF', borderRadius: 20, overflow: 'hidden' }}
                     onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}

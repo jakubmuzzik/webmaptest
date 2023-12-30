@@ -47,19 +47,19 @@ const Account = ({ navigation, route }) => {
         switch (route.key) {
             case 'profileInformation':
                 return (
-                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
                         <PersonalDetails />
                     </View>
                 )
             case 'photosAndVideos':
                 return (
-                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
                         <Photos />
                     </View>
                 )
             case 'settings':
                 return (
-                    <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center' }}>
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
                         <Settings />
                     </View>
                 )
@@ -72,7 +72,7 @@ const Account = ({ navigation, route }) => {
         <TabBar
             {...props}
             indicatorStyle={{ backgroundColor: 'red', left: SPACING.medium }}
-            style={{ backgroundColor: 'transparent', width: normalize(850), maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.medium }}
+            style={{ backgroundColor: 'transparent', width: normalize(800), maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.medium }}
             tabStyle={{ width: 'auto' }}
             scrollEnabled={true}
             renderLabel={({ route, focused, color }) => (
@@ -86,7 +86,7 @@ const Account = ({ navigation, route }) => {
 
     return (
         <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
-            <View style={{ width: normalize(850), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF' }}>
                     Account
                 </Text>
@@ -99,7 +99,7 @@ const Account = ({ navigation, route }) => {
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 sceneContainerStyle={{ 
-                    width: normalize(850), 
+                    width: normalize(800), 
                     maxWidth: '100%', 
                     alignSelf: 'center',
                     paddingHorizontal: SPACING.medium

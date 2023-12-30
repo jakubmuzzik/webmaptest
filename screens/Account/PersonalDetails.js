@@ -443,7 +443,7 @@ const PersonalDetails = ({ route }) => {
                         Edit
                     </Button>
                 </View>
-                <View style={{ width: '100%', height: 400 }}>
+                <View style={{ width: '100%', height: 300, borderRadius: 5, overflow: 'hidden' }}>
                     <MapView
                         ref={mapRef}
                         googleMapsApiKey="AIzaSyCA1Gw6tQbTOm9ME6Ru0nulUNFAOotVY3s"
@@ -613,7 +613,9 @@ const styles = StyleSheet.create({
     table: {
         borderWidth: 1,
         borderColor: COLORS.lightGrey,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderRadius: 5,
+        overflow: 'hidden'
     },
     tableHeaderText: { 
         color: '#FFF', 
