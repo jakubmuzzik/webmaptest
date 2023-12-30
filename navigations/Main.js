@@ -25,7 +25,6 @@ import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../c
 import Explore from './Explore'
 
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
-import Profile2 from '../screens/Profile2'
 
 const { height: initialHeight } = Dimensions.get('window')
 
@@ -60,18 +59,6 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     
                     <View style={{ flex: 1 }}>
                         <Profile />
-                    </View>
-                </>
-            } />
-
-            <Route path='/profile2/:id' element={
-                <>
-                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
-                        <Header />
-                    </View>
-
-                    <View style={{ flex: 1 }}>
-                        <Profile2 />
                     </View>
                 </>
             } />
