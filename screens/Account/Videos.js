@@ -9,7 +9,7 @@ import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Photos = ({ navigation, route, setTabHeight }) => {
+const Videos = ({ navigation, route, setTabHeight }) => {
     const [data, setData] = useState({
         images: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')]
     })
@@ -23,12 +23,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
     }
 
     return (
-        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height )} style={{ paddingVertical: SPACING.large, }}>
-            <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginBottom: SPACING.small }}>
-                Cover photos
-            </Text>
-
-            <View style={{ flexDirection: 'row' }}>
+        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height )}>
+            <View style={{ paddingVertical: SPACING.large, flexDirection: 'row' }}>
                 <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
                     {data.images[0] ?
                         <>
@@ -200,4 +196,4 @@ const Photos = ({ navigation, route, setTabHeight }) => {
     )
 }
 
-export default memo(Photos)
+export default memo(Videos)

@@ -241,66 +241,66 @@ const Profile = ({ }) => {
                     Personal Details
                 </Text>
                 <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                    <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
+                    <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Age</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Age</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>26</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Sexual orientation</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Sexual orientation</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Bisexual</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Nationality</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Nationality</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Czech</Text>
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                             <Text style={styles.attributeName}>Languages</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Czech, English</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Height</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Height</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>160 cm</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Weight</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Weight</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>56 kg</Text>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
+                    <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Body type</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Body type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Slim</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Pubic hair</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Pubic hair</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Shaved</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast size</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Breast size</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>B</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast type</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Breast type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Natural</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Hair color</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Hair color</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Blonde</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Eye color</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Eye color</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Green</Text>
                         </View>

@@ -92,7 +92,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
+                    <View style={{ flex: 1 }}>
+                        {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
+                    </View>
                 </>
             } />
 

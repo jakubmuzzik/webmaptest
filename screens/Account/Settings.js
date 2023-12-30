@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { FONTS, FONT_SIZES, COLORS, SPACING } from '../../constants'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -9,7 +9,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = () => {
+const Settings = ({ setTabHeight }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -40,19 +40,8 @@ const Settings = () => {
     }
 
     return (
-        <>
+        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
             <View style={styles.container}>
-                <View style={styles.row}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <MaterialCommunityIcons name="badge-account-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: SPACING.x_small }}>
-                            Name
-                        </Text>
-                    </View>
-                    <Text numberOfLines={1} onPress={onNameEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                        {data.name}
-                    </Text>
-                </View>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <MaterialCommunityIcons name="email-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
@@ -101,11 +90,11 @@ const Settings = () => {
             <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} />
             <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} />
             <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} />
-        </>
+        </View>
     )
 }
 
-export default Settings
+export default memo(Settings)
 
 const styles = StyleSheet.create({
     container: {

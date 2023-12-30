@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
 import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
@@ -10,18 +10,21 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 
 import PersonalDetails from './account/PersonalDetails'
 import Photos from './account/Photos'
+import Videos from './Account/Videos'
 import Settings from './Account/Settings'
 
 const Account = ({ navigation, route }) => {
     const [loginVisible, setLoginVisible] = useState(false)
     const [signUpVisible, setSignUpVisible] = useState(false)
     const [index, setIndex] = useState(0)
-    const [routes] = useState([
-        { key: 'profileInformation', title: 'Profile information' },
-        { key: 'photosAndVideos', title: 'Photos & Videos' },
-        { key: 'settings', title: 'Settings' },
+    const [routes, setRoutes] = useState([
+        { key: 'profileInformation', title: 'Profile information', height: '100%' },
+        { key: 'photos', title: 'Photos', height: '100%' },
+        { key: 'videos', title: 'Videos', height: '100%' },
+        { key: 'settings', title: 'Settings', height: '100%' },
     ])
-
+    const [mockIndex, setMockIndex] = useState(0)
+    
     const onLoginPress = () => {
         setSignUpVisible(false)
         setLoginVisible(true)
@@ -30,6 +33,13 @@ const Account = ({ navigation, route }) => {
     const onSignUpPress = () => {
         setLoginVisible(false)
         setSignUpVisible(true)
+    }
+
+    const setTabHeight = (height, index) => {
+        setRoutes(r => {
+            r[index].height = height
+            return [...r]
+        })
     }
 
     //todo - this is used only for photos tab - implement skeleton loading
@@ -47,20 +57,26 @@ const Account = ({ navigation, route }) => {
         switch (route.key) {
             case 'profileInformation':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <PersonalDetails />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
+                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, 0)} />
                     </View>
                 )
-            case 'photosAndVideos':
+            case 'photos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Photos />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
+                        <Photos setTabHeight={(height) => setTabHeight(height, 1)}/>
+                    </View>
+                )
+            case 'videos':
+                return (
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
+                        <Videos setTabHeight={(height) => setTabHeight(height, 2)} />
                     </View>
                 )
             case 'settings':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Settings />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
+                        <Settings setTabHeight={(height) => setTabHeight(height, 3)}/>
                     </View>
                 )
             default:
@@ -80,7 +96,7 @@ const Account = ({ navigation, route }) => {
                     {route.title}
                 </Text>
             )}
-            //onTabPress={(props) => setIndex(routes.indexOf(props.route))}
+            onTabPress={(props) => setMockIndex(routes.indexOf(props.route))}
         />
     )
 
@@ -92,22 +108,24 @@ const Account = ({ navigation, route }) => {
                 </Text>
             </View>
 
+        <View style={{ flex: 1 }}>
             <TabView
                 renderTabBar={renderTabBar}
                 swipeEnabled={false}
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
-                sceneContainerStyle={{ 
-                    width: normalize(800), 
-                    maxWidth: '100%', 
+                sceneContainerStyle={{
+                    width: normalize(800),
+                    maxWidth: '100%',
                     alignSelf: 'center',
-                    paddingHorizontal: SPACING.medium
+                    paddingHorizontal: SPACING.medium,
                 }}
                 initialLayout={{ width: Dimensions.get('window').width }}
-                lazy={({ route }) => route.key === 'photosAndVideos'}
-                renderLazyPlaceholder={renderLazyPlaceholder}       
+                lazy={({ route }) => route.key !== 'settings'}
+                renderLazyPlaceholder={renderLazyPlaceholder}
             />
+            </View>
         </View>
     )
 }

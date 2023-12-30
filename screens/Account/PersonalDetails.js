@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Svg, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS } from '../../constants'
 import { Button } from 'react-native-paper'
+import { MaterialCommunityIcons, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 
 import HoverableView from '../../components/HoverableView'
@@ -22,10 +23,10 @@ const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ route }) => {
+const PersonalDetails = ({ route, setTabHeight }) => {
     const [data, setData] = useState({
         gender: '',
-        name: '',
+        name: 'Jakub Muzik',
         email: '',
         password: '',
         confirmPassword: '',
@@ -48,6 +49,7 @@ const PersonalDetails = ({ route }) => {
         prices: [], //{length: 1, incall: '', outcall: ''}
         incall: true,
         outcall: true,
+        phone: '+420 732 710 244',
         address: {title: 'Thamova 681/32 Karlin'},
         hiddenAddress: false,
         description: 'mock description',
@@ -136,7 +138,58 @@ const PersonalDetails = ({ route }) => {
     }, [])
 
     return (
-        <>
+        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionHeaderText}>
+                        Contact information
+                    </Text>
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        mode="outlined"
+                        icon="pencil-outline"
+                        onPress={onAboutEditPress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Edit
+                    </Button>
+                </View>
+
+                <View style={[styles.row,{ borderTopWidth: 1, borderColor: COLORS.lightGrey }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="badge-account-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
+                            Name
+                        </Text>
+                    </View>
+                    <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                        {data.name}
+                    </Text>
+                </View>
+                <View style={styles.row}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="phone-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
+                            Phone
+                        </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.xx_small }}>
+                            {data.phone}
+                        </Text>
+                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                            <FontAwesome5 name="whatsapp" size={18} color="white" />
+                        </View>
+                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                            <FontAwesome5 name="viber" size={18} color="white" />
+                        </View>
+                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+                            <EvilIcons name="sc-telegram" size={22} color="white" />
+                        </View>
+                    </View>
+                </View>
+            </View>
+
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionHeaderText}>
@@ -187,66 +240,66 @@ const PersonalDetails = ({ route }) => {
                     </Button>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                    <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
+                    <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Age</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Age</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>26</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Sexual orientation</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Sexual orientation</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Bisexual</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Nationality</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Nationality</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Czech</Text>
                         </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Languages</Text>
+                        <View style={{ flexDirection: 'row',  flexWrap: 'wrap'  }}>
+                            <Text style={styles.attributeName} numberOfLines={1}>Languages</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Czech, English</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Height</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Height</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>160 cm</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Weight</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Weight</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>56 kg</Text>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'column', flexGrow: 1, marginHorizontal: SPACING.small }}>
+                    <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Body type</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Body type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Slim</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Pubic hair</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Pubic hair</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Shaved</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast size</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Breast size</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>B</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Breast type</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Breast type</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Natural</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Hair color</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Hair color</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Blonde</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={styles.attributeName}>Eye color</Text>
+                            <Text style={styles.attributeName} numberOfLines={1}>Eye color</Text>
                             <View style={styles.attributeDivider}></View>
                             <Text style={styles.attributeValue}>Green</Text>
                         </View>
@@ -489,11 +542,11 @@ const PersonalDetails = ({ route }) => {
             <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} />
             <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} />
             <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} />
-        </>
+        </View>
     )
 }
 
-export default PersonalDetails
+export default memo(PersonalDetails)
 
 const styles = StyleSheet.create({
     containerLarge: { 
@@ -629,5 +682,13 @@ const styles = StyleSheet.create({
     },
     column: {
         padding: SPACING.xx_small
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: SPACING.small,
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.lightGrey
     }
 })
