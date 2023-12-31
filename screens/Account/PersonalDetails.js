@@ -612,7 +612,9 @@ const styles = StyleSheet.create({
         marginTop: SPACING.large, 
         padding: SPACING.small, 
         borderRadius: 20, 
-        backgroundColor: COLORS.grey
+        backgroundColor: COLORS.grey,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,.08)',
     },
     sectionHeader: {
         flexDirection: 'row',

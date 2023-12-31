@@ -36,8 +36,7 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                 style={{
                                     aspectRatio: 3 / 4,
                                     width: 'auto',
-                                    borderTopLeftRadius: 20,
-                                    borderBottomLeftRadius: 20
+                                    borderRadius: 10
                                 }}
                                 source={{ uri: data.images[0] }}
                                 placeholder={blurhash}
@@ -70,7 +69,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                     <Image
                                         style={{
                                             flex: 1,
-                                            aspectRatio: 3 / 4
+                                            aspectRatio: 3 / 4,
+                                            borderRadius: 10
                                         }}
                                         source={{ uri: data.images[1] }}
                                         placeholder={blurhash}
@@ -103,7 +103,7 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                     <Image
                                         style={{
                                             flex: 1,
-                                            borderTopRightRadius: 20,
+                                            borderRadius: 10,
                                             aspectRatio: 3 / 4
                                         }}
                                         source={{ uri: data.images[2] }}
@@ -138,7 +138,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                     <Image
                                         style={{
                                             flex: 1,
-                                            aspectRatio: 3 / 4
+                                            aspectRatio: 3 / 4,
+                                            borderRadius: 10
                                         }}
                                         source={{ uri: data.images[3] }}
                                         placeholder={blurhash}
@@ -169,7 +170,7 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                     <Image
                                         style={{
                                             flex: 1,
-                                            borderBottomRightRadius: 20,
+                                            borderRadius: 10,
                                             aspectRatio: 3 / 4
                                         }}
                                         source={{ uri: data.images[4] }}

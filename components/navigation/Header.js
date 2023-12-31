@@ -193,7 +193,7 @@ const Header = ({ }) => {
 
                                     <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
-                                            Language:
+                                            Language: 
                                         </Text>
                                         <Picker
                                             selectedValue={params.language ?? DEFAULT_LANGUAGE}

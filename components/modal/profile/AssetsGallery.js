@@ -1,11 +1,10 @@
-import React, { useMemo, useState, useEffect, useRef, memo } from 'react'
+import React, { useMemo, useState, useEffect, useRef, memo, useLayoutEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView } from 'react-native'
 import { COLORS, SPACING, SUPPORTED_LANGUAGES } from '../../../constants'
 import { stripEmptyParams } from '../../../utils'
 import Gallery from 'react-native-awesome-gallery'
 import { Image } from 'expo-image'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import { Video, ResizeMode } from 'expo-av'
 
 const MAX_IMAGE_SIZE = 130
 
@@ -38,9 +37,18 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
     const { width, height } = useWindowDimensions()
 
     const gallery = useRef()
+    const bottomScrollViewRef = useRef()
 
     const [index, setIndex] = useState(pressedAssetIndex)
     const [galleryHeight, setGalleryHeight] = useState()
+
+    const baseImageWidth = width < 800 ? width : 800
+    const dynamicImageSize = baseImageWidth / 4
+
+    useLayoutEffect(() => {
+        const x = index * dynamicImageSize + index * SPACING.small
+        bottomScrollViewRef.current.scrollTo({ x, animated: true })
+    }, [index])
 
     const onNextPress = () => {
         gallery.current?.setIndex(
@@ -59,9 +67,6 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
             true
         )
     }
-
-    const baseImageWidth = width < 800 ? width : 800
-    const dynamicImageSize = baseImageWidth / 4
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
@@ -83,7 +88,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
             
 
             <View style={{ width: 800, maxWidth: '100%', alignSelf: 'center' }}>
-                <ScrollView horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', margin: SPACING.small, }}>
+                <ScrollView ref={bottomScrollViewRef} horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', margin: SPACING.small, }}>
                     {assets.map((asset, assetIndex) => (
                         <TouchableOpacity key={asset} onPress={() => gallery.current?.setIndex(assetIndex, true)} activeOpacity={1}>
                             <Image
@@ -93,7 +98,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
                                     maxHeight: MAX_IMAGE_SIZE,
                                     maxWidth: MAX_IMAGE_SIZE,
                                     marginRight: assetIndex + 1 === assets.length ? 0 : SPACING.small,
-                                    opacity: assetIndex === index ? 1 : 0.75,
+                                    opacity: assetIndex === index ? 1 : 0.6,
                                     borderRadius: 5
                                 }}
                                 source={asset}
