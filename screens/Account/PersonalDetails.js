@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Svg, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
-import { SPACING, FONTS, FONT_SIZES, COLORS } from '../../constants'
+import { SPACING, FONTS, FONT_SIZES, COLORS, SMALL_SCREEN_THRESHOLD } from '../../constants'
 import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
@@ -24,6 +24,9 @@ const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
 const PersonalDetails = ({ route, setTabHeight }) => {
+    const { width } = useWindowDimensions()
+    const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
+
     const [data, setData] = useState({
         gender: '',
         name: 'Jakub Muzik',
@@ -239,7 +242,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                         Edit
                     </Button>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <View style={{ flex: 1, flexDirection: isSmallScreen ? 'column' : 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                     <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={styles.attributeName} numberOfLines={1}>Age</Text>
@@ -324,7 +327,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                 </View>
                 <View style={styles.table}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
                             <Text style={styles.tableHeaderText}>Length</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
@@ -335,7 +338,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                         </HoverableView>
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
                             <Text style={styles.tableHeaderText}>Incall</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
@@ -346,7 +349,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                         </HoverableView>
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
                             <Text style={styles.tableHeaderText}>Outcall</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
@@ -376,35 +379,27 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                 </View>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 1</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 2</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 3</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 4</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 5</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 6</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 7</Text>
                     </View>
                     <View style={styles.chip}>
-                        <Entypo name="check" size={18} color="green" style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={styles.chipText}>Service 8</Text>
                     </View>
                 </View>
@@ -427,7 +422,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                 </View>
                 <View style={styles.table}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
                             <Text style={styles.tableHeaderText}>Day</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
@@ -453,7 +448,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                         </HoverableView>
                     </View>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                        <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
                             <Text style={styles.tableHeaderText}>Availability</Text>
                         </View>
                         <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
@@ -627,7 +622,7 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.h3
     },
     attributeName: {
-        color: 'rgba(255,255,255,0.8)',
+        color: COLORS.greyText,
         fontFamily: FONTS.medium,
         fontSize: FONT_SIZES.medium
     },
@@ -639,7 +634,8 @@ const styles = StyleSheet.create({
     attributeDivider: {
         flexGrow: 1,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.hoveredLightGrey
+        borderBottomColor: COLORS.lightGrey,
+        marginBottom: 4
     },
     serviceText: {
         color: '#FFF',
@@ -647,14 +643,12 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.regular
     },
     chip: { 
-        flexDirection: 'row', 
-        width: 'fit-content', 
-        marginRight: SPACING.xx_small, 
-        backgroundColor: COLORS.lightGrey, 
-        paddingHorizontal: SPACING.xx_small, 
-        paddingVertical: 5, 
-        borderRadius: 8,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
+        marginRight: SPACING.xx_small,
+        backgroundColor: COLORS.darkRed2,
+        paddingHorizontal: SPACING.xx_small,
+        paddingVertical: 5,
+        borderRadius: 10,
+        borderColor: COLORS.lightGrey,
         borderWidth: 0.5,
         alignItems: 'center',
         justifyContent: 'center',

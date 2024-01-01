@@ -43,7 +43,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
     const [galleryHeight, setGalleryHeight] = useState()
 
     const baseImageWidth = width < 800 ? width : 800
-    const dynamicImageSize = baseImageWidth / 4
+    const dynamicImageSize = Math.floor(baseImageWidth / 4)
 
     useLayoutEffect(() => {
         const x = index * dynamicImageSize + index * SPACING.small
@@ -88,7 +88,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
             
 
             <View style={{ width: 800, maxWidth: '100%', alignSelf: 'center' }}>
-                <ScrollView ref={bottomScrollViewRef} horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', margin: SPACING.small, }}>
+                <ScrollView ref={bottomScrollViewRef} horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: SPACING.small, }}>
                     {assets.map((asset, assetIndex) => (
                         <TouchableOpacity key={asset} onPress={() => gallery.current?.setIndex(assetIndex, true)} activeOpacity={1}>
                             <Image

@@ -44,34 +44,34 @@ const Settings = ({ setTabHeight }) => {
             <View style={styles.container}>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <MaterialCommunityIcons name="email-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: SPACING.x_small }}>
+                        <MaterialCommunityIcons name="email-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
                             Email
                         </Text>
                     </View>
-                    <Text numberOfLines={1} onPress={onEmailEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                    <Text numberOfLines={1} onPress={onEmailEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                         {data.email}
                     </Text>
                 </View>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <MaterialCommunityIcons name="lock-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: SPACING.x_small }}>
+                        <MaterialCommunityIcons name="lock-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
                             Password
                         </Text>
                     </View>
-                    <Text onPress={onPasswordEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                    <Text onPress={onPasswordEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                         Change
                     </Text>
                 </View>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <MaterialCommunityIcons name="delete-outline" size={FONT_SIZES.large} color="white" style={{ marginRight: SPACING.xxx_small }} />
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: SPACING.x_small }}>
+                        <MaterialCommunityIcons name="delete-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
                             Delete account
                         </Text>
                     </View>
-                    <Text onPress={onDeleteAccountPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightRed }}>
+                    <Text onPress={onDeleteAccountPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.lightRed }}>
                         Delete
                     </Text>
                 </View>
