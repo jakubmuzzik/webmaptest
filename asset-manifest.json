@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.41e75e13.js",
-    "static/js/706.382a72e1.js": "/webmaptest/static/js/706.382a72e1.js",
+    "main.js": "/webmaptest/static/js/main.f6e0b163.js",
+    "static/js/933.7467c8d3.js": "/webmaptest/static/js/933.7467c8d3.js",
     "static/media/big_buck_bunny.mp4": "/webmaptest/static/media/big_buck_bunny.f3997e52ea9aa77296a3.mp4",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
@@ -19,7 +19,6 @@
     "static/media/dummy_photo.png": "/webmaptest/static/media/dummy_photo.aa962d803f130c31e5d7.png",
     "static/media/CATEGORY3.png": "/webmaptest/static/media/CATEGORY3.16da66562373f11d7c2f.png",
     "static/media/CATEGORY4.png": "/webmaptest/static/media/CATEGORY4.26331dd0ba3561672a08.png",
-    "static/media/red_windows.jpeg": "/webmaptest/static/media/red_windows.b0d4dcd0b60d0f3b987a.jpeg",
     "static/media/FontAwesome5_Regular.ttf": "/webmaptest/static/media/FontAwesome5_Regular.1017bce89c72f95bcf8e.ttf",
     "static/media/logo-header.png": "/webmaptest/static/media/logo-header.6575dd315c027bd4e2bb.png",
     "static/media/us.png": "/webmaptest/static/media/us.fa44cd5298e756aadaac.png",
@@ -35,11 +34,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.41e75e13.js.map": "/webmaptest/static/js/main.41e75e13.js.map",
-    "706.382a72e1.js.map": "/webmaptest/static/js/706.382a72e1.js.map"
+    "main.f6e0b163.js.map": "/webmaptest/static/js/main.f6e0b163.js.map",
+    "933.7467c8d3.js.map": "/webmaptest/static/js/933.7467c8d3.js.map"
   },
   "entrypoints": [
-    "static/js/706.382a72e1.js",
-    "static/js/main.41e75e13.js"
+    "static/js/933.7467c8d3.js",
+    "static/js/main.f6e0b163.js"
   ]
 }
