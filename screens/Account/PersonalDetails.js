@@ -17,6 +17,7 @@ import PricingEditor from '../../components/modal/account/PricingEditor'
 import ServicesEditor from '../../components/modal/account/ServicesEditor'
 import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEditor'
 import AddressEditor from '../../components/modal/account/AddressEditor'
+import ContactInformationEditor from '../../components/modal/account/ContactInformationEditor'
 
 const LOCATION_LATITUDE_DELTA = 0.9735111002971948 // default value just for map init -> later is used minLatitudeDelta.current
 const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km 
@@ -87,6 +88,11 @@ const PersonalDetails = ({ route, setTabHeight }) => {
         hiddenAddress: data.hiddenAddress
     }), [data])
 
+    const contactInformation = useMemo(() => ({
+        phone: data.phone,
+        name: data.name
+    }), [data])
+
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
 
@@ -96,6 +102,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
     const [servicesEditorVisible, setServicesEditorVisible] = useState(false)
     const [workingHoursEditorVisible, setWorkingHoursEditorVisible] = useState(false)
     const [addressEditorVisible, setAddressEditorVisible] = useState(false)
+    const [contactInformationEditorVisible, setContactInformationEditorVisible] = useState(false)
 
     const mapRef = useRef()
 
@@ -106,6 +113,10 @@ const PersonalDetails = ({ route, setTabHeight }) => {
         if (count >= 5 || isNaN(count)) {
             setShowTextTriggeringButton(true)
         }
+    }
+
+    const onContactInformationEditPress = () => {
+        setContactInformationEditorVisible(true)
     }
 
     const onAboutEditPress = () => {
@@ -144,14 +155,14 @@ const PersonalDetails = ({ route, setTabHeight }) => {
         <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Contact information
                     </Text>
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         mode="outlined"
                         icon="pencil-outline"
-                        onPress={onAboutEditPress}
+                        onPress={onContactInformationEditPress}
                         rippleColor="rgba(220, 46, 46, .16)"
                     >
                         Edit
@@ -195,7 +206,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         About
                     </Text>
                     <Button
@@ -229,7 +240,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={[styles.section, { paddingHorizontal: 0 }]}>
                 <View style={[styles.sectionHeader, { marginHorizontal: SPACING.small }]}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Personal Details
                     </Text>
                     <Button
@@ -312,7 +323,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Pricing
                     </Text>
                     <Button
@@ -364,7 +375,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Services
                     </Text>
                     <Button
@@ -407,7 +418,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Working Hours
                     </Text>
                     <Button
@@ -478,7 +489,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             <View style={[styles.section, { marginBottom: SPACING.medium }]}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionHeaderText}>
+                    <Text numberOfLines={1} style={styles.sectionHeaderText}>
                         Address
                     </Text>
                     <Button
@@ -491,6 +502,14 @@ const PersonalDetails = ({ route, setTabHeight }) => {
                         Edit
                     </Button>
                 </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, marginBottom: SPACING.x_small }}>
+                    <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
+                    <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                        Prague, Czech Republic
+                    </Text>
+                </View>
+
                 <View style={{ width: '100%', height: 300, borderRadius: 5, overflow: 'hidden' }}>
                     <MapView
                         ref={mapRef}
@@ -537,6 +556,7 @@ const PersonalDetails = ({ route, setTabHeight }) => {
             <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} />
             <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} />
             <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} />
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} />
         </View>
     )
 }

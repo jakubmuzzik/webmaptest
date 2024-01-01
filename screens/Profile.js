@@ -176,7 +176,7 @@ const Profile = ({ }) => {
                 ]}
                     style={{ position: 'absolute', top: 680, width: '100%', height: '100%' }} 
                     locations={[0.1, 0.2]}
-                /> 
+                />
             </View> */}
 
             <LinearGradient colors={[
@@ -185,8 +185,18 @@ const Profile = ({ }) => {
             ]}
                 style={{ position: 'absolute', width: '100%', height: 600 }}
                 locations={[0.5, 0.7]}
-            /> 
+            />
 
+            {/* <TouchableOpacity
+                //onPress={() => navigation.goBack()}
+                style={{ marginLeft: SPACING.large, marginTop: normalize(70) + SPACING.medium, flexDirection: 'row', alignItems: 'center' }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+                <Ionicons name="arrow-back" size={FONTS.medium} color={COLORS.greyText} />
+                <Text style={{ color: COLORS.greyText, fontFamily: FONTS.medium, fontSize: FONTS.medium }}>Back</Text>
+            </TouchableOpacity> */}
+
+            
             <View style={{ marginTop: normalize(70), alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
                 <View style={{ alignItems: 'center', flex: 1 }}>
                     <Text style={{ color: '#FFF', marginBottom: SPACING.x_small, marginHorizontal: SPACING.xx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, }}>
@@ -244,7 +254,9 @@ const Profile = ({ }) => {
                         <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                             About
                         </Text>
-                        <Text numberOfLines={1} style={{ color: COLORS.red, fontSize: FONT_SIZES.x_large, fontFamily: FONTS.medium }}>• Independent</Text>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            • Independent lady
+                        </Text>
                     </View>
 
                     <Text style={{ color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
@@ -339,20 +351,19 @@ const Profile = ({ }) => {
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionHeaderText}>
-                        Pricing
-                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
+                        <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                            Pricing
+                        </Text>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            • CZK 
+                        </Text>
+                    </View>
+
                     <View style={styles.table}>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2, padding: 0 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                                <LinearGradient
-                                    colors={[
-                                        COLORS.darkRed2,
-                                        COLORS.darkRed,
-                                    ]}
-                                    style={{ width:'100%', height: '100%', position: 'absolute' }}
-                                />
-                                <Text style={[styles.tableHeaderText, {margin: SPACING.xx_small}]}>Length</Text>
+                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                                <Text style={styles.tableHeaderText}>Length</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                                 <Text style={styles.tableHeaderValue}>0.5 hour</Text>
@@ -362,51 +373,43 @@ const Profile = ({ }) => {
                             </HoverableView>
                         </View>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2, padding: 0 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                                <LinearGradient
-                                    colors={[
-                                        COLORS.darkRed2,
-                                        COLORS.darkRed,
-                                    ]}
-                                    style={{ width: '100%', height: '100%', position: 'absolute' }}
-                                />
-                                <Text style={[styles.tableHeaderText, { margin: SPACING.xx_small }]}>Incall</Text>
+                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                                <Text style={styles.tableHeaderText}>Incall</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>1000 CZK</Text>
+                                <Text style={styles.tableHeaderValue}>1000</Text>
                             </HoverableView>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>2500 CZK</Text>
+                                <Text style={styles.tableHeaderValue}>2500</Text>
                             </HoverableView>
                         </View>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2, padding: 0 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                                <LinearGradient
-                                    colors={[
-                                        COLORS.darkRed2,
-                                        COLORS.darkRed,
-                                    ]}
-                                    style={{ width: '100%', height: '100%', position: 'absolute' }}
-                                />
-                                <Text style={[styles.tableHeaderText, { margin: SPACING.xx_small }]}>Outcall</Text>
+                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                                <Text style={styles.tableHeaderText}>Outcall</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>1500 CZK</Text>
+                                <Text style={styles.tableHeaderValue}>1500</Text>
                             </HoverableView>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>3000 CZK</Text>
+                                <Text style={styles.tableHeaderValue}>3000</Text>
                             </HoverableView>
                         </View>
                     </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionHeaderText}>
-                        Services
-                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
+                        <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                            Services
+                        </Text>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            • Only massage 
+                        </Text>
+                    </View>
+
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                         <View style={styles.chip}>
-                            <LinearGradient
+                            {/* <LinearGradient
                                 colors={[
                                     COLORS.darkRed2,
                                     COLORS.darkRed,
@@ -414,111 +417,64 @@ const Profile = ({ }) => {
                                 start={{ x: 0, y: 0.5 }}
                                 end={{ x: 0, y: 0.5 }}
                                 style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
+                            /> */}
                             <Text style={styles.chipText}>Service 1</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 2</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 3</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 4</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 5</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 6</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 7</Text>
                         </View>
                         <View style={styles.chip}>
-                            <LinearGradient
-                                colors={[
-                                    COLORS.darkRed2,
-                                    COLORS.darkRed,
-                                ]}
-                                start={{ x: 0, y: 0.5 }}
-                                end={{ x: 0, y: 0.5 }}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
-                            />
                             <Text style={styles.chipText}>Service 8</Text>
                         </View>
                     </View>
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionHeaderText}>
-                        Working Hours
-                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
+                        <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                            Working hours
+                        </Text>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            <Text style={{ color: 'green' }}>•</Text> Currently Availabile 
+                        </Text>
+                    </View>
+
+                    {/* <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
+                        <Text style={[styles.sectionHeaderText, { marginBottom: 0, }]}>
+                            Working hours&nbsp;&nbsp;
+                        </Text>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            <Text style={{ color: 'green' }}>•</Text> Currently available
+                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                            • 
+                        </Text>
+                            
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>&nbsp;&nbsp;Currently available</Text>
+                            <Octicons name="dot-fill" size={20} color="green" />
+                        </View>
+                    </View> */}
+
                     <View style={styles.table}>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2, padding: 0 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                                <LinearGradient
-                                    colors={[
-                                        COLORS.darkRed2,
-                                        COLORS.darkRed,
-                                    ]}
-                                    style={{ width: '100%', height: '100%', position: 'absolute' }}
-                                />
-                                <Text style={[styles.tableHeaderText, { margin: SPACING.xx_small }]}>Day</Text>
+                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                                <Text style={styles.tableHeaderText}>Day</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                                 <Text style={styles.tableHeaderValue}>Monday</Text>
@@ -543,15 +499,8 @@ const Profile = ({ }) => {
                             </HoverableView>
                         </View>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2, padding: 0 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                                <LinearGradient
-                                    colors={[
-                                        COLORS.darkRed2,
-                                        COLORS.darkRed,
-                                    ]}
-                                    style={{ width: '100%', height: '100%', position: 'absolute' }}
-                                />
-                                <Text style={[styles.tableHeaderText, { margin: SPACING.xx_small }]}>Availability</Text>
+                            <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                                <Text style={styles.tableHeaderText}>Availability</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
                                 <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
@@ -581,7 +530,7 @@ const Profile = ({ }) => {
                 <View style={styles.section}>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                         <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                            Location
+                            Address
                         </Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
                             <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />

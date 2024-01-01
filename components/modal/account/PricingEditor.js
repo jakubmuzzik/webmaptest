@@ -23,7 +23,7 @@ import {
     CURRENCIES
 } from '../../../constants'
 
-import { Button, IconButton, HelperText } from 'react-native-paper'
+import { Button, IconButton, HelperText, SegmentedButtons } from 'react-native-paper'
 import Toast from 'react-native-toast-message'
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
@@ -141,6 +141,12 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
         updateIsChanged(value, attribute)
     }
 
+    const onServiceTypeChange = (values) => {
+        setChangedPricing(data => ({ ...data, ...values }))
+
+        setIsChanged(!areValuesEqual(values.outcall, pricing['outcall']) || !areValuesEqual(values.incall, pricing['incall']))
+    }
+
     const modalContainerStyles = useAnimatedStyle(() => {
         return {
             backgroundColor: '#FFF',
@@ -184,7 +190,43 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
                                 Edit Pricing
                             </Text>
 
-                            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.x_small, alignItems: 'center' }}>
+                            <View style={{ marginHorizontal: SPACING.small }}>
+                                <Text style={{ marginBottom: SPACING.xx_small, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                                    Available for:
+                                </Text>
+
+                                <SegmentedButtons
+                                    onValueChange={() => null}
+                                    theme={{ roundness: 1.5 }}
+                                    buttons={[
+                                        {
+                                            style: { borderColor: COLORS.placeholder, backgroundColor: changedPricing.incall && changedPricing.outcall ? COLORS.red : 'transparent', borderTopLeftRadius: 10, borderBottomLeftRadius: 10 },
+                                            value: changedPricing.incall && changedPricing.outcall,
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: changedPricing.incall && changedPricing.outcall ? '#FFF' : '#000' }}>Both</Text>,
+                                            onPress: () => onServiceTypeChange({ outcall: true, incall: true }),
+                                            rippleColor: "rgba(220, 46, 46, .10)"
+                                        },
+                                        {
+                                            style: { borderColor: COLORS.placeholder, backgroundColor: changedPricing.outcall && !changedPricing.incall ? COLORS.red : 'transparent' },
+                                            value: changedPricing.outcall && !changedPricing.incall,
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: changedPricing.outcall && !changedPricing.incall ? '#FFF' : '#000' }}>Outcall</Text>,
+                                            checkedColor: '#FFF',
+                                            onPress: () => onServiceTypeChange({ outcall: true, incall: false }),
+                                            rippleColor: "rgba(220, 46, 46, .10)"
+                                        },
+                                        {
+                                            style: { borderColor: COLORS.placeholder, backgroundColor: changedPricing.incall && !changedPricing.outcall ? COLORS.red : 'transparent', borderTopRightRadius: 10, borderBottomRightRadius: 10 },
+                                            value: changedPricing.incall && !changedPricing.outcall,
+                                            label: <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: changedPricing.incall && !changedPricing.outcall ? '#FFF' : '#000' }}>Incall</Text>,
+                                            checkedColor: '#FFF',
+                                            onPress: () => onServiceTypeChange({ incall: true, outcall: false }),
+                                            rippleColor: "rgba(220, 46, 46, .10)"
+                                        }
+                                    ]}
+                                />
+                            </View>
+
+                            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.xx_small, marginTop: SPACING.medium, alignItems: 'center' }}>
                                 <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                                     Pricing
                                 </Text>
@@ -292,7 +334,7 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
                                 </View>
                             </View>}
 
-                            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginTop: SPACING.xx_small }}>
+                            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small }}>
                                 <DropdownSelect
                                     ref={pricesDropdownPress}
                                     containerRef={containerRef}
