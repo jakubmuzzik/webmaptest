@@ -71,7 +71,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
                     onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
                     onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
                 >
-                    <View style={{ borderRadius: 20, overflow: 'hidden' }}>
+                    <View style={{ borderRadius: 10, overflow: 'hidden' }}>
                         <FlatList
                             ref={carouselRef}
                             style={{ flex: 1 }}
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         flexGrow: 1,
         //backgroundColor: COLORS.grey,
-        borderRadius: normalize(20),
+        borderRadius: 10,
         //marginRight: SPACING.large
     },
 })

@@ -8,9 +8,9 @@ import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from "../components/HoverableView"
 import MapView from "@teovilla/react-native-web-maps"
 import AssetsTabView from "../components/modal/profile/AssetsTabView"
-import { BlurView } from 'expo-blur'
+import { isBrowser } from 'react-device-detect'
 
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -23,6 +23,9 @@ const Profile = ({ }) => {
     //     language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : '',
     //     id: route.params.id
     // }), [route.params])
+
+    const location = useLocation()
+    const navigate = useNavigate()
 
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
@@ -187,14 +190,14 @@ const Profile = ({ }) => {
                 locations={[0.5, 0.7]}
             />
 
-            {/* <TouchableOpacity
-                //onPress={() => navigation.goBack()}
-                style={{ marginLeft: SPACING.large, marginTop: normalize(70) + SPACING.medium, flexDirection: 'row', alignItems: 'center' }}
+            {location.key !== 'default' && !isBrowser && <TouchableOpacity
+                onPress={() => navigate(-1)}
+                style={{ position: 'absolute', marginLeft: SPACING.page_horizontal, top: normalize(70) + 5, flexDirection: 'row', alignItems: 'center' }}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-                <Ionicons name="arrow-back" size={FONTS.medium} color={COLORS.greyText} />
-                <Text style={{ color: COLORS.greyText, fontFamily: FONTS.medium, fontSize: FONTS.medium }}>Back</Text>
-            </TouchableOpacity> */}
+                <Ionicons name="chevron-back" size={FONT_SIZES.medium} color={COLORS.greyText} />
+                <Text style={{ color: COLORS.greyText, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Back</Text>
+            </TouchableOpacity>}
 
             
             <View style={{ marginTop: normalize(70), alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>

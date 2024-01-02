@@ -101,7 +101,18 @@ const Categories = ({ }) => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 0.5, borderColor: 'grey', flexDirection: 'row' }}>
+        <View style={{
+            flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 0.5, borderColor: 'grey', flexDirection: 'row',
+            shadowColor: COLORS.lightBlack,
+            shadowOffset: {
+                width: 0,
+                height: 3,
+            },
+            shadowOpacity: 0.27,
+            shadowRadius: 4.65,
+            
+            elevation: 6,
+        }}>
             
             <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: SPACING.page_horizontal, marginVertical: SPACING.xx_small  }}>
                 <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'flex-start' }}>

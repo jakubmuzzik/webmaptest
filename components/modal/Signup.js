@@ -118,7 +118,11 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
 
     const onContinuePress = () => {
         if (profileType === 'member') {
-            setIndex(1)
+            closeModal()
+            navigate({
+                pathname: '/establishment-signup',
+                search: new URLSearchParams(stripEmptyParams(params)).toString() 
+            })
         } else if (profileType === 'lady') {
             closeModal()
             navigate({
@@ -149,7 +153,7 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
         })
     }
 
-    const renderLoginPage = () => {
+    const renderSignUpPage = () => {
         return (
             <>
                 <View style={styles.modal__header}>
@@ -171,36 +175,13 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, paddingTop: SPACING.small, marginBottom: SPACING.medium }}>
-                        What are you looking for?
+                        How would you like to Sign up?
                     </Text>
 
                     <View style={{ flexDirection: 'row' }}>
                         <TouchableRipple style={{
                             flex: 1,
                             marginRight: SPACING.xx_small,
-                            flexDirection: 'column',
-                            padding: SPACING.x_small,
-                            borderRadius: 5,
-                            borderColor: profileType === 'member' ? COLORS.red : COLORS.placeholder,
-                            backgroundColor: profileType === 'member' ? 'rgba(220, 46, 46, .10)' : 'transparent',
-                            borderWidth: 1
-                        }}
-                            onPress={() => setProfileType('member')}
-                            rippleColor="rgba(220, 46, 46, .10)"
-                        >
-                            <>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <MaterialCommunityIcons name="guy-fawkes-mask" size={28} color="black" />
-                                </View>
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginTop: SPACING.x_small }}>
-                                    I'm seeking a Lady, to have fun
-                                </Text>
-                            </>
-
-                        </TouchableRipple>
-                        <TouchableRipple style={{
-                            flex: 1,
-                            marginLeft: SPACING.xx_small,
                             flexDirection: 'column',
                             padding: SPACING.x_small,
                             borderRadius: 5,
@@ -216,9 +197,33 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
                                     <Entypo name="mask" size={28} color="black" />
                                 </View>
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginTop: SPACING.x_small }}>
-                                    I'm a Lady, providing services
+                                    As Independent Lady
                                 </Text>
                             </>
+                        </TouchableRipple>
+
+                        <TouchableRipple style={{
+                            flex: 1,
+                            marginLeft: SPACING.xx_small,
+                            flexDirection: 'column',
+                            padding: SPACING.x_small,
+                            borderRadius: 5,
+                            borderColor: profileType === 'member' ? COLORS.red : COLORS.placeholder,
+                            backgroundColor: profileType === 'member' ? 'rgba(220, 46, 46, .10)' : 'transparent',
+                            borderWidth: 1
+                        }}
+                            onPress={() => setProfileType('member')}
+                            rippleColor="rgba(220, 46, 46, .10)"
+                        >
+                            <>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <MaterialCommunityIcons name="guy-fawkes-mask" size={28} color="black" />
+                                </View>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginTop: SPACING.x_small }}>
+                                    As Establishment
+                                </Text>
+                            </>
+
                         </TouchableRipple>
                     </View>
 
@@ -400,7 +405,7 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1':
-                return renderLoginPage()
+                return renderSignUpPage()
             case '2':
                 return renderMemberSignUp()
         }
@@ -417,14 +422,14 @@ const Signup = ({ visible, setVisible, onLoginPress }) => {
             >
                 <TouchableWithoutFeedback>
                     <Animated.View style={modalContainerStyles}>
-                        <TabView
+                        {/* <TabView
                             renderTabBar={props => null}
                             swipeEnabled={false}
                             navigationState={{ index, routes }}
                             renderScene={renderScene}
                             onIndexChange={setIndex}
-                        //initialLayout={{ width: contentWidth }}
-                        />
+                        /> */}
+                        {renderSignUpPage()}
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>

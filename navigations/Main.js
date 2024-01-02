@@ -17,7 +17,7 @@ import Profile from '../screens/Profile'
 import Account from '../screens/Account'
 import Chat from '../screens/Chat'
 import Favourites from '../screens/Favourites'
-import MobileFooter from './MobileFooter'
+import EstablishmentSignup from '../screens/EstablishmentSignup'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../constants'
@@ -110,6 +110,18 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 </>
             } />
 
+        <Route path='/establishment-signup' element={
+                <>
+                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+                        <Header />
+                    </View>
+
+                    <View style={{ height: initialHeight - normalize(70) }}>
+                        <EstablishmentSignup />
+                    </View>
+                </>
+            } />
+
             <Route path='*' element={
                 <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
@@ -125,6 +137,10 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     ))
 
     router.subscribe(() => {
+        //document.documentElement.scrollTop = 0
+        //document.documentElement.scrollIntoView()
+        window.scrollTo(0, 0);
+
         if (scrollDisabled) {
             setTimeout(() => updateScrollDisabled(false))
         }

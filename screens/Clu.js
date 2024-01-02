@@ -61,7 +61,7 @@ const Clu = ({  }) => {
                 <ContentLoader
                     speed={2}
                     width={cardWidth}
-                    style={{ aspectRatio: 3/4, borderRadius: 20 }}
+                    style={{ aspectRatio: 3/4, borderRadius: 10 }}
                     backgroundColor={COLORS.grey}
                     foregroundColor={COLORS.lightGrey}
                 >
