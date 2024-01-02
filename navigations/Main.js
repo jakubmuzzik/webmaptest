@@ -110,7 +110,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 </>
             } />
 
-        <Route path='/establishment-signup' element={
+            <Route path='/establishment-signup' element={
                 <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
@@ -137,9 +137,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     ))
 
     router.subscribe(() => {
-        //document.documentElement.scrollTop = 0
-        //document.documentElement.scrollIntoView()
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant'})
 
         if (scrollDisabled) {
             setTimeout(() => updateScrollDisabled(false))

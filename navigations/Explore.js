@@ -30,7 +30,7 @@ const Explore = () => {
 
             previousScrollY.current = window.scrollY
         
-            if (positiveScrollYDelta.current >= normalize(70) && translateY.value === 0) {
+            if (positiveScrollYDelta.current >= normalize(70) && window.scrollY > 200 && translateY.value === 0) {
                 translateY.value = withTiming(-normalize(70), {
                     useNativeDriver: true
                 })

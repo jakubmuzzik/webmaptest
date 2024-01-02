@@ -638,18 +638,14 @@ const EstablishmentSignup = ({ }) => {
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles3]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler3} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
-                    <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small + 8 }]}>
+                    <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small - 8 }]}>
                         4. Address & Working Hours
-                    </Text>
-
-                    <Text style={{ marginBottom: SPACING.x_small - 8, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
-                        Address
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'flex-start' }}>
                         <TouchableOpacity
                             onPress={onSearchAddressPress}
-                            style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginRight: SPACING.x_large, }}>
+                            style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginRight: SPACING.x_large, marginTop: SPACING.xx_small }}>
                             <HoverableInput
                                 pointerEventsDisabled
                                 placeholder="Search address"
@@ -665,7 +661,7 @@ const EstablishmentSignup = ({ }) => {
                                 errorMessage={showLocationErrorMessages && !data.address?.addressTitle ? 'Enter your address' : undefined}
                             />
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small, flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginRight: SPACING.x_large }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small, flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginRight: SPACING.x_large, marginTop: SPACING.xx_small }}>
                             <View style={{ flex: 1, flexDirection: 'column', marginRight: SPACING.small }}>
                                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>
                                     Show your specific location
@@ -683,11 +679,7 @@ const EstablishmentSignup = ({ }) => {
                         </View>
                     </View>
 
-                    <Text style={{ marginBottom: SPACING.x_small, marginTop: SPACING.small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
-                        Working Hours
-                    </Text>
-
-                    <View style={[styles.table, { marginHorizontal: SPACING.x_large }]}>
+                    <View style={[styles.table, { marginHorizontal: SPACING.x_large, marginTop: SPACING.small, }]}>
                         <View style={{ flexShrink: 1 }}>
                             <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
                                 <Text style={styles.tableHeaderText}>Day</Text>
