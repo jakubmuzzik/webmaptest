@@ -5,7 +5,7 @@ import { normalize, generateThumbnailFromLocalURI } from '../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import DropdownSelect from '../components/DropdownSelect'
-import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, AntDesign, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { TabView } from 'react-native-tab-view'
 import Animated, {
     Extrapolation,
@@ -14,22 +14,14 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated'
-
 import {
-    LANGUAGES,
-    NATIONALITIES,
-    BODY_TYPES,
-    PUBIC_HAIR_VALUES,
-    SEXUAL_ORIENTATION,
-    HAIR_COLORS,
-    BREAST_SIZES,
-    BREAST_TYPES,
-    EYE_COLORS
+    ESTABLISHMENT_TYPES
 } from '../labels'
 import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
 import Toast from 'react-native-toast-message'
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -56,13 +48,17 @@ const EstablishmentSignup = ({ }) => {
         confirmPassword: '',
         secureTextEntry: true,
         confirmSecureTextEntry: true,
+        establishmentType: '',
         address: '',
         hiddenAddress: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null, null],
+        images: [null, null],
         videos: [null],
         phone: '',
+        viber: false,
+        whatsapp: false,
+        telegram: false,
         website: ''
     })
 
@@ -357,7 +353,7 @@ const EstablishmentSignup = ({ }) => {
 
                 setData(d => {
                     d.images[index] = result.assets[0].uri
-                    if (index > 4 && d.images.length < MAX_PHOTOS) {
+                    if (index > 0 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
                     return { ...d }
@@ -415,7 +411,7 @@ const EstablishmentSignup = ({ }) => {
 
     const onDeleteImagePress = async (index) => {
         setData(d => {
-            if (index > 4) {
+            if (index > 0) {
                 d.images.splice(index, 1)
             } else {
                 d.images[index] = null
@@ -569,8 +565,8 @@ const EstablishmentSignup = ({ }) => {
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <HoverableInput
-                            placeholder="Height in cm"
-                            label="Height (cm)"
+                            placeholder="www.website.com"
+                            label="Website"
                             borderColor={COLORS.placeholder}
                             hoveredBorderColor={COLORS.red}
                             textColor='#000'
@@ -578,15 +574,15 @@ const EstablishmentSignup = ({ }) => {
                             textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                             labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                             placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
-                            text={data.height}
-                            //setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
-                            //errorMessage={showEstablishmentDetailsErrorMessages && !data.height ? 'Enter your height' : undefined}
-                            numeric={true}
+                            text={data.website}
+                            setText={(text) => onValueChange(text, 'website')}
                         />
 
-                        <HoverableInput
-                            placeholder="Weight in kg"
-                            label="Weight (kg)"
+                        <DropdownSelect
+                            values={ESTABLISHMENT_TYPES}
+                            offsetX={contentWidth * i}
+                            placeholder="Select establishment type"
+                            label="Establishment type"
                             borderColor={COLORS.placeholder}
                             hoveredBorderColor={COLORS.red}
                             textColor='#000'
@@ -594,16 +590,83 @@ const EstablishmentSignup = ({ }) => {
                             textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                             labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                             placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
-                            text={data.weight}
-                            //setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
-                            //errorMessage={showEstablishmentDetailsErrorMessages && !data.weight ? 'Enter your weight' : undefined}
-                            numeric={true}
+                            text={data.establishmentType}
+                            setText={(text) => onValueChange(text, 'establishmentType')}
+                            rightIconName='chevron-down'
+                            errorMessage={showEstablishmentDetailsErrorMessages && !data.establishmentType ? 'Select the establishment type' : undefined}
                         />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginLeft: SPACING.x_large }}>
+                        <HoverableInput
+                            placeholder="+420 777 666 777"
+                            label="Phone number"
+                            borderColor={COLORS.placeholder}
+                            hoveredBorderColor={COLORS.red}
+                            textColor='#000'
+                            containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                            labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                            placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                            text={data.phone}
+                            setText={(text) => onValueChange(text, 'phone')}
+                            errorMessage={showEstablishmentDetailsErrorMessages && !data.phone ? 'Enter your phone' : undefined}
+                        />
+
+                        <View style={{ flexDirection: 'row', flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
+                            <BouncyCheckbox
+                                style={{ marginRight: SPACING.xx_small }}
+                                disableBuiltInState
+                                isChecked={data.whatsapp}
+                                size={normalize(19)}
+                                fillColor={data.whatsapp ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, whatsapp: !data.whatsapp}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                        <FontAwesome5 name="whatsapp" size={18} color="white" />
+                                    </View>
+                                }
+                            />
+                            <BouncyCheckbox
+                                style={{ marginRight: SPACING.xx_small }}
+                                disableBuiltInState
+                                isChecked={data.viber}
+                                size={normalize(19)}
+                                fillColor={data.viber ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, viber: !data.viber}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                        <FontAwesome5 name="viber" size={18} color="white" />
+                                    </View>
+                                }
+                            />
+                            <BouncyCheckbox
+                                disableBuiltInState
+                                isChecked={data.telegram}
+                                size={normalize(19)}
+                                fillColor={data.telegram ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, telegram: !data.telegram}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', marginLeft: SPACING.xxx_small, justifyContent: 'center' }}>
+                                        <EvilIcons name="sc-telegram" size={22} color="white" />
+                                    </View>
+                                }
+                            />
+                        </View>
                     </View>
 
                     <View style={{ marginHorizontal: SPACING.x_large }}>
                         <HoverableInput
-                            placeholder="Desribe yourself"
+                            placeholder="Describe your establishment"
                             multiline
                             numberOfLines={5}
                             maxLength={1000}
@@ -639,7 +702,7 @@ const EstablishmentSignup = ({ }) => {
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles3]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler3} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small - 8 }]}>
-                        4. Address & Working Hours
+                        3. Address & Working Hours
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'flex-start' }}>
@@ -856,7 +919,7 @@ const EstablishmentSignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles4}>5. Photos & Videos</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles4}>4. Photos & Videos</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles4]} />
                 <Animated.ScrollView 
@@ -866,185 +929,48 @@ const EstablishmentSignup = ({ }) => {
                     style={{ flex: 1 }} 
                     contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small + 8 }]}>
-                        5. Photos & Videos
+                        4. Photos & Videos
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large }}>
-                        Add at least 5 cover photos
+                        Add cover photo
                     </Text>
 
                     <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large }}>
-                        These photos will be prominently displayed on your profile page
+                        This photos will be prominently displayed on your profile page
                     </Text>
 
                     <View style={{ marginTop: SPACING.x_small, flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
-                        <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
-                            {data.images[0] ?
-                                <>
-                                    <Image
-                                        style={{
-                                            aspectRatio: 3 / 4,
-                                            width: 'auto',
-                                            borderRadius: 10
-                                        }}
-                                        source={{ uri: data.images[0] }}
-                                        placeholder={blurhash}
-                                        resizeMode="cover"
-                                        transition={200}
-                                    />
-                                    <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                        icon="delete-outline"
-                                        iconColor='white'
-                                        size={normalize(20)}
-                                        onPress={() => onDeleteImagePress(0)}
-                                    />
-                                </> :
-
-                                <TouchableRipple
-                                    onPress={() => onSelectImagePress(0)}
-                                    style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
-                                >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                </TouchableRipple>
-                            }
-                        </View>
-                        <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
-                            <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
-
-                                <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                                    {data.images[1] ?
-                                        <>
-                                            <Image
-                                                style={{
-                                                    flex: 1,
-                                                    aspectRatio: 3 / 4,
-                                                    borderRadius: 10
-                                                }}
-                                                source={{ uri: data.images[1] }}
-                                                placeholder={blurhash}
-                                                resizeMode="cover"
-                                                transition={200}
-                                            />
-                                            <IconButton
-                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)', borderRadius: 10 }}
-                                                icon="delete-outline"
-                                                iconColor='white'
-                                                size={normalize(20)}
-                                                onPress={() => onDeleteImagePress(1)}
-                                            />
-                                        </> :
-
-                                        <TouchableRipple
-                                            onPress={() => onSelectImagePress(1)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1 }}
-                                        >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                        </TouchableRipple>
-
-                                    }
-                                </View>
-
-
-                                <View style={{ flex: 1 }}>
-                                    {data.images[2] ?
-                                        <>
-                                            <Image
-                                                style={{
-                                                    flex: 1,
-                                                    borderRadius: 10,
-                                                    aspectRatio: 3 / 4
-                                                }}
-                                                source={{ uri: data.images[2] }}
-                                                placeholder={blurhash}
-                                                resizeMode="cover"
-                                                transition={200}
-                                            />
-                                            <IconButton
-                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                                icon="delete-outline"
-                                                iconColor='white'
-                                                size={normalize(20)}
-                                                onPress={() => onDeleteImagePress(2)}
-                                            />
-                                        </> :
-
-                                        <TouchableRipple
-                                            onPress={() => onSelectImagePress(2)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderRadius: 10, flex: 1, }}
-                                        >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                        </TouchableRipple>
-
-                                    }
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: 'row', flexGrow: 1 }}>
-
-                                <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                                    {data.images[3] ?
-                                        <>
-                                            <Image
-                                                style={{
-                                                    flex: 1,
-                                                    aspectRatio: 3 / 4,
-                                                    borderRadius: 10
-                                                }}
-                                                source={{ uri: data.images[3] }}
-                                                placeholder={blurhash}
-                                                resizeMode="cover"
-                                                transition={200}
-                                            />
-                                            <IconButton
-                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)', }}
-                                                icon="delete-outline"
-                                                iconColor='white'
-                                                size={normalize(20)}
-                                                onPress={() => onDeleteImagePress(3)}
-                                            />
-                                        </>
-                                        :
-                                        <TouchableRipple
-                                            onPress={() => onSelectImagePress(3)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1, borderRadius: 10 }}
-                                        >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                        </TouchableRipple>
-                                    }
-                                </View>
-
-                                <View style={{ flex: 1}}>
-                                    {data.images[4] ?
-                                        <>
-                                            <Image
-                                                style={{
-                                                    flex: 1,
-                                                    borderRadius: 10,
-                                                    aspectRatio: 3 / 4 
-                                                }}
-                                                source={{ uri: data.images[4] }}
-                                                placeholder={blurhash}
-                                                resizeMode="cover"
-                                                transition={200}
-                                            />
-                                            <IconButton
-                                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                                icon="delete-outline"
-                                                iconColor='white'
-                                                size={normalize(20)}
-                                                onPress={() => onDeleteImagePress(4)}
-                                            />
-                                        </> :
-                                        <TouchableRipple
-                                            onPress={() => onSelectImagePress(4)}
-                                            style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderRadius: 10, flex :1, }}
-                                        >
-                                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                        </TouchableRipple>
-                                    }
-                                </View>
-                            </View>
-                        </View>
+                        {data.images[0] ?
+                            <React.Fragment>
+                                <Image
+                                    style={{
+                                        flex: 1,
+                                        borderRadius: 10,
+                                        aspectRatio: 16 / 9,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(28,27,31,0.16)'
+                                    }}
+                                    source={{ uri: data.images[0] }}
+                                    placeholder={blurhash}
+                                    resizeMode="cover"
+                                    transition={200}
+                                />
+                                <IconButton
+                                    style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                    icon="delete-outline"
+                                    iconColor='white'
+                                    size={normalize(20)}
+                                    onPress={() => onDeleteImagePress(0)}
+                                />
+                            </React.Fragment> :
+                            <TouchableRipple
+                                onPress={() => onSelectImagePress(0)}
+                                style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 10, aspectRatio: 16 / 9 }}
+                            >
+                                <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                            </TouchableRipple>
+                        }
                     </View>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginTop: SPACING.medium }}>
@@ -1054,8 +980,8 @@ const EstablishmentSignup = ({ }) => {
                         Visitors can explore these photos by clicking the 'View All' button on your profile
                     </Text>
 
-                    {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
-                        {data.images.slice(5).map((image, index) =>
+                    <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
+                        {data.images.slice(1).map((image, index) =>
                             <View key={image ?? Math.random()} style={{ width: ((photosContentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                                 {image ?
                                     <React.Fragment>
@@ -1077,11 +1003,11 @@ const EstablishmentSignup = ({ }) => {
                                             icon="delete-outline"
                                             iconColor='white'
                                             size={normalize(20)}
-                                            onPress={() => onDeleteImagePress(index + 5)}
+                                            onPress={() => onDeleteImagePress(index + 1)}
                                         />
                                     </React.Fragment> :
                                     <TouchableRipple
-                                        onPress={() => onSelectImagePress(index + 5)}
+                                        onPress={() => onSelectImagePress(index + 1)}
                                         style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 10, aspectRatio: 1 / 1 }}
                                     >
                                         <>
@@ -1096,7 +1022,7 @@ const EstablishmentSignup = ({ }) => {
                                     </TouchableRipple>
                                 }
                             </View>)}
-                    </View>}
+                    </View>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large,  marginHorizontal: SPACING.x_large, marginTop: SPACING.medium - SPACING.xxx_small, }}>
                         Add videos
@@ -1193,11 +1119,11 @@ const EstablishmentSignup = ({ }) => {
                         </View>
                     
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
-                        Your Profile has been submitted for review!
+                        Your Establishment has been submitted for review!
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
-                        Our team will review your profile shortly, and once approved, you'll receive a confirmation email to: {data.email}
+                        Our team will review your establishment shortly, and once approved, you'll receive a confirmation email to: {data.email}
                     </Text>
                 </Animated.ScrollView>
             </>
@@ -1274,8 +1200,7 @@ const EstablishmentSignup = ({ }) => {
                         <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                             style={{ flexShrink: 1, borderRadius: 10 }}
-                            buttonColor={COLORS.red}
-                            rippleColor="rgba(220, 46, 46, .16)"
+                            buttonColor={index === Object.keys(routes).length - 2 ? COLORS.red : COLORS.lightBlack}
                             mode="contained"
                             onPress={onNextPress}
                             loading={nextButtonIsLoading}

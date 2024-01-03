@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue,
     withTiming
 } from 'react-native-reanimated'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Ionicons, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import HoverableView from '../../HoverableView'
 import HoverableInput from '../../HoverableInput'
 import { normalize, areValuesEqual } from '../../../utils'
@@ -20,6 +20,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../../constants'
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 import { Button } from 'react-native-paper'
 import Toast from 'react-native-toast-message'
@@ -148,6 +149,73 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation }) =
                                     leftIconName="badge-account-outline"
                                     errorMessage={showErrorMessage && !changedContactInformation.name ? 'Enter your Name' : undefined}
                                 />
+                            </View>
+                            <View style={{ marginHorizontal: SPACING.small }}>
+                                <HoverableInput
+                                    placeholder="+420 777 666 777"
+                                    label="Phone number"
+                                    borderColor={COLORS.placeholder}
+                                    hoveredBorderColor={COLORS.red}
+                                    textColor='#000'
+                                    containerStyle={{ marginTop: SPACING.xxx_small }}
+                                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                                    text={changedContactInformation.phone}
+                                    setText={(text) => onValueChange(text, 'phone')}
+                                    errorMessage={showErrorMessage && !changedContactInformation.phone ? 'Enter your phone' : undefined}
+                                />
+                            </View>
+                            <View style={{ marginHorizontal: SPACING.small, marginTop: SPACING.x_small}}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <BouncyCheckbox
+                                        style={{ marginRight: SPACING.xx_small }}
+                                        disableBuiltInState
+                                        isChecked={changedContactInformation.whatsapp}
+                                        size={normalize(19)}
+                                        fillColor={changedContactInformation.whatsapp ? 'green' : COLORS.placeholder}
+                                        unfillColor="#FFFFFF"
+                                        iconStyle={{ borderRadius: 3 }}
+                                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                        onPress={() => setChangedContactInformation(data => ({ ...data, whatsapp: !data.whatsapp }))}
+                                        textComponent={
+                                            <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                                <FontAwesome5 name="whatsapp" size={18} color="white" />
+                                            </View>
+                                        }
+                                    />
+                                    <BouncyCheckbox
+                                        style={{ marginRight: SPACING.xx_small }}
+                                        disableBuiltInState
+                                        isChecked={changedContactInformation.viber}
+                                        size={normalize(19)}
+                                        fillColor={changedContactInformation.viber ? 'green' : COLORS.placeholder}
+                                        unfillColor="#FFFFFF"
+                                        iconStyle={{ borderRadius: 3 }}
+                                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                        onPress={() => setChangedContactInformation(data => ({ ...data, viber: !data.viber }))}
+                                        textComponent={
+                                            <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                                <FontAwesome5 name="viber" size={18} color="white" />
+                                            </View>
+                                        }
+                                    />
+                                    <BouncyCheckbox
+                                        disableBuiltInState
+                                        isChecked={changedContactInformation.telegram}
+                                        size={normalize(19)}
+                                        fillColor={changedContactInformation.telegram ? 'green' : COLORS.placeholder}
+                                        unfillColor="#FFFFFF"
+                                        iconStyle={{ borderRadius: 3 }}
+                                        innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                        onPress={() => setChangedContactInformation(data => ({ ...data, telegram: !data.telegram }))}
+                                        textComponent={
+                                            <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', marginLeft: SPACING.xxx_small, justifyContent: 'center' }}>
+                                                <EvilIcons name="sc-telegram" size={22} color="white" />
+                                            </View>
+                                        }
+                                    />
+                                </View>
                             </View>
                         </Animated.ScrollView>
 

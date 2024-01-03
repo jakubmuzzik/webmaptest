@@ -7,7 +7,7 @@ import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
 import DropdownSelect from '../components/DropdownSelect'
 import ServicesPicker from '../components/modal/ServicesPicker'
-import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, AntDesign, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { TabView } from 'react-native-tab-view'
 import Animated, {
     Extrapolation,
@@ -32,8 +32,7 @@ import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
 import Toast from 'react-native-toast-message'
-
-const { height } = Dimensions.get('window')
+import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -83,6 +82,9 @@ const LadySignup = ({ }) => {
         address: '',
         hiddenAddress: false,
         phone: '',
+        viber: false,
+        whatsapp: false,
+        telegram: false,
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
         images: [null, null, null, null, null, null],
@@ -895,6 +897,73 @@ const LadySignup = ({ }) => {
                             rightIconName='chevron-down'
                             errorMessage={showPersonalDetailsErrorMessages && !data.eyeColor ? 'Select your eye color' : undefined}
                         />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginLeft: SPACING.x_large }}>
+                        <HoverableInput
+                            placeholder="+420 777 666 777"
+                            label="Phone number"
+                            borderColor={COLORS.placeholder}
+                            hoveredBorderColor={COLORS.red}
+                            textColor='#000'
+                            containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                            labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                            placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                            text={data.phone}
+                            setText={(text) => onValueChange(text, 'phone')}
+                            errorMessage={showPersonalDetailsErrorMessages && !data.phone ? 'Enter your phone' : undefined}
+                        />
+
+                        <View style={{ flexDirection: 'row', flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
+                            <BouncyCheckbox
+                                style={{ marginRight: SPACING.xx_small }}
+                                disableBuiltInState
+                                isChecked={data.whatsapp}
+                                size={normalize(19)}
+                                fillColor={data.whatsapp ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, whatsapp: !data.whatsapp}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                        <FontAwesome5 name="whatsapp" size={18} color="white" />
+                                    </View>
+                                }
+                            />
+                            <BouncyCheckbox
+                                style={{ marginRight: SPACING.xx_small }}
+                                disableBuiltInState
+                                isChecked={data.viber}
+                                size={normalize(19)}
+                                fillColor={data.viber ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, viber: !data.viber}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                        <FontAwesome5 name="viber" size={18} color="white" />
+                                    </View>
+                                }
+                            />
+                            <BouncyCheckbox
+                                disableBuiltInState
+                                isChecked={data.telegram}
+                                size={normalize(19)}
+                                fillColor={data.telegram ? 'green' : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({...data, telegram: !data.telegram}))}
+                                textComponent={
+                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', marginLeft: SPACING.xxx_small, justifyContent: 'center' }}>
+                                        <EvilIcons name="sc-telegram" size={22} color="white" />
+                                    </View>
+                                }
+                            />
+                        </View>
                     </View>
 
                     <View style={{ marginHorizontal: SPACING.x_large }}>
@@ -1799,7 +1868,7 @@ const LadySignup = ({ }) => {
                         <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}
                             style={{ flexShrink: 1, borderRadius: 10 }}
-                            buttonColor={COLORS.red}
+                            buttonColor={index === Object.keys(routes).length - 2 ? COLORS.red : COLORS.lightBlack}
                             rippleColor="rgba(220, 46, 46, .16)"
                             mode="contained"
                             onPress={onNextPress}

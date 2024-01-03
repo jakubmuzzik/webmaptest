@@ -191,7 +191,7 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
                             </Text>
 
                             <View style={{ marginHorizontal: SPACING.small }}>
-                                <Text style={{ marginBottom: SPACING.xx_small, color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                                <Text style={{ marginBottom: SPACING.xx_small, color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                                     Available for:
                                 </Text>
 
@@ -227,7 +227,7 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
                             </View>
 
                             <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.xx_small, marginTop: SPACING.medium, alignItems: 'center' }}>
-                                <Text style={{ color: '#000', fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
+                                <Text style={{ color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
                                     Pricing
                                 </Text>
                                 <DropdownSelect
@@ -241,7 +241,7 @@ const PricingEditor = ({ visible, setVisible, pricing }) => {
                                         onPress={() => currencyDropdownRef.current?.onDropdownPress()}
                                         style={{ marginLeft: SPACING.xxx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
                                     >
-                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}>
+                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#000' }}>
                                             {changedPricing.currency}
                                         </Text>
                                         <MaterialCommunityIcons style={{ marginLeft: 4, }} name="chevron-down" size={normalize(20)} color="black" />

@@ -12,6 +12,7 @@ import PersonalDetails from './account/PersonalDetails'
 import Photos from './account/Photos'
 import Videos from './Account/Videos'
 import Settings from './Account/Settings'
+import Ladies from './account/Ladies'
 
 const Account = ({ navigation, route }) => {
     const [loginVisible, setLoginVisible] = useState(false)
@@ -19,10 +20,11 @@ const Account = ({ navigation, route }) => {
     const [index, setIndex] = useState(0)
     const [routes, setRoutes] = useState([
         { key: 'profileInformation', title: 'Profile information', height: '100%' },
+        { key: 'ladies', title: 'Ladies', height: '100%' },
         { key: 'photos', title: 'Photos', height: '100%' },
         { key: 'videos', title: 'Videos', height: '100%' },
         { key: 'settings', title: 'Settings', height: '100%' },
-    ])
+    ].map((route, index) => ({...route, index})))//.filter(route => route.key !== 'ladies'))
     const [mockIndex, setMockIndex] = useState(0)
     
     const onLoginPress = () => {
@@ -58,25 +60,31 @@ const Account = ({ navigation, route }) => {
             case 'profileInformation':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, 0)} />
+                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
+                    </View>
+                )
+            case 'ladies':
+                return (
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
+                        <Ladies setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'photos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Photos setTabHeight={(height) => setTabHeight(height, 1)}/>
+                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)}/>
                     </View>
                 )
             case 'videos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Videos setTabHeight={(height) => setTabHeight(height, 2)} />
+                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'settings':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Settings setTabHeight={(height) => setTabHeight(height, 3)}/>
+                        <Settings setTabHeight={(height) => setTabHeight(height, route.index)}/>
                     </View>
                 )
             default:
@@ -103,7 +111,7 @@ const Account = ({ navigation, route }) => {
     return (
         <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF' }}>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
                     Account
                 </Text>
             </View>

@@ -86,7 +86,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 </>
             } />
 
-            <Route path='/me' element={
+            <Route path='/account-settings' element={
                 <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
