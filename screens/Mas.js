@@ -9,7 +9,7 @@ import {
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { CZECH_CITIES } from '../labels'
-import RenderClient from '../components/list/RenderClient'
+import RenderLady from '../components/list/RenderLady'
 import { normalize, getParam } from '../utils'
 
 import { MOCK_DATA } from '../constants'
@@ -50,7 +50,7 @@ const Mas = ({  }) => {
     const renderCard = useCallback((data) => {
         return (
             <View key={data.id} style={[styles.cardContainer, { width: cardWidth }]}>
-                <RenderClient client={data} width={cardWidth} />
+                <RenderLady client={data} width={cardWidth} />
             </View>
         )
     }, [cardWidth])

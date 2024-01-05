@@ -12,7 +12,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const RenderClient = ({ client, width, showPrice = true }) => {
+const RenderLady = ({ client, width, showPrice = true }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -196,7 +196,7 @@ const RenderClient = ({ client, width, showPrice = true }) => {
     )
 }
 
-export default memo(RenderClient)
+export default memo(RenderLady)
 
 const styles = StyleSheet.create({
     container: {

@@ -105,7 +105,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     </View>
 
                     <View style={{ height: initialHeight - normalize(70) }}>
-                        <LadySignup />
+                        <LadySignup independent/>
                     </View>
                 </>
             } />
@@ -129,7 +129,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     </View>
 
                     <View style={{ flex: 1 }}>
-                        <NotFound />
+                        <Account />
                     </View>
                 </>
             } />

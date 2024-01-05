@@ -59,7 +59,8 @@ const EstablishmentSignup = ({ }) => {
         viber: false,
         whatsapp: false,
         telegram: false,
-        website: ''
+        website: '',
+        agreed: ''
     })
 
     const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
@@ -336,7 +337,7 @@ const EstablishmentSignup = ({ }) => {
                     Toast.show({
                         type: 'error',
                         text1: 'File Size Error',
-                        text2:`Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
+                        text2: `Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
                     })
                     return
                 }
@@ -346,7 +347,7 @@ const EstablishmentSignup = ({ }) => {
                     Toast.show({
                         type: 'error',
                         text1: 'Invalid File Type',
-                        text2:`Please upload a supported file type.`
+                        text2: `Please upload a supported file type.`
                     })
                     return
                 }
@@ -379,7 +380,7 @@ const EstablishmentSignup = ({ }) => {
                     Toast.show({
                         type: 'error',
                         text1: 'File Size Error',
-                        text2:`Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
+                        text2: `Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
                     })
                     return
                 }
@@ -389,7 +390,7 @@ const EstablishmentSignup = ({ }) => {
                     Toast.show({
                         type: 'error',
                         text1: 'Invalid File Type',
-                        text2:`Please upload a supported file type.`
+                        text2: `Please upload a supported file type.`
                     })
                     return
                 }
@@ -397,7 +398,7 @@ const EstablishmentSignup = ({ }) => {
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri}
+                    d.videos[index] = { thumbnail, video: result.assets[0].uri }
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }
@@ -416,7 +417,7 @@ const EstablishmentSignup = ({ }) => {
             } else {
                 d.images[index] = null
             }
-            
+
             return { ...d }
         })
     }
@@ -424,7 +425,7 @@ const EstablishmentSignup = ({ }) => {
     const onDeleteVideoPress = async (index) => {
         setData(d => {
             d.videos.splice(index, 1)
-            
+
             return { ...d }
         })
     }
@@ -469,7 +470,7 @@ const EstablishmentSignup = ({ }) => {
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
-                        <HoverableInput
+                        {/* <HoverableInput
                             placeholder="Agency xxx"
                             label="Establishment Name"
                             borderColor={COLORS.placeholder}
@@ -483,7 +484,7 @@ const EstablishmentSignup = ({ }) => {
                             setText={(text) => onValueChange(text, 'name')}
                             leftIconName="badge-account-outline"
                             errorMessage={showLoginInfoErrorMessages && !data.name ? 'Enter your Name' : undefined}
-                        />
+                        /> */}
                         <HoverableInput
                             placeholder="agency@email.com"
                             label="Email"
@@ -499,9 +500,7 @@ const EstablishmentSignup = ({ }) => {
                             leftIconName="email-outline"
                             errorMessage={showLoginInfoErrorMessages && !data.email ? 'Enter your Email' : undefined}
                         />
-                    </View>
 
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <HoverableInput
                             placeholder="8 or more characters"
                             label="Password"
@@ -520,6 +519,9 @@ const EstablishmentSignup = ({ }) => {
                             errorMessage={showLoginInfoErrorMessages && (!data.password || data.password.length < 8) ? 'Password must be at least 8 characters long' : undefined}
                             secureTextEntry={data.secureTextEntry}
                         />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
 
                         <HoverableInput
                             placeholder="Confirm your password"
@@ -539,13 +541,30 @@ const EstablishmentSignup = ({ }) => {
                             errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                             secureTextEntry={data.confirmSecureTextEntry}
                         />
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
+                            <BouncyCheckbox
+                                style={{}}
+                                disableBuiltInState
+                                isChecked={data.agreed}
+                                size={normalize(19)}
+                                fillColor={data.agreed ? COLORS.red : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({ ...data, agreed: !data.agreed }))}
+                            />
+                            <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
+                                I agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
+                            </Text>
+                        </View>
                     </View>
 
-                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
+                    {/* <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
                         <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
                             By countinuing, you agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
                         </Text>
-                    </View>
+                    </View> */}
                 </Animated.ScrollView>
             </>
         )
@@ -565,17 +584,19 @@ const EstablishmentSignup = ({ }) => {
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <HoverableInput
-                            placeholder="www.website.com"
-                            label="Website"
+                            placeholder="Agency xxx"
+                            label="Establishment Name"
                             borderColor={COLORS.placeholder}
                             hoveredBorderColor={COLORS.red}
                             textColor='#000'
-                            containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}
+                            containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, }}
                             textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                             labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                             placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
-                            text={data.website}
-                            setText={(text) => onValueChange(text, 'website')}
+                            text={data.name}
+                            setText={(text) => onValueChange(text, 'name')}
+                            //leftIconName="badge-account-outline"
+                            errorMessage={showEstablishmentDetailsErrorMessages && !data.name ? 'Enter your Name' : undefined}
                         />
 
                         <DropdownSelect
@@ -597,10 +618,10 @@ const EstablishmentSignup = ({ }) => {
                         />
                     </View>
 
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginLeft: SPACING.x_large }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', marginLeft: SPACING.x_large }}>
                         <HoverableInput
-                            placeholder="+420 777 666 777"
-                            label="Phone number"
+                            placeholder="www.website.com"
+                            label="Website"
                             borderColor={COLORS.placeholder}
                             hoveredBorderColor={COLORS.red}
                             textColor='#000'
@@ -608,59 +629,75 @@ const EstablishmentSignup = ({ }) => {
                             textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
                             labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                             placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
-                            text={data.phone}
-                            setText={(text) => onValueChange(text, 'phone')}
-                            errorMessage={showEstablishmentDetailsErrorMessages && !data.phone ? 'Enter your phone' : undefined}
+                            text={data.website}
+                            setText={(text) => onValueChange(text, 'website')}
                         />
 
-                        <View style={{ flexDirection: 'row', flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
-                            <BouncyCheckbox
-                                style={{ marginRight: SPACING.xx_small }}
-                                disableBuiltInState
-                                isChecked={data.whatsapp}
-                                size={normalize(19)}
-                                fillColor={data.whatsapp ? 'green' : COLORS.placeholder}
-                                unfillColor="#FFFFFF"
-                                iconStyle={{ borderRadius: 3 }}
-                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                                onPress={() => setData(data => ({...data, whatsapp: !data.whatsapp}))}
-                                textComponent={
-                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
-                                        <FontAwesome5 name="whatsapp" size={18} color="white" />
-                                    </View>
-                                }
+                        <View style={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
+                            <HoverableInput
+                                placeholder="+420 777 666 777"
+                                label="Phone number"
+                                borderColor={COLORS.placeholder}
+                                hoveredBorderColor={COLORS.red}
+                                textColor='#000'
+
+                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                                text={data.phone}
+                                setText={(text) => onValueChange(text, 'phone')}
+                                errorMessage={showEstablishmentDetailsErrorMessages && !data.phone ? 'Enter your phone' : undefined}
                             />
-                            <BouncyCheckbox
-                                style={{ marginRight: SPACING.xx_small }}
-                                disableBuiltInState
-                                isChecked={data.viber}
-                                size={normalize(19)}
-                                fillColor={data.viber ? 'green' : COLORS.placeholder}
-                                unfillColor="#FFFFFF"
-                                iconStyle={{ borderRadius: 3 }}
-                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                                onPress={() => setData(data => ({...data, viber: !data.viber}))}
-                                textComponent={
-                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
-                                        <FontAwesome5 name="viber" size={18} color="white" />
-                                    </View>
-                                }
-                            />
-                            <BouncyCheckbox
-                                disableBuiltInState
-                                isChecked={data.telegram}
-                                size={normalize(19)}
-                                fillColor={data.telegram ? 'green' : COLORS.placeholder}
-                                unfillColor="#FFFFFF"
-                                iconStyle={{ borderRadius: 3 }}
-                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
-                                onPress={() => setData(data => ({...data, telegram: !data.telegram}))}
-                                textComponent={
-                                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', marginLeft: SPACING.xxx_small, justifyContent: 'center' }}>
-                                        <EvilIcons name="sc-telegram" size={22} color="white" />
-                                    </View>
-                                }
-                            />
+
+                            <View style={{ flexDirection: 'row', marginTop: SPACING.xx_small }}>
+                                <BouncyCheckbox
+                                    style={{ marginRight: SPACING.xx_small }}
+                                    disableBuiltInState
+                                    isChecked={data.whatsapp}
+                                    size={normalize(19)}
+                                    fillColor={data.whatsapp ? 'green' : COLORS.placeholder}
+                                    unfillColor="#FFFFFF"
+                                    iconStyle={{ borderRadius: 3 }}
+                                    innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                    onPress={() => setData(data => ({ ...data, whatsapp: !data.whatsapp }))}
+                                    textComponent={
+                                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                            <FontAwesome5 name="whatsapp" size={18} color="white" />
+                                        </View>
+                                    }
+                                />
+                                <BouncyCheckbox
+                                    style={{ marginRight: SPACING.xx_small }}
+                                    disableBuiltInState
+                                    isChecked={data.viber}
+                                    size={normalize(19)}
+                                    fillColor={data.viber ? 'green' : COLORS.placeholder}
+                                    unfillColor="#FFFFFF"
+                                    iconStyle={{ borderRadius: 3 }}
+                                    innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                    onPress={() => setData(data => ({ ...data, viber: !data.viber }))}
+                                    textComponent={
+                                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                                            <FontAwesome5 name="viber" size={18} color="white" />
+                                        </View>
+                                    }
+                                />
+                                <BouncyCheckbox
+                                    disableBuiltInState
+                                    isChecked={data.telegram}
+                                    size={normalize(19)}
+                                    fillColor={data.telegram ? 'green' : COLORS.placeholder}
+                                    unfillColor="#FFFFFF"
+                                    iconStyle={{ borderRadius: 3 }}
+                                    innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                    onPress={() => setData(data => ({ ...data, telegram: !data.telegram }))}
+                                    textComponent={
+                                        <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', marginLeft: SPACING.xxx_small, justifyContent: 'center' }}>
+                                            <EvilIcons name="sc-telegram" size={22} color="white" />
+                                        </View>
+                                    }
+                                />
+                            </View>
                         </View>
                     </View>
 
@@ -922,11 +959,11 @@ const EstablishmentSignup = ({ }) => {
                     <Animated.Text style={modalHeaderTextStyles4}>4. Photos & Videos</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles4]} />
-                <Animated.ScrollView 
+                <Animated.ScrollView
                     onContentSizeChange={(contentWidth) => setPhotosContentWidth(contentWidth)}
-                    scrollEventThrottle={1} 
-                    onScroll={scrollHandler4} 
-                    style={{ flex: 1 }} 
+                    scrollEventThrottle={1}
+                    onScroll={scrollHandler4}
+                    style={{ flex: 1 }}
                     contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small + 8 }]}>
                         4. Photos & Videos
@@ -1024,7 +1061,7 @@ const EstablishmentSignup = ({ }) => {
                             </View>)}
                     </View>
 
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large,  marginHorizontal: SPACING.x_large, marginTop: SPACING.medium - SPACING.xxx_small, }}>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, marginTop: SPACING.medium - SPACING.xxx_small, }}>
                         Add videos
                     </Text>
                     <Text style={{ color: COLORS.grey, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, marginTop: 2, marginHorizontal: SPACING.x_large, marginBottom: SPACING.x_small }}>
@@ -1093,11 +1130,11 @@ const EstablishmentSignup = ({ }) => {
                     style={{ flex: 1 }}
                     contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large, alignItems: 'center' }}
                 >
-                    <Text style={[styles.pageHeaderText,{ textAlign: 'center' }]}>
+                    <Text style={[styles.pageHeaderText, { textAlign: 'center' }]}>
                         Registration completed
                     </Text>
-                    
-                    <View style={{ height: 100, width: 100, marginVertical: SPACING.medium  }}>
+
+                    <View style={{ height: 100, width: 100, marginVertical: SPACING.medium }}>
                         {index === 4 && <MotiView
                             style={{ flex: 1 }}
                             from={{
@@ -1111,13 +1148,13 @@ const EstablishmentSignup = ({ }) => {
                             }}
                         >
                             <Image
-                                    resizeMode='contain'
-                                    source={require('../assets/completed.svg')}
-                                    style={{ width: '100%', height: '100%'}}
-                                />
-                            </MotiView>}
-                        </View>
-                    
+                                resizeMode='contain'
+                                source={require('../assets/completed.svg')}
+                                style={{ width: '100%', height: '100%' }}
+                            />
+                        </MotiView>}
+                    </View>
+
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
                         Your Establishment has been submitted for review!
                     </Text>

@@ -1,9 +1,9 @@
 import React, { useState, memo } from 'react'
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { FONTS, FONT_SIZES, COLORS, SPACING } from '../../constants'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
-import { Button, IconButton } from 'react-native-paper'
+import { Button, Tooltip, IconButton } from 'react-native-paper'
 
 import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
@@ -35,6 +35,10 @@ const Settings = ({ setTabHeight }) => {
         setPasswordEditorVisible(true)
     }
 
+    const onStatusChangePress = () => {
+
+    }
+
     const onDeleteAccountPress = () => {
         setDeleteAccountVisible(true)
     }
@@ -63,6 +67,20 @@ const Settings = ({ setTabHeight }) => {
                     <Text onPress={onPasswordEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
                         Change
                     </Text>
+                </View>
+                <View style={styles.row}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <MaterialCommunityIcons name="account-check-outline" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
+                            Profile Status
+                        </Text>
+                    </View>
+                    <TouchableOpacity onPress={onStatusChangePress} style={{ flexDirection: 'row', alignItems: 'center' }} activeOpacity={1}>
+                        <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xxx_small }}/>
+                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                            Active
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>

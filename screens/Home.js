@@ -10,7 +10,7 @@ import {
 } from '../labels'
 import CityPicker from '../components/modal/CityPicker'
 import { Link } from '@react-navigation/native'
-import RenderClient from '../components/list/RenderClient'
+import RenderLady from '../components/list/RenderLady'
 
 const {
     width: INITIAL_SCREEN_WIDTH
@@ -166,7 +166,7 @@ const Home = ({ route, navigation }) => {
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.page_horizontal }}>Newest Clients</Text>
 
                 <ScrollView contentContainerStyle={{ marginHorizontal: SPACING.page_horizontal }} horizontal showsHorizontalScrollIndicator={false}>
-                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}><RenderClient client={data} width={150} showPrice={false} /></View> )}
+                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}><RenderLady client={data} width={150} showPrice={false} /></View> )}
                 </ScrollView>
             </View>
 

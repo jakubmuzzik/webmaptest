@@ -53,7 +53,7 @@ const getFileSizeInMb = (uri) => {
     return (uri.length * (3 / 4) - 2) / (1024 * 1024)
 }
 
-const LadySignup = ({ }) => {
+const LadySignup = ({ independent }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -73,7 +73,6 @@ const LadySignup = ({ }) => {
         weight: '',
         height: '',
         dateOfBirth: '',
-        sexuality: '',
         services: [],
         currency: 'CZK',
         prices: [], //{length: 1, incall: '', outcall: ''}
@@ -88,7 +87,8 @@ const LadySignup = ({ }) => {
         description: '',
         workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
         images: [null, null, null, null, null, null],
-        videos: [null]
+        videos: [null],
+        agreed: false
     })
 
     const [photosContentWidth, setPhotosContentWidth] = useState(normalize(800))
@@ -106,14 +106,18 @@ const LadySignup = ({ }) => {
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
 
-    const [routes] = useState([
-        { key: '1. Login Information', index: 0 },
-        { key: '2. Personal Details', index: 1 },
-        { key: '3. Services & Pricing', index: 2 },
-        { key: '4. Address & Availability', index: 3 },
-        { key: '5. Upload Photos', index: 4 },
-        { key: '6. Registration Completed', inde: 5 }
-    ])
+    const [routes] = useState(
+        [
+            { key: 'login_information' },
+            { key: 'personal_details' },
+            { key: 'services_and_pricing' },
+            { key: 'address_and_availability' },
+            { key: 'photos_and_videos' },
+            { key: 'registration_completed' }
+        ]
+        .filter(r => r.key === 'login_information' ? independent : true)
+        .map((r, index) => ({...r, index}))
+    )
 
     const scrollYLoginInformation = useSharedValue(0)
     const scrollYPersonalDetails = useSharedValue(0)
@@ -242,7 +246,7 @@ const LadySignup = ({ }) => {
         paginageNext()
         return
 
-        if (!data.dateOfBirth || !data.sexuality || !data.nationality || !data.languages.length || !data.height || data.weight || !data.bodyType || !data.pubicHair || !data.breastSize || !data.breastType || !data.hairColor || !data.eyeColor) {
+        if (!data.dateOfBirth || !data.nationality || !data.languages.length || !data.height || data.weight || !data.bodyType || !data.pubicHair || !data.breastSize || !data.breastType || !data.hairColor || !data.eyeColor) {
             setShowPersonalDetailsErrorMessages(true)
             return
         }
@@ -575,16 +579,16 @@ const LadySignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles1}>1. Login Information</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles1}>{`${i + 1}. Login Information`}</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles1]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler1} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={styles.pageHeaderText}>
-                        1. Login Information
+                        {`${i + 1}. Login Information`}
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
-                        <HoverableInput
+                        {/* <HoverableInput
                             placeholder="Lady xxx"
                             label="Name"
                             borderColor={COLORS.placeholder}
@@ -598,7 +602,7 @@ const LadySignup = ({ }) => {
                             setText={(text) => onValueChange(text, 'name')}
                             leftIconName="badge-account-outline"
                             errorMessage={showLoginInfoErrorMessages && !data.name ? 'Enter your Name' : undefined}
-                        />
+                        /> */}
                         <HoverableInput
                             placeholder="lady@email.com"
                             label="Email"
@@ -614,9 +618,6 @@ const LadySignup = ({ }) => {
                             leftIconName="email-outline"
                             errorMessage={showLoginInfoErrorMessages && !data.email ? 'Enter your Email' : undefined}
                         />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <HoverableInput
                             placeholder="8 or more characters"
                             label="Password"
@@ -635,7 +636,9 @@ const LadySignup = ({ }) => {
                             errorMessage={showLoginInfoErrorMessages && (!data.password || data.password.length < 8) ? 'Password must be at least 8 characters long' : undefined}
                             secureTextEntry={data.secureTextEntry}
                         />
+                    </View>
 
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <HoverableInput
                             placeholder="Confirm your password"
                             label="Confirm password"
@@ -654,13 +657,36 @@ const LadySignup = ({ }) => {
                             errorMessage={showLoginInfoErrorMessages && (!data.confirmPassword || data.confirmPassword.length < 8) ? 'Password must be at least 8 characters long' : showLoginInfoErrorMessages && data.password !== data.confirmPassword ? 'Provided passwords do not match.' : undefined}
                             secureTextEntry={data.confirmSecureTextEntry}
                         />
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large }}>
+                            <BouncyCheckbox
+                                style={{  }}
+                                disableBuiltInState
+                                isChecked={data.agreed}
+                                size={normalize(19)}
+                                fillColor={data.agreed ? COLORS.red : COLORS.placeholder}
+                                unfillColor="#FFFFFF"
+                                iconStyle={{ borderRadius: 3 }}
+                                innerIconStyle={{ borderWidth: 2, borderRadius: 3 }}
+                                onPress={() => setData(data => ({ ...data, agreed: !data.agreed }))}
+                            />
+                            <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
+                                I agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
+                            </Text>
+                        </View>
+
+                        {/* <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
+                            <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
+                                By countinuing, you agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
+                            </Text>
+                        </View> */}
                     </View>
 
-                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
+                    {/* <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large, marginTop: SPACING.small }}>
                         <Text style={{ fontSize: FONT_SIZES.medium, fontFamily: FONTS.medium }}>
                             By countinuing, you agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
                         </Text>
-                    </View>
+                    </View> */}
                 </Animated.ScrollView>
             </>
         )
@@ -670,15 +696,30 @@ const LadySignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles2}>2. Personal Details</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles2}>{`${i + 1}. Personal Details`}</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles2]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler2} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={styles.pageHeaderText}>
-                        2. Personal Details
+                        {`${i + 1}. Personal Details`}
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
+                        <HoverableInput
+                            placeholder="Lady xxx"
+                            label="Name"
+                            borderColor={COLORS.placeholder}
+                            hoveredBorderColor={COLORS.red}
+                            textColor='#000'
+                            containerStyle={{ flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginTop: SPACING.xxx_small, marginRight: SPACING.x_large, }}
+                            textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                            labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                            placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                            text={data.name}
+                            setText={(text) => onValueChange(text, 'name')}
+                            //leftIconName="badge-account-outline"
+                            errorMessage={showPersonalDetailsErrorMessages && !data.name ? 'Enter your Name' : undefined}
+                        />
                         <HoverableInput
                             placeholder="DD.MM.YYYY"
                             label="Date of birth"
@@ -693,7 +734,7 @@ const LadySignup = ({ }) => {
                             setText={(text) => onBirthdateChange(text)}
                             errorMessage={showPersonalDetailsErrorMessages && !data.dateOfBirth ? 'Enter your date of birth' : showPersonalDetailsErrorMessages && data.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
                         />
-                        <DropdownSelect
+                        {/* <DropdownSelect
                             values={SEXUAL_ORIENTATION}
                             offsetX={contentWidth * Number(i)}
                             placeholder="Select your sexuality"
@@ -709,15 +750,15 @@ const LadySignup = ({ }) => {
                             setText={(text) => onValueChange(text, 'sexuality')}
                             rightIconName='chevron-down'
                             errorMessage={showPersonalDetailsErrorMessages && !data.sexuality ? 'Select your sexuality' : undefined}
-                        />
+                        /> */}
                     </View>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <DropdownSelect
                             values={NATIONALITIES}
                             offsetX={contentWidth * i}
-                            searchable
-                            searchPlaceholder="Search nationality"
+                            //searchable
+                            //searchPlaceholder="Search nationality"
                             placeholder="Select your nationality"
                             label="Nationality"
                             borderColor={COLORS.placeholder}
@@ -999,12 +1040,12 @@ const LadySignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles3}>3. Services & Pricing</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles3}>{`${i + 1}. Services & Pricing`}</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles3]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler3} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small + 8 }]}>
-                        3. Services & Pricing
+                        {`${i + 1}. Services & Pricing`}
                     </Text>
 
                     <Text style={{ marginBottom: SPACING.xx_small, marginHorizontal: SPACING.x_large, color: '#000', fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginRight: SPACING.xx_small }}>
@@ -1227,12 +1268,12 @@ const LadySignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles4}>4. Address & Working Hours</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles4}>{`${i + 1}. Address & Working Hours`}</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles4]} />
                 <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler4} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small - 8 }]}>
-                        4. Address & Working Hours
+                        {`${i + 1}. Address & Working Hours`}
                     </Text>
 
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large, alignItems: 'flex-start' }}>
@@ -1263,7 +1304,7 @@ const LadySignup = ({ }) => {
                                     If not selected, only city will be visible on your profile
                                 </Text>
                             </View>
-                            <Switch value={data.hiddenAddress}
+                            <Switch value={!data.hiddenAddress}
                                 onValueChange={(value) => setData({
                                     ...data,
                                     hiddenAddress: value
@@ -1449,7 +1490,7 @@ const LadySignup = ({ }) => {
         return (
             <>
                 <View style={styles.modal__header}>
-                    <Animated.Text style={modalHeaderTextStyles5}>5. Photos & Videos</Animated.Text>
+                    <Animated.Text style={modalHeaderTextStyles5}>{`${i + 1}. Photos & Videos`}</Animated.Text>
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles5]} />
                 <Animated.ScrollView 
@@ -1459,7 +1500,7 @@ const LadySignup = ({ }) => {
                     style={{ flex: 1 }} 
                     contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
                     <Text style={[styles.pageHeaderText, { marginBottom: SPACING.small + 8 }]}>
-                        5. Photos & Videos
+                        {`${i + 1}. Photos & Videos`}
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large }}>
@@ -1764,7 +1805,7 @@ const LadySignup = ({ }) => {
                     </Text>
                     
                     <View style={{ height: 100, width: 100, marginVertical: SPACING.medium  }}>
-                        {index === 5 && <MotiView
+                        {index === routes.length - 1 && <MotiView
                             style={{ flex: 1 }}
                             from={{
                                 transform: [{ scale: 0 }]
@@ -1785,11 +1826,15 @@ const LadySignup = ({ }) => {
                         </View>
                     
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
-                        Your Profile has been submitted for review!
+                        {independent ? 'Your Profile has been submitted for review!' : 'Profile has been submitted for review!'}
                     </Text>
 
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
-                        Our team will review your profile shortly, and once approved, you'll receive a confirmation email to: {data.email}
+                        {independent ? 
+                            "Our team will review your profile shortly, and once approved, you'll receive a confirmation email to:"  + data.email 
+                            : "Our team will review the profile shortly, and once approved, you'll receive a confirmation email to:" + '' 
+                            //TODO - add email to the text above from redux
+                        }
                     </Text>
                 </Animated.ScrollView>
             </>
@@ -1798,17 +1843,17 @@ const LadySignup = ({ }) => {
 
     const renderScene = ({ route }) => {
         switch (route.key) {
-            case '1. Login Information':
+            case 'login_information':
                 return renderLoginInformation(route.index)
-            case '2. Personal Details':
+            case 'personal_details':
                 return renderPersonalDetails(route.index)
-            case '3. Services & Pricing':
+            case 'services_and_pricing':
                 return renderServicesAndPricing(route.index)
-            case '4. Address & Availability':
+            case 'address_and_availability':
                 return renderLocationAndAvailability(route.index)
-            case '5. Upload Photos':
+            case 'photos_and_videos':
                 return renderUploadPhotos(route.index)
-            case '6. Registration Completed':
+            case 'registration_completed':
                 return renderRegistrationCompleted()
         }
     }
@@ -1819,7 +1864,7 @@ const LadySignup = ({ }) => {
         <View style={{ height: '100%', backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
-                    Lady sign up
+                    {independent ? 'Lady sign up' : 'Add Lady'}
                 </Text>
                 <ProgressBar style={{ marginHorizontal: SPACING.medium, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
@@ -1854,7 +1899,7 @@ const LadySignup = ({ }) => {
                         initialLayout={{ width: contentWidth }}
                     />
 
-                    {index !== 5 && <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, }}>
+                    {index !== routes.length - 1 && <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: SPACING.x_large, marginVertical: SPACING.small, }}>
                         {index === 0 ? <View /> : <Button
                             labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#000' }}
                             style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}

@@ -89,7 +89,7 @@ export const BREAST_SIZES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H+']
 export const BREAST_TYPES = ['Natural', 'Silicone']
 export const EYE_COLORS = ['Blue', 'Brown', 'Gray', 'Green', 'Hazel']
 export const LANGUAGES = ['English', 'French', 'German', 'Japanese', 'Italian', 'Russian', 'Spanish', 'Chinese', 'Arabic', 'Hindi', 'Portuguese', 'Turkish', 'Indonesian', 'Dutch', 'Korean', 'Bengali', 'Thai', 'Punjabi', 'Greek', 'Polish', 'Malay', 'Tagalog', 'Danish', 'Swedish', 'Finnish', 'Czech', 'Hungarian', 'Ukrainian']
-export const NATIONALITIES = ['Australian','Brazilian','Canadian','Chinese','French','German','Indian','Italian','Japanese','Korean','Mexican','Russian','Spanish','American']
+export const NATIONALITIES = ['Australian','Brazilian','Canadian','Chinese','French','German','Indian','Italian','Japanese','Korean','Mexican', 'Mixed', 'Russian','Spanish','American']
 export const ESTABLISHMENT_TYPES = ['Club']
 
 export const LABELS = {
