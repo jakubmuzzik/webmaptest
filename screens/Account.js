@@ -3,6 +3,7 @@ import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
 import { normalize } from '../utils'
+import { MotiText, AnimatePresence } from 'moti'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 
@@ -62,6 +63,36 @@ const Account = ({ navigation, route }) => {
 
     return (
         <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text onPress={onGoBackPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', textDecorationLine: index !== 0 ? 'underline' : 'none' }}>Account</Text>
+                    <AnimatePresence>
+                    { index === 1 &&
+                   
+                        <MotiText 
+                            style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}
+                            from={{
+                                opacity: 0,
+                                transform: [{ translatex: 100 }],
+                            }}
+                            animate={{
+                                opacity: 1,
+                                transform: [{ translatex: 0 }],
+                            }}
+                            exit={{
+                                opacity: 0,
+                                transform: [{ translatex: 100 }],
+                            }}
+                            transition={{
+                                type: 'timing'
+                            }}
+                        >
+                            {' > Edit Lady'}
+                        </MotiText>
+                    }
+                    </AnimatePresence>
+                </View>
+            </View>
 
             <View style={{ flex: 1 }}>
                 <TabView

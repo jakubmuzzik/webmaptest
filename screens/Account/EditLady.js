@@ -82,12 +82,12 @@ const EditLady = ({ onGoBackPress, setTabHeightFromParent }) => {
 
     return (
         <View onLayout={(event) => setTabHeightFromParent(event.nativeEvent.layout.height)}>
-            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
+            {/* <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Text onPress={onGoBackPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', textDecorationLine: 'underline' }}>Account</Text>
                     <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>{' > Edit Lady'}</Text>
                 </View>
-            </View>
+            </View> */}
 
             <View style={{ flex: 1 }}>
                 <TabView
