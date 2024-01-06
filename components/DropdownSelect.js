@@ -48,11 +48,11 @@ const DropdownSelect = forwardRef((props, ref) => {
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState(COLORS.placeholder)
 
+    const { height } = useWindowDimensions()
+
     useEffect(() => {
         filteredValuesRef.current = values
     }, [values])
-
-    const { height } = useWindowDimensions()
 
     const onValuePress = (value) => {
         setText(value)

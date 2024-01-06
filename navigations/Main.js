@@ -137,7 +137,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     </View>
 
                     <View style={{ flex: 1 }}>
-                        <NotFound />
+                        <Account />
                     </View>
                 </>
             } />

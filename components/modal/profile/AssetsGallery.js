@@ -5,6 +5,7 @@ import { stripEmptyParams } from '../../../utils'
 import Gallery from 'react-native-awesome-gallery'
 import { Image } from 'expo-image'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 const MAX_IMAGE_SIZE = 130
 
@@ -70,7 +71,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack }}>
-            <View style={{ flex: 1 }} onLayout={(event) => setGalleryHeight(event.nativeEvent.layout.height)}>
+            <GestureHandlerRootView style={{ flex: 1 }} onLayout={(event) => setGalleryHeight(event.nativeEvent.layout.height)}>
                 <Gallery
                     style={{ backgroundColor: COLORS.lightBlack, marginTop: 10, marginHorizontal: SPACING.medium }}
                     containerDimensions={{ width: width - SPACING.medium - SPACING.medium, height: '100%' }}
@@ -84,7 +85,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
                     onIndexChange={(index) => setIndex(index)}
                     loop
                 />
-            </View>
+            </GestureHandlerRootView>
             
 
             <View style={{ width: 800, maxWidth: '100%', alignSelf: 'center' }}>

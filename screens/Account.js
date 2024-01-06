@@ -45,14 +45,10 @@ const Account = ({ navigation, route }) => {
     }
 
     const onGoBackPress = () => {
-        if (location.key === 'default') {
-            navigate({
-                pathname: '/account/ladies',
-                search: new URLSearchParams(stripEmptyParams(params)).toString()
-            })
-        } else {
-            navigate(-1)
-        }
+        navigate({
+            pathname: '/account/ladies',
+            search: new URLSearchParams(stripEmptyParams(params)).toString()
+        })
     }
 
     //todo - this is used only for photos tab - implement skeleton loading
