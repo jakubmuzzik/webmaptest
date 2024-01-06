@@ -44,7 +44,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                 transition={200}
                             />
                             <IconButton
-                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                style={{ position: 'absolute', top: 2, right: 2,  }}
+                                containerColor={COLORS.grey + 'B3'}
                                 icon="pencil-outline"
                                 iconColor='white'
                                 size={normalize(20)}
@@ -78,7 +79,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                         transition={200}
                                     />
                                     <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                        style={{ position: 'absolute', top: 2, right: 2,  }}
+                                        containerColor={COLORS.grey + 'B3'}
                                         icon="pencil-outline"
                                         iconColor='white'
                                         size={normalize(20)}
@@ -112,7 +114,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                         transition={200}
                                     />
                                     <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                        style={{ position: 'absolute', top: 2, right: 2,  }}
+                                        containerColor={COLORS.grey + 'B3'}
                                         icon="pencil-outline"
                                         iconColor='white'
                                         size={normalize(20)}
@@ -147,7 +150,8 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                         transition={200}
                                     />
                                     <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                        style={{ position: 'absolute', top: 2, right: 2,  }}
+                                        containerColor={COLORS.grey + 'B3'}
                                         icon="pencil-outline"
                                         iconColor='white'
                                         size={normalize(20)}
@@ -178,8 +182,10 @@ const Photos = ({ navigation, route, setTabHeight }) => {
                                         resizeMode="cover"
                                         transition={200}
                                     />
+                                    
                                     <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                        style={{ position: 'absolute', top: 2, right: 2,  }}
+                                        containerColor={COLORS.grey + 'B3'}
                                         icon="pencil-outline"
                                         iconColor='white'
                                         size={normalize(20)}

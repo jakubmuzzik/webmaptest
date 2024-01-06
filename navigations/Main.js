@@ -24,7 +24,7 @@ import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from '../c
 
 import Explore from './Explore'
 
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet, Navigate } from 'react-router-dom'
 
 const { height: initialHeight } = Dimensions.get('window')
 
@@ -86,17 +86,25 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 </>
             } />
 
-            <Route path='/account-settings' element={
+            <Route path='/account' element={
                 <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
 
-                    <View style={{ flex: 1 }}>
-                        {!isLoggedIn ? <Account /> : <SignUpOrLogin />}
-                    </View>
+                    <Outlet />
                 </>
-            } />
+            } >
+                <Route index element={<Navigate to="/account/profile-information" replace />} />
+                <Route path='profile-information' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='ladies' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='edit-lady/:id' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='photos' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='videos' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='settings' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+
+                <Route path='*' element={<NotFound />} />
+            </Route>
 
             <Route path='/lady-signup' element={
                 <>
@@ -129,7 +137,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                     </View>
 
                     <View style={{ flex: 1 }}>
-                        <Account />
+                        <NotFound />
                     </View>
                 </>
             } />

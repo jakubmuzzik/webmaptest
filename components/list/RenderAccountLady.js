@@ -26,26 +26,24 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
     const actionsDropdownRef = useRef()
 
     return (
-        <View style={styles.container}>
-            <View style={{ flex: 1 }}
+        <>
+            <View style={{  }}
                 onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
                 onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
             >
-                <View style={{ borderRadius: 10, overflow: 'hidden', height: (width / 3) * 4, width: Math.ceil(width) }}>
-                    <Image
-                        style={{
-                            flex: 1,
-                            // aspectRatio: 3 / 4,
-                            //borderRadius: 20
-                        }}
-                        source={lady.images[0]}
-                        placeholder={blurhash}
-                        resizeMode="cover"
-                        transition={200}
-                        alt={lady.name}
-                    />
-                </View>
-
+                <Image
+                    style={{
+                        borderRadius: 10, 
+                        overflow: 'hidden', 
+                        height: (width / 3) * 4, 
+                        width
+                    }}
+                    source={lady.images[0]}
+                    placeholder={blurhash}
+                    resizeMode="cover"
+                    transition={200}
+                    alt={lady.name}
+                />
 
                 <View style={{
                     position: 'absolute',
@@ -56,7 +54,7 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                         ref={actionsDropdownRef}
                         offsetX={offsetX}
                         values={actions.map(action => action.label)}
-                        setText={(text) => actions.find(action => action.label === text).onPress()}
+                        setText={(text) => actions.find(action => action.label === text).onPress(lady.id)}
                     >
                         <IconButton
                             icon="dots-horizontal"
@@ -74,9 +72,9 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                 {lady.name}
             </Text>
             <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText }}>
-                Created: 21.05.2023
+                Added: 21.05.2023
             </Text>
-        </View>
+        </>
     )
 }
 

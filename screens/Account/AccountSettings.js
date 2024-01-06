@@ -1,8 +1,8 @@
-import React, { useState, useRef, useLayoutEffect, memo } from 'react'
+import React, { useState, useRef, useLayoutEffect, memo, useMemo } from 'react'
 import { View, Text, ScrollView, Dimensions } from 'react-native'
-import { FONTS, FONT_SIZES, SPACING, COLORS } from '../../constants'
+import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../../constants'
 import { ActivityIndicator } from 'react-native-paper'
-import { normalize } from '../../utils'
+import { normalize, getParam, stripEmptyParams } from '../../utils'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 
@@ -11,22 +11,46 @@ import Photos from './Photos'
 import Videos from './Videos'
 import Settings from './Settings'
 import Ladies from './Ladies'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 
-const AccountSettings = ({ onEditLadyPress, setTabHeightFromParent }) => {
+const AccountSettings = ({ setTabHeightFromParent }) => {
+    const [searchParams] = useSearchParams()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
     const [index, setIndex] = useState(0)
     const [routes, setRoutes] = useState([
-        { key: 'profileInformation', title: 'Profile information', height: '100%' },
-        { key: 'ladies', title: 'Ladies', height: '100%' },
-        { key: 'photos', title: 'Photos', height: '100%' },
-        { key: 'videos', title: 'Videos', height: '100%' },
-        { key: 'settings', title: 'Settings', height: '100%' },
+        { key: 'profile-information', title: 'Profile information', height: '100%', path: '/account/profile-information' },
+        { key: 'ladies', title: 'Ladies', height: '100%', path: '/account/ladies' },
+        { key: 'photos', title: 'Photos', height: '100%', path: '/account/photos' },
+        { key: 'videos', title: 'Videos', height: '100%', path: '/account/videos' },
+        { key: 'settings', title: 'Settings', height: '100%', path: '/account/settings' },
     ].map((route, index) => ({ ...route, index })))//.filter(route => route.key !== 'ladies'))
     const [mockIndex, setMockIndex] = useState(0)
+
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    useLayoutEffect(() => {
+        const newIndex = routes.find(route => route.path === location.pathname)?.index
+        setIndex(newIndex ?? 0)
+    }, [location])
 
     const setTabHeight = (height, index) => {
         setRoutes(r => {
             r[index].height = height
             return [...r]
+        })
+    }
+
+    const onTabPress = (props) => {
+        setMockIndex(routes.indexOf(props.route))
+
+        navigate({
+            pathname: props.route.path,
+            search: new URLSearchParams(stripEmptyParams(params)).toString()
         })
     }
 
@@ -43,7 +67,7 @@ const AccountSettings = ({ onEditLadyPress, setTabHeightFromParent }) => {
         }
 
         switch (route.key) {
-            case 'profileInformation':
+            case 'profile-information':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
                         <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
@@ -52,7 +76,7 @@ const AccountSettings = ({ onEditLadyPress, setTabHeightFromParent }) => {
             case 'ladies':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Ladies setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} onEditLadyPress={onEditLadyPress} />
+                        <Ladies setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
                     </View>
                 )
             case 'photos':
@@ -90,7 +114,7 @@ const AccountSettings = ({ onEditLadyPress, setTabHeightFromParent }) => {
                     {route.title}
                 </Text>
             )}
-            onTabPress={(props) => setMockIndex(routes.indexOf(props.route))}
+            onTabPress={onTabPress}
         />
     )
 

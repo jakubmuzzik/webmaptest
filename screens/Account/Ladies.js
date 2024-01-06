@@ -1,16 +1,23 @@
 import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
-import { SPACING, FONTS, FONT_SIZES, COLORS, SMALL_SCREEN_THRESHOLD } from '../../constants'
+import { SPACING, FONTS, FONT_SIZES, COLORS, SUPPORTED_LANGUAGES } from '../../constants'
 import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, Ionicons, Octicons } from '@expo/vector-icons'
-import { normalize } from '../../utils'
+import { stripEmptyParams, getParam } from '../../utils'
 import AddLady from '../../components/modal/account/AddLady'
 import RenderAccountLady from '../../components/list/RenderAccountLady'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { MOCK_DATA } from '../../constants'
 
-const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
+const Ladies = ({ route, setTabHeight, index }) => {
+    const [searchParams] = useSearchParams()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
     const [data, setData] = useState({
         active: [MOCK_DATA.slice(25)],
         inactive: [],
@@ -18,7 +25,9 @@ const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
         rejected: []
     })
     const [addLadyModalVisible, setAddLadyModalVisible] = useState(false)
-    const [sectionWidth, setSectionWidth] = useState()
+    const [sectionWidth, setSectionWidth] = useState(0)
+
+    const navigate = useNavigate()
 
     const onAddNewLadyPress = () => {
         setAddLadyModalVisible(true)
@@ -38,15 +47,18 @@ const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
         const isXMediumScreen = sectionWidth >= 750 && sectionWidth < 960
         const isLargeScreen = sectionWidth >= 960 && sectionWidth < 1300
 
-        return isXSmallScreen ? Math.floor((sectionWidth) - (SPACING.small + SPACING.small))
-            : isSmallScreen ? Math.floor((sectionWidth / 2) - (SPACING.small + SPACING.small / 2))
-                : isMediumScreen ? Math.floor((sectionWidth / 3) - (SPACING.small + SPACING.small / 3))
-                    : isXMediumScreen ? Math.floor((sectionWidth / 4) - (SPACING.small + SPACING.small / 4))
-                        : isLargeScreen ? Math.floor((sectionWidth / 5) - (SPACING.small + SPACING.small / 5)) : Math.floor((sectionWidth / 6) - (SPACING.small + SPACING.small / 6))
+        return isXSmallScreen ? ((sectionWidth - SPACING.small - SPACING.small)) 
+            : isSmallScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 2) - (SPACING.small) / 2
+                : isMediumScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 3) - (SPACING.small * 2) / 3
+                    : isXMediumScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 4) - (SPACING.small * 3) / 4
+                        : isLargeScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 5) - (SPACING.small * 4) / 5 : ((sectionWidth - SPACING.small - SPACING.small) / 6) - (SPACING.small * 5) / 6
     }, [sectionWidth])
 
-    const onOpenProfilePress = () => {
-        
+    const onOpenProfilePress = (ladyId) => {
+        navigate({
+            pathname: '/profile/' + ladyId, 
+            search: new URLSearchParams(stripEmptyParams(params)).toString()
+        })
     }
 
     const onDeletePress = () => {
@@ -63,6 +75,13 @@ const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
 
     const onShowRejectedReasonPress = () => {
 
+    }
+
+    const onEditLadyPress = (ladyId) => {
+        navigate({
+            pathname: '/account/edit-lady/' + ladyId,
+            search: new URLSearchParams(stripEmptyParams(params)).toString()
+        })
     }
 
     const activeActions = useRef([
@@ -146,9 +165,9 @@ const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
                 data.active.length === 0 ? <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
                     No active profiles
                 </Text> : (
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginHorizontal: SPACING.small }}>
                         {MOCK_DATA.slice(25).map(lady => (
-                            <View key={data.id} style={{ width: cardWidth, marginRight: SPACING.small, marginBottom: SPACING.medium, }}>
+                            <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, }}>
                                 <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions.current} offsetX={windowWidth * index} />
                             </View>
                         ))}
@@ -199,7 +218,7 @@ const Ladies = ({ route, setTabHeight, index, onEditLadyPress }) => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                     {MOCK_DATA.slice(25).map(lady => (
-                        <View key={data.id} style={{ width: cardWidth, marginRight: SPACING.small, marginBottom: SPACING.medium, }}>
+                        <View key={lady.id} style={{ width: cardWidth, marginRight: SPACING.small, marginBottom: SPACING.medium, }}>
                             <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions.current} offsetX={windowWidth * index} />
                         </View>
                     ))}

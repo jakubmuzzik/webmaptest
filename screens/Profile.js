@@ -190,14 +190,14 @@ const Profile = ({ }) => {
                 locations={[0.5, 0.7]}
             />
 
-            {location.key !== 'default' && !isBrowser && <TouchableOpacity
+            {/* {location.key !== 'default' && !isBrowser && <TouchableOpacity
                 onPress={() => navigate(-1)}
                 style={{ position: 'absolute', marginLeft: SPACING.page_horizontal, top: normalize(70) + 5, flexDirection: 'row', alignItems: 'center' }}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
                 <Ionicons name="chevron-back" size={FONT_SIZES.medium} color={COLORS.greyText} />
                 <Text style={{ color: COLORS.greyText, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>Back</Text>
-            </TouchableOpacity>}
+            </TouchableOpacity>} */}
 
             
             <View style={{ marginTop: normalize(70), alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>

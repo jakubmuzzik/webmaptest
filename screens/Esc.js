@@ -73,7 +73,7 @@ const Esc = ({ }) => {
             </View>
         ))
     }, [cardWidth])
-console.log(contentWidth)
+
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large + normalize(70) + normalize(70) }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
