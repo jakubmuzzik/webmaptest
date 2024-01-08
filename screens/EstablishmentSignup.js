@@ -1162,6 +1162,10 @@ const EstablishmentSignup = ({ }) => {
                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
                         Our team will review your establishment shortly, and once approved, you'll receive a confirmation email to: {data.email}
                     </Text>
+
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginTop: SPACING.xx_small }}>
+                        In the meantime you can log in and start adding your profiles of your ladies.
+                    </Text>
                 </Animated.ScrollView>
             </>
         )
