@@ -9,7 +9,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = ({ setTabHeight }) => {
+const Settings = ({  }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -44,7 +44,7 @@ const Settings = ({ setTabHeight }) => {
     }
 
     return (
-        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
+        <>
             <View style={styles.container}>
                 <View style={styles.row}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -108,7 +108,7 @@ const Settings = ({ setTabHeight }) => {
             <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} />
             <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} />
             <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} />
-        </View>
+        </>
     )
 }
 

@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { MOCK_DATA } from '../../constants'
 
-const Ladies = ({ route, setTabHeight, index }) => {
+const Ladies = ({ route, index }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -36,7 +36,6 @@ const Ladies = ({ route, setTabHeight, index }) => {
     const { width: windowWidth } = useWindowDimensions()
 
     const onLayout = (event) => {
-        setTabHeight(event.nativeEvent.layout.height)
         setSectionWidth(event.nativeEvent.layout.width)
     }
 

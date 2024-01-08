@@ -60,18 +60,18 @@ const Account = ({ navigation, route }) => {
 
 
     const renderPagesScene = ({ route }) => {
+        if (Math.abs(index - routes.indexOf(route)) > 0) {
+            return <View />
+        }
+
         switch (route.key) {
             case 'account':
                 return (
-                    <View style={{ height: routes[index].height }}>
-                        <AccountSettings setTabHeightFromParent={(height) => setTabHeight(height, route.index)} />
-                    </View>
+                    <AccountSettings />
                 )
             case 'edit_lady':
                 return (
-                    <View style={{ height: routes[index].height }}>
-                        <EditLady setTabHeightFromParent={(height) => setTabHeight(height, route.index)} onGoBackPress={onGoBackPress} />
-                    </View>
+                    <EditLady onGoBackPress={onGoBackPress} />
                 )
             default:
                 return null
@@ -120,7 +120,7 @@ const Account = ({ navigation, route }) => {
                     onIndexChange={setIndex}
                     lazy
                     renderLazyPlaceholder={renderLazyPlaceholder}
-                    initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+                    initialLayout={{ width: Dimensions.get('window').width }}
                 />
             </View>
         </View>

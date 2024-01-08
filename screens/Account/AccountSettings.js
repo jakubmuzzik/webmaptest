@@ -13,7 +13,7 @@ import Settings from './Settings'
 import Ladies from './Ladies'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 
-const AccountSettings = ({ setTabHeightFromParent }) => {
+const AccountSettings = ({  }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -21,14 +21,13 @@ const AccountSettings = ({ setTabHeightFromParent }) => {
     }), [searchParams])
 
     const [index, setIndex] = useState(0)
-    const [routes, setRoutes] = useState([
+    const [routes] = useState([
         { key: 'profile-information', title: 'Profile information', height: '100%', path: '/account/profile-information' },
         { key: 'ladies', title: 'Ladies', height: '100%', path: '/account/ladies' },
         { key: 'photos', title: 'Photos', height: '100%', path: '/account/photos' },
         { key: 'videos', title: 'Videos', height: '100%', path: '/account/videos' },
         { key: 'settings', title: 'Settings', height: '100%', path: '/account/settings' },
     ].map((route, index) => ({ ...route, index })))//.filter(route => route.key !== 'ladies'))
-    const [mockIndex, setMockIndex] = useState(0)
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -38,18 +37,13 @@ const AccountSettings = ({ setTabHeightFromParent }) => {
         setIndex(newIndex ?? 0)
     }, [location])
 
-    const setTabHeight = (height, index) => {
-        setRoutes(r => {
-            r[index].height = height
-            return [...r]
-        })
-    }
-
-    const onTabPress = (props) => {
-        setMockIndex(routes.indexOf(props.route))
+    const onTabPress = ({ route, preventDefault }) => {
+        preventDefault()
+        
+        setIndex(routes.indexOf(route))
 
         navigate({
-            pathname: props.route.path,
+            pathname: route.path,
             search: new URLSearchParams(stripEmptyParams(params)).toString()
         })
     }
@@ -63,38 +57,38 @@ const AccountSettings = ({ setTabHeightFromParent }) => {
 
     const renderScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
-            //return <View />
+            return <View />
         }
 
         switch (route.key) {
             case 'profile-information':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <PersonalDetails />
                     </View>
                 )
             case 'ladies':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Ladies setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Ladies index={route.index} />
                     </View>
                 )
             case 'photos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Photos />
                     </View>
                 )
             case 'videos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Videos />
                     </View>
                 )
             case 'settings':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[mockIndex].height, alignSelf: 'center' }}>
-                        <Settings setTabHeight={(height) => setTabHeight(height, route.index)} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
+                        <Settings />
                     </View>
                 )
             default:
@@ -119,32 +113,22 @@ const AccountSettings = ({ setTabHeightFromParent }) => {
     )
 
     return (
-        <View onLayout={(event) => setTabHeightFromParent(event.nativeEvent.layout.height)}>
-            {/* <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
-                    Account
-                </Text>
-            </View> */}
-
-            <View style={{ flex: 1 }}>
-                <TabView
-                    renderTabBar={renderTabBar}
-                    swipeEnabled={false}
-                    navigationState={{ index, routes }}
-                    renderScene={renderScene}
-                    onIndexChange={setIndex}
-                    sceneContainerStyle={{
-                        width: normalize(800),
-                        maxWidth: '100%',
-                        alignSelf: 'center',
-                        paddingHorizontal: SPACING.medium,
-                    }}
-                    initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
-                    lazy={({ route }) => route.key !== 'settings'}
-                    renderLazyPlaceholder={renderLazyPlaceholder}
-                />
-            </View>
-        </View>
+        <TabView
+            renderTabBar={renderTabBar}
+            swipeEnabled={false}
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            sceneContainerStyle={{
+                width: normalize(800),
+                maxWidth: '100%',
+                alignSelf: 'center',
+                paddingHorizontal: SPACING.medium,
+            }}
+            initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+            lazy={({ route }) => route.key !== 'settings'}
+            renderLazyPlaceholder={renderLazyPlaceholder}
+        />
     )
 }
 
