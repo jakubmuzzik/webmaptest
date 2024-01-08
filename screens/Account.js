@@ -124,8 +124,8 @@ const Account = ({ navigation, route }) => {
                     navigationState={{ index, routes }}
                     renderScene={renderPagesScene}
                     onIndexChange={setIndex}
-                    lazy
-                    renderLazyPlaceholder={renderLazyPlaceholder}
+                    //lazy
+                    //renderLazyPlaceholder={renderLazyPlaceholder}
                     initialLayout={{ width: Dimensions.get('window').width }}
                 />
             </View>

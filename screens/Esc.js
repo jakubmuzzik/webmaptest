@@ -75,7 +75,7 @@ const Esc = ({ }) => {
     }, [cardWidth])
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large + normalize(70) + normalize(70) }} 
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>

@@ -4,16 +4,29 @@ import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants'
 import { Button } from 'react-native-paper'
 import { normalize } from '../utils'
 
+import { useNavigate, useLocation } from 'react-router-dom'
+
 import Login from '../components/modal/Login'
 import Signup from '../components/modal/Signup'
 
 const SignUpOrLogin = ({ }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+  
+    const from = location.state?.from?.pathname || "/"
+
     const [loginVisible, setLoginVisible] = useState(false)
     const [signUpVisible, setSignUpVisible] = useState(false)
 
     const onLoginPress = () => {
         setSignUpVisible(false)
         setLoginVisible(true)
+
+
+        /*
+        //TODO -- after login: 
+        navigate(from, { replace: true });
+        */
     }
 
     const onSignUpPress = () => {
