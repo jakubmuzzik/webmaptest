@@ -14,6 +14,8 @@ import LadySignup from './LadySignup'
 import AccountSettings from './account/AccountSettings'
 import EditLady from './account/EditLady'
 
+const { height: initialHeight } = Dimensions.get('window')
+
 const Account = ({ navigation, route }) => {
     const [searchParams] = useSearchParams()
 
@@ -89,7 +91,7 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ backgroundColor: COLORS.lightBlack, height: '100%' }}>
+        <View style={{ backgroundColor: COLORS.lightBlack, height: routes[index].key === 'add_lady' ? initialHeight - normalize(70) :  '100%' }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginTop: SPACING.small, paddingHorizontal: SPACING.medium }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Text onPress={index !== 0 ? onGoBackPress : undefined} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', textDecorationLine: index !== 0 ? 'underline' : 'none' }}>Account</Text>

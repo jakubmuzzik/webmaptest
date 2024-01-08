@@ -107,7 +107,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 <Route path='profile-information' element={<Account />} />
                 <Route path='ladies' element={<Account />} />
                 <Route path='edit-lady/:id' element={<Account />} />
-                <Route path='add-lady' element={<View style={{ height: initialHeight - normalize(70), overflow: 'hidden' }}><Account /></View>} />
+                <Route path='add-lady' element={<Account />} />
                 <Route path='photos' element={<Account />} />
                 <Route path='videos' element={<Account />} />
                 <Route path='settings' element={<Account />} />
