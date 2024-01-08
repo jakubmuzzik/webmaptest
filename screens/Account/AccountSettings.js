@@ -39,7 +39,7 @@ const AccountSettings = ({  }) => {
 
     const onTabPress = ({ route, preventDefault }) => {
         preventDefault()
-        
+
         setIndex(routes.indexOf(route))
 
         navigate({
@@ -125,7 +125,7 @@ const AccountSettings = ({  }) => {
                 alignSelf: 'center',
                 paddingHorizontal: SPACING.medium,
             }}
-            initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+            initialLayout={{ width: Dimensions.get('window').width }}
             lazy={({ route }) => route.key !== 'settings'}
             renderLazyPlaceholder={renderLazyPlaceholder}
         />

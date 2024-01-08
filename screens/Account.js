@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useLayoutEffect, useRef } from 'react'
-import { View, Text, ScrollView, Dimensions } from 'react-native'
+import { View, Text, useWindowDimensions, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
 import { normalize, stripEmptyParams, getParam } from '../utils'
@@ -22,6 +22,8 @@ const Account = ({ navigation, route }) => {
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
     }), [searchParams])
+
+    const { width: windowWidth } = useWindowDimensions()
 
     const [index, setIndex] = useState(0)
     const [routes] = useState([
@@ -82,7 +84,7 @@ const Account = ({ navigation, route }) => {
             case 'add_lady':
                 return (
                     <View style={{ paddingTop: SPACING.small, backgroundColor: COLORS.lightBlack, flex: 1 }}>
-                        <LadySignup showHeaderText={false} />
+                        <LadySignup showHeaderText={false} offsetX={windowWidth * route.index} />
                     </View>
                 )
             default:

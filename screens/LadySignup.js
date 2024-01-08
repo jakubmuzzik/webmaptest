@@ -53,7 +53,7 @@ const getFileSizeInMb = (uri) => {
     return (uri.length * (3 / 4) - 2) / (1024 * 1024)
 }
 
-const LadySignup = ({ independent, showHeaderText = true }) => {
+const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -736,7 +736,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                         />
                         {/* <DropdownSelect
                             values={SEXUAL_ORIENTATION}
-                            offsetX={contentWidth * Number(i)}
+                            offsetX={offsetX + (contentWidth * N)umber(i)}
                             placeholder="Select your sexuality"
                             label="Sexuality"
                             borderColor={COLORS.placeholder}
@@ -756,7 +756,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <DropdownSelect
                             values={NATIONALITIES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             //searchable
                             //searchPlaceholder="Search nationality"
                             placeholder="Select your nationality"
@@ -775,7 +775,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                         />
                         <DropdownSelect
                             values={LANGUAGES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             multiselect
                             searchable
                             searchPlaceholder="Search language"
@@ -832,7 +832,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <DropdownSelect
                             values={BODY_TYPES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Select your body type"
                             label="Body type"
                             borderColor={COLORS.placeholder}
@@ -849,7 +849,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                         />
                         <DropdownSelect
                             values={PUBIC_HAIR_VALUES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Search your pubic hair"
                             label="Pubic hair"
                             borderColor={COLORS.placeholder}
@@ -869,7 +869,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <DropdownSelect
                             values={BREAST_SIZES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Select your breast size"
                             label="Breast size"
                             borderColor={COLORS.placeholder}
@@ -886,7 +886,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                         />
                         <DropdownSelect
                             values={BREAST_TYPES}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Search your breast type"
                             label="Breast type"
                             borderColor={COLORS.placeholder}
@@ -906,7 +906,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.x_large }}>
                         <DropdownSelect
                             values={HAIR_COLORS}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Select your hair color"
                             label="Hair color"
                             borderColor={COLORS.placeholder}
@@ -923,7 +923,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                         />
                         <DropdownSelect
                             values={EYE_COLORS}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             placeholder="Search your eye color"
                             label="Eye color"
                             borderColor={COLORS.placeholder}
@@ -1134,7 +1134,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
 
                         <DropdownSelect
                             ref={currencyDropdownRef}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             text={data.currency}
                             values={CURRENCIES}
                             setText={(text) => onValueChange(text, 'currency')}
@@ -1240,7 +1240,7 @@ const LadySignup = ({ independent, showHeaderText = true }) => {
                     <View style={{ flexDirection: 'row', marginHorizontal: SPACING.x_large }}>
                         <DropdownSelect
                             ref={pricesDropdownPress}
-                            offsetX={contentWidth * i}
+                            offsetX={offsetX + (contentWidth * i)}
                             values={HOURS.filter(hour => !data.prices.some(price => price.length === Number(hour.substring(0, hour.indexOf('h') - 1))))}
                             setText={onAddNewPrice}
                         >

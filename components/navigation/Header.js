@@ -193,10 +193,10 @@ const Header = ({ }) => {
 
                                     <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
-                                            Language: 
+                                            Language:&nbsp;
                                         </Text>
                                         <Picker
-                                            selectedValue={params.language ?? DEFAULT_LANGUAGE}
+                                            selectedValue={params.language.length ? params.language : DEFAULT_LANGUAGE}
                                             onValueChange={(itemValue, itemIndex) => navigate({
                                                 pathname: location.pathname,
                                                 search: new URLSearchParams(stripEmptyParams({ ...params, language: itemValue })).toString()

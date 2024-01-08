@@ -48,7 +48,7 @@ const DropdownSelect = forwardRef((props, ref) => {
     const [search, setSearch] = useState('')
     const [searchBorderColor, setSearchBorderColor] = useState(COLORS.placeholder)
 
-    const { height } = useWindowDimensions()
+    const { height, width } = useWindowDimensions()
 
     useEffect(() => {
         filteredValuesRef.current = values
@@ -111,7 +111,8 @@ const DropdownSelect = forwardRef((props, ref) => {
 
         setDropdownDesc((desc) => ({
             ...desc,
-            y: hasEnoughSpaceBelow ? dropdownDesc.py + dropdownDesc.h + 5 : height - event.nativeEvent.layout.height - SPACING.medium
+            y: hasEnoughSpaceBelow ? dropdownDesc.py + dropdownDesc.h + 5 : height - event.nativeEvent.layout.height - SPACING.medium,
+            dropdownWidth: event.nativeEvent.layout.width
         }))
     }, [dropdownDesc, height])
 
@@ -141,7 +142,7 @@ const DropdownSelect = forwardRef((props, ref) => {
                                 maxHeight: 300,
                                 minWidth: dropdownDesc.width,
                                 top: dropdownDesc.y,
-                                left: dropdownDesc.x,
+                                left: dropdownDesc.x + dropdownDesc.dropdownWidth > width ? dropdownDesc.x - (dropdownDesc.x + dropdownDesc.dropdownWidth - width) - 5 : dropdownDesc.x,
                             }]}
                         >
                             {searchable && (
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
     dropdown: {
         position: 'absolute',
         backgroundColor: '#fff',
-        marginRight: SPACING.page_horizontal,
+        //marginRight: SPACING.page_horizontal,
         borderRadius: 10,
         paddingVertical: SPACING.xxx_small,
         shadowColor: COLORS.lightBlack,
