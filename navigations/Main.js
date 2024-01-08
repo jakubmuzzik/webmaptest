@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 
@@ -66,7 +66,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
         return <Navigate to={to} replace={replace} />
     }
 
-    const LayoutWithHeader = ({ children }) => (
+    const LayoutWithHeader = useCallback(({ children }) => (
         <>
             <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                 <Header />
@@ -76,26 +76,14 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 {children}
             </View>
         </>
-    )
-
-    const LayoutWithHeaderAndCategories = ({ children }) => (
-        <>
-            <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
-                <Header />
-            </View>
-
-            <View style={{ flex: 1, marginTop: normalize(70) + normalize(70) }}>
-                {children}
-            </View>
-        </>
-    )
+    ), [])
 
     const router = createBrowserRouter(createRoutesFromElements(
         <>
             <Route path='/' element={
-                <LayoutWithHeaderAndCategories>
+                <LayoutWithHeader>
                     <Explore />
-                </LayoutWithHeaderAndCategories>
+                </LayoutWithHeader>
             } >
                 <Route index element={<Esc />} />
                 <Route path='/mas' element={<Mas />} />
@@ -119,7 +107,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                 <Route path='profile-information' element={<Account />} />
                 <Route path='ladies' element={<Account />} />
                 <Route path='edit-lady/:id' element={<Account />} />
-                <Route path='add-lady' element={<Account />} />
+                <Route path='add-lady' element={<View style={{ height: initialHeight - normalize(70), overflow: 'hidden' }}><Account /></View>} />
                 <Route path='photos' element={<Account />} />
                 <Route path='videos' element={<Account />} />
                 <Route path='settings' element={<Account />} />
@@ -131,7 +119,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ height: initialHeight - normalize(70), marginTop: normalize(70) }}>
+                    <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <LadySignup independent/>
                     </View>
                 </>
@@ -166,6 +154,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     router.subscribe(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant'})
 
+        //reset scroll whenever user navigates
         if (scrollDisabled) {
             setTimeout(() => updateScrollDisabled(false))
         }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react"
+import React, { useState, useRef, useMemo, useCallback, useEffect, useLayoutEffect } from "react"
 import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, Modal, ScrollView, ImageBackground, Dimensions } from "react-native"
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD, SMALL_SCREEN_THRESHOLD } from "../constants"
 import { normalize, stripEmptyParams } from "../utils"
@@ -252,7 +252,7 @@ const Profile = ({ }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.section}>
+                <View style={[styles.section, { marginTop: SPACING.xxx_large }]}>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                         <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                             About

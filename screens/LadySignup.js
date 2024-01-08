@@ -53,7 +53,7 @@ const getFileSizeInMb = (uri) => {
     return (uri.length * (3 / 4) - 2) / (1024 * 1024)
 }
 
-const LadySignup = ({ independent }) => {
+const LadySignup = ({ independent, showHeaderText = true }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -1863,9 +1863,9 @@ const LadySignup = ({ independent }) => {
     return (
         <View style={{ height: '100%', backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
+                {showHeaderText && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     {independent ? 'Lady sign up' : 'Add Lady'}
-                </Text>
+                </Text>}
                 <ProgressBar style={{ marginHorizontal: SPACING.medium, borderRadius: 10 }} progress={progress == 0 ? 0.01 : progress} color={COLORS.error} />
             </View>
             <MotiView

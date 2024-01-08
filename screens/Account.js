@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useRef } from 'react'
 import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
@@ -67,16 +67,20 @@ const Account = ({ navigation, route }) => {
         switch (route.key) {
             case 'account':
                 return (
-                    <AccountSettings />
+                    <View style={{ marginTop: SPACING.large }}>
+                        <AccountSettings />
+                    </View>
                 )
             case 'edit_lady':
                 return (
-                    <EditLady />
+                    <View style={{ marginTop: SPACING.large }}>
+                        <EditLady />
+                    </View>
                 )
             case 'add_lady':
                 return (
-                    <View style={{ height: Dimensions.get('window').height - normalize(70), backgroundColor: COLORS.lightBlack }}>
-                        <LadySignup />
+                    <View style={{ paddingTop: SPACING.small, backgroundColor: COLORS.lightBlack, flex: 1 }}>
+                        <LadySignup showHeaderText={false} />
                     </View>
                 )
             default:
@@ -85,8 +89,8 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ backgroundColor: COLORS.lightBlack }}>
-            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
+        <View style={{ backgroundColor: COLORS.lightBlack, height: '100%' }}>
+            <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginTop: SPACING.small, paddingHorizontal: SPACING.medium }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Text onPress={index !== 0 ? onGoBackPress : undefined} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', textDecorationLine: index !== 0 ? 'underline' : 'none' }}>Account</Text>
                     <AnimatePresence>
@@ -117,18 +121,16 @@ const Account = ({ navigation, route }) => {
                 </View>
             </View>
 
-            <View style={{ flex: 1 }}>
-                <TabView
-                    renderTabBar={props => null}
-                    swipeEnabled={false}
-                    navigationState={{ index, routes }}
-                    renderScene={renderPagesScene}
-                    onIndexChange={setIndex}
-                    //lazy
-                    //renderLazyPlaceholder={renderLazyPlaceholder}
-                    initialLayout={{ width: Dimensions.get('window').width }}
-                />
-            </View>
+            <TabView
+                renderTabBar={props => null}
+                swipeEnabled={false}
+                navigationState={{ index, routes }}
+                renderScene={renderPagesScene}
+                onIndexChange={setIndex}
+                //lazy
+                //renderLazyPlaceholder={renderLazyPlaceholder}
+                initialLayout={{ width: Dimensions.get('window').width }}
+            />
         </View>
     )
 }

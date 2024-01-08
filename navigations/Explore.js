@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import Header from '../components/navigation/Header'
 import Categories from '../components/navigation/Categories'
 import { Outlet } from 'react-router-dom'
-import { COLORS } from '../constants'
+import { COLORS, SPACING } from '../constants'
 import { normalize } from '../utils'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
 
@@ -63,7 +63,9 @@ const Explore = () => {
                 <Categories />
             </Animated.View>
 
-            <Outlet />
+            <View style={{ marginTop: normalize(70) }}>
+                <Outlet />
+            </View>
         </>
     )
 }
