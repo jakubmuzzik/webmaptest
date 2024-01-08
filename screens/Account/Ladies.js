@@ -5,7 +5,6 @@ import { SPACING, FONTS, FONT_SIZES, COLORS, SUPPORTED_LANGUAGES } from '../../c
 import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, Ionicons, Octicons } from '@expo/vector-icons'
 import { stripEmptyParams, getParam } from '../../utils'
-import AddLady from '../../components/modal/account/AddLady'
 import RenderAccountLady from '../../components/list/RenderAccountLady'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -24,14 +23,9 @@ const Ladies = ({ route, index }) => {
         pending: [null],
         rejected: []
     })
-    const [addLadyModalVisible, setAddLadyModalVisible] = useState(false)
     const [sectionWidth, setSectionWidth] = useState(0)
 
     const navigate = useNavigate()
-
-    const onAddNewLadyPress = () => {
-        setAddLadyModalVisible(true)
-    }
 
     const { width: windowWidth } = useWindowDimensions()
 
@@ -52,6 +46,13 @@ const Ladies = ({ route, index }) => {
                     : isXMediumScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 4) - (SPACING.small * 3) / 4
                         : isLargeScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 5) - (SPACING.small * 4) / 5 : ((sectionWidth - SPACING.small - SPACING.small) / 6) - (SPACING.small * 5) / 6
     }, [sectionWidth])
+
+    const onAddNewLadyPress = () => {
+        navigate({
+            pathname: '/account/add-lady',
+            search: new URLSearchParams(stripEmptyParams(params)).toString()
+        })
+    }
 
     const onOpenProfilePress = (ladyId) => {
         navigate({
@@ -215,9 +216,9 @@ const Ladies = ({ route, index }) => {
                     </Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginHorizontal: SPACING.small }}>
                     {MOCK_DATA.slice(25).map(lady => (
-                        <View key={lady.id} style={{ width: cardWidth, marginRight: SPACING.small, marginBottom: SPACING.medium, }}>
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, }}>
                             <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions.current} offsetX={windowWidth * index} />
                         </View>
                     ))}
@@ -248,8 +249,6 @@ const Ladies = ({ route, index }) => {
             {renderPending()}
             {renderInactive()}
             {renderRejected()}
-
-            <AddLady visible={addLadyModalVisible} setVisible={setAddLadyModalVisible} />
         </View>
     )
 }

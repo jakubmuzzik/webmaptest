@@ -1861,7 +1861,7 @@ const LadySignup = ({ independent }) => {
     const progress = (index) / (Object.keys(routes).length - 1)
 
     return (
-        <View style={{ height: '100%', backgroundColor: COLORS.lightBlack, marginTop: normalize(70) }}>
+        <View style={{ height: '100%', backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', }}>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, marginHorizontal: SPACING.medium, marginVertical: SPACING.small, color: '#FFF' }}>
                     {independent ? 'Lady sign up' : 'Add Lady'}

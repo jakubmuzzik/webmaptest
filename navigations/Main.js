@@ -8,15 +8,12 @@ import { updateScrollDisabled } from '../redux/actions'
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
 import Header from '../components/navigation/Header'
-import Categories from '../components/navigation/Categories'
 import Pri from '../screens/Pri'
 import Esc from '../screens/Esc'
 import Clu from '../screens/Clu'
 import Mas from '../screens/Mas'
 import Profile from '../screens/Profile'
 import Account from '../screens/Account'
-import Chat from '../screens/Chat'
-import Favourites from '../screens/Favourites'
 import EstablishmentSignup from '../screens/EstablishmentSignup'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
 
@@ -57,31 +54,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
                     
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, marginTop: normalize(70) }}>
                         <Profile />
-                    </View>
-                </>
-            } />
-
-            <Route path='/favourites' element={
-                <>
-                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
-                        <Header />
-                    </View>
-
-                    <View>
-                        {isLoggedIn ? <Favourites /> : <SignUpOrLogin />}
-                    </View>
-                </>
-            } />
-
-            <Route path='/chat' element={
-                <>
-                    <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
-                        <Header />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        {isLoggedIn ? <Chat /> : <SignUpOrLogin />}
                     </View>
                 </>
             } />
@@ -92,13 +66,16 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <Outlet />
+                    <View style={{ marginTop: normalize(70) }}>
+                        <Outlet />
+                    </View>
                 </>
             } >
                 <Route index element={<Navigate to="/account/profile-information" replace />} />
                 <Route path='profile-information' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
                 <Route path='ladies' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
                 <Route path='edit-lady/:id' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
+                <Route path='add-lady' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
                 <Route path='photos' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
                 <Route path='videos' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
                 <Route path='settings' element={!isLoggedIn ? <Account /> : <SignUpOrLogin />} />
@@ -112,7 +89,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ height: initialHeight - normalize(70) }}>
+                    <View style={{ height: initialHeight - normalize(70), marginTop: normalize(70) }}>
                         <LadySignup independent/>
                     </View>
                 </>
@@ -124,7 +101,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ height: initialHeight - normalize(70) }}>
+                    <View style={{ height: initialHeight - normalize(70), marginTop: normalize(70) }}>
                         <EstablishmentSignup />
                     </View>
                 </>

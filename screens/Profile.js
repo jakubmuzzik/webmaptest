@@ -200,7 +200,7 @@ const Profile = ({ }) => {
             </TouchableOpacity>} */}
 
             
-            <View style={{ marginTop: normalize(70), alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
+            <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
                 <View style={{ alignItems: 'center', flex: 1 }}>
                     <Text style={{ color: '#FFF', marginBottom: SPACING.x_small, marginHorizontal: SPACING.xx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, }}>
                         Jakub Muzik

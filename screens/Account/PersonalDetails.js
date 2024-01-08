@@ -335,7 +335,7 @@ const PersonalDetails = ({ route }) => {
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
 
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
                     <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                         Pricing
                     </Text>

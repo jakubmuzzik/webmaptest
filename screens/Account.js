@@ -7,6 +7,7 @@ import { MotiText, AnimatePresence } from 'moti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import LadySignup from './LadySignup'
 
 //const Tab = createMaterialTopTabNavigator()
 
@@ -21,9 +22,10 @@ const Account = ({ navigation, route }) => {
     }), [searchParams])
 
     const [index, setIndex] = useState(0)
-    const [routes, setRoutes] = useState([
-        { key: 'account', title: 'Account', height: '100%'},
-        { key: 'edit_lady', title: 'Edit Lady', height: '100%' }
+    const [routes] = useState([
+        { key: 'account', title: 'Account' },
+        { key: 'edit_lady', title: 'Edit Lady' },
+        { key: 'add_lady', title: 'Add Lady' },
     ].map((route, index) => ({ ...route, index })))//.filter(route => route.key !== 'ladies'))
 
     const location = useLocation()
@@ -32,23 +34,22 @@ const Account = ({ navigation, route }) => {
     useLayoutEffect(() => {
         if (location.pathname.includes('edit-lady')) {
             setIndex(1)
+        } else if (location.pathname.includes('add-lady')) {
+            setIndex(2)
         } else {
             setIndex(0)
         }
     }, [location])
 
-    const setTabHeight = (height, index) => {
-        setRoutes(r => {
-            r[index].height = height
-            return [...r]
-        })
-    }
-
     const onGoBackPress = () => {
-        navigate({
-            pathname: '/account/ladies',
-            search: new URLSearchParams(stripEmptyParams(params)).toString()
-        })
+        if (location.key === 'default') {
+            navigate({
+                pathname: '/account/ladies',
+                search: new URLSearchParams(stripEmptyParams(params)).toString()
+            })
+        } else {
+            navigate(-1)
+        }
     }
 
     //todo - this is used only for photos tab - implement skeleton loading
@@ -57,7 +58,6 @@ const Account = ({ navigation, route }) => {
             <ActivityIndicator animating color={COLORS.red} size={30} />
         </View>
     )
-
 
     const renderPagesScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
@@ -71,7 +71,13 @@ const Account = ({ navigation, route }) => {
                 )
             case 'edit_lady':
                 return (
-                    <EditLady onGoBackPress={onGoBackPress} />
+                    <EditLady />
+                )
+            case 'add_lady':
+                return (
+                    <View style={{ height: Dimensions.get('window').height - normalize(70), backgroundColor: COLORS.lightBlack }}>
+                        <LadySignup />
+                    </View>
                 )
             default:
                 return null
@@ -79,12 +85,12 @@ const Account = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ marginTop: normalize(70), backgroundColor: COLORS.lightBlack }}>
+        <View style={{ backgroundColor: COLORS.lightBlack }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginBottom: SPACING.large, marginTop: SPACING.medium, paddingHorizontal: SPACING.medium }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Text onPress={index !== 0 ? onGoBackPress : undefined} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF', textDecorationLine: index !== 0 ? 'underline' : 'none' }}>Account</Text>
                     <AnimatePresence>
-                    { index === 1 &&
+                    { index !== 0 &&
                    
                         <MotiText 
                             style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}
@@ -104,7 +110,7 @@ const Account = ({ navigation, route }) => {
                                 type: 'timing'
                             }}
                         >
-                            {' > Edit Lady'}
+                            {` > ${routes[index].title}`}
                         </MotiText>
                     }
                     </AnimatePresence>
