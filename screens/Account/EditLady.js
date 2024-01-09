@@ -10,8 +10,6 @@ import { useSearchParams } from 'react-router-dom'
 import PersonalDetails from './PersonalDetails'
 import Photos from './Photos'
 import Videos from './Videos'
-import Settings from './Settings'
-import Ladies from './Ladies'
 
 const EditLady = ({  }) => {
     const [searchParams] = useSearchParams()
@@ -22,11 +20,18 @@ const EditLady = ({  }) => {
 
 
     const [index, setIndex] = useState(0)
-    const [routes] = useState([
-        { key: 'profileInformation', title: 'Profile information' },
-        { key: 'photos', title: 'Photos' },
-        { key: 'videos', title: 'Videos' },
+    const [routes, setRoutes] = useState([
+        { key: 'profileInformation', title: 'Profile information', height: '100%'  },
+        { key: 'photos', title: 'Photos', height: '100%'  },
+        { key: 'videos', title: 'Videos', height: '100%'  },
     ].map((route, index) => ({ ...route, index })))
+
+    const setTabHeight = (height, index) => {
+        setRoutes(r => {
+            r[index].height = height
+            return [...r]
+        })
+    }
 
     //todo - this is used only for photos tab - implement skeleton loading
     const renderLazyPlaceholder = () => (
@@ -43,26 +48,26 @@ const EditLady = ({  }) => {
 
     const renderScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
-            return <View />
+            //return <View />
         }
 
         switch (route.key) {
             case 'profileInformation':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <PersonalDetails />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'photos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Photos />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'videos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Videos />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             default:

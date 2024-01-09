@@ -21,7 +21,7 @@ const AccountSettings = ({  }) => {
     }), [searchParams])
 
     const [index, setIndex] = useState(0)
-    const [routes] = useState([
+    const [routes, setRoutes] = useState([
         { key: 'profile-information', title: 'Profile information', height: '100%', path: '/account/profile-information' },
         { key: 'ladies', title: 'Ladies', height: '100%', path: '/account/ladies' },
         { key: 'photos', title: 'Photos', height: '100%', path: '/account/photos' },
@@ -36,6 +36,13 @@ const AccountSettings = ({  }) => {
         const newIndex = routes.find(route => route.path === location.pathname)?.index
         setIndex(newIndex ?? 0)
     }, [location])
+
+    const setTabHeight = (height, index) => {
+        setRoutes(r => {
+            r[index].height = height
+            return [...r]
+        })
+    }
 
     const onTabPress = ({ route, preventDefault }) => {
         preventDefault()
@@ -57,38 +64,38 @@ const AccountSettings = ({  }) => {
 
     const renderScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
-            return <View />
+            //return <View />
         }
 
         switch (route.key) {
             case 'profile-information':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <PersonalDetails />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'ladies':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Ladies index={route.index} />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Ladies setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
                     </View>
                 )
             case 'photos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Photos index={route.index}/>
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
                     </View>
                 )
             case 'videos':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Videos index={route.index}/>
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
                     </View>
                 )
             case 'settings':
                 return (
-                    <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Settings />
+                    <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
+                        <Settings setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             default:
@@ -125,7 +132,7 @@ const AccountSettings = ({  }) => {
                 alignSelf: 'center',
                 paddingHorizontal: SPACING.medium,
             }}
-            initialLayout={{ width: Dimensions.get('window').width }}
+            initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
             lazy={({ route }) => route.key !== 'settings'}
             renderLazyPlaceholder={renderLazyPlaceholder}
         />

@@ -11,7 +11,7 @@ import RenderVideoWithActions from '../../components/list/RenderVideoWithActions
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Videos = ({ index }) => {
+const Videos = ({ index, setTabHeight }) => {
     const [data, setData] = useState({
         active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
         pending: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'),],
@@ -21,6 +21,11 @@ const Videos = ({ index }) => {
 
     const { width: windowWidth } = useWindowDimensions()
     const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
+
+    const onLayout = (event) => {
+        setTabHeight(event.nativeEvent.layout.height)
+        setSectionWidth(event.nativeEvent.layout.width - 2)
+    }
 
     const onEditImagePress = (image) => {
 
@@ -176,7 +181,7 @@ const Videos = ({ index }) => {
     }
 
     return (
-        <View style={{ marginBottom: SPACING.large }} onLayout={event => setSectionWidth(event.nativeEvent.layout.width - 2)}>
+        <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
             {renderActive()}
             {renderPending()}
             {renderRejected()}

@@ -21,6 +21,12 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
         init()
     }, [])
 
+    useEffect(() => {
+        if (!showPoster && videoRef.current) {
+            videoRef.current.playAsync()
+        }
+    }, [showPoster, videoRef.current])
+
     const init = async () => {
         try {
             //todo - get and save thumbnail aspect ratio when uploading video instead
@@ -34,11 +40,6 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
         }
     }
 
-    const onPlayPress = () => {
-        videoRef.current.playAsync()
-        setShowPoster(false)
-    }
-
     if (!aspectRatio) {
         return (
             <ActivityIndicator style={{ margin: SPACING.large, alignSelf: 'center' }} animating color={COLORS.red} />
@@ -47,7 +48,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
 
     return (
         <>
-            <Video
+            {!showPoster && <Video
                 ref={videoRef}
                 style={{
                     width: '100%',
@@ -64,20 +65,18 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
                 }}
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
-            />
-            {!isBrowser && showPoster && (
+            />}
+            {showPoster && (
                 <ImageBackground
                     source={require('../../assets/dummy_photo.png')}
                     style={{
                         width: '100%',
                         height: undefined,
                         aspectRatio: aspectRatio,
-                        top: 0,
-                        position: 'absolute',
                         alignItems: 'center',
                         justifyContent: 'center'
                     }} >
-                    <TouchableOpacity activeOpacity={0.8} onPress={onPlayPress}>
+                    <TouchableOpacity activeOpacity={0.8} onPress={() => setShowPoster(false)}>
                         <Ionicons name="ios-play-circle-sharp" size={normalize(70)} color='rgba(0,0,0,.7)' />
                     </TouchableOpacity>
                 </ImageBackground>

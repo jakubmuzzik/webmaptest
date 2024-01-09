@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import { MOCK_DATA } from '../../constants'
 
-const Ladies = ({ route, index }) => {
+const Ladies = ({ route, index, setTabHeight }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -32,6 +32,7 @@ const Ladies = ({ route, index }) => {
     const onLayout = (event) => {
         //-2 due to border radius
         setSectionWidth(event.nativeEvent.layout.width - 2)
+        setTabHeight(event.nativeEvent.layout.height)
     }
 
     const cardWidth = useMemo(() => {
@@ -247,7 +248,7 @@ const Ladies = ({ route, index }) => {
     )
 
     return (
-        <View onLayout={onLayout} style={{ marginBottom: SPACING.large }}>
+        <View onLayout={onLayout} style={{ paddingBottom: SPACING.large }}>
             {renderActive()}
             {renderPending()}
             {renderInactive()}

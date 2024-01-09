@@ -24,7 +24,7 @@ const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ route }) => {
+const PersonalDetails = ({ route, setTabHeight }) => {
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
 
@@ -576,7 +576,7 @@ const PersonalDetails = ({ route }) => {
     )
 
     return (
-        <>            
+        <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
             {renderContactInformation()}
 
             {renderAbout()}
@@ -598,7 +598,7 @@ const PersonalDetails = ({ route }) => {
             <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} />
             <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} />
             <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} />
-        </>
+        </View>
     )
 }
 

@@ -11,15 +11,20 @@ import RenderImageWithActions from '../../components/list/RenderImageWithActions
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Photos = ({ index }) => {
+const Photos = ({ index, setTabHeight }) => {
     const [data, setData] = useState({
         active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
-        pending: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'),],
+        pending: [require('../../assets/CATEGORY1.png'), require('../../assets/CATEGORY2.png'), require('../../assets/CATEGORY3.png'),],
         rejected: [require('../../assets/dummy_photo.png')]
     })
     const [sectionWidth, setSectionWidth] = useState(0)
 
     const { width: windowWidth } = useWindowDimensions()
+
+    const onLayout = (event) => {
+       setTabHeight(event.nativeEvent.layout.height )
+       setSectionWidth(event.nativeEvent.layout.width - 2)
+    }
 
     const onEditImagePress = (image) => {
 
@@ -286,7 +291,7 @@ const Photos = ({ index }) => {
     }
 
     return (
-        <View style={{ marginBottom: SPACING.large }} onLayout={event => setSectionWidth(event.nativeEvent.layout.width - 2)}>
+        <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
             {renderActive()}
             {renderPending()}
             {renderRejected()}
