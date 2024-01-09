@@ -85,7 +85,8 @@ const Ladies = ({ route, index }) => {
         })
     }
 
-    const activeActions = useRef([
+    //cant use useRef -> didn't work on mobile
+    const activeActions = [
         {
             label: 'Edit',
             onPress: onEditLadyPress
@@ -102,9 +103,9 @@ const Ladies = ({ route, index }) => {
             label: 'Delete',
             onPress: onDeletePress
         }
-    ])
+    ]
 
-    const inactiveActions = useRef([
+    const inactiveActions = [
         {
             label: 'Edit',
             onPress: onEditLadyPress
@@ -117,16 +118,16 @@ const Ladies = ({ route, index }) => {
             label: 'Delete',
             onPress: onDeletePress
         }
-    ])
+    ]
 
-    const pendingActions = useRef([
+    const pendingActions = [
         {
             label: 'Delete',
             onPress: onDeletePress
         }
-    ])
+    ]
 
-    const rejectedActions = useRef([
+    const rejectedActions = [
         {
             label: 'Show rejection reason',
             onPress: onShowRejectedReasonPress
@@ -135,7 +136,7 @@ const Ladies = ({ route, index }) => {
             label: 'Delete',
             onPress: onDeletePress
         }
-    ])
+    ]
 
     const renderActive = () => (
         <View style={styles.section}>
@@ -169,7 +170,7 @@ const Ladies = ({ route, index }) => {
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                         {MOCK_DATA.slice(25).map(lady => (
                             <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small  }}>
-                                <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions.current} offsetX={windowWidth * index} />
+                                <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions} offsetX={windowWidth * index} />
                             </View>
                         ))}
                     </View>

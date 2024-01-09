@@ -7,7 +7,7 @@ import { Image } from 'expo-image'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
 import { isBrowser } from 'react-device-detect'
 import { IconButton } from "react-native-paper"
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import DropdownSelect from "../DropdownSelect"
 
 const blurhash =
@@ -64,7 +64,6 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                             onPress={() => actionsDropdownRef.current?.onDropdownPress()}
                         />
                     </DropdownSelect>
-
                 </View>
             </View>
 
