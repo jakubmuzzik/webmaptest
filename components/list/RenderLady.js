@@ -47,22 +47,19 @@ const RenderLady = ({ client, width, showPrice = true }) => {
         }
     }
 
-    const renderImage = useCallback(({ item }) => (
-        <View style={{ height: (width / 3) * 4, width: Math.ceil(width) }}>
-            <Image
-                style={{
-                    flex: 1,
-                    // aspectRatio: 3 / 4,
-                    //borderRadius: 20
-                }}
-                source={item}
-                placeholder={blurhash}
-                resizeMode="cover"
-                transition={200}
-                alt={client.name}
-            />
-        </View>
-    ), [width])
+    const renderImage = ({ item }) => (
+        <Image
+            style={{
+                width: width,
+                aspectRatio: 3 / 4,
+            }}
+            source={item}
+            placeholder={blurhash}
+            resizeMode="cover"
+            transition={200}
+            alt={client.name}
+        />
+    )
 
     return (
         <View style={styles.container}>

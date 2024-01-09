@@ -30,7 +30,8 @@ const Ladies = ({ route, index }) => {
     const { width: windowWidth } = useWindowDimensions()
 
     const onLayout = (event) => {
-        setSectionWidth(event.nativeEvent.layout.width)
+        //-2 due to border radius
+        setSectionWidth(event.nativeEvent.layout.width - 2)
     }
 
     const cardWidth = useMemo(() => {
@@ -138,7 +139,7 @@ const Ladies = ({ route, index }) => {
 
     const renderActive = () => (
         <View style={styles.section}>
-            <View style={[styles.sectionHeader, { justifyContent: 'space-between', marginBottom: SPACING.small, }]}>
+            <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
                     <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
                     <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -165,9 +166,9 @@ const Ladies = ({ route, index }) => {
                 data.active.length === 0 ? <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
                     No active profiles
                 </Text> : (
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginHorizontal: SPACING.small }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                         {MOCK_DATA.slice(25).map(lady => (
-                            <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, }}>
+                            <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small  }}>
                                 <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions.current} offsetX={windowWidth * index} />
                             </View>
                         ))}
@@ -178,7 +179,7 @@ const Ladies = ({ route, index }) => {
     )
 
     const renderInactive = () => (
-        <View style={[styles.section, { marginBottom: SPACING.large }]}>
+        <View style={styles.section}>
             <View style={[styles.sectionHeader, { alignItems: 'center', }]}>
                 <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
                 <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -216,9 +217,9 @@ const Ladies = ({ route, index }) => {
                     </Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginHorizontal: SPACING.small }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                     {MOCK_DATA.slice(25).map(lady => (
-                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, }}>
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
                             <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions.current} offsetX={windowWidth * index} />
                         </View>
                     ))}
@@ -244,7 +245,7 @@ const Ladies = ({ route, index }) => {
     )
 
     return (
-        <View onLayout={onLayout}>
+        <View onLayout={onLayout} style={{ marginBottom: SPACING.large }}>
             {renderActive()}
             {renderPending()}
             {renderInactive()}

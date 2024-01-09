@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, useRef } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react'
 import { View, Text, useWindowDimensions, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
@@ -35,7 +35,7 @@ const Account = ({ navigation, route }) => {
     const location = useLocation()
     const navigate = useNavigate()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (location.pathname.includes('edit-lady')) {
             setIndex(1)
         } else if (location.pathname.includes('add-lady')) {
@@ -43,7 +43,7 @@ const Account = ({ navigation, route }) => {
         } else {
             setIndex(0)
         }
-    }, [location])
+    }, [location.pathname])
 
     const onGoBackPress = () => {
         if (location.key === 'default') {

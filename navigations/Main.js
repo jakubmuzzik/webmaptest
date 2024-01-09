@@ -30,7 +30,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
 
     const { height } = useWindowDimensions()
 
-    const RequireAuth = ({ children }) => {
+    const RequireAuth = useCallback(({ children }) => {
         const location = useLocation()
         const [searchParams] = useSearchParams()
 
@@ -49,7 +49,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
         }
 
         return children
-    }
+    }, [])
 
     const Redirect = ({ replace, to }) => {
         const [searchParams] = useSearchParams()
