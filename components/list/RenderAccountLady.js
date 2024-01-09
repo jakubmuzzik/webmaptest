@@ -45,7 +45,14 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                     alt={lady.name}
                 />
 
-                <View style={{
+                {actions.length === 1 ? <IconButton
+                    style={{ position: 'absolute', top: 2, right: 2, }}
+                    containerColor={COLORS.grey + 'B3'}
+                    icon={actions[0].iconName}
+                    iconColor='white'
+                    size={normalize(20)}
+                    onPress={() => actions[0].onPress(lady.id)}
+                /> : <View style={{
                     position: 'absolute',
                     right: 2,
                     top: 2,
@@ -64,7 +71,7 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                             onPress={() => actionsDropdownRef.current?.onDropdownPress()}
                         />
                     </DropdownSelect>
-                </View>
+                </View>}
             </View>
 
             <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF', marginTop: SPACING.x_small }}>

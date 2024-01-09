@@ -123,7 +123,8 @@ const Ladies = ({ route, index }) => {
     const pendingActions = [
         {
             label: 'Delete',
-            onPress: onDeletePress
+            onPress: onDeletePress,
+            iconName: 'delete-outline'
         }
     ]
 
@@ -181,7 +182,7 @@ const Ladies = ({ route, index }) => {
 
     const renderInactive = () => (
         <View style={styles.section}>
-            <View style={[styles.sectionHeader, { alignItems: 'center', }]}>
+            <View style={styles.sectionHeader}>
                 <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
                 <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                     Inactive
@@ -208,7 +209,7 @@ const Ladies = ({ route, index }) => {
     const renderPending = () => (
         data.pending.length === 0 ? null :
             <View style={styles.section}>
-                <View style={[styles.sectionHeader, { alignItems: 'center' }]}>
+                <View style={styles.sectionHeader}>
                     <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
                     <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                         Under review
@@ -221,7 +222,7 @@ const Ladies = ({ route, index }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                     {MOCK_DATA.slice(25).map(lady => (
                         <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                            <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions.current} offsetX={windowWidth * index} />
+                            <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions} offsetX={windowWidth * index} />
                         </View>
                     ))}
                 </View>
@@ -269,19 +270,11 @@ const styles = StyleSheet.create({
     sectionHeader: {
         flexDirection: 'row',
         margin: SPACING.small,
-        //padding: SPACING.small
+        alignItems: 'center'
     },
     sectionHeaderText: {
         color: '#FFF',
         fontFamily: FONTS.bold,
         fontSize: FONT_SIZES.h3
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: SPACING.small,
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.lightGrey
     }
 })

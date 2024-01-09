@@ -50,7 +50,7 @@ const RenderLady = ({ client, width, showPrice = true }) => {
     const renderImage = ({ item }) => (
         <Image
             style={{
-                width: width,
+                width: width ,
                 aspectRatio: 3 / 4,
             }}
             source={item}

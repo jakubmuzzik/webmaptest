@@ -994,7 +994,7 @@ const EstablishmentSignup = ({ }) => {
                                     transition={200}
                                 />
                                 <IconButton
-                                    style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                    style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
                                     icon="delete-outline"
                                     iconColor='white'
                                     size={normalize(20)}
@@ -1036,7 +1036,7 @@ const EstablishmentSignup = ({ }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
                                             icon="delete-outline"
                                             iconColor='white'
                                             size={normalize(20)}
@@ -1087,7 +1087,7 @@ const EstablishmentSignup = ({ }) => {
                                             transition={200}
                                         />
                                         <IconButton
-                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
+                                            style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
                                             icon="delete-outline"
                                             iconColor='white'
                                             size={normalize(20)}

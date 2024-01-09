@@ -76,13 +76,13 @@ const AccountSettings = ({  }) => {
             case 'photos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Photos />
+                        <Photos index={route.index}/>
                     </View>
                 )
             case 'videos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center' }}>
-                        <Videos />
+                        <Videos index={route.index}/>
                     </View>
                 )
             case 'settings':

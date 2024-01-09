@@ -1,199 +1,223 @@
-import React, {useState, memo} from 'react'
-import { View, Text } from 'react-native'
+import React, { useState, memo } from 'react'
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
 import { Image } from 'expo-image'
-import { COLORS, FONTS, FONT_SIZES, SPACING } from '../../constants'
+import { COLORS, FONTS, FONT_SIZES, SPACING, SMALL_SCREEN_THRESHOLD } from '../../constants'
 import { normalize } from '../../utils'
-import { IconButton, TouchableRipple } from 'react-native-paper'
-import { Ionicons, MaterialCommunityIcons, AntDesign } from '@expo/vector-icons'
+import { IconButton, Button } from 'react-native-paper'
+import { Octicons } from '@expo/vector-icons'
+import DropdownSelect from '../../components/DropdownSelect'
+import RenderVideoWithActions from '../../components/list/RenderVideoWithActions'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Videos = ({ navigation, route }) => {
+const Videos = ({ index }) => {
     const [data, setData] = useState({
-        images: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')]
+        active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
+        pending: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'),],
+        rejected: [require('../../assets/dummy_photo.png')]
     })
+    const [sectionWidth, setSectionWidth] = useState(0)
 
-    const onEditImagePress = (index) => {
+    const { width: windowWidth } = useWindowDimensions()
+    const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
+
+    const onEditImagePress = (image) => {
 
     }
 
-    const onSelectImagePress = (index) => {
+    const onDeleteImagePress = (image) => {
 
+    }
+
+    const onAddNewImagePress = () => {
+
+    }
+
+    const onShowRejectedReasonPress = () => {
+
+    }
+
+    const activeActions = [
+        {
+            label: 'Edit',
+            onPress: onEditImagePress
+        },
+        {
+            label: 'Delete',
+            onPress: onDeleteImagePress
+        }
+    ]
+
+    const pendingActions = [
+        {
+            label: 'Delete',
+            onPress: onDeleteImagePress,
+            iconName: 'delete-outline'
+        }
+    ]
+
+    const rejectedActions = [
+        {
+            label: 'Show rejection reason',
+            onPress: onShowRejectedReasonPress
+        },
+        {
+            label: 'Delete',
+            onPress: onDeleteImagePress
+        }
+    ]
+
+    const renderVideos = (videos, actions) => {
+        const largeContainerStyles = {
+            flexDirection: 'row', 
+            marginLeft: SPACING.small, 
+            marginRight: SPACING.small - SPACING.small, 
+            flexWrap: 'wrap'
+        }
+        const smallContainerStyles = {
+            flexDirection: 'row', marginHorizontal: SPACING.small,  marginBottom: SPACING.small, flexWrap: 'wrap'
+        }
+        const largeImageContainerStyles = {
+            borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small )) / 2), marginRight: SPACING.small, marginBottom: SPACING.small
+        }
+        const smallImageContainerStyles = {
+            borderRadius: 10, overflow: 'hidden', width: '100%', marginBottom: SPACING.small
+        }
+
+        return (
+            <View style={isSmallScreen ? smallContainerStyles : largeContainerStyles}>
+                {videos.map((video) =>
+                    <View key={videos ?? Math.random()} style={isSmallScreen ? smallImageContainerStyles : largeImageContainerStyles}>
+                        <RenderVideoWithActions video={video} actions={actions} offsetX={windowWidth * index}/>
+                    </View>)}
+            </View>
+        )
+
+    }
+
+    const renderActive = () => {
+
+        return (
+            <View style={styles.section}>
+                <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
+                        <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
+                        <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                            Active
+                        </Text>
+                        <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                            • {data.active.length}
+                        </Text>
+                    </View>
+
+                    <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        style={{ height: 'auto' }}
+                        mode="outlined"
+                        icon="plus"
+                        onPress={onAddNewImagePress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Add video
+                    </Button>
+                </View>
+
+                {renderVideos(data.active, activeActions)}
+            </View>
+        )
+    }
+
+    const renderPending = () => {
+        
+        return (
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        Under review
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.pending.length}
+                    </Text>
+                </View>
+
+                {
+                    data.pending.length === 0 ?
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
+                            No videos under review
+                        </Text>
+                        : renderVideos(data.pending, pendingActions)
+                }
+            </View>
+        )
+    }
+
+    const renderRejected = () => {
+        if (data.rejected.length === 0) {
+            return null
+        }
+
+        return (
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Octicons name="dot-fill" size={20} color="red" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        Rejected
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.rejected.length}
+                    </Text>
+                </View>
+
+                {renderVideos(data.rejected, rejectedActions)}
+            </View>
+        )
     }
 
     return (
-        <>
-            <View style={{ paddingVertical: SPACING.large, flexDirection: 'row' }}>
-                <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
-                    {data.images[0] ?
-                        <>
-                            <Image
-                                style={{
-                                    aspectRatio: 3 / 4,
-                                    width: 'auto',
-                                    borderTopLeftRadius: 20,
-                                    borderBottomLeftRadius: 20
-                                }}
-                                source={{ uri: data.images[0] }}
-                                placeholder={blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-                            <IconButton
-                                style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                icon="pencil-outline"
-                                iconColor='white'
-                                size={normalize(20)}
-                                onPress={() => onEditImagePress(0)}
-                            />
-                        </> :
-
-                        <TouchableRipple
-                            onPress={() => onSelectImagePress(0)}
-                            style={{ backgroundColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderTopLeftRadius: 20, borderBottomLeftRadius: 20 }}
-                        >
-                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                        </TouchableRipple>
-                    }
-                </View>
-                <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
-                    <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
-
-                        <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                            {data.images[1] ?
-                                <>
-                                    <Image
-                                        style={{
-                                            flex: 1,
-                                            aspectRatio: 3 / 4
-                                        }}
-                                        source={{ uri: data.images[1] }}
-                                        placeholder={blurhash}
-                                        resizeMode="cover"
-                                        transition={200}
-                                    />
-                                    <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                        icon="pencil-outline"
-                                        iconColor='white'
-                                        size={normalize(20)}
-                                        onPress={() => onEditImagePress(1)}
-                                    />
-                                </> :
-
-                                <TouchableRipple
-                                    onPress={() => onSelectImagePress(1)}
-                                    style={{ backgroundColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1 }}
-                                >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                </TouchableRipple>
-
-                            }
-                        </View>
-
-
-                        <View style={{ flex: 1 }}>
-                            {data.images[2] ?
-                                <>
-                                    <Image
-                                        style={{
-                                            flex: 1,
-                                            borderTopRightRadius: 20,
-                                            aspectRatio: 3 / 4
-                                        }}
-                                        source={{ uri: data.images[2] }}
-                                        placeholder={blurhash}
-                                        resizeMode="cover"
-                                        transition={200}
-                                    />
-                                    <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                        icon="pencil-outline"
-                                        iconColor='white'
-                                        size={normalize(20)}
-                                        onPress={() => onEditImagePress(2)}
-                                    />
-                                </> :
-
-                                <TouchableRipple
-                                    onPress={() => onSelectImagePress(2)}
-                                    style={{ backgroundColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderTopRightRadius: 20, flex: 1, }}
-                                >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                </TouchableRipple>
-
-                            }
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexGrow: 1 }}>
-
-                        <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                            {data.images[3] ?
-                                <>
-                                    <Image
-                                        style={{
-                                            flex: 1,
-                                            aspectRatio: 3 / 4
-                                        }}
-                                        source={{ uri: data.images[3] }}
-                                        placeholder={blurhash}
-                                        resizeMode="cover"
-                                        transition={200}
-                                    />
-                                    <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                        icon="pencil-outline"
-                                        iconColor='white'
-                                        size={normalize(20)}
-                                        onPress={() => onEditImagePress(3)}
-                                    />
-                                </>
-                                :
-                                <TouchableRipple
-                                    onPress={() => onSelectImagePress(3)}
-                                    style={{ backgroundColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, flex: 1, }}
-                                >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                </TouchableRipple>
-                            }
-                        </View>
-
-                        <View style={{ flex: 1 }}>
-                            {data.images[4] ?
-                                <>
-                                    <Image
-                                        style={{
-                                            flex: 1,
-                                            borderBottomRightRadius: 20,
-                                            aspectRatio: 3 / 4
-                                        }}
-                                        source={{ uri: data.images[4] }}
-                                        placeholder={blurhash}
-                                        resizeMode="cover"
-                                        transition={200}
-                                    />
-                                    <IconButton
-                                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: 'rgba(40,40,40,0.9)' }}
-                                        icon="pencil-outline"
-                                        iconColor='white'
-                                        size={normalize(20)}
-                                        onPress={() => onEditImagePress(4)}
-                                    />
-                                </> :
-                                <TouchableRipple
-                                    onPress={() => onSelectImagePress(4)}
-                                    style={{ backgroundColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', aspectRatio: 3 / 4, borderBottomRightRadius: 20, flex: 1, }}
-                                >
-                                    <Ionicons name="image-outline" size={normalize(30)} color="black" />
-                                </TouchableRipple>
-                            }
-                        </View>
-                    </View>
-                </View>
-            </View>
-        </>
+        <View style={{ marginBottom: SPACING.large }} onLayout={event => setSectionWidth(event.nativeEvent.layout.width - 2)}>
+            {renderActive()}
+            {renderPending()}
+            {renderRejected()}
+        </View>
     )
 }
 
 export default memo(Videos)
+
+const styles = StyleSheet.create({
+    section: {
+        marginTop: SPACING.large,
+        borderRadius: 20,
+        backgroundColor: COLORS.grey,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,.08)',
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        margin: SPACING.small,
+        alignItems: 'center'
+    },
+    sectionHeaderText: {
+        color: '#FFF',
+        fontFamily: FONTS.bold,
+        fontSize: FONT_SIZES.h3
+    },
+    largeContainerStyles: {
+        flexDirection: 'row', 
+        marginLeft: SPACING.small, 
+        marginRight: SPACING.small - SPACING.xxx_small, 
+        marginBottom: SPACING.small, 
+        flexWrap: 'wrap'
+    }, 
+    smallContainerStyles: {
+        flexDirection: 'row', marginHorizontal: SPACING.small,  marginBottom: SPACING.small, flexWrap: 'wrap'
+    },
+    largeImageContainerStyles: {
+
+    }, 
+    smallImageContainerStyles: {
+        
+    }
+})

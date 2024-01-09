@@ -16,6 +16,7 @@
     "@fanchenbao/react-native-scroll-indicator": "^0.2.2",
     "@georstat/react-native-image-gallery": "^1.1.0",
     "@react-native-assets/slider": "^7.0.5",
+    "@react-native-picker/picker": "2.4.10",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/drawer": "^6.6.3",
     "@react-navigation/material-top-tabs": "^6.6.5",
@@ -61,8 +62,7 @@
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.21.0",
     "react-router-native": "^6.20.1",
-    "redux-thunk": "^2.4.2",
-    "@react-native-picker/picker": "2.4.10"
+    "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

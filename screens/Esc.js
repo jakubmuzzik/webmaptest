@@ -48,16 +48,16 @@ const Esc = ({ }) => {
             : isXMediumScreen ? (contentWidth / 4) - (SPACING.large + SPACING.large / 4)
             : isLargeScreen ? (contentWidth / 5) - (SPACING.large + SPACING.large / 5) : (contentWidth / 6) - (SPACING.large + SPACING.large / 6) 
     }, [contentWidth])
-     
-    const renderCard = useCallback((data) => {
+
+    const renderCard = (data) => {
         return (
             <View key={data.id} style={[styles.cardContainer, { width: cardWidth }]}>
                 <RenderLady client={data} width={cardWidth} />
             </View>
         )
-    }, [cardWidth])
+    }
 
-    const loadingCards = useMemo(() => {
+    const loadingCards = () => {
         return Array(20).fill({}).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
@@ -72,7 +72,7 @@ const Esc = ({ }) => {
                 </ContentLoader>
             </View>
         ))
-    }, [cardWidth])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 

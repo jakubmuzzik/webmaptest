@@ -109,7 +109,7 @@ export const MOCK_DATA = [
         id: 1,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
-        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
+        images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -117,7 +117,7 @@ export const MOCK_DATA = [
         id: 2,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
-        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
+        images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -125,7 +125,7 @@ export const MOCK_DATA = [
         id: 3,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
-        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
+        images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
@@ -133,7 +133,7 @@ export const MOCK_DATA = [
         id: 4,
         name: 'Test Name',
         profilePhoto: require('../assets/dummy_photo.png'),
-        images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
+        images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
         text2: 'from 2000 CZK/hour'
     },
