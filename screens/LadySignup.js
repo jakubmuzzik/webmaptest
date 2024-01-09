@@ -1753,7 +1753,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
                                             }}
                                             source={{ uri: video.thumbnail }}
                                             placeholder={blurhash}
-                                            resizeMode="contain"
+                                            resizeMode="cover"
                                             transition={200}
                                         />
                                         <IconButton
