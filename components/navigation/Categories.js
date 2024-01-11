@@ -102,7 +102,7 @@ const Categories = ({ }) => {
 
     return (
         <View style={{
-            flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 0.5, borderColor: 'grey', flexDirection: 'row',
+            flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 1, borderColor: COLORS.lightGrey, flexDirection: 'row',
             shadowColor: COLORS.lightBlack,
             shadowOffset: {
                 width: 0,

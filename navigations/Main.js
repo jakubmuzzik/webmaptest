@@ -8,6 +8,7 @@ import { updateScrollDisabled } from '../redux/actions'
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
 import Header from '../components/navigation/Header'
+import Footer from '../components/navigation/Footer'
 import Pri from '../screens/Pri'
 import Esc from '../screens/Esc'
 import Clu from '../screens/Clu'
@@ -75,6 +76,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
             <View style={{ flex: 1, marginTop: normalize(70) }}>
                 {children}
             </View>
+
+            <Footer />
         </>
     ), [])
 

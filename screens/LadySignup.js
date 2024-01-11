@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Text, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity, TextInput, ImageBackground } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
-import { normalize, generateThumbnailFromLocalURI } from '../utils'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import HoverableView from '../components/HoverableView'
@@ -476,6 +476,14 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
                     }
                     return { ...d }
                 })
+
+                //TODO - do this when pressing next button !!
+                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
+
+                setData(d => {
+                    d.images[index] = blurhash
+                    return { ...d }
+                })
             } catch (e) {
                 console.error(e)
             }
@@ -521,6 +529,8 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
                     }
                     return { ...d }
                 })
+
+                //TODO - generate blurhash also for videos
             } catch (e) {
                 console.error(e)
             }

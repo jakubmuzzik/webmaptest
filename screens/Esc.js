@@ -58,12 +58,11 @@ const Esc = ({ }) => {
     }
 
     const loadingCards = () => {
-        return Array(20).fill({}).map((_, index) => (
+        return MOCK_DATA.map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
                     speed={2}
                     width={cardWidth}
-                    //width='100%'
                     style={{ aspectRatio: 3/4, borderRadius: 10 }}
                     backgroundColor={COLORS.grey}
                     foregroundColor={COLORS.lightGrey}
@@ -84,7 +83,7 @@ const Esc = ({ }) => {
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
+                    {isLoading ? loadingCards() : MOCK_DATA.map(data => renderCard(data))}
                 </View>
             </View>
         </View>

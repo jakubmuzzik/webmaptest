@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { View, Text, Dimensions, Image, ImageBackground, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, Dimensions, Image as RNImage, ImageBackground, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
-import { normalize, generateThumbnailFromLocalURI } from '../utils'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
 import HoverableInput from '../components/HoverableInput'
 import DropdownSelect from '../components/DropdownSelect'
@@ -23,6 +23,7 @@ import AddressSearch from '../components/modal/AddressSearch'
 import Toast from 'react-native-toast-message'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { BlurView } from 'expo-blur'
+import { Image } from 'expo-image'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -360,6 +361,15 @@ const EstablishmentSignup = ({ }) => {
                     }
                     return { ...d }
                 })
+
+
+                //TODO - do this when pressing next button !!
+                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
+
+                setData(d => {
+                    d.images[index] = blurhash
+                    return { ...d }
+                })
             } catch (e) {
                 console.error(e)
             }
@@ -405,6 +415,8 @@ const EstablishmentSignup = ({ }) => {
                     }
                     return { ...d }
                 })
+
+                //TODO - generate blurhash also for videos
             } catch (e) {
                 console.error(e)
             }
@@ -990,9 +1002,7 @@ const EstablishmentSignup = ({ }) => {
                                         borderColor: 'rgba(28,27,31,0.16)'
                                     }}
                                     source={{ uri: data.images[0] }}
-                                    placeholder={blurhash}
                                     resizeMode="cover"
-                                    transition={200}
                                 />
                                 <IconButton
                                     style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
@@ -1038,9 +1048,7 @@ const EstablishmentSignup = ({ }) => {
                                                     borderColor: 'rgba(28,27,31,0.16)'
                                                 }}
                                                 source={{ uri: image }}
-                                                placeholder={blurhash}
                                                 resizeMode="contain"
-                                                transition={200}
                                             />
                                             <IconButton
                                                 style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
@@ -1090,9 +1098,7 @@ const EstablishmentSignup = ({ }) => {
                                                 borderColor: 'rgba(28,27,31,0.16)'
                                             }}
                                             source={{ uri: video.thumbnail }}
-                                            placeholder={blurhash}
                                             resizeMode="cover"
-                                            transition={200}
                                         />
                                         <IconButton
                                             style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
