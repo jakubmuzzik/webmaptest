@@ -11,7 +11,7 @@ const Footer = () => {
     }
 
     return (
-        <View style={{ padding: SPACING.large, backgroundColor: COLORS.darkGrey, borderTopWidth: 1, borderColor: COLORS.lightGrey, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flexDirection: 'row' }}>
+        <View style={{ padding: SPACING.large, backgroundColor: COLORS.grey, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flexDirection: 'row' }}>
             <HoverableText onPress={onPress} textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginHorizontal: SPACING.medium }} hoveredColor='#FFF' text="About Us" />
             <HoverableText onPress={onPress} textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginHorizontal: SPACING.medium }} hoveredColor='#FFF' text="FAQ" />
             <HoverableText onPress={onPress} textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginHorizontal: SPACING.medium }} hoveredColor='#FFF' text="Privacy Policy" />

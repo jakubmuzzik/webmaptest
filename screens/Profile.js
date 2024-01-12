@@ -182,12 +182,20 @@ const Profile = ({ }) => {
                 />
             </View> */}
 
-            <LinearGradient colors={[
+            {/* <LinearGradient colors={[
                 COLORS.grey,
                 COLORS.lightBlack,
             ]}
                 style={{ position: 'absolute', width: '100%', height: 600 }}
                 locations={[0.5, 0.7]}
+            /> */}
+
+            <LinearGradient colors={[
+                COLORS.grey,
+                COLORS.lightBlack,
+            ]}
+                style={{ position: 'absolute', width: '100%', height: Dimensions.get('window').height - normalize(70) }}
+                //locations={[0.5, 0.7]}
             />
 
             {/* {location.key !== 'default' && !isBrowser && <TouchableOpacity

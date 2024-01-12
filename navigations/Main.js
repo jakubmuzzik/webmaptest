@@ -134,7 +134,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
                         <Header />
                     </View>
 
-                    <View style={{ height: initialHeight - normalize(70), marginTop: normalize(70) }}>
+                    <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <EstablishmentSignup />
                     </View>
                 </>
