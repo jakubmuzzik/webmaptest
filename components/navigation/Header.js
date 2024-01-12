@@ -84,9 +84,16 @@ const Header = ({ }) => {
     const isSmallScreen = width < SMALL_SCREEN_THRESHOLD
     const isLargeScreen = width >= LARGE_SCREEN_THRESHOLD
 
-    const onSearchSubmit = useCallback(() => {
-        //navigate to search screen
-    }, [search])
+    const onSearchSubmit = () => {
+        if (!search.length) {
+            return
+        }
+
+        navigate({
+            pathname: '/search',
+            search: new URLSearchParams(stripEmptyParams({ language: params.language, q: search })).toString()
+        })
+    }
 
     const toggleUserDropdown = useCallback(() => {
         userDropdownVisible ? setUserDropdownVisible(false) : openUserDropdown()

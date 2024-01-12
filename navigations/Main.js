@@ -17,6 +17,7 @@ import Profile from '../screens/Profile'
 import Account from '../screens/Account'
 import EstablishmentSignup from '../screens/EstablishmentSignup'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
+import SearchResults from '../screens/SearchResults'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 
@@ -143,6 +144,12 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
             <Route path='/auth' element={
                 <LayoutWithHeader>
                     <SignUpOrLogin />
+                </LayoutWithHeader>
+            } />
+
+            <Route path='/search' element={
+                <LayoutWithHeader>
+                    <SearchResults />
                 </LayoutWithHeader>
             } />
 
