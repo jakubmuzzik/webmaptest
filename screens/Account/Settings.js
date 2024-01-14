@@ -4,6 +4,12 @@ import { FONTS, FONT_SIZES, COLORS, SPACING } from '../../constants'
 import { MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 import { Button, Tooltip, IconButton } from 'react-native-paper'
+import Toast from 'react-native-toast-message'
+
+import {
+    signOut,
+    getAuth,
+  } from '../../firebase/config'
 
 import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
@@ -20,7 +26,11 @@ const Settings = ({ setTabHeight }) => {
     const [deleteAccountVisible, setDeleteAccountVisible] = useState(false)
 
     const onLogoutPress = () => {
-
+        signOut(getAuth())
+        Toast.show({
+            type: 'success',
+            text2: 'Successfully logged out.'
+        })
     }
 
     const onNameEditPress = () => {

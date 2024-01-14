@@ -17,18 +17,33 @@ import {
     FONT_SIZES,
     SPACING,
     SUPPORTED_LANGUAGES,
-    DEFAULT_LANGUAGE
+    DEFAULT_LANGUAGE,
+    toastConfig
 } from '../../constants'
 import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
 
-import { useSearchParams } from 'react-router-dom'
+import Toast from 'react-native-toast-message'
+
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
+
+import {
+    db,
+    getAuth,
+    doc,
+    updateDoc,
+    signInWithEmailAndPassword
+  } from '../../firebase/config'
 
 const window = Dimensions.get('window')
 
 const Login = ({ visible, setVisible, onSignUpPress }) => {
     const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+    const location = useLocation()
+  
+    const from = location.state?.from?.pathname || "/account"
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
@@ -45,6 +60,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         emailForReset: '',
         secureTextEntry: true
     })
+    const [buttonIsLoading, setButtonIsLoading] = useState(false)
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [index, setIndex] = useState(0)
 
@@ -124,10 +140,40 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         setIndex(0)
     }
 
-    const onLoginPress = () => {
+    const onLoginPress = async () => {
         if (!data.email || !data.password) {
             setShowErrorMessages(true)
             return
+        }
+
+        setButtonIsLoading(true)
+
+        const { email, password } = data
+
+        try {
+            await signInWithEmailAndPassword(getAuth(), email, password)
+            updateDoc(doc(db, 'users', getAuth().currentUser.uid), {
+                email
+            })
+            closeModal()
+
+            navigate(from, { replace: true });
+        } catch(error) {
+            if (error.code?.includes('auth')) {
+                Toast.show({
+                    type: 'error',
+                    //text1: 'Login error',
+                    text2: 'Invalid Username or Password.'
+                })
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Login error',
+                    text2: 'Something went wrong.'
+                })
+            }
+        } finally {
+            setButtonIsLoading(false)
         }
     }
     
@@ -204,6 +250,8 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="contained"
                         onPress={onLoginPress}
+                        loading={buttonIsLoading}
+                        disabled={buttonIsLoading}
                     >
                         Log in
                     </Button>
@@ -294,6 +342,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         <Modal transparent={true}
             visible={visible}
             animationType="fade">
+
             <TouchableOpacity
                 style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', cursor: 'default' }}
                 activeOpacity={1}
@@ -312,6 +361,8 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast config={toastConfig} />
         </Modal>
     )
 }

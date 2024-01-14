@@ -8,49 +8,13 @@ const store = initStore()
 //import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
+import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, toastConfig } from './constants'
 
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message'
+import Toast from 'react-native-toast-message'
 
 import Main from './navigations/Main'
 
 //enableLegacyWebImplementation(true)
-
-const toastConfig = {
-  success: (props) => (
-    <BaseToast
-      {...props}
-      style={{ borderLeftColor: 'rgb(31,199,10)',/*width: 'fit-content', maxWidth: '80%'*/ }} // this width setup didn't work on mobile
-      //contentContainerStyle={{ paddingVertical: 15 }}
-      text1Style={{
-        fontSize: FONT_SIZES.large,
-        fontStyle: FONTS.bold,
-      }}
-      text2Style={{
-        fontSize: FONT_SIZES.medium,
-        fontStyle: FONTS.bold,
-        color: '#000',
-      }}
-      text2NumberOfLines={2}
-    />
-  ),
-  error: (props) => (
-    <ErrorToast
-      {...props}
-      style={{ borderLeftColor: COLORS.error }}
-      text1Style={{
-        fontSize: FONT_SIZES.medium,
-        fontStyle: FONTS.bold
-      }}
-      text2Style={{
-        fontSize: FONT_SIZES.small,
-        fontStyle: FONTS.bold,
-        color: '#000'
-      }}
-      text2NumberOfLines={2}
-    />
-  )
-}
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true)

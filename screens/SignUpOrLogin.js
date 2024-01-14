@@ -10,8 +10,8 @@ import Login from '../components/modal/Login'
 import Signup from '../components/modal/Signup'
 
 const SignUpOrLogin = ({ }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate()
+    const location = useLocation()
   
     const from = location.state?.from?.pathname || "/"
 
@@ -21,12 +21,6 @@ const SignUpOrLogin = ({ }) => {
     const onLoginPress = () => {
         setSignUpVisible(false)
         setLoginVisible(true)
-
-
-        /*
-        //TODO -- after login: 
-        navigate(from, { replace: true });
-        */
     }
 
     const onSignUpPress = () => {

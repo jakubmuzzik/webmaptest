@@ -37,6 +37,7 @@ import { normalize } from '../../utils'
 import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
+import { getAuth, signOut } from '../../firebase/config'
 
 import { useSearchParams, Link, useLocation, useNavigate } from 'react-router-dom'
 
@@ -152,77 +153,161 @@ const Header = ({ }) => {
         }
     }
 
+    const onAccountPress = () => {
+        navigate({
+            pathname: '/account',
+            search: new URLSearchParams(stripEmptyParams({ language: params.language })).toString()
+        })
+    }
+
+    const onLogoutPress = () => {
+        signOut(getAuth())
+    }
+
     const renderUserDropdown = () => {
-        return (
-            <Modal visible={userDropdownVisible} transparent animationType="none">
-                <TouchableOpacity
-                    style={styles.dropdownOverlay}
-                    onPress={() => setUserDropdownVisible(false)}
-                >
-                    <TouchableWithoutFeedback>
-                        <MotiView
-                            from={{
-                                opacity: 0,
-                                transform: [{ scaleY: 0.8 }, { translateY: -10 }],
-                            }}
-                            animate={{
-                                opacity: 1,
-                                transform: [{ scaleY: 1 }, { translateY: 0 }],
-                            }}
-                            transition={{
-                                type: 'timing',
-                                duration: 100,
-                            }}
-                            style={[styles.dropdown, { top: dropdownTop }]}
-                        >
-                            <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                <TouchableOpacity onPress={onSignUpPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
-                                    activeOpacity={0.8}
-                                >
-                                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                                        {labels.SIGN_UP}
-                                    </Text>
-                                </TouchableOpacity>
-                            </HoverableView>
-                            <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <TouchableOpacity onPress={onLoginPress} style={{ padding: SPACING.xx_small }}
-                                    activeOpacity={0.8}
-                                >
-                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                        {labels.SIGN_IN}
-                                    </Text>
-                                </TouchableOpacity>
-                            </HoverableView>
-
-                            {isSmallScreen && (
-                                <>
-                                    <View style={{ marginVertical: 2, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)' }} />
-
-                                    <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
-                                            Language:&nbsp;
+        if (getAuth().currentUser) {
+            return (
+                <Modal visible={userDropdownVisible} transparent animationType="none">
+                    <TouchableOpacity
+                        style={styles.dropdownOverlay}
+                        onPress={() => setUserDropdownVisible(false)}
+                    >
+                        <TouchableWithoutFeedback>
+                            <MotiView
+                                from={{
+                                    opacity: 0,
+                                    transform: [{ scaleY: 0.8 }, { translateY: -10 }],
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    transform: [{ scaleY: 1 }, { translateY: 0 }],
+                                }}
+                                transition={{
+                                    type: 'timing',
+                                    duration: 100,
+                                }}
+                                style={[styles.dropdown, { top: dropdownTop }]}
+                            >
+                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
+                                    <TouchableOpacity onPress={onAccountPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                                            Account
                                         </Text>
-                                        <Picker
-                                            selectedValue={params.language.length ? params.language : DEFAULT_LANGUAGE}
-                                            onValueChange={(itemValue, itemIndex) => navigate({
-                                                pathname: location.pathname,
-                                                search: new URLSearchParams(stripEmptyParams({ ...params, language: itemValue })).toString()
-                                            })
-                                            }
-                                            fontFamily={FONTS.bold}
-                                            style={{ borderWidth: 0, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, outlineStyle: 'none' }}
-                                        >
-                                            <Picker.Item label="Čeština" value="cs" />
-                                            <Picker.Item label="English" value="en" />
-                                        </Picker>
-                                    </HoverableView>
-                                </>
-                            )}
-                        </MotiView>
-                    </TouchableWithoutFeedback>
-                </TouchableOpacity>
-            </Modal>
-        )
+                                    </TouchableOpacity>
+                                </HoverableView>
+                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                    <TouchableOpacity onPress={onLogoutPress} style={{ padding: SPACING.xx_small }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                            Log out
+                                        </Text>
+                                    </TouchableOpacity>
+                                </HoverableView>
+    
+                                {isSmallScreen && (
+                                    <>
+                                        <View style={{ marginVertical: 2, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)' }} />
+    
+                                        <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
+                                                Language:&nbsp;
+                                            </Text>
+                                            <Picker
+                                                selectedValue={params.language.length ? params.language : DEFAULT_LANGUAGE}
+                                                onValueChange={(itemValue, itemIndex) => navigate({
+                                                    pathname: location.pathname,
+                                                    search: new URLSearchParams(stripEmptyParams({ ...params, language: itemValue })).toString()
+                                                })
+                                                }
+                                                fontFamily={FONTS.bold}
+                                                style={{ borderWidth: 0, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, outlineStyle: 'none' }}
+                                            >
+                                                <Picker.Item label="Čeština" value="cs" />
+                                                <Picker.Item label="English" value="en" />
+                                            </Picker>
+                                        </HoverableView>
+                                    </>
+                                )}
+                            </MotiView>
+                        </TouchableWithoutFeedback>
+                    </TouchableOpacity>
+                </Modal>
+            )
+        } else {
+            return (
+                <Modal visible={userDropdownVisible} transparent animationType="none">
+                    <TouchableOpacity
+                        style={styles.dropdownOverlay}
+                        onPress={() => setUserDropdownVisible(false)}
+                    >
+                        <TouchableWithoutFeedback>
+                            <MotiView
+                                from={{
+                                    opacity: 0,
+                                    transform: [{ scaleY: 0.8 }, { translateY: -10 }],
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    transform: [{ scaleY: 1 }, { translateY: 0 }],
+                                }}
+                                transition={{
+                                    type: 'timing',
+                                    duration: 100,
+                                }}
+                                style={[styles.dropdown, { top: dropdownTop }]}
+                            >
+                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
+                                    <TouchableOpacity onPress={onSignUpPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                                            {labels.SIGN_UP}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </HoverableView>
+                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                    <TouchableOpacity onPress={onLoginPress} style={{ padding: SPACING.xx_small }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                            {labels.SIGN_IN}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </HoverableView>
+    
+                                {isSmallScreen && (
+                                    <>
+                                        <View style={{ marginVertical: 2, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)' }} />
+    
+                                        <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
+                                                Language:&nbsp;
+                                            </Text>
+                                            <Picker
+                                                selectedValue={params.language.length ? params.language : DEFAULT_LANGUAGE}
+                                                onValueChange={(itemValue, itemIndex) => navigate({
+                                                    pathname: location.pathname,
+                                                    search: new URLSearchParams(stripEmptyParams({ ...params, language: itemValue })).toString()
+                                                })
+                                                }
+                                                fontFamily={FONTS.bold}
+                                                style={{ borderWidth: 0, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, outlineStyle: 'none' }}
+                                            >
+                                                <Picker.Item label="Čeština" value="cs" />
+                                                <Picker.Item label="English" value="en" />
+                                            </Picker>
+                                        </HoverableView>
+                                    </>
+                                )}
+                            </MotiView>
+                        </TouchableWithoutFeedback>
+                    </TouchableOpacity>
+                </Modal>
+            )
+        }
     }
 
     const renderSeoContent = () => (
@@ -296,9 +381,9 @@ const Header = ({ }) => {
     }, [languageDropdownVisible, languageDropdownRight, dropdownTop, userDropdownRef, languageDropdownModalRef, params.language])
 
     const renderRightHeader = useCallback(() => {
-        return isSmallScreen ? (
+        return isSmallScreen || getAuth().currentUser ? (
             <>
-                <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor, flexGrow: 1, flexShrink: 1 }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
+                {!getAuth().currentUser &&  <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor, flexGrow: 1, flexShrink: 1 }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
                     <Ionicons name="search" size={normalize(20)} color="white" />
                     <TextInput
                         style={styles.search}
@@ -311,7 +396,7 @@ const Header = ({ }) => {
                         onSubmitEditing={onSearchSubmit}
                     />
                     <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
-                </HoverableView>
+                </HoverableView>}
                 <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
                     <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
                         <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />

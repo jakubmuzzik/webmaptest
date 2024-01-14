@@ -7,6 +7,8 @@ import { updateScrollDisabled } from '../redux/actions'
 
 import { getAuth, onAuthStateChanged } from '../firebase/config'
 
+import Toast from 'react-native-toast-message'
+
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
 import Header from '../components/navigation/Header'
@@ -32,7 +34,8 @@ const { height: initialHeight } = Dimensions.get('window')
 const auth = getAuth()
 
 const Main = ({ scrollDisabled, updateScrollDisabled }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [isLoggedIn, setIsLoggedIn] = useState(null)
+    const [userVerified, setUserVerified] = useState(null)
 
     const { height } = useWindowDimensions()
 
@@ -40,15 +43,28 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
-                //setUserVerified(false)
+                setUserVerified(false)
                 //navigationRef.current?.dispatch(StackActions.replace('AuthStack'))
-            } else if (!user.emailVerified && !user.isAnonymous) {
+            } else if (!user.emailVerified) {
                 setIsLoggedIn(true)
-                //setUserVerified(false)
+                setUserVerified(false)
                 //navigationRef.current?.dispatch(StackActions.replace('EmailConfirmation'))
+                /*Toast.show({
+                    type: 'success',
+                    text2: 'Successfully logged in.'
+                })*/
             } else {
+                /*if (isLoggedIn !== null) {
+                    Toast.show({
+                        type: 'success',
+                        text2: 'Successfully logged in.'
+                    })
+                }*/
+
                 setIsLoggedIn(true)
-                //setUserVerified(true)
+                setUserVerified(true)
+
+                /**/
                 //navigationRef.current?.dispatch(StackActions.replace('Main'))
             }
         })
@@ -72,12 +88,12 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
             to += '?language=' + params.language
         }
 
-        if (isLoggedIn) {
+        if (!isLoggedIn) {
             return <Navigate to={to} state={{ from: location }} replace />
         }
 
         return children
-    }, [])
+    }, [isLoggedIn, userVerified])
 
     const Redirect = ({ replace, to }) => {
         const [searchParams] = useSearchParams()
@@ -195,6 +211,10 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
             setTimeout(() => updateScrollDisabled(false))
         }
     })
+
+    if (isLoggedIn == null || userVerified == null) {
+        return null
+    }
 
     return (
         <View style={scrollDisabled ? { height, overflow: 'hidden' }: {flex:1}}>

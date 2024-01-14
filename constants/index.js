@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native'
+import { BaseToast, ErrorToast } from 'react-native-toast-message'
 
 const {
   width: SCREEN_WIDTH
@@ -102,6 +103,42 @@ export const CURRENCIES = ['CZK', 'EUR']
 
 export const rem = (number) => {
     return isLargeScreen ? number * 16 : isMediumScreen ? number * 14 : number * 12
+}
+
+export const toastConfig = {
+    success: (props) => (
+        <BaseToast
+            {...props}
+            style={{ borderLeftColor: 'rgb(31,199,10)',/*width: 'fit-content', maxWidth: '80%'*/ }} // this width setup didn't work on mobile
+            //contentContainerStyle={{ paddingVertical: 15 }}
+            text1Style={{
+                fontSize: FONT_SIZES.large,
+                fontStyle: FONTS.bold,
+            }}
+            text2Style={{
+                fontSize: FONT_SIZES.medium,
+                fontStyle: FONTS.bold,
+                color: '#000',
+            }}
+            text2NumberOfLines={2}
+        />
+    ),
+    error: (props) => (
+        <ErrorToast
+            {...props}
+            style={{ borderLeftColor: COLORS.error }}
+            text1Style={{
+                fontSize: FONT_SIZES.medium,
+                fontStyle: FONTS.bold
+            }}
+            text2Style={{
+                fontSize: FONT_SIZES.small,
+                fontStyle: FONTS.bold,
+                color: '#000'
+            }}
+            text2NumberOfLines={2}
+        />
+    )
 }
 
 export const MOCK_DATA = [
