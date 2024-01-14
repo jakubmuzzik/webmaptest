@@ -5,6 +5,8 @@ import { normalize, stripEmptyParams, getParam } from '../utils'
 import { connect } from 'react-redux'
 import { updateScrollDisabled } from '../redux/actions'
 
+import { getAuth, onAuthStateChanged } from '../firebase/config'
+
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
 import Header from '../components/navigation/Header'
@@ -27,10 +29,34 @@ import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, O
 
 const { height: initialHeight } = Dimensions.get('window')
 
+const auth = getAuth()
+
 const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     const { height } = useWindowDimensions()
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            if (!user) {
+                setIsLoggedIn(false)
+                //setUserVerified(false)
+                //navigationRef.current?.dispatch(StackActions.replace('AuthStack'))
+            } else if (!user.emailVerified && !user.isAnonymous) {
+                setIsLoggedIn(true)
+                //setUserVerified(false)
+                //navigationRef.current?.dispatch(StackActions.replace('EmailConfirmation'))
+            } else {
+                setIsLoggedIn(true)
+                //setUserVerified(true)
+                //navigationRef.current?.dispatch(StackActions.replace('Main'))
+            }
+        })
+
+        return () => {
+            unsubscribe()
+        }
+    }, [])
 
     const RequireAuth = useCallback(({ children }) => {
         const location = useLocation()
