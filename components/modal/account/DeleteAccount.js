@@ -22,13 +22,12 @@ import {
 } from '../../../constants'
 
 import { Button } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
 
-const DeleteAccount = ({ visible, setVisible }) => {
+const DeleteAccount = ({ visible, setVisible, showToast }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -97,10 +96,10 @@ const DeleteAccount = ({ visible, setVisible }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Email was changed successfully.'
+                headerText: 'Success!',
+                text: 'Your Email was changed successfully.'
             })
         }, 1000)
     }

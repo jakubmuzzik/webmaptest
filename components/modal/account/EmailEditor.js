@@ -22,11 +22,10 @@ import {
 } from '../../../constants'
 
 import { Button } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const EmailEditor = ({ visible, setVisible }) => {
+const EmailEditor = ({ visible, setVisible, showToast }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -83,10 +82,10 @@ const EmailEditor = ({ visible, setVisible }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Email was changed successfully.'
+                headerText: 'Success!',
+                text: 'Your Email was changed successfully.'
             })
         }, 1000)
     }

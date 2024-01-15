@@ -4,7 +4,8 @@ import { FONTS, FONT_SIZES, COLORS, SPACING } from '../../constants'
 import { MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 import { Button, Tooltip, IconButton } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
+import { connect } from 'react-redux'
+import { showToast } from '../../redux/actions'
 
 import {
     signOut,
@@ -15,7 +16,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = ({ setTabHeight }) => {
+const Settings = ({ setTabHeight, showToast }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -27,10 +28,6 @@ const Settings = ({ setTabHeight }) => {
 
     const onLogoutPress = () => {
         signOut(getAuth())
-        Toast.show({
-            type: 'success',
-            text2: 'Successfully logged out.'
-        })
     }
 
     const onNameEditPress = () => {
@@ -115,14 +112,14 @@ const Settings = ({ setTabHeight }) => {
                 </Button>
             </View>
 
-            <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} />
-            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} />
-            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} />
+            <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} showToast={showToast} />
+            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} showToast={showToast}/>
+            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} showToast={showToast}/>
         </View>
     )
 }
 
-export default memo(Settings)
+export default connect(null, { showToast })(memo(Settings))
 
 const styles = StyleSheet.create({
     container: {

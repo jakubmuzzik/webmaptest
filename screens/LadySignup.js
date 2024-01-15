@@ -31,9 +31,11 @@ import {
 import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
-import Toast from 'react-native-toast-message'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { BlurView } from 'expo-blur'
+
+import { connect } from 'react-redux'
+import { showToast } from '../redux/actions'
 
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
@@ -54,7 +56,7 @@ const getFileSizeInMb = (uri) => {
     return (uri.length * (3 / 4) - 2) / (1024 * 1024)
 }
 
-const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
+const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast }) => {
     const [data, setData] = useState({
         gender: '',
         name: '',
@@ -451,20 +453,20 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_PHOTO_SIZE_MB) {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'File Size Error',
-                        text2:`Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
+                        headerText: 'File Size Error',
+                        text:`Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
                     })
                     return
                 }
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'image') {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'Invalid File Type',
-                        text2:`Please upload a supported file type.`
+                        headerText: 'Invalid File Type',
+                        text:`Please upload a supported file type.`
                     })
                     return
                 }
@@ -502,20 +504,20 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_VIDEO_SIZE_MB) {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'File Size Error',
-                        text2:`Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
+                        headerText: 'File Size Error',
+                        text:`Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
                     })
                     return
                 }
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'video') {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'Invalid File Type',
-                        text2:`Please upload a supported file type.`
+                        headerText: 'Invalid File Type',
+                        text:`Please upload a supported file type.`
                     })
                     return
                 }
@@ -1946,7 +1948,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0 }) => {
     )
 }
 
-export default LadySignup
+export default connect(null, { showToast })(LadySignup)
 
 const styles = StyleSheet.create({
     pageHeaderText: {

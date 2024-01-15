@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import React, {
     useState,
     useCallback,
@@ -15,15 +15,25 @@ import Animated, {
     runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FONTS, FONT_SIZES, SPACING } from '../constants';
+import { normalize } from '../utils';
+import { MotiView } from 'moti';
+
 const Toast = forwardRef(({ }, ref) => {
     const toastTopAnimation = useSharedValue(-100);
     const context = useSharedValue(0);
     const [showing, setShowing] = useState(false);
-    const [toastType, setToastType] = useState('success');
-    const [toastText, setToastText] = useState('');
-    const [toastDuration, setToastDuration] = useState(0);
+    const [toastData, setToastData] = useState({
+        type: '',
+        headerText: '',
+        text: '',
+        duration: ''
+    })
+
+    const insets = useSafeAreaInsets()
     
-    const TOP_VALUE = 60//Platform.OS === 'ios' ? 60 : 20;
+    const TOP_VALUE = SPACING.medium + insets.top //60//Platform.OS === 'ios' ? 60 : 20;
     useImperativeHandle(
         ref,
         () => ({
@@ -33,11 +43,14 @@ const Toast = forwardRef(({ }, ref) => {
     );
 
     const show = useCallback(
-        ({ type, text, duration }) => {
+        ({ type, headerText, text, duration=3000 }) => {
             setShowing(true);
-            setToastType(type);
-            setToastText(text);
-            setToastDuration(duration);
+            setToastData({
+                type,
+                headerText,
+                text,
+                duration
+            })
             toastTopAnimation.value = withSequence(
                 withTiming(TOP_VALUE),
                 withDelay(
@@ -85,7 +98,7 @@ const Toast = forwardRef(({ }, ref) => {
                 toastTopAnimation.value = withSequence(
                     withTiming(TOP_VALUE),
                     withDelay(
-                        toastDuration,
+                        toastData.duration,
                         withTiming(-100, null, finish => {
                             if (finish) {
                                 runOnJS(setShowing)(false);
@@ -103,34 +116,54 @@ const Toast = forwardRef(({ }, ref) => {
                     <Animated.View
                         style={[
                             styles.toastContainer,
-                            toastType === 'success'
+                            toastData.type === 'success'
                                 ? styles.successToastContainer
-                                : toastType === 'warning'
+                                : toastData.type === 'warning'
                                     ? styles.warningToastContainer
                                     : styles.errorToastContainer,
                             animatedTopStyles,
                         ]}>
-                        <Image
-                            source={
-                                toastType === 'success'
-                                    ? require('../assets/SuccessIcon.png')
-                                    : toastType === 'warning'
-                                        ? require('../assets/WarningIcon.png')
-                                        : require('../assets/ErrorIcon.png')
-                            }
-                            style={styles.toastIcon}
-                        />
-                        <Text
-                            style={[
-                                styles.toastText,
-                                toastType === 'success'
-                                    ? styles.successToastText
-                                    : toastType === 'warning'
-                                        ? styles.warningToastText
-                                        : styles.errorToastText,
-                            ]}>
-                            {toastText}
-                        </Text>
+                        <View
+                            style={{ padding: 10, marginVertical: 5, marginLeft: 5, backgroundColor: toastData.type === 'success' ? '#e0f7e7' : toastData.type === 'warning' ? '#fef7ec' : '#fcd9df', borderRadius: 10 }}
+                        >
+                            <MotiView
+                                from={toastData.type === 'success' ? {
+                                    transform: [{ scale: 0 }]
+                                } : undefined}
+                                animate={toastData.type === 'success' ? {
+                                    transform: [{ scale: 1 }],
+                                } : undefined}
+                                transition={toastData.type === 'success' ? {
+                                    delay: 50,
+                                } : undefined}
+                            >
+                                <Image
+                                    source={
+                                        toastData.type === 'success'
+                                            ? require('../assets/SuccessIcon.png')
+                                            : toastData.type === 'warning'
+                                                ? require('../assets/WarningIcon.png')
+                                                : require('../assets/ErrorIcon.png')
+                                    }
+                                    style={styles.toastIcon}
+                                />
+                            </MotiView>
+                        </View>
+                        <View style={{ flexDirection: 'column', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small }}>
+                            <Text style={styles.toastHeaderText}>{toastData.headerText}</Text>
+                            <Text
+                                numberOfLines={2}
+                                style={[
+                                    styles.toastText,
+                                    toastData.type === 'success'
+                                        ? styles.successToastText
+                                        : toastData.type === 'warning'
+                                            ? styles.warningToastText
+                                            : styles.errorToastText,
+                                ]}>
+                                {toastData.text}
+                            </Text>
+                        </View>
                     </Animated.View>
                 </GestureDetector>
             )}
@@ -142,44 +175,50 @@ export default Toast;
 
 const styles = StyleSheet.create({
     toastContainer: {
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
-        width: '90%',
-        padding: 10,
-        borderRadius: 18,
+        maxWidth: '90%',
+        //padding: 10,
+        borderRadius: 10,
         borderWidth: 1,
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'center',
     },
+    toastHeaderText: {
+        fontSize: FONT_SIZES.medium,
+        fontFamily: FONTS.bold
+    },
     toastText: {
-        marginLeft: 14,
-        fontSize: 16,
+        //marginLeft: SPACING.xx_small,
+        fontSize: FONT_SIZES.medium,
+        fontFamily: FONTS.medium
     },
     toastIcon: {
-        width: 30,
-        height: 30,
+        width: normalize(25),
+        height: normalize(25),
         resizeMode: 'contain',
     },
     successToastContainer: {
-        backgroundColor: '#def1d7',
+        //backgroundColor: '#def1d7',
+        backgroundColor: '#FFF',
         borderColor: '#1f8722',
     },
     warningToastContainer: {
-        backgroundColor: '#fef7ec',
+        backgroundColor: '#FFF',//backgroundColor: '#fef7ec',
         borderColor: '#f08135',
     },
     errorToastContainer: {
-        backgroundColor: '#fae1db',
+        backgroundColor: '#FFF',//backgroundColor: '#fae1db',
         borderColor: '#d9100a',
     },
     successToastText: {
-        color: '#1f8722',
+        color: '#000'//'#1f8722',
     },
     warningToastText: {
-        color: '#f08135',
+        color: '#000'//color: '#f08135',
     },
     errorToastText: {
-        color: '#d9100a',
+        color: '#000'//color: '#d9100a',
     },
 });

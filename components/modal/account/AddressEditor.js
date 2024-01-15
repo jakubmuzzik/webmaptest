@@ -24,13 +24,12 @@ import {
 import { TabView } from 'react-native-tab-view'
 
 import { Button, TouchableRipple, ActivityIndicator, Switch } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
-const AddressEditor = ({ visible, setVisible, address }) => {
+const AddressEditor = ({ visible, setVisible, address, showToast }) => {
     const [routes] = useState([
         { key: '1' },
         { key: '2' }
@@ -109,10 +108,10 @@ const AddressEditor = ({ visible, setVisible, address }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Address was changed successfully.'
+                headerText: 'Success!',
+                text: 'Address was changed successfully.'
             })
         }, 1000)
     }

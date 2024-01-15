@@ -22,12 +22,10 @@ import {
 } from '../../../constants'
 
 import { Button } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const AboutEditor = ({ visible, setVisible, about }) => {
-
+const AboutEditor = ({ visible, setVisible, about, showToast }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)
     const [changedAbout, setChangedAbout] = useState(about)
@@ -75,10 +73,10 @@ const AboutEditor = ({ visible, setVisible, about }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Description was changed successfully.'
+                headerText: 'Success!',
+                text: 'Description was changed successfully.'
             })
         }, 1000)
     }

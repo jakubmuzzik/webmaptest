@@ -23,11 +23,10 @@ import {
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 import { Button } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const ContactInformationEditor = ({ visible, setVisible, contactInformation }) => {
+const ContactInformationEditor = ({ visible, setVisible, contactInformation, showToast }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -76,10 +75,10 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation }) =
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Contact Information was changed successfully.'
+                headerText: 'Success!',
+                text: 'Contact Information was changed successfully.'
             })
         }, 1000)
     }

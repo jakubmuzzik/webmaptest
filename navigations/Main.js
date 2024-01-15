@@ -7,7 +7,7 @@ import { updateScrollDisabled } from '../redux/actions'
 
 import { getAuth, onAuthStateChanged } from '../firebase/config'
 
-import Toast from 'react-native-toast-message'
+import Toast from '../components/Toast'
 
 import LadySignup from '../screens/LadySignup'
 import NotFound from '../screens/NotFound'
@@ -33,40 +33,56 @@ const { height: initialHeight } = Dimensions.get('window')
 
 const auth = getAuth()
 
-const Main = ({ scrollDisabled, updateScrollDisabled }) => {
+const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
     const [userVerified, setUserVerified] = useState(null)
 
+    const toastRef = useRef()
+    const hasLoadedRef = useRef(false)
+
     const { height } = useWindowDimensions()
 
-    useLayoutEffect(() => {
+    useEffect(() => {
+        if (toastData) {
+            toastRef.current?.show(toastData)
+        }
+    }, [toastData])
+
+    useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
                 setUserVerified(false)
-                //navigationRef.current?.dispatch(StackActions.replace('AuthStack'))
+
+                if (hasLoadedRef.current) {
+                    toastRef.current?.show({
+                        type: 'success',
+                        text: 'Successfully logged out.'
+                    })
+                }                
             } else if (!user.emailVerified) {
+                if (hasLoadedRef.current) {
+                    toastRef.current?.show({
+                        type: 'success',
+                        text: 'Successfully logged in.'
+                    })
+                }
+
                 setIsLoggedIn(true)
                 setUserVerified(false)
-                //navigationRef.current?.dispatch(StackActions.replace('EmailConfirmation'))
-                /*Toast.show({
-                    type: 'success',
-                    text2: 'Successfully logged in.'
-                })*/
             } else {
-                /*if (isLoggedIn !== null) {
-                    Toast.show({
+                if (hasLoadedRef.current) {
+                    toastRef.current?.show({
                         type: 'success',
-                        text2: 'Successfully logged in.'
+                        text: 'Successfully logged in.'
                     })
-                }*/
+                }
 
                 setIsLoggedIn(true)
                 setUserVerified(true)
-
-                /**/
-                //navigationRef.current?.dispatch(StackActions.replace('Main'))
             }
+
+            hasLoadedRef.current = true
         })
 
         return () => {
@@ -217,14 +233,19 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
     }
 
     return (
-        <View style={scrollDisabled ? { height, overflow: 'hidden' }: {flex:1}}>
-            <RouterProvider router={router} />
-        </View>
+        <>
+            <View style={scrollDisabled ? { height, overflow: 'hidden' }: {flex:1}}>
+                <RouterProvider router={router} />
+            </View>
+
+            <Toast ref={toastRef} />
+        </>
     )
 }
 
 const mapStateToProps = (store) => ({
-    scrollDisabled: store.appState.scrollDisabled
+    scrollDisabled: store.appState.scrollDisabled,
+    toastData: store.appState.toastData
 })
 
 export default connect(mapStateToProps, { updateScrollDisabled })(Main)

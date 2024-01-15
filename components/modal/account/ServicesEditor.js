@@ -26,12 +26,11 @@ import {
 } from '../../../labels'
 
 import { Button, TouchableRipple } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
 
-const ServicesEditor = ({ visible, setVisible, services }) => {
+const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [changedServices, setChangedServices] = useState(services)
@@ -87,10 +86,10 @@ const ServicesEditor = ({ visible, setVisible, services }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Services were changed successfully.'
+                headerText: 'Success!',
+                text: 'Services were changed successfully.'
             })
         }, 1000)
     }

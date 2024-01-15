@@ -20,10 +20,12 @@ import {
 import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
 import AddressSearch from '../components/modal/AddressSearch'
-import Toast from 'react-native-toast-message'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { BlurView } from 'expo-blur'
 import { Image } from 'expo-image'
+
+import { connect } from 'react-redux'
+import { showToast } from '../redux/actions'
 
 const MAX_PHOTO_SIZE_MB = 5
 const MAX_VIDEO_SIZE_MB = 10
@@ -39,7 +41,7 @@ const getFileSizeInMb = (uri) => {
     return (uri.length * (3 / 4) - 2) / (1024 * 1024)
 }
 
-const EstablishmentSignup = ({ }) => {
+const EstablishmentSignup = ({ showToast }) => {
     const [data, setData] = useState({
         name: '',
         email: '',
@@ -333,20 +335,20 @@ const EstablishmentSignup = ({ }) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_PHOTO_SIZE_MB) {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'File Size Error',
-                        text2: `Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
+                        headerText: 'File Size Error',
+                        text: `Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
                     })
                     return
                 }
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'image') {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'Invalid File Type',
-                        text2: `Please upload a supported file type.`
+                        headerText: 'Invalid File Type',
+                        text: `Please upload a supported file type.`
                     })
                     return
                 }
@@ -385,20 +387,20 @@ const EstablishmentSignup = ({ }) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_VIDEO_SIZE_MB) {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'File Size Error',
-                        text2: `Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
+                        headerText: 'File Size Error',
+                        text: `Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
                     })
                     return
                 }
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'video') {
-                    Toast.show({
+                    showToast({
                         type: 'error',
-                        text1: 'Invalid File Type',
-                        text2: `Please upload a supported file type.`
+                        headerText: 'Invalid File Type',
+                        text: `Please upload a supported file type.`
                     })
                     return
                 }
@@ -1268,7 +1270,7 @@ const EstablishmentSignup = ({ }) => {
     )
 }
 
-export default EstablishmentSignup
+export default connect(null, { showToast })(EstablishmentSignup)
 
 const styles = StyleSheet.create({
     pageHeaderText: {

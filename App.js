@@ -8,9 +8,7 @@ const store = initStore()
 //import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, toastConfig } from './constants'
-
-import Toast from 'react-native-toast-message'
+import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from './constants'
 
 import Main from './navigations/Main'
 
@@ -62,10 +60,6 @@ export default function App() {
           <Main />
         </SafeAreaProvider>
       </Provider>
-
-      <View style={{ flex: 1, position: 'fixed', top: 0, left: 0, right: 0 }}>
-        <Toast config={toastConfig} />
-      </View>
     </>
   )
 }

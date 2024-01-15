@@ -22,11 +22,10 @@ import {
 } from '../../../constants'
 
 import { Button } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const PasswordEditor = ({ visible, setVisible }) => {
+const PasswordEditor = ({ visible, setVisible, showToast }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -85,10 +84,10 @@ const PasswordEditor = ({ visible, setVisible }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Passoword was changed successfully.'
+                headerText: 'Success!',
+                text: 'Your Passoword was changed successfully.'
             })
         }, 1000)
     }

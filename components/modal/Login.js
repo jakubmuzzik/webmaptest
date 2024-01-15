@@ -24,7 +24,7 @@ import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
 
-import Toast from 'react-native-toast-message'
+import Toast from '../Toast'
 
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 
@@ -63,6 +63,8 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     const [buttonIsLoading, setButtonIsLoading] = useState(false)
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [index, setIndex] = useState(0)
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -141,6 +143,10 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     }
 
     const onLoginPress = async () => {
+        if (buttonIsLoading) {
+            return
+        }
+
         if (!data.email || !data.password) {
             setShowErrorMessages(true)
             return
@@ -160,16 +166,15 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
             navigate(from, { replace: true });
         } catch(error) {
             if (error.code?.includes('auth')) {
-                Toast.show({
+                toastRef.current.show({
                     type: 'error',
-                    //text1: 'Login error',
-                    text2: 'Invalid Username or Password.'
+                    text: 'Invalid Username or Password.'
                 })
             } else {
-                Toast.show({
+                toastRef.current.show({
                     type: 'error',
-                    text1: 'Login error',
-                    text2: 'Something went wrong.'
+                    headerText: 'Login error',
+                    text: 'Something went wrong.'
                 })
             }
         } finally {
@@ -218,6 +223,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                         setText={(text) => setData({ ...data, ['email']: text })}
                         leftIconName="email-outline"
                         errorMessage={showErrorMessages && !data.email ? 'Enter your Email' : undefined}
+                        onSubmitEditing={onLoginPress}
                     />
 
                     <HoverableInput
@@ -237,6 +243,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                         onRightIconPress={updateSecureTextEntry}
                         secureTextEntry={data.secureTextEntry}
                         errorMessage={showErrorMessages && !data.password ? 'Enter your Password' : undefined}
+                        onSubmitEditing={onLoginPress}
                     />
 
                     <Text onPress={onForgotPasswordPress} style={{ alignSelf: 'flex-end', marginTop: SPACING.small, fontSize: FONTS.medium, fontStyle: FONTS.medium, color: 'blue' }}>
@@ -362,7 +369,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast config={toastConfig} />
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

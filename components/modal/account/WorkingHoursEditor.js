@@ -22,11 +22,10 @@ import {
 } from '../../../constants'
 
 import { Button, Switch } from 'react-native-paper'
-import Toast from 'react-native-toast-message'
 
 const window = Dimensions.get('window')
 
-const WorkingHoursEditor = ({ visible, setVisible, workingHours }) => {
+const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedWorkingHours, setChangedWorkingHours] = useState(workingHours)
@@ -77,10 +76,10 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours }) => {
             setIsSaving(false)
             closeModal()
 
-            Toast.show({
+            showToast({
                 type: 'success',
-                text1: 'Success!',
-                text2: 'Your Working Hours were changed successfully.'
+                headerText: 'Success!',
+                text: 'Working Hours were changed successfully.'
             })
         }, 1000)
     }

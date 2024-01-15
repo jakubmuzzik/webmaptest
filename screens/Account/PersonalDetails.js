@@ -6,6 +6,8 @@ import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 
+import { connect } from 'react-redux'
+
 import HoverableView from '../../components/HoverableView'
 //import MapView, { Marker, ClusterProps, MarkerClusterer } from "@teovilla/react-native-web-maps"
 import MapView, { Marker, Callout } from 'react-native-maps'
@@ -19,12 +21,14 @@ import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEdito
 import AddressEditor from '../../components/modal/account/AddressEditor'
 import ContactInformationEditor from '../../components/modal/account/ContactInformationEditor'
 
+import { showToast } from '../../redux/actions'
+
 const LOCATION_LATITUDE_DELTA = 0.9735111002971948 // default value just for map init -> later is used minLatitudeDelta.current
 const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km 
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ route, setTabHeight }) => {
+const PersonalDetails = ({ setTabHeight, showToast }) => {
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
 
@@ -591,18 +595,18 @@ const PersonalDetails = ({ route, setTabHeight }) => {
 
             {renderAddress()}
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={data.description} />
-            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} />
-            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} />
-            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} />
-            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} />
-            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} />
-            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} />
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={data.description} showToast={showToast} />
+            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast}/>
+            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast}/>
+            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} showToast={showToast}/>
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} showToast={showToast}/>
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast}/>
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast}/>
         </View>
     )
 }
 
-export default memo(PersonalDetails)
+export default connect(null, { showToast })(memo(PersonalDetails))
 
 const styles = StyleSheet.create({
     containerLarge: { 
