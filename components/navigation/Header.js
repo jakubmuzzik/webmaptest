@@ -38,6 +38,7 @@ import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
 import { getAuth, signOut } from '../../firebase/config'
+import { Avatar } from 'react-native-paper'
 
 import { useSearchParams, Link, useLocation, useNavigate } from 'react-router-dom'
 
@@ -69,6 +70,10 @@ const Header = ({ }) => {
     const [languageDropdownRight, setLanguageDropdownRight] = useState(-1000)
     const [loginVisible, setLoginVisible] = useState(false)
     const [signUpVisible, setSignUpVisible] = useState(false)
+
+    const [userData, setUserData] = useState({
+        name: 'J'
+    })//TODO - take user first letter form Redux instead and use it in user dropdown avatar
 
     const userDropdownRef = useRef()
     const userDropdownModalRef = useRef()
@@ -189,28 +194,23 @@ const Header = ({ }) => {
                                 style={[styles.dropdown, { top: dropdownTop }]}
                             >
                                 <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                    <TouchableOpacity onPress={onAccountPress} style={{ padding: SPACING.xx_small, margin: SPACING.xxx_small, backgroundColor: COLORS.red, borderRadius: 7, overflow: 'hidden' }}
+                                    <TouchableOpacity onPress={onAccountPress} style={{ maxWidth: 250, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.xx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
                                         activeOpacity={0.8}
                                     >
-                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                                            Account
-                                        </Text>
+                                        <Avatar.Text size={normalize(38)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />
+                                        <View style={{ flexDirection: 'column', marginHorizontal: SPACING.xxx_small, flexShrink: 1, }}>
+                                            <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.lightGrey }}>
+                                                Account
+                                            </Text>
+                                            <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium,  }}>
+                                                Jakub Muzik
+                                            </Text>
+                                        </View>
+                                        <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
                                     </TouchableOpacity>
                                 </HoverableView>
-                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                    <TouchableOpacity onPress={onLogoutPress} style={{ padding: SPACING.xx_small }}
-                                        activeOpacity={0.8}
-                                    >
-                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
-                                            Log out
-                                        </Text>
-                                    </TouchableOpacity>
-                                </HoverableView>
-    
                                 {isSmallScreen && (
                                     <>
-                                        <View style={{ marginVertical: 2, borderBottomWidth: 1, borderColor: 'rgba(0,0,0,0.2)' }} />
-    
                                         <HoverableView style={{ flexDirection: 'row', padding: SPACING.xx_small }} hoveredBackgroundColor={COLORS.hoveredWhite}>
                                             <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, opacity: 0.8 }}>
                                                 Language:&nbsp;
@@ -231,6 +231,15 @@ const Header = ({ }) => {
                                         </HoverableView>
                                     </>
                                 )}
+                                <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
+                                    <TouchableOpacity onPress={onLogoutPress} style={{ padding: SPACING.xx_small, paddingTop: SPACING.x_small, borderTopWidth: 1, borderColor: COLORS.placeholder }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}>
+                                            Log out
+                                        </Text>
+                                    </TouchableOpacity>
+                                </HoverableView>
                             </MotiView>
                         </TouchableWithoutFeedback>
                     </TouchableOpacity>
@@ -318,7 +327,7 @@ const Header = ({ }) => {
         </>
     )
 
-    const rendeLanguageDropdown = useCallback(() => {
+    const rendeLanguageDropdown = () => {
         return (
             <Modal ref={languageDropdownModalRef} visible={languageDropdownVisible} transparent animationType="none">
                 <TouchableOpacity
@@ -378,12 +387,12 @@ const Header = ({ }) => {
                 </TouchableOpacity>
             </Modal>
         )
-    }, [languageDropdownVisible, languageDropdownRight, dropdownTop, userDropdownRef, languageDropdownModalRef, params.language])
+    }
 
-    const renderRightHeader = useCallback(() => {
-        return isSmallScreen || getAuth().currentUser ? (
+    const renderRightHeader = () => {
+        return (isSmallScreen || getAuth().currentUser) ? (
             <>
-                {!getAuth().currentUser &&  <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor, flexGrow: 1, flexShrink: 1 }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
+                {isSmallScreen && <HoverableView style={{ ...styles.searchWrapper, borderColor: searchBorderColor, flexGrow: 1, flexShrink: 1 }} hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey}>
                     <Ionicons name="search" size={normalize(20)} color="white" />
                     <TextInput
                         style={styles.search}
@@ -399,7 +408,12 @@ const Header = ({ }) => {
                 </HoverableView>}
                 <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
                     <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
-                        <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
+                        {getAuth().currentUser ? (
+                            <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />
+                        ) : (
+                            <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
+                        )}
+                        
                         <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="menu" size={normalize(20)} color="white" />
                     </TouchableOpacity>
                 </HoverableView>
@@ -442,7 +456,7 @@ const Header = ({ }) => {
                 )}
             </>
         )
-    }, [isSmallScreen, isLargeScreen, search, params.language, searchBorderColor, languageDropdownVisible, userDropdownVisible])
+    }
 
     const renderLeftHeader = () => (
         <>
