@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
 import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 
@@ -39,7 +39,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled }) => {
 
     const { height } = useWindowDimensions()
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
