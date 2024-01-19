@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.de2ec162.js",
-    "static/js/829.a82ca1b8.js": "/webmaptest/static/js/829.a82ca1b8.js",
+    "main.js": "/webmaptest/static/js/main.be623c89.js",
+    "static/js/789.04d4248a.js": "/webmaptest/static/js/789.04d4248a.js",
     "static/media/big_buck_bunny.mp4": "/webmaptest/static/media/big_buck_bunny.f3997e52ea9aa77296a3.mp4",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
@@ -33,16 +33,17 @@
     "static/media/WarningIcon.png": "/webmaptest/static/media/WarningIcon.f4d9ea6de2cbee557ce1.png",
     "static/media/cz.png": "/webmaptest/static/media/cz.4c6cfc79c62bbbd9ad57.png",
     "index.html": "/webmaptest/index.html",
+    "static/media/mail.svg": "/webmaptest/static/media/mail.db4e6033a38f64d337dc.svg",
     "static/media/padlock-icon.png": "/webmaptest/static/media/padlock-icon.0bbe8e274540af5627be.png",
     "favicon-32.png": "/webmaptest/favicon-32.png",
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.de2ec162.js.map": "/webmaptest/static/js/main.de2ec162.js.map",
-    "829.a82ca1b8.js.map": "/webmaptest/static/js/829.a82ca1b8.js.map"
+    "main.be623c89.js.map": "/webmaptest/static/js/main.be623c89.js.map",
+    "789.04d4248a.js.map": "/webmaptest/static/js/789.04d4248a.js.map"
   },
   "entrypoints": [
-    "static/js/829.a82ca1b8.js",
-    "static/js/main.de2ec162.js"
+    "static/js/789.04d4248a.js",
+    "static/js/main.be623c89.js"
   ]
 }
