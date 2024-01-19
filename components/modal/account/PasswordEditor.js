@@ -20,6 +20,8 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../../constants'
+import { getAuth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from '../../../firebase/config'
+import Toast from '../../Toast'
 
 import { Button } from 'react-native-paper'
 
@@ -35,6 +37,8 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
         currentSecureTextEntry: true,
         newSecureTextEntry: true,
     })
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -77,19 +81,61 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
         })
     }
 
-    const onSavePress = async () => {
-        setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
-            closeModal()
+    const reauthenticate = async () => {
+        const cred = EmailAuthProvider.credential(getAuth().currentUser.email, data.currentPassword)
+        return reauthenticateWithCredential(getAuth().currentUser, cred)
+    }
 
+    const onSavePress = async () => {
+        if (!data.newPassword || !data.currentPassword) {
+            setShowErrorMessage(true)
+            return
+        }
+
+        if (isSaving) {
+            return
+        }
+
+        setIsSaving(true)
+
+        try {
+            await reauthenticate()
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                text: 'Invalid password.'
+            })
+            setIsSaving(false)
+            return
+        }
+
+        try {
+            await reauthenticate()
+            await updatePassword(getAuth().currentUser, data.newPassword)
+            
             showToast({
                 type: 'success',
-                headerText: 'Success!',
-                text: 'Your Passoword was changed successfully.'
+                text: 'Your password has been successfully changed.'
             })
-        }, 1000)
+
+            closeModal()
+        } catch(e) {
+            if (e.code?.includes('auth')) {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Invalid password.'
+                })
+            } else {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Password could not be changed. Please try it again later.'
+                })
+            }
+            console.error(e)
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -153,7 +199,9 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
                                 leftIconName='lock-outline'
                                 rightIconName={data.currentSecureTextEntry ? 'eye-off' : 'eye'}
                                 onRightIconPress={() => updateSecureTextEntry('currentSecureTextEntry')}
+                                errorMessage={showErrorMessage && !data.currentPassword ? 'Enter your password' : undefined}
                                 secureTextEntry={data.currentSecureTextEntry}
+                                onSubmitEditing={onSavePress}
                             />
 
                             <HoverableInput
@@ -173,6 +221,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
                                 onRightIconPress={() => updateSecureTextEntry('newSecureTextEntry')}
                                 errorMessage={showErrorMessage && (!data.newPassword || data.newPassword.length < 8) ? 'Password must be at least 8 characters long' : undefined}
                                 secureTextEntry={data.newSecureTextEntry}
+                                onSubmitEditing={onSavePress}
                             />
                         </Animated.ScrollView>
 
@@ -203,6 +252,8 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

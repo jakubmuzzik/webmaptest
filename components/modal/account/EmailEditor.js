@@ -20,7 +20,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../../constants'
-import { updateEmail, sendEmailVerification, getAuth, verifyBeforeUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from '../../../firebase/config'
+import { getAuth, verifyBeforeUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from '../../../firebase/config'
 
 import { Button } from 'react-native-paper'
 
@@ -118,47 +118,6 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
             return
         }
 
-        if (getAuth().currentUser.emailVerified) {
-            changeEmail()
-        } else {
-            sendVerificationToNewEmail()
-        }
-    }
-
-    const changeEmail = async () => {
-        try {
-            await updateEmail(getAuth().currentUser, data.newEmail)
-            await sendEmailVerification(getAuth().currentUser)
-            showToast({
-                type: 'success',
-                text: 'Your Email has been successfully changed.'
-            })
-            closeModal()
-            //signOut(getAuth())
-        } catch(e) {
-            if (e.code === 'auth/email-already-in-use') {
-                toastRef.current.show({
-                    type: 'error',
-                    text: 'Provided Email address is already in use.'
-                })
-            } else if (e.code === 'auth/invalid-email') {
-                toastRef.current.show({
-                    type: 'error',
-                    text: 'Provided Email address is invalid.'
-                })
-            } else {
-                toastRef.current.show({
-                    type: 'error',
-                    text: 'Email could not be changed. Please log out and try it again later.'
-                })
-            }
-            console.error(e)
-        } finally {
-            setIsSaving(false)
-        }
-    }
-
-    const sendVerificationToNewEmail = async () => {
         try {
             await verifyBeforeUpdateEmail(getAuth().currentUser, data.newEmail)
 
@@ -167,6 +126,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                 text: 'Verification email was sent to the provided email address.'
             })
             closeModal()
+            //signOut(getAuth())
         } catch(e) {
             if (e.code === 'auth/email-already-in-use') {
                 toastRef.current.show({

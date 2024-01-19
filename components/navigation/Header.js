@@ -194,7 +194,7 @@ const Header = ({ }) => {
                                 style={[styles.dropdown, { top: dropdownTop }]}
                             >
                                 <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite} style={{ overflow: 'hidden' }}>
-                                    <TouchableOpacity onPress={onAccountPress} style={{ maxWidth: 250, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.xx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+                                    <TouchableOpacity onPress={onAccountPress} style={{ maxWidth: 250, paddingVertical: SPACING.xx_small, paddingHorizontal: SPACING.xx_small, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
                                         activeOpacity={0.8}
                                     >
                                         <Avatar.Text size={normalize(38)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />

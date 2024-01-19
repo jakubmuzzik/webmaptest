@@ -61,7 +61,7 @@ const Settings = ({ setTabHeight, showToast }) => {
                         </Text>
                     </View>
                     <Text numberOfLines={1} onPress={onEmailEditPress} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                        {data.email}
+                        {getAuth().currentUser.email}
                     </Text>
                 </View>
                 <View style={styles.row}>

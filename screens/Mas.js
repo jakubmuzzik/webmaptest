@@ -76,8 +76,11 @@ const Mas = ({  }) => {
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
            <View style={{ marginLeft: SPACING.large }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h3, color: '#FFF' }}>
-                    {`Mas ${params.city ? 'in ' + params.city : ''} • Discover 212 ...`}
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
+                    Massages
+                </Text>
+                <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
+                    Anywhere • 218 ladies
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>

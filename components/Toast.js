@@ -16,9 +16,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FONTS, FONT_SIZES, SPACING } from '../constants';
+import { FONTS, FONT_SIZES, SPACING, COLORS } from '../constants';
 import { normalize } from '../utils';
 import { MotiView } from 'moti';
+import { IconButton } from 'react-native-paper';
 
 const Toast = forwardRef(({ }, ref) => {
     const toastTopAnimation = useSharedValue(-100);
@@ -65,6 +66,14 @@ const Toast = forwardRef(({ }, ref) => {
         },
         [TOP_VALUE, toastTopAnimation],
     );
+
+    const hide = () => {
+        toastTopAnimation.value = withTiming(-100, null, finish => {
+            if (finish) {
+                runOnJS(setShowing)(false);
+            }
+        });
+    }
 
     const animatedTopStyles = useAnimatedStyle(() => {
         return {
@@ -149,7 +158,7 @@ const Toast = forwardRef(({ }, ref) => {
                                 />
                             </MotiView>
                         </View>
-                        <View style={{ flexDirection: 'column', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small }}>
+                        <View style={{ flexDirection: 'column', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small, flexShrink: 1 }}>
                             <Text style={styles.toastHeaderText}>{toastData.headerText}</Text>
                             <Text
                                 numberOfLines={2}
@@ -164,6 +173,12 @@ const Toast = forwardRef(({ }, ref) => {
                                 {toastData.text}
                             </Text>
                         </View>
+                        <IconButton
+                            icon="close"
+                            iconColor="#000"
+                            size={15}
+                            onPress={hide}
+                        />
                     </Animated.View>
                 </GestureDetector>
             )}

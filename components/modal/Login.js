@@ -23,6 +23,8 @@ import {
 import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
+import { showToast } from '../../redux/actions'
+import { connect } from 'react-redux'
 
 import Toast from '../Toast'
 
@@ -33,12 +35,13 @@ import {
     getAuth,
     doc,
     updateDoc,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail
   } from '../../firebase/config'
 
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, onSignUpPress }) => {
+const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const location = useLocation()
@@ -62,6 +65,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
         secureTextEntry: true
     })
     const [buttonIsLoading, setButtonIsLoading] = useState(false)
+    const [resetPasswordButtonIsLoading, setResetPasswordButtonIsLoading] = useState(false)
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [index, setIndex] = useState(0)
 
@@ -188,13 +192,34 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
             setButtonIsLoading(false)
         }
     }
-    
-    const onResetPasswordPress = () => {
-        //TODO - add if loading -> return
-        //TODO - add disabled when loading to a button
+
+    const onResetPasswordPress = async () => {
         if (!data.emailForReset) {
             setShowErrorMessages(true)
             return
+        }
+
+        if(resetPasswordButtonIsLoading) {
+            return
+        }
+
+        setResetPasswordButtonIsLoading(true)
+
+        try {
+            await sendPasswordResetEmail(getAuth(), data.emailForReset)
+            
+            showToast({
+                type: 'success',
+                text: 'Instructions to reset your password have been sent to your Email address.'
+            })
+            closeModal()
+        } catch(e) {
+            toastRef.current.show({
+                type: 'error',
+                text: 'Provided Email address is invalid.'
+            })
+        } finally {
+            setResetPasswordButtonIsLoading(false)
         }
     }
 
@@ -301,7 +326,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                 </View>
                 <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles2]} />
 
-                <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler2} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingHorizontal: SPACING.small }}>
+                <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler2} style={{ zIndex: 1, paddingBottom: SPACING.small }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingHorizontal: SPACING.small }}>
                     <Image
                         resizeMode="contain"
                         source={require('../../assets/images/padlock-icon.png')}
@@ -333,11 +358,13 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
 
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        style={{ marginTop: SPACING.medium, borderRadius: 10 }}
+                        style={{ marginTop: SPACING.medium, marginBottom: SPACING.xx_large, borderRadius: 10 }}
                         buttonColor={COLORS.red}
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="contained"
                         onPress={onResetPasswordPress}
+                        loading={resetPasswordButtonIsLoading}
+                        disabled={resetPasswordButtonIsLoading}
                     >
                         Reset password
                     </Button>
@@ -384,7 +411,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     )
 }
 
-export default memo(Login)
+export default connect(null, { showToast })(memo(Login))
 
 const styles = StyleSheet.create({
     modal__header: {
