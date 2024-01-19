@@ -116,12 +116,12 @@ const Categories = ({ }) => {
             
             <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: SPACING.page_horizontal, marginVertical: SPACING.xx_small  }}>
                 <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'flex-start' }}>
-                    <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.small }}>
+                    <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.x_small }}>
                         {/* <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}> */}
                         <Link style={{ textDecoration: 'none' }} to={{ pathname: '/', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
                             <View style={[styles.categoryContainer, routeName === '' ? styles.selectedCategoryContainer : {}]}>
                                 <Entypo name="mask" size={normalize(26)} color={routeName === '' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === '' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === '' ? COLORS.red : COLORS.placeholder }}>Essc</Text>
                             </View>
                         </Link>  
                     </HoverableView>
@@ -133,7 +133,7 @@ const Categories = ({ }) => {
                             </View>
                         </Link>
                     </HoverableView> */}
-                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
+                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.x_small }}>
                         <Link style={{ textDecoration: 'none' }} to={{ pathname: '/mas', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
                             <View style={[styles.categoryContainer, routeName === 'mas' ? styles.selectedCategoryContainer : {}]}>
                                 <FontAwesome5 name="person-booth" size={normalize(26)} color={routeName === 'mas' ? COLORS.red : COLORS.placeholder} />
@@ -141,11 +141,11 @@ const Categories = ({ }) => {
                             </View>
                         </Link>
                     </HoverableView>
-                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
+                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.x_small }}>
                         <Link style={{ textDecoration: 'none' }} to={{ pathname: '/clu', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
                             <View style={[styles.categoryContainer, routeName === 'clu' ? styles.selectedCategoryContainer : {}]}>
                                 <MaterialIcons name="meeting-room" size={normalize(26)} color={routeName === 'clu' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'clu' ? COLORS.red : COLORS.placeholder }}>Clu</Text>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'clu' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
                             </View>
                         </Link>
                     </HoverableView>

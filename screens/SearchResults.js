@@ -6,6 +6,7 @@ import { getParam } from '../utils'
 import { MOCK_DATA } from '../constants'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import RenderLady from '../components/list/RenderLady'
+import { AnimatePresence, MotiView } from 'moti'
 
 const SearchResults = () => {
     const [searchParams] = useSearchParams()
@@ -46,13 +47,21 @@ const SearchResults = () => {
         )
     }
 
-    const skeletonLoader = () => (
-        <>
+    const SkeletonLoader = () => (
+        <MotiView
+            animate={{ opacity: 1 }}
+            exit={{
+                opacity: 0,
+            }}
+            transition={{
+                duration: 150
+            }}
+        >
             <ContentLoader
                 speed={2}
                 width={cardWidth * 2}
                 height={FONT_SIZES.h1}
-                style={{ marginHorizontal: SPACING.large }}
+                style={{ marginHorizontal: SPACING.large, borderRadius: 5 }}
                 backgroundColor={COLORS.grey}
                 foregroundColor={COLORS.lightGrey}
             >
@@ -61,13 +70,13 @@ const SearchResults = () => {
 
             <ContentLoader
                 speed={2}
-                width={cardWidth * 2}
+                width={(cardWidth * 2) * 0.4}
                 height={FONT_SIZES.h3}
-                style={{ marginHorizontal: SPACING.large, marginTop: SPACING.large }}
+                style={{ marginHorizontal: SPACING.large, marginTop: SPACING.large, borderRadius: 5 }}
                 backgroundColor={COLORS.grey}
                 foregroundColor={COLORS.lightGrey}
             >
-               <Rect x="0" y="0" rx="0" ry="0" width="40%" height={FONT_SIZES.h3} />
+               <Rect x="0" y="0" rx="0" ry="0" width="100%" height={FONT_SIZES.h3} />
             </ContentLoader>
 
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.medium }}>
@@ -85,31 +94,39 @@ const SearchResults = () => {
                     </View>
                 ))}
             </View>
-        </>
+        </MotiView>
     )
-    
+
+    const Content = () => (
+        <MotiView
+            animate={{ opacity: 1 }}
+            exit={{
+                opacity: 0,
+            }}
+        >
+            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF' }}>
+                Search results for {params.query}
+            </Text>
+
+            <View style={{ marginTop: SPACING.large }}>
+                <Text style={{ fontSize: FONT_SIZES.h3, color: '#FFF', fontFamily: FONTS.bold, marginHorizontal: SPACING.large, }}>
+                    Ladies
+                </Text>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.medium }}>
+                    {MOCK_DATA.map(data => renderCard(data))}
+                </View>
+            </View>
+        </MotiView>
+    )
+
     return (
         <View onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)} style={{ backgroundColor: COLORS.lightBlack, flex: 1, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }}>
-            {
-                isLoading ? skeletonLoader() : (
-                    <>
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF' }}>
-                            Search results for {params.query}
-                        </Text>
+            <AnimatePresence exitBeforeEnter>
+                {isLoading && <SkeletonLoader key="skeleton"/>}
 
-                        <View style={{ marginTop: SPACING.large }}>
-                            <Text style={{ fontSize: FONT_SIZES.h3, color: '#FFF', fontFamily: FONTS.bold, marginHorizontal: SPACING.large, }}>
-                                Ladies
-                            </Text>
-
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.medium }}>
-                                {MOCK_DATA.map(data => renderCard(data))}
-                            </View>
-                        </View>
-                    </>
-                )
-            }
-
+                {!isLoading && <Content key="content"/>}
+            </AnimatePresence>
         </View>
     )
 }
