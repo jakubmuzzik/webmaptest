@@ -105,9 +105,9 @@ const Header = ({ }) => {
         userDropdownVisible ? setUserDropdownVisible(false) : openUserDropdown()
     }, [userDropdownVisible])
 
-    const toggleLanguageDropdown = useCallback(() => {
+    const toggleLanguageDropdown = () => {
         languageDropdownVisible ? setLanguageDropdownRight(false) : openLanguageDropdown()
-    }, [languageDropdownVisible, isLargeScreen, isSmallScreen])
+    }
 
     const openLanguageDropdown = () => {
         languageDropdownRef.current.measureLayout(
@@ -117,7 +117,7 @@ const Header = ({ }) => {
             },
         )
 
-        if (isLargeScreen) {
+        if (isLargeScreen && !getAuth()?.currentUser) {
             loginButtonsRef.current.measure((_fx, _fy, _w, h, _px, py) => {
                 setLanguageDropdownRight(_w + SPACING.page_horizontal + SPACING.xx_small)
             })
@@ -406,8 +406,15 @@ const Header = ({ }) => {
                     />
                     <Ionicons onPress={() => setSearch('')} style={{ opacity: search ? '1' : '0' }} name="close" size={normalize(20)} color="white" />
                 </HoverableView>}
+                {!isSmallScreen && <HoverableView hoveredOpacity={0.8} style={{ borderRadius: 20, justifyContent: 'center' }}>
+                    <TouchableOpacity ref={languageDropdownRef} onPress={toggleLanguageDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
+                        <MaterialIcons style={{ paddingRight: SPACING.xxx_small }} name="language" size={normalize(20)} color="white" />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>{params.language ? params.language.toUpperCase() : DEFAULT_LANGUAGE.toUpperCase()}</Text>
+                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="keyboard-arrow-down" size={normalize(20)} color='#FFF' />
+                    </TouchableOpacity>
+                </HoverableView>}
                 <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
-                    <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: SPACING.xxx_small, paddingRight: SPACING.xx_small }}>
+                    <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.xx_small }}>
                         {getAuth().currentUser ? (
                             <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />
                         ) : (

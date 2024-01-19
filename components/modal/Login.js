@@ -43,7 +43,8 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     const navigate = useNavigate()
     const location = useLocation()
   
-    const from = location.state?.from?.pathname || "/account"
+    let from = location.state?.from?.pathname || "/account"
+    from = from === '/verify-email' ? '/account' : from
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
@@ -163,7 +164,13 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
             })
             closeModal()
 
-            navigate(from, { replace: true });
+            if (params.language) {
+                from += '?language=' + params.language
+            }
+
+            navigate(from, {
+                replace: true
+            })
         } catch(error) {
             if (error.code?.includes('auth')) {
                 toastRef.current.show({
@@ -183,6 +190,8 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
     }
     
     const onResetPasswordPress = () => {
+        //TODO - add if loading -> return
+        //TODO - add disabled when loading to a button
         if (!data.emailForReset) {
             setShowErrorMessages(true)
             return
@@ -319,6 +328,7 @@ const Login = ({ visible, setVisible, onSignUpPress }) => {
                         setText={(text) => setData({ ...data, ['emailForReset']: text })}
                         leftIconName="email-outline"
                         errorMessage={showErrorMessages && !data.emailForReset ? 'Enter Your Email' : undefined}
+                        onSubmitEditing={onResetPasswordPress}
                     />
 
                     <Button

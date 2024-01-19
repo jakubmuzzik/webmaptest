@@ -22,6 +22,7 @@ import Account from '../screens/Account'
 import EstablishmentSignup from '../screens/EstablishmentSignup'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
 import SearchResults from '../screens/SearchResults'
+import VerifyEmail from '../screens/VerifyEmail'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 
@@ -63,8 +64,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
             } else if (!user.emailVerified) {
                 if (hasLoadedRef.current) {
                     toastRef.current?.show({
-                        type: 'success',
-                        text: 'Successfully logged in.'
+                        type: 'warning',
+                        text: 'You email is not verified.'
                     })
                 }
 
@@ -98,13 +99,21 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
             language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
         }
 
-        let to = '/auth'
-        //need to hardcode => search param on Navigate component didn't work
-        if (params.language) {
-            to += '?language=' + params.language
-        }
+        if (isLoggedIn && !userVerified && location.pathname !== '/verify-email') {
+            let to = '/verify-email'
+            //need to hardcode => search param on Navigate component didn't work
+            if (params.language) {
+                to += '?language=' + params.language
+            }
 
-        if (!isLoggedIn) {
+            return <Navigate to={to} state={{ from: location }} replace />
+        } else if (!isLoggedIn) {
+            let to = '/auth'
+            //need to hardcode => search param on Navigate component didn't work
+            if (params.language) {
+                to += '?language=' + params.language
+            }
+
             return <Navigate to={to} state={{ from: location }} replace />
         }
 
@@ -205,6 +214,14 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                 </LayoutWithHeader>
             } />
 
+            <Route path='/verify-email' element={
+                <RequireAuth>
+                    <LayoutWithHeader>
+                        <VerifyEmail />
+                    </LayoutWithHeader>
+                </RequireAuth>
+            } />
+
             <Route path='/search' element={
                 <LayoutWithHeader>
                     <SearchResults />
@@ -213,7 +230,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
 
             <Route path='*' element={
                 <LayoutWithHeader>
-                    <Account />
+                    <NotFound />
                 </LayoutWithHeader>
             } />
         </>

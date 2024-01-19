@@ -32,11 +32,11 @@ const SignUpOrLogin = ({ }) => {
         <>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
                 <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF', width: '100%' }}>Sign up or Log in</Text>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.h1, color: '#FFF', width: '100%' }}>Sign up or Log in</Text>
 
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        style={{ marginTop: SPACING.medium, borderRadius: 10, width: '100%' }}
+                        style={{ marginTop: SPACING.large, borderRadius: 10, width: '100%' }}
                         buttonColor={COLORS.red}
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="contained"
@@ -47,7 +47,7 @@ const SignUpOrLogin = ({ }) => {
 
                     <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        style={{ marginTop: SPACING.medium, borderRadius: 10, width: '100%' }}
+                        style={{ marginTop: SPACING.small, borderRadius: 10, width: '100%' }}
                         //buttonColor={COLORS.red}
                         rippleColor="rgba(220, 46, 46, .16)"
                         mode="outlined"

@@ -41,7 +41,9 @@ import {
     deleteUser,
     signInAnonymously,
     linkWithCredential,
-    indexedDBLocalPersistence
+    indexedDBLocalPersistence,
+    validatePassword,
+    verifyBeforeUpdateEmail
 } from 'firebase/auth'
 import { 
     getStorage,
@@ -115,5 +117,7 @@ export {
     signInAnonymously,
     linkWithCredential,
     getCountFromServer,
-    startAfter
+    startAfter,
+    validatePassword,
+    verifyBeforeUpdateEmail
 }

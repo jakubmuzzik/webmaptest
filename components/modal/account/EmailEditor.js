@@ -20,8 +20,11 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../../constants'
+import { updateEmail, sendEmailVerification, getAuth, verifyBeforeUpdateEmail, reauthenticateWithCredential, EmailAuthProvider } from '../../../firebase/config'
 
 import { Button } from 'react-native-paper'
+
+import Toast from '../../Toast'
 
 const window = Dimensions.get('window')
 
@@ -34,6 +37,8 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         password: '',
         secureTextEntry: true
     })
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -75,19 +80,114 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         })
     }
 
+    const reauthenticate = async () => {
+        const cred = EmailAuthProvider.credential(getAuth().currentUser.email, data.password)
+        return reauthenticateWithCredential(getAuth().currentUser, cred)
+    }
+
     const onSavePress = async () => {
+        if (!data.newEmail || !data.password) {
+            setShowErrorMessage(true)
+            return
+        }
+
+        if (isSaving) {
+            return
+        }
+
+        if (data.newEmail === getAuth().currentUser.email) {
+            toastRef.current.show({
+                type: 'error',
+                text: 'Provided Email address is already in use.'
+            })
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
+        //TODO update redux state if success
+
+        try {
+            await reauthenticate()
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                text: 'Invalid password.'
+            })
             setIsSaving(false)
+            return
+        }
+
+        if (getAuth().currentUser.emailVerified) {
+            changeEmail()
+        } else {
+            sendVerificationToNewEmail()
+        }
+    }
+
+    const changeEmail = async () => {
+        try {
+            await updateEmail(getAuth().currentUser, data.newEmail)
+            await sendEmailVerification(getAuth().currentUser)
+            showToast({
+                type: 'success',
+                text: 'Your Email has been successfully changed.'
+            })
             closeModal()
+            //signOut(getAuth())
+        } catch(e) {
+            if (e.code === 'auth/email-already-in-use') {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Provided Email address is already in use.'
+                })
+            } else if (e.code === 'auth/invalid-email') {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Provided Email address is invalid.'
+                })
+            } else {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Email could not be changed. Please log out and try it again later.'
+                })
+            }
+            console.error(e)
+        } finally {
+            setIsSaving(false)
+        }
+    }
+
+    const sendVerificationToNewEmail = async () => {
+        try {
+            await verifyBeforeUpdateEmail(getAuth().currentUser, data.newEmail)
 
             showToast({
                 type: 'success',
-                headerText: 'Success!',
-                text: 'Your Email was changed successfully.'
+                text: 'Verification email was sent to the provided email address.'
             })
-        }, 1000)
+            closeModal()
+        } catch(e) {
+            if (e.code === 'auth/email-already-in-use') {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Provided Email address is already in use.'
+                })
+            } else if (e.code === 'auth/invalid-email') {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Provided Email address is invalid.'
+                })
+            } else {
+                toastRef.current.show({
+                    type: 'error',
+                    text: 'Email could not be changed. Please log out and try it again later.'
+                })
+            }
+            console.error(e)
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -153,6 +253,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                                 setText={(text) => setData({ ...data, ['newEmail']: text })}
                                 leftIconName="email-outline"
                                 errorMessage={showErrorMessage && !data.newEmail ? 'Enter your email' : undefined}
+                                onSubmitEditing={onSavePress}
                             />
 
                             <HoverableInput
@@ -172,6 +273,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                                 onRightIconPress={updateSecureTextEntry}
                                 secureTextEntry={data.secureTextEntry}
                                 errorMessage={showErrorMessage && !data.password ? 'Enter your Password' : undefined}
+                                onSubmitEditing={onSavePress}
                             />
                         </Animated.ScrollView>
 
@@ -202,6 +304,8 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }
