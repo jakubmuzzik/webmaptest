@@ -11,7 +11,7 @@ import RenderImageWithActions from '../../components/list/RenderImageWithActions
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Photos = ({ index, setTabHeight }) => {
+const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
     const [data, setData] = useState({
         active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
         pending: [require('../../assets/CATEGORY1.png'), require('../../assets/CATEGORY2.png'), require('../../assets/CATEGORY3.png'),],
@@ -203,7 +203,7 @@ const Photos = ({ index, setTabHeight }) => {
             <View style={{ flexDirection: 'row', marginLeft: SPACING.small, marginRight: SPACING.small - SPACING.small, marginBottom: SPACING.small, flexWrap: 'wrap' }}>
                 {images.map((image) =>
                     <View key={image ?? Math.random()} style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small }}>
-                        <RenderImageWithActions image={image} actions={actions} offsetX={windowWidth * index}/>
+                        <RenderImageWithActions image={image} actions={actions} offsetX={(windowWidth * index) + offsetX}/>
                     </View>)}
             </View>
         )

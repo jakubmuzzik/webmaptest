@@ -11,7 +11,7 @@ import RenderVideoWithActions from '../../components/list/RenderVideoWithActions
 const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const Videos = ({ index, setTabHeight }) => {
+const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
     const [data, setData] = useState({
         active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
         pending: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'),],
@@ -21,6 +21,12 @@ const Videos = ({ index, setTabHeight }) => {
 
     const { width: windowWidth } = useWindowDimensions()
     const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
+
+
+    console.log(offsetX)
+    console.log(index + ' | ' + windowWidth)
+    console.log(windowWidth * index)
+    console.log((windowWidth * index) + offsetX)
 
     const onLayout = (event) => {
         setTabHeight(event.nativeEvent.layout.height)
@@ -94,7 +100,7 @@ const Videos = ({ index, setTabHeight }) => {
             <View style={isSmallScreen ? smallContainerStyles : largeContainerStyles}>
                 {videos.map((video) =>
                     <View key={videos ?? Math.random()} style={isSmallScreen ? smallImageContainerStyles : largeImageContainerStyles}>
-                        <RenderVideoWithActions video={video} actions={actions} offsetX={windowWidth * index}/>
+                        <RenderVideoWithActions video={video} actions={actions} offsetX={(windowWidth * index) + offsetX} />
                     </View>)}
             </View>
         )

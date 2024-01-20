@@ -48,15 +48,7 @@ const SearchResults = () => {
     }
 
     const SkeletonLoader = () => (
-        <MotiView
-            animate={{ opacity: 1 }}
-            exit={{
-                opacity: 0,
-            }}
-            transition={{
-                duration: 150
-            }}
-        >
+        <>
             <ContentLoader
                 speed={2}
                 width={cardWidth * 2}
@@ -94,16 +86,11 @@ const SearchResults = () => {
                     </View>
                 ))}
             </View>
-        </MotiView>
+        </>
     )
 
     const Content = () => (
-        <MotiView
-            animate={{ opacity: 1 }}
-            exit={{
-                opacity: 0,
-            }}
-        >
+        <>
             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF' }}>
                 Search results for {params.query}
             </Text>
@@ -117,16 +104,14 @@ const SearchResults = () => {
                     {MOCK_DATA.map(data => renderCard(data))}
                 </View>
             </View>
-        </MotiView>
+        </>
     )
 
     return (
         <View onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)} style={{ backgroundColor: COLORS.lightBlack, flex: 1, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }}>
-            <AnimatePresence exitBeforeEnter>
-                {isLoading && <SkeletonLoader key="skeleton"/>}
+            {isLoading && <SkeletonLoader />}
 
-                {!isLoading && <Content key="content"/>}
-            </AnimatePresence>
+            {!isLoading && <Content />}
         </View>
     )
 }

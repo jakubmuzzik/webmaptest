@@ -1,10 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { View, Text, Dimensions, Image as RNImage, ImageBackground, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
-import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../constants'
-import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../utils'
+import { COLORS, FONTS, FONT_SIZES, SPACING, CURRENCIES } from '../../constants'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../../utils'
 import { ProgressBar, Button, TouchableRipple, IconButton, SegmentedButtons, TextInput as RNPaperTextInput, Switch, HelperText } from 'react-native-paper'
-import HoverableInput from '../components/HoverableInput'
-import DropdownSelect from '../components/DropdownSelect'
+import HoverableInput from '../../components/HoverableInput'
+import DropdownSelect from '../../components/DropdownSelect'
 import { Ionicons, MaterialCommunityIcons, AntDesign, FontAwesome5, EvilIcons } from '@expo/vector-icons'
 import { TabView } from 'react-native-tab-view'
 import Animated, {
@@ -16,16 +16,16 @@ import Animated, {
 } from 'react-native-reanimated'
 import {
     ESTABLISHMENT_TYPES
-} from '../labels'
+} from '../../labels'
 import { MotiView } from 'moti'
 import * as ImagePicker from 'expo-image-picker'
-import AddressSearch from '../components/modal/AddressSearch'
+import AddressSearch from '../../components/modal/AddressSearch'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import { BlurView } from 'expo-blur'
 import { Image } from 'expo-image'
 
 import { connect } from 'react-redux'
-import { showToast } from '../redux/actions'
+import { showToast } from '../../redux/actions'
 
 const MAX_PHOTO_SIZE_MB = 5
 const MAX_VIDEO_SIZE_MB = 10
@@ -1162,7 +1162,7 @@ const EstablishmentSignup = ({ showToast }) => {
                         >
                             <Image
                                 resizeMode='contain'
-                                source={require('../assets/completed.svg')}
+                                source={require('../../assets/completed.svg')}
                                 style={{ width: '100%', height: '100%' }}
                             />
                         </MotiView>}

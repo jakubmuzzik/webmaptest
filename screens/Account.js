@@ -7,7 +7,7 @@ import { MotiText, AnimatePresence } from 'moti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
-import LadySignup from './LadySignup'
+import LadySignup from './signup/LadySignup'
 
 //const Tab = createMaterialTopTabNavigator()
 
@@ -78,7 +78,7 @@ const Account = ({ navigation, route }) => {
             case 'edit_lady':
                 return (
                     <View style={{ marginTop: SPACING.large }}>
-                        <EditLady />
+                        <EditLady offsetX={windowWidth * route.index}/>
                     </View>
                 )
             case 'add_lady':

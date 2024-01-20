@@ -11,7 +11,7 @@ import PersonalDetails from './PersonalDetails'
 import Photos from './Photos'
 import Videos from './Videos'
 
-const EditLady = ({  }) => {
+const EditLady = ({ offsetX = 0 }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -61,13 +61,13 @@ const EditLady = ({  }) => {
             case 'photos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} />
+                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} offsetX={offsetX} />
                     </View>
                 )
             case 'videos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} />
+                        <Videos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} offsetX={offsetX}/>
                     </View>
                 )
             default:

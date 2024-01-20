@@ -88,12 +88,12 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
         currency: data.currency,
         outcall: data.outcall,
         incall: data.incall
-    }), [data])
+    }), [data.prices, data.currency, data.outcall, data.incall])
 
     const address = useMemo(() => ({
         ...data.address,
         hiddenAddress: data.hiddenAddress
-    }), [data])
+    }), [data.address, data.hiddenAddress])
 
     const contactInformation = useMemo(() => ({
         phone: data.phone,
@@ -101,7 +101,7 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
         viber: data.viber,
         whatsapp: data.whatsapp,
         telegram: data.telegram
-    }), [data])
+    }), [data.phone, data.name, data.viber, data.whatsapp, data.telegram])
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)

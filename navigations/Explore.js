@@ -63,7 +63,7 @@ const Explore = () => {
                 <Categories />
             </Animated.View>
 
-            <View style={{ marginTop: normalize(70) }}>
+            <View style={{ marginTop: normalize(62.5) }}>
                 <Outlet />
             </View>
         </>

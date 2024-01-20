@@ -13,7 +13,7 @@ import Settings from './Settings'
 import Ladies from './Ladies'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 
-const AccountSettings = ({  }) => {
+const AccountSettings = ({ }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({

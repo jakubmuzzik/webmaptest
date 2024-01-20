@@ -25,17 +25,20 @@ const Categories = ({ }) => {
         {
             path: '/',
             title: 'EscEscEsc',
-            key: 'esc'
+            key: 'esc',
+            icon: (focused) => <Entypo name="mask" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         },
         {
             path: '/mas',
             title: 'MasMasMas',
-            key: 'mas'
+            key: 'mas',
+            icon: (focused) => <FontAwesome5 name="person-booth" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         },
         {
             path: '/clu',
             title: 'CluC',
-            key: 'clu'
+            key: 'clu',
+            icon: (focused) => <MaterialIcons name="meeting-room" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         }
     ])
 
@@ -141,9 +144,17 @@ const Categories = ({ }) => {
             tabStyle={{ width: 'auto' }}
             scrollEnabled={true}
             renderLabel={({ route, focused, color }) => (
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
-                    {route.title}
-                </Text>
+                // <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
+                //     {route.title}
+                // </Text>
+                <Link style={{ textDecoration: 'none' }} to={{ pathname: route.path, search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                    <View style={styles.categoryContainer}>
+                        {route.icon(focused)}
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
+                            {route.title}
+                        </Text>
+                    </View>
+                </Link>  
             )}
             onTabPress={onTabPress}
         />
@@ -163,7 +174,7 @@ const Categories = ({ }) => {
             elevation: 6,
         }}>
 
-            <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: SPACING.page_horizontal, marginVertical: SPACING.xx_small }}>
+            <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: SPACING.page_horizontal }}>
                 <TabView
                     renderTabBar={renderTabBar}
                     swipeEnabled={false}
@@ -327,6 +338,7 @@ const styles = StyleSheet.create({
     categoryContainer: {
         alignItems: 'center',
         justifyContent: 'center',
+        //flexDirection: 'row'
     },
     selectedCategoryContainer: {
         borderBottomWidth: 1,
