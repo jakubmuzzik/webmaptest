@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.d4c2d238.js",
-    "static/js/789.ea6ab78c.js": "/webmaptest/static/js/789.ea6ab78c.js",
+    "main.js": "/webmaptest/static/js/main.6c6882cf.js",
+    "static/js/789.02a81777.js": "/webmaptest/static/js/789.02a81777.js",
     "static/media/big_buck_bunny.mp4": "/webmaptest/static/media/big_buck_bunny.f3997e52ea9aa77296a3.mp4",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
@@ -39,11 +39,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.d4c2d238.js.map": "/webmaptest/static/js/main.d4c2d238.js.map",
-    "789.ea6ab78c.js.map": "/webmaptest/static/js/789.ea6ab78c.js.map"
+    "main.6c6882cf.js.map": "/webmaptest/static/js/main.6c6882cf.js.map",
+    "789.02a81777.js.map": "/webmaptest/static/js/789.02a81777.js.map"
   },
   "entrypoints": [
-    "static/js/789.ea6ab78c.js",
-    "static/js/main.d4c2d238.js"
+    "static/js/789.02a81777.js",
+    "static/js/main.6c6882cf.js"
   ]
 }
