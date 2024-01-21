@@ -12,15 +12,15 @@ import HoverableInput from '../../../components/HoverableInput'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import { normalize } from '../../../utils'
 import { HelperText } from 'react-native-paper'
+import { fetchSignInMethodsForEmail, getAuth } from '../../../firebase/config'
 
 const LoginInformation = forwardRef((props, ref) => {
-    const {i, contentWidth} = props
+    const {i, contentWidth, showToast} = props
 
     const [data, setData] = useState({
         email: '',
         password: '',
-        confirmPassword: '',
-        name: ''
+        confirmPassword: ''
     })
     const [showErrors, setShowErrors] = useState(false)
     const [agreed, setAgreed] = useState(false)
@@ -28,8 +28,32 @@ const LoginInformation = forwardRef((props, ref) => {
     const [confirmSecureTextEntry, setConfirmSecureTextEntry] = useState(true)
 
     const validate = async () => {
-        if (!data.email || !data.password || !data.name || !data.confirmPassword || data.password !== data.confirmPassword) {
+        if (!data.email || !data.password || !data.confirmPassword || data.password !== data.confirmPassword || data.length < 8 || !agreed) {
             setShowErrors(true)
+            return false
+        }
+
+        try {
+            const result = await fetchSignInMethodsForEmail(getAuth(), data.email)
+            if (result.length > 0) {
+                showToast({
+                    type: 'error',
+                    text: 'Email address is already in use.'
+                })
+                return false
+            }
+        } catch(error) {
+            if (error.code?.includes('auth')) {
+                showToast({
+                    type: 'error',
+                    text: 'Invalid Email.'
+                })
+            } else {
+                showToast({
+                    type: 'error',
+                    text: 'Could not validate the email.'
+                })
+            }
             return false
         }
 
@@ -40,7 +64,7 @@ const LoginInformation = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         validate,
-        data
+        data: {email: data.email, password: data.password}
     }))
 
     const scrollY = useSharedValue(0)
@@ -156,7 +180,7 @@ const LoginInformation = forwardRef((props, ref) => {
                                 I agree to Ladiesforfun <Text style={{ color: 'blue' }} onPress={onTermsOfServicePress}>Terms of Service</Text> and <Text style={{ color: 'blue' }} onPress={onPrivacyPolicyPress}>Privacy Policy</Text>.
                             </Text>
                         </View>
-                        {showErrors && <HelperText type="error" visible>
+                        {showErrors && !agreed && <HelperText type="error" visible>
                             <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error }}>
                                 You must agree before continuing
                             </Text>

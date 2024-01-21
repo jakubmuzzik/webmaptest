@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue
 } from 'react-native-reanimated'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
-import { TouchableRipple, IconButton } from 'react-native-paper'
+import { TouchableRipple, IconButton, HelperText } from 'react-native-paper'
 import { normalize, encodeImageToBlurhash, generateThumbnailFromLocalURI } from '../../../utils'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
@@ -53,7 +53,10 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         validate,
-        data
+        data: {
+            images: data.images.filter(image => image),
+            videos: data.videos.filter(video => video)
+        }
     }))
 
     const scrollY = useSharedValue(0)
@@ -166,6 +169,10 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
         setData(d => {
             if (index > 0) {
                 d.images.splice(index, 1)
+
+                if (d.images[d.images.length - 1]) {
+                    d.images.push(null)
+                }
             } else {
                 d.images[index] = null
             }
@@ -177,6 +184,10 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
     const onDeleteVideoPress = async (index) => {
         setData(d => {
             d.videos.splice(index, 1)
+
+            if (d.videos[d.videos.length - 1]) {
+                d.videos.push(null)
+            }
 
             return { ...d }
         })
@@ -235,10 +246,15 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                             onPress={() => onSelectImagePress(0)}
                             style={{ backgroundColor: 'rgba(28,27,31,0.16)', alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 10, aspectRatio: 16 / 9 }}
                         >
-                            <Ionicons name="image-outline" size={normalize(30)} color="black" />
+                            <Ionicons name="image-outline" size={normalize(30)} color={showErrors ? COLORS.error : "black"} />
                         </TouchableRipple>
                     }
                 </View>
+                {showErrors && <HelperText type="error" visible>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.small, color: COLORS.error, paddingHorizontal: SPACING.x_large }}>
+                        Add your cover photo.
+                    </Text>
+                </HelperText>}
 
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginTop: SPACING.medium }}>
                     Add additional photos
@@ -249,7 +265,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
 
                 <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                     {data.images.slice(1).map((image, index) =>
-                        <View key={image ?? Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
+                        <View key={Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {image ?
                                 <ImageBackground
                                     source={{ uri: image }}
@@ -305,7 +321,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
 
                 <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                     {data.videos.map((video, index) =>
-                        <View key={video ?? Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
+                        <View key={Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {video ?
                                 <React.Fragment>
                                     <Image

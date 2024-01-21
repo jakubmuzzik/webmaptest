@@ -43,7 +43,8 @@ import {
     linkWithCredential,
     indexedDBLocalPersistence,
     validatePassword,
-    verifyBeforeUpdateEmail
+    verifyBeforeUpdateEmail,
+    fetchSignInMethodsForEmail
 } from 'firebase/auth'
 import { 
     getStorage,
@@ -119,5 +120,6 @@ export {
     getCountFromServer,
     startAfter,
     validatePassword,
-    verifyBeforeUpdateEmail
+    verifyBeforeUpdateEmail,
+    fetchSignInMethodsForEmail
 }

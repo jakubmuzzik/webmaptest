@@ -17,6 +17,8 @@ import { MotiView } from 'moti'
 import { connect } from 'react-redux'
 import { showToast } from '../../redux/actions'
 
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db } from '../../firebase/config'
+
 const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast }) => {
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
@@ -51,25 +53,54 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
         setNextButtonIsLoading(true)
         try {
             const isValid = await routes[index].ref.current.validate()
-            /*if (isValid) {
-                paginageNext()
-            }*/
+            if (!isValid) {
+                return
+            }
+
+            if (index === Object.keys(routes).length - 2) {
+                //setNextButtonIsLoading(false)
+                await uploadUser()
+            }
+
             paginageNext()
         } catch(e) {
             console.error(e)
             showToast({
                 type: 'error',
-                text: 'Your data could not be processed.'
+                text: 'Data could not be processed.'
             })
         } finally {
             setNextButtonIsLoading(false)
         }
     }
 
+    const uploadUser = async () => {
+        let data = {}
+        routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
+
+        const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
+
+        delete data.password
+
+        await setDoc(doc(db, 'ladies', response.user.uid), {
+            id: response.user.uid,
+            ...data,
+            nameLowerCase: data.name.toLowerCase(),
+            createdDate: new Date()
+        })
+
+        await sendEmailVerification(response.user)
+        
+
+        //create auth user
+        //upload data
+        //upload photos
+    }
+
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'login_information':
-                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} />
+                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} showToast={showToast} />
             case 'personal_details':
                 return <PersonalDetails ref={route.ref} i={route.index} contentWidth={contentWidth} offsetX={offsetX} />
             case 'services_and_pricing':

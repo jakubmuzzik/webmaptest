@@ -27,17 +27,15 @@ const LocationAndAvailability = forwardRef((props, ref) => {
     const [addressSearchVisible, setAddressSearchVisible] = useState(false)
 
     const validate = async () => {
-
         let dataValid = true
 
         if (!data.address) {
             dataValid = false
         }
 
-        const timeRegex = /^(?:[01]\d|2[0-3]):(?:[0-5]\d)$/
         const workingHours = JSON.parse(JSON.stringify(data.workingHours))
 
-        workingHours.forEach(setup => {
+        workingHours.filter(day => day.enabled).forEach(setup => {
             if (!setup.from) {
                 setup.invalidFrom = 'Enter value in HH:mm format.'
             } else {
@@ -58,11 +56,6 @@ const LocationAndAvailability = forwardRef((props, ref) => {
             try {
                 let hours = parseInt(setup.from.split(':')[0], 10)
                 let minutes = parseInt(setup.from.split(':')[1], 10)
-
-                if (setup.day === 'monday') {
-                    console.log(hours)
-                    console.log(minutes)
-                }
 
                 if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
                     setup.invalidFrom = false
@@ -171,7 +164,7 @@ const LocationAndAvailability = forwardRef((props, ref) => {
                             placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                             text={data.address?.title}
                             leftIconName='map-marker-outline'
-                            errorMessage={showErrors && !data.address?.addressTitle ? 'Enter your address' : undefined}
+                            errorMessage={showErrors && !data.address?.title ? 'Enter your address' : undefined}
                         />
                     </TouchableOpacity>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small, flexGrow: 1, flexShrink: 1, flexBasis: (contentWidth / 2) - SPACING.x_large * 2, minWidth: 220, marginRight: SPACING.x_large, marginTop: SPACING.xx_small }}>
