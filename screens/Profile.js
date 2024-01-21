@@ -6,7 +6,7 @@ import { Image } from 'expo-image'
 import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, MaterialCommunityIcons, EvilIcons, Entypo } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from "../components/HoverableView"
-import MapView from "@teovilla/react-native-web-maps"
+import MapView from "react-native-maps"
 import AssetsTabView from "../components/modal/profile/AssetsTabView"
 import { isBrowser } from 'react-device-detect'
 
