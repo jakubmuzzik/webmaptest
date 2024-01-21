@@ -12,7 +12,7 @@ import { normalize } from '../../../utils'
 import { Image } from 'expo-image'
 import { MotiView } from 'moti'
 
-const LadyRegistrationCompleted = ({ independent, visible, email }) => {
+const EstablishmentRegistrationCompleted = ({ visible, email }) => {
     const scrollY = useSharedValue(0)
 
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -40,7 +40,7 @@ const LadyRegistrationCompleted = ({ independent, visible, email }) => {
                 contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}
             >
                 <Text style={styles.pageHeaderText}>
-                     Registration completed
+                    Registration completed
                 </Text>
 
                 <View style={{ height: 100, width: 100, marginVertical: SPACING.medium, alignSelf: 'center' }}>
@@ -65,22 +65,22 @@ const LadyRegistrationCompleted = ({ independent, visible, email }) => {
                 </View>
 
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
-                    {independent ? 'Your Profile has been submitted for review!' : 'Profile has been submitted for review!'}
+                    Your Establishment has been submitted for review!
                 </Text>
 
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
-                    {independent ?
-                        "Our team will review your profile shortly, and once approved, you'll receive a confirmation email to:" + email
-                        : "Our team will review the profile shortly, and once approved, you'll receive a confirmation email to:" + ''
-                        //TODO - add email to the text above from redux
-                    }
+                    Our team will review your establishment shortly, and once approved, you'll receive a confirmation email to: {email}
+                </Text>
+
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginTop: SPACING.xx_small }}>
+                    In the meantime you can log in and start adding your profiles of your ladies.
                 </Text>
             </Animated.ScrollView>
         </>
     )
 }
 
-export default memo(LadyRegistrationCompleted)
+export default memo(EstablishmentRegistrationCompleted)
 
 const styles = StyleSheet.create({
     pageHeaderText: {
