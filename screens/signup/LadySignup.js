@@ -16,6 +16,7 @@ import { MotiView } from 'moti'
 
 import { connect } from 'react-redux'
 import { showToast } from '../../redux/actions'
+import { IN_REVIEW } from '../../labels'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db } from '../../firebase/config'
 
@@ -77,6 +78,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
     const uploadUser = async () => {
         let data = {}
         routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
+        data.status = IN_REVIEW
 
         const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
 

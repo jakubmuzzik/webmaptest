@@ -75,6 +75,9 @@ export const SELECT_CITY = 'SELECT_CITY'
 export const SIGN_IN = 'SIGN_IN'
 export const SIGN_UP = 'SIGN_UP'
 export const ANYWHERE = 'ANYWHERE'
+export const IN_REVIEW = 'IN_REVIEW'
+export const ACTIVE = 'ACTIVE'
+export const INACTIVE = 'INACTIVE'
 export const BODY_TYPE_SLIM = 'Slim' // TODO - do this for all filter values
 
 
