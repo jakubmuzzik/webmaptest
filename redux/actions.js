@@ -1,7 +1,8 @@
 import {
     ROUTE_STATE_CHANGE,
     SCROLL_DISABLED_STATE_CHANGE,
-    SHOW_TOAST
+    SHOW_TOAST,
+    USER_STATE_CHANGE
 } from './actionTypes'
 
 export const updateRoute = (route) => ({
@@ -17,4 +18,9 @@ export const updateScrollDisabled = (scrollDisabled) => ({
 export const showToast = (toastData) => ({
     type: SHOW_TOAST,
     toastData
+})
+
+export const updateCurrentUser = (data) => ({
+    type: USER_STATE_CHANGE,
+    data
 })

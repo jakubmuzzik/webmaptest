@@ -62,13 +62,6 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                     })
                 }                
             } else if (!user.emailVerified) {
-                if (hasLoadedRef.current) {
-                    toastRef.current?.show({
-                        type: 'warning',
-                        text: 'You email is not verified.'
-                    })
-                }
-
                 setIsLoggedIn(true)
                 setUserVerified(false)
             } else {
@@ -119,6 +112,26 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
 
         return children
     }, [isLoggedIn, userVerified])
+
+    const ProhibitsAuth = useCallback(({ children }) => {
+        const [searchParams] = useSearchParams()
+
+        const params = {
+            language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+        }
+
+        if (isLoggedIn) {
+            let to = '/account'
+            //need to hardcode => search param on Navigate component didn't work
+            if (params.language) {
+                to += '?language=' + params.language
+            }
+
+            return <Navigate to={to} replace />
+        }
+
+        return children
+    }, [isLoggedIn])
 
     const Redirect = ({ replace, to }) => {
         const [searchParams] = useSearchParams()
@@ -185,7 +198,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
             </Route>
 
             <Route path='/lady-signup' element={
-                <>
+                <ProhibitsAuth>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
@@ -193,11 +206,11 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <LadySignup independent/>
                     </View>
-                </>
+                </ProhibitsAuth>
             } />
 
             <Route path='/establishment-signup' element={
-                <>
+                <ProhibitsAuth>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
@@ -205,7 +218,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <EstablishmentSignup />
                     </View>
-                </>
+                </ProhibitsAuth>
             } />
 
             <Route path='/auth' element={

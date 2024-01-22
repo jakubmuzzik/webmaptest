@@ -1,7 +1,7 @@
-import React, { useState, createRef } from 'react'
+import React, { useState, createRef, useEffect, useMemo } from 'react'
 import { View, Text } from 'react-native'
-import { COLORS, FONTS, FONT_SIZES, SPACING } from '../../constants'
-import { normalize } from '../../utils'
+import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES} from '../../constants'
+import { normalize, stripEmptyParams, getParam } from '../../utils'
 import { ProgressBar, Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
 import { MotiView } from 'moti'
@@ -15,7 +15,18 @@ import LocationAndAvailability from './steps/LocationAndAvailability'
 import EstablishmentPhotos from './steps/EstablishmentPhotos'
 import EstablishmentRegistrationCompleted from './steps/EstablishmentRegistrationCompleted'
 
+import { useSearchParams, useNavigate } from 'react-router-dom'
+
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
+
 const EstablishmentSignup = ({ showToast }) => {
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))

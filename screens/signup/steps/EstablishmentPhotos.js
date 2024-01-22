@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
 import { TouchableRipple, IconButton, HelperText } from 'react-native-paper'
-import { normalize, encodeImageToBlurhash, generateThumbnailFromLocalURI } from '../../../utils'
+import { normalize, generateThumbnailFromLocalURI } from '../../../utils'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import * as ImagePicker from 'expo-image-picker'
@@ -104,15 +104,6 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                     }
                     return { ...d }
                 })
-
-
-                //TODO - do this when pressing next button !!
-                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
-
-                setData(d => {
-                    d.images[index] = blurhash
-                    return { ...d }
-                })
             } catch (e) {
                 console.error(e)
             }
@@ -158,8 +149,6 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                     }
                     return { ...d }
                 })
-
-                //TODO - generate blurhash also for videos
             } catch (e) {
                 console.error(e)
             }

@@ -11,7 +11,10 @@ export const user = (state = INITIAL_STATE, action) => {
         case USER_STATE_CHANGE:
             return {
                 ...state,
-                currentUser: action.currentUser
+                currentUser: {
+                    ...state.currentUser,
+                    ...action.data
+                }
             }
         default:
             return state;

@@ -1,7 +1,7 @@
-import React, { useState, createRef } from 'react'
-import { View, Text } from 'react-native'
-import { COLORS, FONTS, FONT_SIZES, SPACING } from '../../constants'
-import { normalize } from '../../utils'
+import React, { useState, createRef, useMemo, useEffect } from 'react'
+import { View, Text, StyleSheet } from 'react-native'
+import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES } from '../../constants'
+import { normalize, encodeImageToBlurhash, getParam, stripEmptyParams } from '../../utils'
 import { ProgressBar, Button } from 'react-native-paper'
 
 import LoginInformation from './steps/LoginInformation'
@@ -13,15 +13,27 @@ import LadyRegistrationCompleted from './steps/LadyRegistrationCompleted'
 
 import { TabView } from 'react-native-tab-view'
 import { MotiView } from 'moti'
+import LottieView from 'lottie-react-native'
+import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
-import { showToast } from '../../redux/actions'
+import { showToast, updateCurrentUser } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
-const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast }) => {
+const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast, updateCurrentUser }) => {
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
+
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
+    const [uploading, setUploading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
 
@@ -59,7 +71,8 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             }
 
             if (index === Object.keys(routes).length - 2) {
-                //setNextButtonIsLoading(false)
+                setNextButtonIsLoading(false)
+                setUploading(true)
                 await uploadUser()
             }
 
@@ -72,6 +85,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             })
         } finally {
             setNextButtonIsLoading(false)
+            setUploading(false)
         }
     }
 
@@ -110,6 +124,22 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
         }
 
+        const imageBlurhashes = await Promise.all([
+            ...data.images.map(image => encodeImageToBlurhash(image.image))
+        ])
+
+        for (let i = 0; i < data.images.length; i++) {
+            data.images[i] = {...data.images[i], blurhash: imageBlurhashes[i]}
+        }
+
+        const videoThumbnailsBlurhashes = await Promise.all([
+            ...data.videos.map(video => encodeImageToBlurhash(video.thumbnail))
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
+        }
+
         data.images.forEach((image) => {
             delete image.image
         })
@@ -119,14 +149,14 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             delete video.video
         })
 
-        await setDoc(doc(db, 'ladies', response.user.uid), {
+        const userData = {
             id: response.user.uid,
             ...data,
             nameLowerCase: data.name.toLowerCase(),
             createdDate: new Date()
-        })
-
-        //generate blurhashes
+        }
+        await setDoc(doc(db, 'ladies', response.user.uid), userData)
+        updateCurrentUser(userData)
     }
 
     const uploadAssetToFirestore = async (assetUri, assetPath) => {
@@ -248,10 +278,31 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
                             {index === Object.keys(routes).length - 2 ? 'Sign up' : 'Next'}
                         </Button>
                     </View>}
+
+                    {uploading && (
+                        <MotiView 
+                            style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(80,80,80,0.6)' }}
+                            from={{
+                                opacity: 0,
+                            }}
+                            animate={{
+                                opacity: 1
+                            }}
+                        >
+                            <BlurView intensity={20} style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
+                                <LottieView
+                                    style={{ width: '50%', minWidth: 250, maxWidth: '90%' }}
+                                    autoPlay
+                                    loop
+                                    source={require('../../assets/loading.json')}
+                                />
+                            </BlurView>
+                        </MotiView>
+                    )}
                 </View>
             </MotiView>
         </View>
     )
 }
 
-export default connect(null, { showToast })(LadySignup)
+export default connect(null, { showToast, updateCurrentUser })(LadySignup)

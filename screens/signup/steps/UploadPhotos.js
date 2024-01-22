@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue
 } from 'react-native-reanimated'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
-import { normalize, encodeImageToBlurhash, generateThumbnailFromLocalURI } from '../../../utils'
+import { normalize, generateThumbnailFromLocalURI } from '../../../utils'
 import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { HelperText, TouchableRipple, IconButton } from 'react-native-paper'
 import { Image } from 'expo-image'
@@ -104,14 +104,6 @@ const UploadPhotos = forwardRef((props, ref) => {
                     }
                     return { ...d }
                 })
-
-                //TODO - do this when pressing next button !!
-                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
-
-                /*setData(d => {
-                    d.images[index] = blurhash
-                    return { ...d }
-                })*/
             } catch (e) {
                 console.error(e)
             }
@@ -157,8 +149,6 @@ const UploadPhotos = forwardRef((props, ref) => {
                     }
                     return { ...d }
                 })
-
-                //TODO - generate blurhash also for videos
             } catch (e) {
                 console.error(e)
             }
