@@ -52,7 +52,8 @@ import {
     uploadBytes, 
     getDownloadURL,
     deleteObject,
-    listAll
+    listAll,
+    uploadBytesResumable
 } from 'firebase/storage'
 
 const firebaseConfig = {
@@ -121,5 +122,6 @@ export {
     startAfter,
     validatePassword,
     verifyBeforeUpdateEmail,
-    fetchSignInMethodsForEmail
+    fetchSignInMethodsForEmail,
+    uploadBytesResumable
 }

@@ -14,6 +14,7 @@ import { HelperText, TouchableRipple, IconButton } from 'react-native-paper'
 import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import { BlurView } from 'expo-blur'
+import uuid from 'react-native-uuid'
 
 const MAX_PHOTO_SIZE_MB = 5
 const MAX_VIDEO_SIZE_MB = 10
@@ -53,10 +54,10 @@ const UploadPhotos = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         validate,
-        data: {
+        data: JSON.parse(JSON.stringify({
             images: data.images.filter(image => image),
             videos: data.videos.filter(video => video)
-        }
+        }))
     }))
 
     const scrollY = useSharedValue(0)
@@ -97,7 +98,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                 }
 
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4()}
                     if (index > 4 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
@@ -150,7 +151,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4()}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }
@@ -397,7 +398,7 @@ const UploadPhotos = forwardRef((props, ref) => {
 
                 {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                     {data.images.slice(5).map((image, index) =>
-                        <View key={Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
+                        <View key={image ? image.id : Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {image ?
                                 <ImageBackground
                                     source={{ uri: image.image }}
@@ -450,7 +451,7 @@ const UploadPhotos = forwardRef((props, ref) => {
 
                 <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                     {data.videos.map((video, index) =>
-                        <View key={Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
+                        <View key={video ? video.id : Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {video ?
                                 <React.Fragment>
                                     <Image

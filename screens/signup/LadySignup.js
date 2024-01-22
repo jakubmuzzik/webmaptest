@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 import { showToast } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db } from '../../firebase/config'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
 const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast }) => {
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
@@ -84,6 +84,41 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
 
         delete data.password
 
+        await sendEmailVerification(response.user)
+
+        const imageURLs = await Promise.all([
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + '12345' + '/' + image.id))
+        ])
+
+        for (let i = 0; i < data.images.length; i++) {
+            data.images[i] = {...data.images[i], downloadUrl: imageURLs[i]}
+        }
+
+        const videoURLs = await Promise.all([
+            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + '12345' + '/' + video.id + '/video')),
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], videoDownloadUrl: videoURLs[i] }
+        }
+
+        const thumbanilURLs = await Promise.all([
+            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + '12345' + '/' + video.id + '/thumbnail')),
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
+        }
+
+        data.images.forEach((image) => {
+            delete image.image
+        })
+        
+        data.videos.forEach((video) => {
+            delete video.thumbnail
+            delete video.video
+        })
+
         await setDoc(doc(db, 'ladies', response.user.uid), {
             id: response.user.uid,
             ...data,
@@ -91,12 +126,45 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             createdDate: new Date()
         })
 
-        await sendEmailVerification(response.user)
-        
+        //generate blurhashes
+    }
 
-        //create auth user
-        //upload data
-        //upload photos
+    const uploadAssetToFirestore = async (assetUri, assetPath) => {
+        const imageRef = ref(storage, assetPath)
+    
+        const response = await fetch(assetUri)
+        const blob = await response.blob()
+
+        /*const uploadTask = uploadBytesResumable(imageRef, blob)
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused');
+                        break;
+                    case 'running':
+                        console.log('Upload is running');
+                        break;
+                }
+            },
+            (error) => {
+                console.error('upload error: ', error)
+            },
+            () => {
+                console.log('upload finished')
+            }
+        );
+
+        await uploadTask*/
+
+        const result = await uploadBytes(imageRef, blob)
+
+        const downloadURL = await getDownloadURL(result.ref)
+    
+        return downloadURL
     }
 
     const renderScene = ({ route }) => {
