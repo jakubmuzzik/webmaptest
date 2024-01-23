@@ -7,7 +7,7 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated'
-import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
+import { COLORS, SPACING, FONTS, FONT_SIZES, MAX_PHOTO_SIZE_MB, MAX_VIDEO_SIZE_MB, MAX_VIDEOS, MAX_PHOTOS } from '../../../constants'
 import { normalize, generateThumbnailFromLocalURI } from '../../../utils'
 import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { HelperText, TouchableRipple, IconButton } from 'react-native-paper'
@@ -15,11 +15,7 @@ import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import { BlurView } from 'expo-blur'
 import uuid from 'react-native-uuid'
-
-const MAX_PHOTO_SIZE_MB = 5
-const MAX_VIDEO_SIZE_MB = 10
-const MAX_VIDEOS = 5
-const MAX_PHOTOS = 15
+import { ACTIVE } from '../../../labels'
 
 const getDataType = (uri) => {
     const parts = uri.split(',')
@@ -98,7 +94,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                 }
 
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4()}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
                     if (index > 4 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
@@ -143,7 +139,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4()}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }

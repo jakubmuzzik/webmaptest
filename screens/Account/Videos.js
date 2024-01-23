@@ -22,12 +22,6 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
     const { width: windowWidth } = useWindowDimensions()
     const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
 
-
-    console.log(offsetX)
-    console.log(index + ' | ' + windowWidth)
-    console.log(windowWidth * index)
-    console.log((windowWidth * index) + offsetX)
-
     const onLayout = (event) => {
         setTabHeight(event.nativeEvent.layout.height)
         setSectionWidth(event.nativeEvent.layout.width - 2)
@@ -146,7 +140,7 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
                 <View style={styles.sectionHeader}>
                     <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
                     <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                        Under review
+                        In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
                         • {data.pending.length}

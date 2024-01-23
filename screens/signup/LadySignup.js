@@ -289,13 +289,15 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
                                 opacity: 1
                             }}
                         >
-                            <BlurView intensity={20} style={{ flex: 1, alignItems: "center", justifyContent: 'center' }}>
-                                <LottieView
-                                    style={{ width: '50%', minWidth: 250, maxWidth: '90%' }}
-                                    autoPlay
-                                    loop
-                                    source={require('../../assets/loading.json')}
-                                />
+                            <BlurView intensity={20} style={{ flex: 1,  }}>
+                                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
+                                    <LottieView
+                                        style={{ width: '50%', minWidth: 250, maxWidth: '90%' }}
+                                        autoPlay
+                                        loop
+                                        source={require('../../assets/loading.json')}
+                                    />
+                                </View>
                             </BlurView>
                         </MotiView>
                     )}

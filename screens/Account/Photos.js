@@ -1,10 +1,10 @@
 import React, { useState, memo } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
 import { Image } from 'expo-image'
-import { COLORS, FONTS, FONT_SIZES, SPACING } from '../../constants'
+import { COLORS, FONTS, FONT_SIZES, SPACING, MAX_PHOTO_SIZE_MB, MAX_VIDEO_SIZE_MB, MAX_VIDEOS, MAX_PHOTOS } from '../../constants'
 import { normalize } from '../../utils'
-import { IconButton, Button } from 'react-native-paper'
-import { Octicons } from '@expo/vector-icons'
+import { IconButton, Button, TouchableRipple } from 'react-native-paper'
+import { Octicons, Ionicons, AntDesign } from '@expo/vector-icons'
 import DropdownSelect from '../../components/DropdownSelect'
 import RenderImageWithActions from '../../components/list/RenderImageWithActions'
 
@@ -77,7 +77,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
         return (
             <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
                 <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
-                    <Image
+                    {data.active[0] ? <><Image
                         style={{
                             aspectRatio: 3 / 4,
                             width: 'auto',
@@ -88,14 +88,26 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                         resizeMode="cover"
                         transition={200}
                     />
-                    <IconButton
-                        style={{ position: 'absolute', top: 2, right: 2, }}
-                        containerColor={COLORS.grey + 'B3'}
-                        icon="pencil-outline"
-                        iconColor='white'
-                        size={normalize(20)}
-                        onPress={() => onEditImagePress(0)}
-                    />
+                        <IconButton
+                            style={{ position: 'absolute', top: 2, right: 2, }}
+                            containerColor={COLORS.grey + 'B3'}
+                            icon="pencil-outline"
+                            iconColor='white'
+                            size={normalize(20)}
+                            onPress={() => onEditImagePress(0)}
+                        />
+                    </>
+                        :
+                        <TouchableRipple
+                            rippleColor={'rgba(255,255,255,.08)'}
+                            onPress={() => onEditImagePress(0)}
+                            style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
+                        >
+                            <>
+                                <AntDesign name="plus" size={normalize(30)} color="white" />
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add</Text>
+                            </>
+                        </TouchableRipple>}
                 </View>
                 <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
                     <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
@@ -197,7 +209,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
         )
     }
 
-    const renderPhotos = (images, actions) => {
+    const renderPhotos = (images, actions, showAddMoreButton = false) => {
 
         return (
             <View style={{ flexDirection: 'row', marginLeft: SPACING.small, marginRight: SPACING.small - SPACING.small, marginBottom: SPACING.small, flexWrap: 'wrap' }}>
@@ -205,6 +217,18 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                     <View key={image ?? Math.random()} style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small }}>
                         <RenderImageWithActions image={image} actions={actions} offsetX={(windowWidth * index) + offsetX}/>
                     </View>)}
+
+                {showAddMoreButton &&
+                    <TouchableRipple
+                        rippleColor={'rgba(255,255,255,.08)'}
+                        onPress={onAddNewImagePress}
+                        style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small, alignItems: 'center', justifyContent: 'center' }}
+                    >
+                        <>
+                            <AntDesign name="plus" size={normalize(30)} color="white" />
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add more</Text>
+                        </>
+                    </TouchableRipple>}
             </View>
         )
     }
@@ -224,7 +248,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                         </Text>
                     </View>
 
-                    <Button
+                    {((data.active.length + data.pending.length) < MAX_PHOTOS) && <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         style={{ height: 'auto' }}
                         mode="outlined"
@@ -233,10 +257,9 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                         rippleColor="rgba(220, 46, 46, .16)"
                     >
                         Add photo
-                    </Button>
+                    </Button>}
                 </View>
 
-               
                 {renderPhotosGrid()}
                 {renderPhotos(data.active.slice(5), activeImageActions)}
             </View>
@@ -250,7 +273,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                 <View style={styles.sectionHeader}>
                     <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
                     <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                        Under review
+                        In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
                         • {data.pending.length}

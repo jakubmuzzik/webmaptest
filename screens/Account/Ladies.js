@@ -131,6 +131,10 @@ const Ladies = ({ route, index, setTabHeight }) => {
 
     const rejectedActions = [
         {
+            label: 'Edit',
+            onPress: onEditLadyPress
+        },
+        {
             label: 'Show rejection reason',
             onPress: onShowRejectedReasonPress
         },
@@ -213,7 +217,7 @@ const Ladies = ({ route, index, setTabHeight }) => {
                 <View style={styles.sectionHeader}>
                     <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
                     <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                        Under review
+                        In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
                         • {data.pending.length}
@@ -230,6 +234,8 @@ const Ladies = ({ route, index, setTabHeight }) => {
             </View>
     )
 
+
+    //TODO - if rejected - users clicks edit, fix the data and then click resubmit for review
     const renderRejected = () => (
         data.rejected.length === 0 ? null :
             <View style={styles.section}>

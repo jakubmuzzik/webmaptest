@@ -15,6 +15,7 @@ import { BlurView } from 'expo-blur'
 import * as ImagePicker from 'expo-image-picker'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import uuid from 'react-native-uuid'
+import { ACTIVE } from '../../../labels'
 
 const MAX_PHOTO_SIZE_MB = 5
 const MAX_VIDEO_SIZE_MB = 10
@@ -98,7 +99,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 }
 
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4()}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
                     if (index > 0 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
@@ -143,7 +144,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4()}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }

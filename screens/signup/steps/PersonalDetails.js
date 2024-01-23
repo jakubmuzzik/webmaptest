@@ -185,6 +185,7 @@ const PersonalDetails = forwardRef((props, ref) => {
                         text={getDateOfBirth()}
                         setText={(text) => onBirthdateChange(text)}
                         errorMessage={showErrors && !data.dateOfBirth ? 'Enter your date of birth' : showErrors && data.dateOfBirth.length !== 8 ? 'Enter a date in DD.MM.YYYY format.' : undefined}
+                        numeric={true}
                     />
                 </View>
 

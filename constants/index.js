@@ -70,6 +70,7 @@ export const COLORS = {
     lightPurple: '#cfbcff',
     purple: '#6152bb',
     darkestBlue: '#05375a',
+    white: '#FFF'
 }
 
 export const FONT_SIZES = {
@@ -103,6 +104,11 @@ export const CURRENCIES = ['CZK', 'EUR']
 export const rem = (number) => {
     return isLargeScreen ? number * 16 : isMediumScreen ? number * 14 : number * 12
 }
+
+export const MAX_PHOTO_SIZE_MB = 5
+export const MAX_VIDEO_SIZE_MB = 10
+export const MAX_VIDEOS = 5
+export const MAX_PHOTOS = 15
 
 export const MOCK_DATA = [
     {
