@@ -1,14 +1,16 @@
-import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { View, Text, useWindowDimensions, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../constants'
 import { ActivityIndicator } from 'react-native-paper'
 import { normalize, stripEmptyParams, getParam } from '../utils'
-import { MotiText, AnimatePresence } from 'moti'
+import { MotiText, AnimatePresence, MotiView } from 'moti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Image } from 'expo-image'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import LadySignup from './signup/LadySignup'
+
+import { Ionicons } from '@expo/vector-icons';
 
 //const Tab = createMaterialTopTabNavigator()
 
@@ -115,19 +117,25 @@ const Account = ({ navigation, route }) => {
         }
     }
 
-    const AccountMessages = () => {
+    const AccountMessages = useCallback(() => {
         if (index !== 0) {
             return null
         }
 
         return (
-            <View style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: -10 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
+            >
                 <View style={{ flexDirection: 'row' }}>
-                    <Image
-                        source={require('../assets/WarningIcon.png')}
-                        style={{ width: normalize(20), height: normalize(20), marginRight: SPACING.small, alignSelf: 'center', flexShrink: 0 }}
-                        resizeMode='contain'
-                    />
+                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{marginRight: SPACING.xx_small}} />
 
                     <View style={{ flexShrink: 1 }}>
                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
@@ -138,9 +146,9 @@ const Account = ({ navigation, route }) => {
                         </Text>
                     </View>
                 </View>
-            </View>
+            </MotiView>
         )
-    }
+    }, [index])
 
     const LadiesMessages = () => {
         if (index !== 1) {
@@ -148,24 +156,30 @@ const Account = ({ navigation, route }) => {
         }
 
         return (
-            <View style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: -10 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
+            >
                 <View style={{ flexDirection: 'row' }}>
-                    <Image
-                        source={require('../assets/WarningIcon.png')}
-                        style={{ width: normalize(20), height: normalize(20), marginRight: SPACING.small, alignSelf: 'center', flexShrink: 0 }}
-                        resizeMode='contain'
-                    />
+                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{marginRight: SPACING.xx_small}} />
 
                     <View style={{ flexShrink: 1 }}>
                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                            Profile is in review
+                            Profile is in review22
                         </Text>
                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
                             All profiles go through a standard review before they become visible.
                         </Text>
                     </View>
                 </View>
-            </View>
+            </MotiView>
         )
     }
 

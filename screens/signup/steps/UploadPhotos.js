@@ -51,8 +51,8 @@ const UploadPhotos = forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
         validate,
         data: JSON.parse(JSON.stringify({
-            images: data.images.filter(image => image),
-            videos: data.videos.filter(video => video)
+            images: data.images.filter(image => image).map((image, index) => ({...image, index})),
+            videos: data.videos.filter(video => video).map((video, index) => ({...video, index})),
         }))
     }))
 

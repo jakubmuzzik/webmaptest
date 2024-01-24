@@ -71,7 +71,6 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             }
 
             if (index === Object.keys(routes).length - 2) {
-                setNextButtonIsLoading(false)
                 setUploading(true)
                 await uploadUser()
             }
@@ -101,7 +100,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
         await sendEmailVerification(response.user)
 
         const imageURLs = await Promise.all([
-            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + '12345' + '/' + image.id))
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id))
         ])
 
         for (let i = 0; i < data.images.length; i++) {
@@ -109,7 +108,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
         }
 
         const videoURLs = await Promise.all([
-            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + '12345' + '/' + video.id + '/video')),
+            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/video')),
         ])
 
         for (let i = 0; i < data.videos.length; i++) {
@@ -117,7 +116,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
         }
 
         const thumbanilURLs = await Promise.all([
-            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + '12345' + '/' + video.id + '/thumbnail')),
+            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/thumbnail')),
         ])
 
         for (let i = 0; i < data.videos.length; i++) {
@@ -289,8 +288,8 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
                                 opacity: 1
                             }}
                         >
-                            <BlurView intensity={20} style={{ flex: 1,  }}>
-                                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
+                            <BlurView intensity={20} style={{ height: '100%', width: '100%' }}>
+                                <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
                                     <LottieView
                                         style={{ width: '50%', minWidth: 250, maxWidth: '90%' }}
                                         autoPlay

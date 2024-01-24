@@ -1,13 +1,16 @@
 import React, { useState, createRef, useEffect, useMemo } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES} from '../../constants'
 import { normalize, stripEmptyParams, getParam } from '../../utils'
 import { ProgressBar, Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
 import { MotiView } from 'moti'
+import LottieView from 'lottie-react-native'
+import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
 import { showToast } from '../../redux/actions'
+import { IN_REVIEW } from '../../labels'
 
 import LoginInformation from './steps/LoginInformation'
 import EstablishmentDetails from './steps/EstablishmentDetails'
@@ -28,6 +31,7 @@ const EstablishmentSignup = ({ showToast }) => {
     }), [searchParams])
 
     const [nextButtonIsLoading, setNextButtonIsLoading] = useState(false)
+    const [uploading, setUploading] = useState(false)
     const [index, setIndex] = useState(0)
     const [contentWidth, setContentWidth] = useState(normalize(800))
 
@@ -58,9 +62,15 @@ const EstablishmentSignup = ({ showToast }) => {
         setNextButtonIsLoading(true)
         try {
             const isValid = await routes[index].ref.current.validate()
-            /*if (isValid) {
-                paginageNext()
-            }*/
+            if (!isValid) {
+                return
+            }
+
+            if (index === Object.keys(routes).length - 2) {
+                setUploading(true)
+                await uploadUser()
+            }
+
             paginageNext()
         } catch(e) {
             console.error(e)
@@ -71,6 +81,89 @@ const EstablishmentSignup = ({ showToast }) => {
         } finally {
             setNextButtonIsLoading(false)
         }
+    }
+
+    const uploadUser = async () => {
+        let data = {}
+        routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
+        data.status = IN_REVIEW
+
+        const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
+
+        delete data.password
+
+        await sendEmailVerification(response.user)
+
+        const imageURLs = await Promise.all([
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id))
+        ])
+
+        for (let i = 0; i < data.images.length; i++) {
+            data.images[i] = {...data.images[i], downloadUrl: imageURLs[i]}
+        }
+
+        const videoURLs = await Promise.all([
+            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/video')),
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], videoDownloadUrl: videoURLs[i] }
+        }
+
+        const thumbanilURLs = await Promise.all([
+            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/thumbnail')),
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
+        }
+
+        const imageBlurhashes = await Promise.all([
+            ...data.images.map(image => encodeImageToBlurhash(image.image))
+        ])
+
+        for (let i = 0; i < data.images.length; i++) {
+            data.images[i] = {...data.images[i], blurhash: imageBlurhashes[i]}
+        }
+
+        const videoThumbnailsBlurhashes = await Promise.all([
+            ...data.videos.map(video => encodeImageToBlurhash(video.thumbnail))
+        ])
+
+        for (let i = 0; i < data.videos.length; i++) {
+            data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
+        }
+
+        data.images.forEach((image) => {
+            delete image.image
+        })
+        
+        data.videos.forEach((video) => {
+            delete video.thumbnail
+            delete video.video
+        })
+
+        const userData = {
+            id: response.user.uid,
+            ...data,
+            nameLowerCase: data.name.toLowerCase(),
+            createdDate: new Date()
+        }
+        await setDoc(doc(db, 'establishments', response.user.uid), userData)
+        updateCurrentUser(userData)
+    }
+
+    const uploadAssetToFirestore = async (assetUri, assetPath) => {
+        const imageRef = ref(storage, assetPath)
+    
+        const response = await fetch(assetUri)
+        const blob = await response.blob()
+
+        const result = await uploadBytes(imageRef, blob)
+
+        const downloadURL = await getDownloadURL(result.ref)
+    
+        return downloadURL
     }
 
     const renderScene = ({ route }) => {
@@ -151,6 +244,29 @@ const EstablishmentSignup = ({ showToast }) => {
                             {index === Object.keys(routes).length - 2 ? 'Sign up' : 'Next'}
                         </Button>
                     </View>}
+
+                    {uploading && (
+                        <MotiView 
+                            style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(80,80,80,0.6)' }}
+                            from={{
+                                opacity: 0,
+                            }}
+                            animate={{
+                                opacity: 1
+                            }}
+                        >
+                            <BlurView intensity={20} style={{ height: '100%', width: '100%' }}>
+                                <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
+                                    <LottieView
+                                        style={{ width: '50%', minWidth: 250, maxWidth: '90%' }}
+                                        autoPlay
+                                        loop
+                                        source={require('../../assets/loading.json')}
+                                    />
+                                </View>
+                            </BlurView>
+                        </MotiView>
+                    )}
                 </View>
             </MotiView>
         </View>

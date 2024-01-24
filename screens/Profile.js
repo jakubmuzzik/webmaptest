@@ -582,6 +582,8 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(255,255,255,.08)',
         backgroundColor: COLORS.grey,
 
+        boxShadow:  '-5px 5px 20px #1d1c20,5px -5px 20px #1d1c20'
+
         /*shadowColor: COLORS.red,
         shadowOffset: {
             width: 0,
