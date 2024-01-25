@@ -27,13 +27,14 @@ const getFileSizeInMb = (uri) => {
 }
 
 const UploadPhotos = forwardRef((props, ref) => {
-    const { i, contentWidth } = props
+    const { i, showToast } = props
 
     const [data, setData] = useState({
         images: [null, null, null, null, null, null],
         videos: [null],
     })
     const [showErrors, setShowErrors] = useState(false)
+    const [contentWidth, setContentWidth] = useState(document.body.clientWidth)
 
     const validate = async () => {
         if (
@@ -198,6 +199,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                 onScroll={scrollHandler} 
                 style={{ flex: 1 }} 
                 contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}
+                onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
             >
                 <Text style={styles.pageHeaderText}>
                     {`${i + 1}. Photos & Videos`}
@@ -382,7 +384,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                     Visitors can explore these photos by clicking the 'View All' button on your profile
                 </Text>
 
-                {data.images.length > 5 && <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
+                <View style={{ flexDirection: 'row', marginLeft: SPACING.x_large, marginRight: SPACING.x_large - SPACING.xxx_small, flexWrap: 'wrap' }}>
                     {data.images.slice(5).map((image, index) =>
                         <View key={image ? image.id : Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {image ?
@@ -392,7 +394,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                                     imageStyle={{ opacity: 0.7, borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, overflow: 'hidden' }}
                                     resizeMode='cover'
                                 >
-                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, }}>
+                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, overflow: 'hidden' }}>
                                         <Image
                                             style={{
                                                 flex: 1,
@@ -426,7 +428,7 @@ const UploadPhotos = forwardRef((props, ref) => {
                                 </TouchableRipple>
                             }
                         </View>)}
-                </View>}
+                </View>
 
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, marginHorizontal: SPACING.x_large, marginTop: SPACING.medium - SPACING.xxx_small, }}>
                     Add videos

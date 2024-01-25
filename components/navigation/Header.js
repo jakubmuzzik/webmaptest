@@ -37,8 +37,10 @@ import { normalize } from '../../utils'
 import Categories from './Categories'
 import Login from '../modal/Login'
 import Signup from '../modal/Signup'
-import { getAuth, signOut } from '../../firebase/config'
+import { getAuth } from '../../firebase/config'
+import { logOut } from '../../redux/actions'
 import { Avatar } from 'react-native-paper'
+import { connect } from 'react-redux'
 
 import { useSearchParams, Link, useLocation, useNavigate } from 'react-router-dom'
 
@@ -46,7 +48,7 @@ const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu', 'NotFound', 'Explore'
 ]
 
-const Header = ({ }) => {
+const Header = ({ logOut }) => {
     const [searchParams] = useSearchParams()
     const location = useLocation()
     const navigate = useNavigate()
@@ -166,7 +168,7 @@ const Header = ({ }) => {
     }
 
     const onLogoutPress = () => {
-        signOut(getAuth())
+        logOut()
     }
 
     const renderUserDropdown = () => {
@@ -526,7 +528,7 @@ const Header = ({ }) => {
     )
 }
 
-export default memo(Header)
+export default connect(null, { logOut })(memo(Header))
 
 const styles = StyleSheet.create({
     headerSmall: {

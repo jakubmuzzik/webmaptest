@@ -17,13 +17,13 @@ import LottieView from 'lottie-react-native'
 import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
-import { showToast, updateCurrentUser } from '../../redux/actions'
+import { showToast, updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
-const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast, updateCurrentUser }) => {
+const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, showToast, updateCurrentUserInRedux, updateLadyInRedux}) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -93,11 +93,13 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
         routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
         data.status = IN_REVIEW
 
-        const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
+        if (independent) {
+            const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
 
-        delete data.password
-
-        await sendEmailVerification(response.user)
+            delete data.password
+    
+            await sendEmailVerification(response.user)
+        }
 
         const imageURLs = await Promise.all([
             ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id))
@@ -123,7 +125,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
         }
 
-        const imageBlurhashes = await Promise.all([
+        /*const imageBlurhashes = await Promise.all([
             ...data.images.map(image => encodeImageToBlurhash(image.image))
         ])
 
@@ -137,7 +139,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
 
         for (let i = 0; i < data.videos.length; i++) {
             data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
-        }
+        }*/
 
         data.images.forEach((image) => {
             delete image.image
@@ -148,14 +150,26 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             delete video.video
         })
 
-        const userData = {
+        const ladyData = {
             id: response.user.uid,
             ...data,
             nameLowerCase: data.name.toLowerCase(),
-            createdDate: new Date()
+            createdDate: new Date(),
+            accountType: 'lady',
+            independent
         }
-        await setDoc(doc(db, 'ladies', response.user.uid), userData)
-        updateCurrentUser(userData)
+
+        if (!independent) {
+            ladyData.establishmentId = getAuth().currentUser.uid
+        }
+
+        await setDoc(doc(db, 'users', response.user.uid), ladyData)
+
+        if (independent) {
+            updateCurrentUserInRedux(ladyData)
+        } else {
+            updateLadyInRedux(ladyData)
+        }
     }
 
     const uploadAssetToFirestore = async (assetUri, assetPath) => {
@@ -207,7 +221,7 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
             case 'address_and_availability':
                 return <LocationAndAvailability ref={route.ref} i={route.index} contentWidth={contentWidth} />
             case 'photos_and_videos':
-                return <UploadPhotos ref={route.ref} i={route.index} showToast={showToast} contentWidth={contentWidth}/>
+                return <UploadPhotos ref={route.ref} i={route.index} showToast={showToast} />
             case 'registration_completed':
                 return <LadyRegistrationCompleted independent={independent} visible={index === routes.length - 1} email={''} />
         }
@@ -306,4 +320,4 @@ const LadySignup = ({ independent, showHeaderText = true, offsetX = 0, showToast
     )
 }
 
-export default connect(null, { showToast, updateCurrentUser })(LadySignup)
+export default connect(null, { showToast, updateCurrentUserInRedux, updateLadyInRedux })(LadySignup)

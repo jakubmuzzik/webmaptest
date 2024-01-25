@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
 import { TouchableRipple, IconButton, HelperText } from 'react-native-paper'
-import { normalize, generateThumbnailFromLocalURI } from '../../../utils'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../../../utils'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import * as ImagePicker from 'expo-image-picker'
@@ -32,13 +32,14 @@ const getFileSizeInMb = (uri) => {
 }
 
 const EstablishmentPhotos = forwardRef((props, ref) => {
-    const { i, contentWidth, offsetX = 0 } = props
+    const { i, offsetX = 0, showToast } = props
 
     const [data, setData] = useState({
         images: [null, null],
         videos: [null],
     })
     const [showErrors, setShowErrors] = useState(false)
+    const [contentWidth, setContentWidth] = useState(document.body.clientWidth)
 
     const validate = async () => {
         if (
@@ -105,6 +106,15 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                     }
                     return { ...d }
                 })
+
+                /*setTimeout(async () => {
+                    const blur = await encodeImageToBlurhash(result.assets[0].uri)
+                    console.log(blur)
+                    setData(d => {
+                        d.images[index] = {...d.images[index], blurhash: blur}
+                        return { ...d }
+                    })
+                })*/
             } catch (e) {
                 console.error(e)
             }
@@ -198,7 +208,13 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 <Animated.Text style={modalHeaderTextStyles}>{`${i + 1}. Photos & Videos`}</Animated.Text>
             </View>
             <Animated.View style={[styles.modal__shadowHeader, modalHeaderTextStyles]} />
-            <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}>
+            <Animated.ScrollView 
+                scrollEventThrottle={1} 
+                onScroll={scrollHandler} 
+                style={{ flex: 1 }} 
+                contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}
+                onContentSizeChange={(contentWidth) => setContentWidth(contentWidth)}
+            >
                 <Text style={styles.pageHeaderText}>
                     {`${i + 1}. Photos & Videos`}
                 </Text>
@@ -260,11 +276,11 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                             {image ?
                                 <ImageBackground
                                     source={{ uri: image }}
-                                    style={StyleSheet.absoluteFillObject}
+                                    style={{ flex: 1 }}
                                     imageStyle={{ opacity: 0.7, borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, overflow: 'hidden' }}
                                     resizeMode='cover'
                                 >
-                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, }}>
+                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1,  overflow: 'hidden'  }}>
                                         <Image
                                             style={{
                                                 flex: 1,

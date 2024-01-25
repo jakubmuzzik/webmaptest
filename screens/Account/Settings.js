@@ -5,10 +5,9 @@ import { MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 import { Button, Tooltip, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
-import { showToast } from '../../redux/actions'
+import { showToast, logOut } from '../../redux/actions'
 
 import {
-    signOut,
     getAuth,
   } from '../../firebase/config'
 
@@ -16,7 +15,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = ({ setTabHeight, showToast }) => {
+const Settings = ({ setTabHeight, showToast, logOut }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -27,7 +26,7 @@ const Settings = ({ setTabHeight, showToast }) => {
     const [deleteAccountVisible, setDeleteAccountVisible] = useState(false)
 
     const onLogoutPress = () => {
-        signOut(getAuth())
+        logOut()
     }
 
     const onNameEditPress = () => {
@@ -119,7 +118,7 @@ const Settings = ({ setTabHeight, showToast }) => {
     )
 }
 
-export default connect(null, { showToast })(memo(Settings))
+export default connect(null, { showToast, logOut })(memo(Settings))
 
 const styles = StyleSheet.create({
     container: {

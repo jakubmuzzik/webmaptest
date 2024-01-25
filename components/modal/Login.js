@@ -23,7 +23,7 @@ import {
 import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
-import { showToast } from '../../redux/actions'
+import { showToast, fetchUser } from '../../redux/actions'
 import { connect } from 'react-redux'
 
 import Toast from '../Toast'
@@ -41,7 +41,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
+const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const location = useLocation()
@@ -166,6 +166,8 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
             updateDoc(doc(db, 'users', getAuth().currentUser.uid), {
                 email
             })
+            fetchUser()
+
             closeModal()
 
             if (params.language) {
@@ -175,7 +177,7 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
             navigate(from, {
                 replace: true
             })
-        } catch(error) {
+        } catch(error) { 
             if (error.code?.includes('auth')) {
                 toastRef.current.show({
                     type: 'error',
@@ -411,7 +413,7 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
     )
 }
 
-export default connect(null, { showToast })(memo(Login))
+export default connect(null, { showToast, fetchUser })(memo(Login))
 
 const styles = StyleSheet.create({
     modal__header: {

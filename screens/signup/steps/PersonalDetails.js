@@ -53,6 +53,7 @@ const PersonalDetails = forwardRef((props, ref) => {
         if (
             !data.name 
             || !data.dateOfBirth 
+            || data.dateOfBirth.length !== 8
             || !data.nationality 
             || !data.languages.length 
             || !data.height 

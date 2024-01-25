@@ -57,19 +57,19 @@ const LocationAndAvailability = forwardRef((props, ref) => {
                 let hours = parseInt(setup.from.split(':')[0], 10)
                 let minutes = parseInt(setup.from.split(':')[1], 10)
 
-                if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                if (hours >= 0 && hours <= 24 && minutes >= 0 && minutes <= 59) {
                     setup.invalidFrom = false
                 } else {
-                    setup.invalidFrom = 'Hours must be between 0 and 23, and minutes between 0 and 59.'
+                    setup.invalidFrom = 'Hours must be between 0 and 24, and minutes between 0 and 59.'
                 }
 
                 hours = parseInt(setup.until.split(':')[0], 10)
                 minutes = parseInt(setup.until.split(':')[1], 10)
 
-                if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                if (hours >= 0 && hours <= 24 && minutes >= 0 && minutes <= 59) {
                     setup.invalidUntil = false
                 } else {
-                    setup.invalidUntil = 'Hours must be between 0 and 23, and minutes between 0 and 59.'
+                    setup.invalidUntil = 'Hours must be between 0 and 24, and minutes between 0 and 59.'
                 }
             } catch (e) {
                 console.error(e)

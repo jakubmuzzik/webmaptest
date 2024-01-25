@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, useMemo } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Animated, {
     Extrapolation,
@@ -7,12 +7,22 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated'
-import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
-import { normalize } from '../../../utils'
+import { COLORS, SPACING, FONTS, FONT_SIZES, SUPPORTED_LANGUAGES } from '../../../constants'
+import { normalize, getParam, stripEmptyParams } from '../../../utils'
 import { Image } from 'expo-image'
 import { MotiView } from 'moti'
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import { Button } from 'react-native-paper'
+import LottieView from 'lottie-react-native'
 
 const EstablishmentRegistrationCompleted = ({ visible, email }) => {
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
+
     const scrollY = useSharedValue(0)
 
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -27,6 +37,13 @@ const EstablishmentRegistrationCompleted = ({ visible, email }) => {
         }
     })
 
+    const onContinuePress = () => {
+        navigate({
+            pathname: '/account',
+            search: new URLSearchParams(stripEmptyParams({ language: params.language })).toString()
+        })
+    }
+
     return (
         <>
             <View style={styles.modal__header}>
@@ -39,42 +56,55 @@ const EstablishmentRegistrationCompleted = ({ visible, email }) => {
                 style={{ flex: 1 }}
                 contentContainerStyle={{ paddingBottom: SPACING.small, paddingTop: SPACING.xxxxx_large }}
             >
-                <Text style={styles.pageHeaderText}>
-                    Registration completed
-                </Text>
-
-                <View style={{ height: 100, width: 100, marginVertical: SPACING.medium, alignSelf: 'center' }}>
-                    {visible && <MotiView
-                        style={{ flex: 1,  }}
-                        from={{
-                            transform: [{ scale: 0 }]
-                        }}
-                        animate={{
-                            transform: [{ scale: 1 }],
-                        }}
-                        transition={{
-                            delay: 50,
-                        }}
-                    >
-                        <Image
-                            resizeMode='contain'
-                            source={require('../../../assets/completed.svg')}
-                            style={{ width: '100%', height: '100%' }}
-                        />
-                    </MotiView>}
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: SPACING.x_large, }}>
+                    <Text style={styles.pageHeaderText}>
+                        Registration completed
+                    </Text>
+                    <Image
+                        resizeMode='contain'
+                        source={require('../../../assets/completed.svg')}
+                        style={{ width: FONT_SIZES.h3, height: FONT_SIZES.h3, marginLeft: SPACING.xx_small }}
+                    />
                 </View>
 
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.small }}>
-                    Your Establishment has been submitted for review!
+                {visible && <MotiView
+                    style={{ flex: 1 }}
+                    from={{
+                        transform: [{ scale: 0 }]
+                    }}
+                    animate={{
+                        transform: [{ scale: 1 }],
+                    }}
+                    transition={{
+                        delay: 50,
+                    }}
+                >
+                    <LottieView
+                        style={{ width: 150, alignSelf: 'center' }}
+                        autoPlay
+                        loop
+                        source={require('../../../assets/verifying.json')}
+                    />
+                </MotiView>}
+
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginBottom: SPACING.xx_small }}>
+                    Your establishment has been submitted for review!
                 </Text>
 
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center' }}>
-                    Our team will review your establishment shortly, and once approved, you'll receive a confirmation email to: {email}
+                    All profiles go through a review before they become visible. As soon as we will review it, you will receive a confirmation email.
                 </Text>
 
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.x_large, textAlign: 'center', marginTop: SPACING.xx_small }}>
-                    In the meantime you can log in and start adding your profiles of your ladies.
-                </Text>
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ marginTop: SPACING.large, borderRadius: 10, width: 200, alignSelf: 'center' }}
+                    buttonColor={COLORS.red}
+                    rippleColor="rgba(220, 46, 46, .16)"
+                    mode="contained"
+                    onPress={onContinuePress}
+                >
+                    Continue
+                </Button>
             </Animated.ScrollView>
         </>
     )
@@ -87,8 +117,7 @@ const styles = StyleSheet.create({
         //color: '#FFF', 
         fontFamily: FONTS.bold,
         fontSize: FONT_SIZES.h3,
-        marginHorizontal: SPACING.x_large,
-        marginBottom: SPACING.small,
+        //marginBottom: SPACING.small,
         textAlign: 'center'
     },
     modal__header: {

@@ -36,7 +36,6 @@ const auth = getAuth()
 
 const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
-    const [userVerified, setUserVerified] = useState(null)
 
     const toastRef = useRef()
     const hasLoadedRef = useRef(false)
@@ -53,17 +52,17 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
-                setUserVerified(false)
+                //setUserVerified(false)
 
                 if (hasLoadedRef.current) {
                     toastRef.current?.show({
                         type: 'success',
                         text: 'Successfully logged out.'
                     })
-                }                
+                }
             } else if (!user.emailVerified) {
                 setIsLoggedIn(true)
-                setUserVerified(false)
+                //setUserVerified(false)
             } else {
                 if (hasLoadedRef.current) {
                     toastRef.current?.show({
@@ -73,7 +72,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                 }
 
                 setIsLoggedIn(true)
-                setUserVerified(true)
+                //setUserVerified(true)
             }
 
             hasLoadedRef.current = true
@@ -92,7 +91,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
             language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
         }
 
-        if (isLoggedIn && !userVerified && location.pathname !== '/verify-email') {
+        const isVerified = getAuth()?.currentUser?.emailVerified
+
+        if (isLoggedIn && !isVerified && location.pathname !== '/verify-email') {
             let to = '/verify-email'
             //need to hardcode => search param on Navigate component didn't work
             if (params.language) {
@@ -111,9 +112,9 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
         }
 
         return children
-    }, [isLoggedIn, userVerified])
+    }, [isLoggedIn])
 
-    const ProhibitsAuth = useCallback(({ children }) => {
+    /*const ProhibitsAuth = useCallback(({ children }) => {
         const [searchParams] = useSearchParams()
 
         const params = {
@@ -131,7 +132,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
         }
 
         return children
-    }, [isLoggedIn])
+    }, [isLoggedIn])*/
 
     const Redirect = ({ replace, to }) => {
         const [searchParams] = useSearchParams()
@@ -198,7 +199,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
             </Route>
 
             <Route path='/lady-signup' element={
-                <ProhibitsAuth>
+                <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
@@ -206,11 +207,11 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <LadySignup independent/>
                     </View>
-                </ProhibitsAuth>
+                </>
             } />
 
             <Route path='/establishment-signup' element={
-                <ProhibitsAuth>
+                <>
                     <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
                         <Header />
                     </View>
@@ -218,7 +219,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <EstablishmentSignup />
                     </View>
-                </ProhibitsAuth>
+                </>
             } />
 
             <Route path='/auth' element={
@@ -258,7 +259,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
         }
     })
 
-    if (isLoggedIn == null || userVerified == null) {
+    if (isLoggedIn == null) {
         return null
     }
 
