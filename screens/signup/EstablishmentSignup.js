@@ -60,31 +60,68 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
         }
 
         setNextButtonIsLoading(true)
+
         try {
             const isValid = await routes[index].ref.current.validate()
             if (!isValid) {
+                setNextButtonIsLoading(false)
                 return
             }
 
-            if (index === Object.keys(routes).length - 2) {
-                setUploading(true)
-                await uploadUser()
+            if (index !== Object.keys(routes).length - 2) {
+                setNextButtonIsLoading(false)
+                paginageNext()
+                return
             }
-
-            paginageNext()
         } catch(e) {
             console.error(e)
             showToast({
                 type: 'error',
-                text: 'Your data could not be processed.'
+                text: 'Data could not be processed.'
             })
-        } finally {
+            setNextButtonIsLoading(false)
+        }
+
+        let data
+        setUploading(true)
+
+        //upload user data before uploading assets
+        try {
+            data = await uploadUserData()
+        } catch(e) {
+            console.error(e)
+            showToast({
+                type: 'error',
+                text: 'Data could not be processed.'
+            })
             setNextButtonIsLoading(false)
             setUploading(false)
+
+            return
+        }        
+
+        //upload user assets
+        try {
+            await uploadUserAssets(data)
+        } catch(e) {
+            console.error(e)
+            showToast({
+                type: 'error',
+                text: 'Assets could not be uploaded.'
+            })
+
+            data.images = []
+            data.videos = []
+        } finally {
+            updateCurrentUserInRedux(data)
+
+            setNextButtonIsLoading(false)
+            setUploading(false)
+            paginageNext()
         }
     }
 
-    const uploadUser = async () => {
+    const uploadUserData = async () => {
         let data = {}
         routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
         data.status = IN_REVIEW
@@ -95,28 +132,36 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
 
         await sendEmailVerification(response.user)
 
+        data = {
+            ...data,
+            id: getAuth().currentUser.uid,
+            nameLowerCase: data.name.toLowerCase(),
+            createdDate: new Date(),
+            accountType: 'establishment'
+        }
+
+        //extract assets before uploading
+        const images = data.images
+        const videos = data.videos
+        data.images = []
+        data.videos = []
+
+        await setDoc(doc(db, 'users', data.id), data)
+
+        //put assets back for further processing
+        data.images = images
+        data.videos = videos
+
+        return data
+    }
+
+    const uploadUserAssets = async (data) => {
         let urls = await Promise.all([
-            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id)),
-            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/video')),
-            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/thumbnail')),
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + data.id + '/' + image.id)),
+            ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + data.id + '/' + video.id + '/video')),
+            ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + data.id + '/' + video.id + '/thumbnail')),
         ])
 
-        const imageURLs = urls.splice(0, data.images.length)
-        const videoURLs = urls.splice(0, data.videos.length)
-        const thumbanilURLs = urls.splice(0, data.videos.length)
-
-        data.images.forEach((image, index) => {
-            delete image.image
-            image.videoURLs = videoURLs[index]
-        })
-
-        data.videos.forEach((video, index) => {
-            delete video.video
-            delete video.thumbnail
-
-            video.downloadUrl = imageURLs[index]
-            video.thumbnailDownloadUrl = thumbanilURLs[index]
-        })
         /*const imageBlurhashes = await Promise.all([
             ...data.images.map(image => encodeImageToBlurhash(image.image))
         ])
@@ -133,17 +178,24 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
             data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
         }*/
 
-        data = {
-            ...data,
-            id: getAuth().currentUser.uid,
-            nameLowerCase: data.name.toLowerCase(),
-            createdDate: new Date(),
-            accountType: 'establishment'
-        }
-        
+        const imageURLs = urls.splice(0, data.images.length)
+        const videoURLs = urls.splice(0, data.videos.length)
+        const thumbanilURLs = urls.splice(0, data.videos.length)
+
+        data.images.forEach((image, index) => {
+            delete image.image
+            image.videoURLs = imageURLs[index]
+        })
+
+        data.videos.forEach((video, index) => {
+            delete video.video
+            delete video.thumbnail
+
+            video.downloadUrl = videoURLs[index]
+            video.thumbnailDownloadUrl = thumbanilURLs[index]
+        })
+
         await setDoc(doc(db, 'users', data.id), data)
-        
-        updateCurrentUserInRedux(data)
     }
 
     const uploadAssetToFirestore = async (assetUri, assetPath) => {

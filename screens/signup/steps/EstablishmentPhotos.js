@@ -275,19 +275,16 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                         <View key={image ? image.id : Math.random()} style={{ width: ((contentWidth - (SPACING.x_large * 2) - (SPACING.xxx_small * 2)) / 3), marginRight: SPACING.xxx_small, marginBottom: SPACING.xxx_small }}>
                             {image ?
                                 <ImageBackground
-                                    source={{ uri: image }}
+                                    source={{ uri: image.image }}
                                     style={{ flex: 1 }}
                                     imageStyle={{ opacity: 0.7, borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, overflow: 'hidden' }}
                                     resizeMode='cover'
                                 >
-                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1,  overflow: 'hidden'  }}>
+                                    <BlurView intensity={50} style={{ borderRadius: 10, borderColor: 'rgba(28,27,31,0.16)', borderWidth: 1, overflow: 'hidden' }}>
                                         <Image
                                             style={{
                                                 flex: 1,
-                                                borderRadius: 10,
                                                 aspectRatio: 1 / 1,
-                                                borderWidth: 1,
-                                                borderColor: 'rgba(28,27,31,0.16)'
                                             }}
                                             source={{ uri: image.image }}
                                             resizeMode="contain"
