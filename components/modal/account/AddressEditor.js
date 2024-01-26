@@ -50,6 +50,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedAddress(address)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -97,7 +98,6 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedAddress(address)
         setIndex(0)
     }
 

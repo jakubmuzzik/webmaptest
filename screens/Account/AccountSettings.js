@@ -13,7 +13,7 @@ import Settings from './Settings'
 import Ladies from './Ladies'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 
-const AccountSettings = ({ }) => {
+const AccountSettings = ({ currentUser, ladies }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -71,7 +71,7 @@ const AccountSettings = ({ }) => {
             case 'profile-information':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <PersonalDetails setTabHeight={(height) => setTabHeight(height, route.index)} />
+                        <PersonalDetails userData={currentUser} setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             case 'ladies':

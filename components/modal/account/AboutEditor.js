@@ -21,13 +21,19 @@ import {
     DEFAULT_LANGUAGE
 } from '../../../constants'
 
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
 import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const AboutEditor = ({ visible, setVisible, about, showToast }) => {
+const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userId }) => {
     const [isSaving, setIsSaving] = useState(false)
-    const [showErrorMessage, setShowErrorMEssage] = useState(false)
+    const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedAbout, setChangedAbout] = useState(about)
 
     useEffect(() => {
@@ -35,6 +41,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedAbout(about)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -63,14 +70,25 @@ const AboutEditor = ({ visible, setVisible, about, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedAbout(about)
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
+        if (
+            !changedAbout
+        ) {
+            setShowErrorMessage(true)
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {description: changedAbout})
+
             closeModal()
 
             showToast({
@@ -78,7 +96,16 @@ const AboutEditor = ({ visible, setVisible, about, showToast }) => {
                 headerText: 'Success!',
                 text: 'Description was changed successfully.'
             })
-        }, 1000)
+
+            updateRedux({description: changedAbout})
+        } catch(e) {
+            showToast({
+                type: 'error',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {

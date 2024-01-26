@@ -45,6 +45,11 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setData({
+                newEmail: '',
+                password: '',
+                secureTextEntry: true
+            })
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -73,11 +78,6 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setData({
-            newEmail: '',
-            password: '',
-            secureTextEntry: true
-        })
     }
 
     const reauthenticate = async () => {

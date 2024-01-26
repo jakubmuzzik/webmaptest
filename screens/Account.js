@@ -7,32 +7,34 @@ import { MotiText, AnimatePresence, MotiView } from 'moti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Image } from 'expo-image'
 
+import { connect } from 'react-redux'
+
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import LadySignup from './signup/LadySignup'
 
-import { Ionicons } from '@expo/vector-icons';
-
-//const Tab = createMaterialTopTabNavigator()
+import { Ionicons } from '@expo/vector-icons'
 
 import AccountSettings from './account/AccountSettings'
 import EditLady from './account/EditLady'
+
+import ContentLoader, { Rect } from "react-content-loader/native"
 
 //todo - create texts for each account statuses 
 //could be a status - Profile was not approved.. fix the following data: list of wrong data
 //and then a button to re-submit a profile for a review after fixing the data
 const ACCOUNT_MESSAGES = {
-    'in_review' : [
+    'in_review': [
         'Profile is in review',
         'All profiles go through a standard review before they become visible.'
     ],
-    'rejected_cover_photos' : [
+    'rejected_cover_photos': [
         'Missing cover photos',
         'All cover photos must be added and approved before your profile becomes visible.'
     ]
 }
 
 const ESTABLISHMENT_LADIES_MESSAGES = {
-    'rejected_cover_photos' : [
+    'rejected_cover_photos': [
         'Missing cover photos',
         'All cover photos must be added and approved before your profile becomes visible.'
     ]
@@ -41,7 +43,7 @@ const ESTABLISHMENT_LADIES_MESSAGES = {
 
 const { height: initialHeight } = Dimensions.get('window')
 
-const Account = ({ navigation, route }) => {
+const Account = ({ navigation, route, currentUser, ladies }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -97,13 +99,13 @@ const Account = ({ navigation, route }) => {
             case 'account':
                 return (
                     <View style={{ marginTop: SPACING.large }}>
-                        <AccountSettings />
+                        <AccountSettings currentUser={currentUser} ladies={ladies} />
                     </View>
                 )
             case 'edit_lady':
                 return (
                     <View style={{ marginTop: SPACING.large }}>
-                        <EditLady offsetX={windowWidth * route.index}/>
+                        <EditLady offsetX={windowWidth * route.index} />
                     </View>
                 )
             case 'add_lady':
@@ -135,7 +137,7 @@ const Account = ({ navigation, route }) => {
                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{marginRight: SPACING.xx_small}} />
+                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
 
                     <View style={{ flexShrink: 1 }}>
                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
@@ -168,7 +170,7 @@ const Account = ({ navigation, route }) => {
                 style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
             >
                 <View style={{ flexDirection: 'row' }}>
-                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{marginRight: SPACING.xx_small}} />
+                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
 
                     <View style={{ flexShrink: 1 }}>
                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
@@ -183,60 +185,110 @@ const Account = ({ navigation, route }) => {
         )
     }
 
+    const SkeletonLoader = () => (
+        <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
+            <ContentLoader
+                speed={2}
+                height={35}
+                style={{ marginHorizontal: SPACING.large, borderRadius: 5, justifyContent: 'space-between' }}
+                backgroundColor={COLORS.grey}
+                foregroundColor={COLORS.lightGrey}
+            >
+                <Rect x="0" y="0" rx="0" ry="0" width="21.25%" height={35} />
+                <Rect x="26.25%" y="0" rx="0" ry="0" width="21.25%" height={35} />
+                <Rect x="52.5%" y="0" rx="0" ry="0" width="21.25%" height={35} />
+                <Rect x="78.75%" y="0" rx="0" ry="0" width="21.25%" height={35} />
+            </ContentLoader>
+
+            <ContentLoader
+                speed={2}
+                height={200}
+                style={{ marginHorizontal: SPACING.large, marginTop: SPACING.x_large, borderRadius: 20 }}
+                backgroundColor={COLORS.grey}
+                foregroundColor={COLORS.lightGrey}
+            >
+                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={200} />
+            </ContentLoader>
+
+            <ContentLoader
+                speed={2}
+                height={200}
+                style={{ marginHorizontal: SPACING.large, marginTop: SPACING.medium, borderRadius: 20 }}
+                backgroundColor={COLORS.grey}
+                foregroundColor={COLORS.lightGrey}
+            >
+                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={200} />
+            </ContentLoader>
+        </View>
+    )
+
     return (
-        <View style={{ backgroundColor: COLORS.lightBlack, height: routes[index].key === 'add_lady' ? initialHeight - normalize(70) :  '100%' }}>
+        <View style={{ backgroundColor: COLORS.lightBlack, height: routes[index].key === 'add_lady' ? initialHeight - normalize(70) : '100%' }}>
             <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginTop: SPACING.small, paddingHorizontal: SPACING.medium }}>
                 <View style={{ flexDirection: 'row' }}>
-                    <Text 
-                        onPress={index !== 0 ? onGoBackPress : undefined} 
+                    <Text
+                        onPress={index !== 0 ? onGoBackPress : undefined}
                         style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textDecorationLine: index !== 0 ? 'underline' : 'none' }}
                     >
                         Account
                     </Text>
 
                     <AnimatePresence>
-                    { index !== 0 &&
-                   
-                        <MotiText 
-                            style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF' }}
-                            from={{
-                                opacity: 0,
-                                transform: [{ translatex: 100 }],
-                            }}
-                            animate={{
-                                opacity: 1,
-                                transform: [{ translatex: 0 }],
-                            }}
-                            exit={{
-                                opacity: 0,
-                                transform: [{ translatex: 100 }],
-                            }}
-                            transition={{
-                                type: 'timing'
-                            }}
-                        >
-                            {` > ${routes[index].title}`}
-                        </MotiText>
-                    }
+                        {index !== 0 &&
+
+                            <MotiText
+                                style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF' }}
+                                from={{
+                                    opacity: 0,
+                                    transform: [{ translatex: 100 }],
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    transform: [{ translatex: 0 }],
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    transform: [{ translatex: 100 }],
+                                }}
+                                transition={{
+                                    type: 'timing'
+                                }}
+                            >
+                                {` > ${routes[index].title}`}
+                            </MotiText>
+                        }
                     </AnimatePresence>
                 </View>
 
-                <AccountMessages />
-                <LadiesMessages />
+                {Object.keys(currentUser).length > 0 && (
+                    <>
+                        <AccountMessages />
+                        <LadiesMessages />
+                    </>
+                )}
             </View>
 
-            <TabView
-                renderTabBar={props => null}
-                swipeEnabled={false}
-                navigationState={{ index, routes }}
-                renderScene={renderPagesScene}
-                onIndexChange={setIndex}
-                //lazy
-                //renderLazyPlaceholder={renderLazyPlaceholder}
-                initialLayout={{ width: Dimensions.get('window').width }}
-            />
+            {Object.keys(currentUser).length === 0 && <SkeletonLoader />}
+
+            {Object.keys(currentUser).length > 0 && (
+                <TabView
+                    renderTabBar={props => null}
+                    swipeEnabled={false}
+                    navigationState={{ index, routes }}
+                    renderScene={renderPagesScene}
+                    onIndexChange={setIndex}
+                    //lazy
+                    //renderLazyPlaceholder={renderLazyPlaceholder}
+                    initialLayout={{ width: Dimensions.get('window').width }}
+                />
+            )}
         </View>
     )
 }
 
-export default Account
+const mapStateToProps = (store) => ({
+    currentUser: store.userState.currentUser,
+    ladies: store.userState.ladies
+})
+
+export default connect(mapStateToProps)(Account)

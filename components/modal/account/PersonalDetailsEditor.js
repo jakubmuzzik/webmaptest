@@ -52,6 +52,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedPersonalDetails(personalDetails)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -79,7 +80,6 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedPersonalDetails(personalDetails)
         setIsChanged(false)
     }
 

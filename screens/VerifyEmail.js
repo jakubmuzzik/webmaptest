@@ -4,12 +4,11 @@ import { Button } from "react-native-paper"
 import { COLORS, SPACING, FONTS, FONT_SIZES, SUPPORTED_LANGUAGES } from "../constants"
 import { normalize, getParam, stripEmptyParams } from "../utils"
 import { getAuth, reload, updateDoc, doc, sendEmailVerification, db } from "../firebase/config"
-import { Image } from "expo-image"
-import { MotiView } from "moti"
 import { showToast } from "../redux/actions"
 import { connect } from "react-redux"
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom"
 import EmailEditor from "../components/modal/account/EmailEditor"
+import LottieView from 'lottie-react-native'
 
 const VerifyEmail = ({ showToast }) => {
     const [searchParams] = useSearchParams()
@@ -98,24 +97,14 @@ const VerifyEmail = ({ showToast }) => {
     return (
         <>
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.large, width: normalize(500), maxWidth: '100%', alignSelf: 'center' }}>
-                <MotiView
-                    from={{
-                        transform: [{ scale: 0 }],
-                        opacity: 0.5
-                    }}
-                    animate={{
-                        transform: [{ scale: 1 }],
-                        opacity: 1
-                    }}
-                >
-                    <Image
-                        resizeMode='contain'
-                        source={require('../assets/mail.svg')}
-                        style={{ width: 130, height: 130 }}
-                    />
-                </MotiView>
+                <LottieView
+                    style={{  height: 130 }}
+                    autoPlay
+                    loop
+                    source={require('../assets/mail-verification.json')}
+                />
 
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center', marginTop: SPACING.medium }}>Verify your email</Text>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center', marginTop: SPACING.x_large }}>Verify your email</Text>
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, paddingTop: SPACING.small, color: COLORS.greyText, textAlign: 'center' }}>
                     We have sent a confirmation mail to
                     <Text style={{ color: '#FFF' }}> {getAuth().currentUser.email}</Text>.

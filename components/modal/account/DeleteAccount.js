@@ -42,6 +42,11 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setData({
+                password: '',
+                secureTextEntry: true,
+                confirmDelete: false
+            })
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -70,11 +75,6 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setData({
-            password: '',
-            secureTextEntry: true,
-            confirmDelete: false
-        })
     }
 
     const onDeletePress = async () => {

@@ -47,6 +47,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedServices(services)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -75,7 +76,6 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedServices(services)
         setIsChanged(false)
     }
 

@@ -22,12 +22,17 @@ import {
 } from '../../../constants'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
 import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const ContactInformationEditor = ({ visible, setVisible, contactInformation, showToast }) => {
-
+const ContactInformationEditor = ({ visible, setVisible, contactInformation, showToast, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedContactInformation, setChangedContactInformation] = useState(contactInformation)
@@ -37,6 +42,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedContactInformation(contactInformation)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -65,14 +71,26 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedContactInformation(contactInformation)
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
+        if (
+            !changedContactInformation.name
+            || !changedContactInformation.phone
+        ) {
+            setShowErrorMessage(true)
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {...changedContactInformation})
+
             closeModal()
 
             showToast({
@@ -80,7 +98,17 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
                 headerText: 'Success!',
                 text: 'Contact Information was changed successfully.'
             })
-        }, 1000)
+
+            updateRedux(changedContactInformation)
+        } catch(e) {
+            showToast({
+                type: 'error',
+                //headerText: 'Success!',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -95,6 +123,14 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
             transform: [{ translateY: translateY.value }]
         }
     })
+
+    const onNameChange = (value) => {
+        setChangedContactInformation(data => ({
+            ...data,
+            name: value,
+            nameLowerCase: value.toLowerCase()
+        }))
+    }
 
     const onValueChange = (value, attribute) => {
         setChangedContactInformation(data => ({
@@ -144,7 +180,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
                                     labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
                                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                                     text={changedContactInformation.name}
-                                    setText={(text) => onValueChange(text, 'name')}
+                                    setText={(text) => onNameChange(text)}
                                     leftIconName="badge-account-outline"
                                     errorMessage={showErrorMessage && !changedContactInformation.name ? 'Enter your Name' : undefined}
                                 />

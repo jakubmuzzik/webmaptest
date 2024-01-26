@@ -41,6 +41,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedPricing(pricing)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -72,7 +73,6 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedPricing(pricing)
         setIsChanged(false)
     }
 

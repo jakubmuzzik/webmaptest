@@ -23,7 +23,7 @@ import {
 import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
-import { showToast, fetchUser } from '../../redux/actions'
+import { showToast } from '../../redux/actions'
 import { connect } from 'react-redux'
 
 import Toast from '../Toast'
@@ -41,7 +41,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => {
+const Login = ({ visible, setVisible, onSignUpPress, showToast }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const location = useLocation()
@@ -166,7 +166,6 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
             updateDoc(doc(db, 'users', getAuth().currentUser.uid), {
                 email
             })
-            fetchUser()
 
             closeModal()
 
@@ -413,7 +412,7 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
     )
 }
 
-export default connect(null, { showToast, fetchUser })(memo(Login))
+export default connect(null, { showToast })(memo(Login))
 
 const styles = StyleSheet.create({
     modal__header: {

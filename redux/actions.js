@@ -23,11 +23,13 @@ export const showToast = (toastData) => ({
     toastData
 })
 
+//either independent lady or establishemtn
 export const updateCurrentUserInRedux = (data) => ({
     type: USER_STATE_CHANGE,
     data
 })
 
+//lady under establishment
 export const updateLadyInRedux = (data) => (dispatch, getState) => {
     let ladies = JSON.parse(JSON.stringify(getState().userState.ladies))
 
@@ -51,7 +53,7 @@ export const fetchUser = () => (dispatch, getState) => {
     return getDoc(doc(db, 'users', getAuth().currentUser.uid))
         .then((snapshot) => {
             if (snapshot.exists()) {
-                dispatch({ type: USER_STATE_CHANGE, currentUser: snapshot.data() })
+                dispatch({ type: USER_STATE_CHANGE, data: snapshot.data() })
             } else {
                 dispatch(logOut())
             }

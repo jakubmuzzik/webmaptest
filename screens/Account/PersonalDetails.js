@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
-import { SPACING, FONTS, FONT_SIZES, COLORS, SMALL_SCREEN_THRESHOLD } from '../../constants'
+import { SPACING, FONTS, FONT_SIZES, COLORS, SMALL_SCREEN_THRESHOLD, CURRENCY_SYMBOLS } from '../../constants'
 import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, FontAwesome5, EvilIcons } from '@expo/vector-icons'
-import { normalize } from '../../utils'
+import { normalize, calculateAgeFromDate } from '../../utils'
 
 import { connect } from 'react-redux'
 
@@ -21,87 +21,55 @@ import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEdito
 import AddressEditor from '../../components/modal/account/AddressEditor'
 import ContactInformationEditor from '../../components/modal/account/ContactInformationEditor'
 
-import { showToast } from '../../redux/actions'
+import { showToast, updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
+
+import {
+    getAuth
+  } from '../../firebase/config'
 
 const LOCATION_LATITUDE_DELTA = 0.9735111002971948 // default value just for map init -> later is used minLatitudeDelta.current
 const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km 
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ setTabHeight, showToast }) => {
+const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserInRedux, updateLadyInRedux }) => {
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
 
-    const [data, setData] = useState({
-        gender: '',
-        name: 'Jakub Muzik',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        secureTextEntry: true,
-        confirmSecureTextEntry: true,
-        nationality: '',
-        languages: [],
-        hairColor: '',
-        eyeColor: '',
-        breastSize: '',
-        breastType: '',
-        bodyType: '',
-        pubicHair: '',
-        weight: '',
-        height: '',
-        dateOfBirth: '',
-        sexuality: '',
-        services: [],
-        currency: 'CZK',
-        prices: [], //{length: 1, incall: '', outcall: ''}
-        incall: true,
-        outcall: true,
-        phone: '+420 732 710 244',
-        viber: false,
-        whatsapp: false,
-        telegram: false,
-        address: {title: 'Thamova 681/32 Karlin'},
-        hiddenAddress: false,
-        description: 'mock description',
-        workingHours: [{ day: 'monday', from: '', until: '', enabled: true }, { day: 'tuesday', from: '', until: '', enabled: true }, { day: 'wednesday', from: '', until: '', enabled: true }, { day: 'thursday', from: '', until: '', enabled: true }, { day: 'friday', from: '', until: '', enabled: true }, { day: 'saturday', from: '', until: '', enabled: true }, { day: 'sunday', from: '', until: '', enabled: true }],
-        images: [null, null, null, null, null, null]
-    })
-
     const personalDetails = useMemo(() => ({
-        nationality: data.nationality,
-        languages: data.languages,
-        hairColor: data.hairColor,
-        eyeColor: data.eyeColor,
-        breastSize: data.breastSize,
-        breastType: data.breastType,
-        bodyType: data.bodyType,
-        pubicHair: data.pubicHair,
-        weight: data.weight,
-        height: data.height,
-        dateOfBirth: data.dateOfBirth,
-        sexuality: data.sexuality
-    }), [data])
+        nationality: userData.nationality,
+        languages: userData.languages,
+        hairColor: userData.hairColor,
+        eyeColor: userData.eyeColor,
+        breastSize: userData.breastSize,
+        breastType: userData.breastType,
+        bodyType: userData.bodyType,
+        pubicHair: userData.pubicHair,
+        weight: userData.weight,
+        height: userData.height,
+        dateOfBirth: userData.dateOfBirth,
+        sexuality: userData.sexuality
+    }), [userData.nationality, userData.languages, userData.hairColor, userData.eyeColor, userData.breastSize, userData.breastType, userData.bodyType, userData.pubicHair, userData.weight, userData.height, userData.dateOfBirth, userData.sexuality])
 
     const pricing = useMemo(() => ({
-        prices: data.prices,
-        currency: data.currency,
-        outcall: data.outcall,
-        incall: data.incall
-    }), [data.prices, data.currency, data.outcall, data.incall])
+        prices: userData.prices,
+        currency: userData.currency,
+        outcall: userData.outcall,
+        incall: userData.incall
+    }), [userData.prices, userData.currency, userData.outcall, userData.incall])
 
     const address = useMemo(() => ({
-        ...data.address,
-        hiddenAddress: data.hiddenAddress
-    }), [data.address, data.hiddenAddress])
+        ...userData.address,
+        hiddenAddress: userData.hiddenAddress
+    }), [userData.address, userData.hiddenAddress])
 
     const contactInformation = useMemo(() => ({
-        phone: data.phone,
-        name: data.name,
-        viber: data.viber,
-        whatsapp: data.whatsapp,
-        telegram: data.telegram
-    }), [data.phone, data.name, data.viber, data.whatsapp, data.telegram])
+        phone: userData.phone,
+        name: userData.name,
+        viber: userData.viber,
+        whatsapp: userData.whatsapp,
+        telegram: userData.telegram
+    }), [userData.phone, userData.name, userData.viber, userData.whatsapp, userData.telegram])
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
@@ -186,7 +154,7 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                     </Text>
                 </View>
                 <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                    {data.name}
+                    {userData.name}
                 </Text>
             </View>
             <View style={styles.row}>
@@ -197,18 +165,18 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                     </Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
-                    <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.xx_small }}>
-                        {data.phone}
+                    <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
+                        {userData.phone}
                     </Text>
-                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                    {userData.whatsapp && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <FontAwesome5 name="whatsapp" size={18} color="white" />
-                    </View>
-                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                    </View>}
+                    {userData.viber && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <FontAwesome5 name="viber" size={18} color="white" />
-                    </View>
-                    <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+                    </View>}
+                    {userData.telegram && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <EvilIcons name="sc-telegram" size={22} color="white" />
-                    </View>
+                    </View>}
                 </View>
             </View>
         </View>
@@ -234,9 +202,7 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                 onLayout={onTextLayout}
                 numberOfLines={moreTextShown ? undefined : 5}
             >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pellentesque erat volutpat, auctor ex at, scelerisque est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus molestie leo velit, eget ullamcorper ipsum laoreet vel. Donec tempus sollicitudin magna, vitae suscipit tellus rutrum a. Sed finibus, nunc quis pellentesque gravida, ligula metus accumsan dui, eu pellentesque lectus enim at metus. Morbi luctus nulla vitae elit dapibus lacinia. In id nibh vitae augue semper maximus sit amet vel ante. Etiam sed tincidunt nisi. Vivamus iaculis tortor non metus interdum sollicitudin. Pellentesque ut bibendum purus. Sed eget erat euismod, condimentum quam id, efficitur mi. Ut velit enim, accumsan vitae ultricies non, volutpat quis turpis.
-                Donec nec ornare nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus orci, cursus nec magna eget, vehicula porttitor odio. Vestibulum semper, ipsum eu sagittis facilisis, justo mi blandit erat, in rhoncus massa arcu vel risus. Quisque fermentum et risus tristique pretium. Aliquam facilisis tortor non justo ornare aliquet. Morbi arcu ante, porta in mauris in, laoreet molestie nunc. Duis commodo lorem ac elit venenatis, vitae varius purus placerat.
-                Pellentesque venenatis mattis sem, vitae pharetra est luctus nec. Nulla iaculis eget lacus eu auctor. Duis egestas libero consequat, rutrum magna non, semper diam. Pellentesque malesuada ultricies nisi, in tempus felis sollicitudin eget. Nunc ac maximus odio. Pellentesque at cursus sem, in dictum nunc. Duis gravida dictum massa sit amet ultrices. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus fermentum congue massa sed consectetur. Nunc finibus lorem eget mattis placerat. Integer non turpis non tortor faucibus ultricies nec non est. Etiam cursus dui eleifend dolor gravida pulvinar.
+                {userData.description}
             </Text>
             {
                 showTextTriggeringButton && (
@@ -271,64 +237,64 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Age</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>26</Text>
+                        <Text style={styles.attributeValue}>{calculateAgeFromDate(userData.dateOfBirth)}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Sexual orientation</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Bisexual</Text>
+                        <Text style={styles.attributeValue}>{userData.sexuality}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Nationality</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Czech</Text>
+                        <Text style={styles.attributeValue}>{userData.nationality}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Languages</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Czech, English</Text>
+                        <Text style={styles.attributeValue}>{userData.languages.join(', ')}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Height</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>160 cm</Text>
+                        <Text style={styles.attributeValue}>{userData.height} cm</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Weight</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>56 kg</Text>
+                        <Text style={styles.attributeValue}>{userData.weight} kg</Text>
                     </View>
                 </View>
                 <View style={{ flexDirection: 'column', flex: 1, marginHorizontal: SPACING.small }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Body type</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Slim</Text>
+                        <Text style={styles.attributeValue}>{userData.bodyType}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Pubic hair</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Shaved</Text>
+                        <Text style={styles.attributeValue}>{userData.pubicHair}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Breast size</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>B</Text>
+                        <Text style={styles.attributeValue}>{userData.breastSize}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Breast type</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Natural</Text>
+                        <Text style={styles.attributeValue}>{userData.breastType}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Hair color</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Blonde</Text>
+                        <Text style={styles.attributeValue}>{userData.hairColor}</Text>
                     </View>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.attributeName} numberOfLines={1}>Eye color</Text>
                         <View style={styles.attributeDivider}></View>
-                        <Text style={styles.attributeValue}>Green</Text>
+                        <Text style={styles.attributeValue}>{userData.eyeColor}</Text>
                     </View>
                 </View>
             </View>
@@ -343,9 +309,9 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                     <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                         Pricing
                     </Text>
-                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
-                        • CZK
-                    </Text>
+                    {userData.prices.length !== 0 && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                        • {userData.currency}
+                    </Text>}
                 </View>
 
                 <Button
@@ -358,41 +324,43 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                     Edit
                 </Button>
             </View>
-            <View style={styles.table}>
-                <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                    <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
-                        <Text style={styles.tableHeaderText}>Length</Text>
+
+            {userData.prices.length === 0 ? (
+                <Text style={{ color: COLORS.white, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>No pricing defined</Text>
+            ) : (
+                <View style={styles.table}>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]} backgroundColor={COLORS.lightGrey} hoveredBackgroundColor={COLORS.grey}>
+                            <Text style={styles.tableHeaderText}>Length</Text>
+                        </View>
+                        {userData.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.length} {price.length > 1 ? 'hours' : 'hour'}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>0.5 hour</Text>
-                    </HoverableView>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>1 hour</Text>
-                    </HoverableView>
-                </View>
-                <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                    <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
-                        <Text style={styles.tableHeaderText}>Incall</Text>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
+                            <Text style={styles.tableHeaderText}>Incall</Text>
+                        </View>
+                        {userData.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.incall} {CURRENCY_SYMBOLS[userData.currency]}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>1000</Text>
-                    </HoverableView>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>2500</Text>
-                    </HoverableView>
-                </View>
-                <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
-                    <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
-                        <Text style={styles.tableHeaderText}>Outcall</Text>
+                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                        <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
+                            <Text style={styles.tableHeaderText}>Outcall</Text>
+                        </View>
+                        {userData.prices.map(price => (
+                            <HoverableView key={price.length} style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
+                                <Text style={styles.tableHeaderValue}>{price.outcall} {CURRENCY_SYMBOLS[userData.currency]}</Text>
+                            </HoverableView>
+                        ))}
                     </View>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>1500</Text>
-                    </HoverableView>
-                    <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>3000</Text>
-                    </HoverableView>
                 </View>
-            </View>
+            )}
         </View>
     )
 
@@ -413,30 +381,11 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                 </Button>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 1</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 2</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 3</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 4</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 5</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 6</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 7</Text>
-                </View>
-                <View style={styles.chip}>
-                    <Text style={styles.chipText}>Service 8</Text>
-                </View>
+                {userData.services.map(service => (
+                    <View key={service} style={styles.chip}>
+                        <Text style={styles.chipText}>Service 1</Text>
+                    </View>
+                ))}
             </View>
         </View>
     )
@@ -489,25 +438,25 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                         <Text style={styles.tableHeaderText}>Availability</Text>
                     </View>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>20:00 - 04:00</Text>
+                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                 </View>
             </View>
@@ -534,7 +483,7 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, marginBottom: SPACING.x_small }}>
                 <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
-                    Prague, Czech Republic
+                    {userData.address.title}
                 </Text>
             </View>
 
@@ -557,10 +506,10 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
                 >
                     <Marker
                         coordinate={{
-                            latitude: '50.09148',
-                            longitude: '14.45501'
+                            latitude: userData.address.lat,
+                            longitude: userData.address.lng
                         }}
-                        title={data.name}
+                        title={userData.name}
                     >
                         <Image
                             source={require('../../assets/sport_marker.png')}
@@ -595,56 +544,56 @@ const PersonalDetails = ({ setTabHeight, showToast }) => {
 
             {renderAddress()}
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={data.description} showToast={showToast} />
-            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast}/>
-            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast}/>
-            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={data.services} showToast={showToast}/>
-            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={data.workingHours} showToast={showToast}/>
-            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast}/>
-            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast}/>
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
         </View>
     )
 }
 
-export default connect(null, { showToast })(memo(PersonalDetails))
+export default connect(null, { showToast, updateCurrentUserInRedux, updateLadyInRedux })(memo(PersonalDetails))
 
 const styles = StyleSheet.create({
-    containerLarge: { 
-        flex: 1, 
-        paddingHorizontal: SPACING.large, 
-        flexDirection: 'row', 
-        backgroundColor: COLORS.lightBlack, 
+    containerLarge: {
+        flex: 1,
+        paddingHorizontal: SPACING.large,
+        flexDirection: 'row',
+        backgroundColor: COLORS.lightBlack,
         justifyContent: 'center',
         overflowY: 'scroll'
     },
-    containerSmall: { 
-        flex: 1, 
-        paddingHorizontal: SPACING.large, 
+    containerSmall: {
+        flex: 1,
+        paddingHorizontal: SPACING.large,
         flexDirection: 'column'
     },
-    contentLarge: { 
-        flexShrink: 1, 
-        flexGrow: 1, 
-        alignItems: 'flex-end', 
-        marginRight: SPACING.x_large, 
-        paddingVertical: SPACING.large 
+    contentLarge: {
+        flexShrink: 1,
+        flexGrow: 1,
+        alignItems: 'flex-end',
+        marginRight: SPACING.x_large,
+        paddingVertical: SPACING.large
     },
     contentSmall: {
-        paddingVertical: SPACING.large ,
+        paddingVertical: SPACING.large,
     },
-    cardContainerLarge : { 
-        flexGrow: 1, 
+    cardContainerLarge: {
+        flexGrow: 1,
         flexBasis: 400,
-        marginTop: SPACING.large 
+        marginTop: SPACING.large
     },
-    cardContainerSmall : {
+    cardContainerSmall: {
         marginTop: SPACING.large
     },
     cardLarge: {
-        width: 400, 
-        backgroundColor: COLORS.grey, 
-        borderRadius: 20, 
-        padding: SPACING.small, 
+        width: 400,
+        backgroundColor: COLORS.grey,
+        borderRadius: 20,
+        padding: SPACING.small,
         shadowColor: COLORS.red,
         shadowOffset: {
             width: 0,
@@ -656,9 +605,9 @@ const styles = StyleSheet.create({
         position: 'fixed'
     },
     cardSmall: {
-        backgroundColor: COLORS.grey, 
-        borderRadius: 20, 
-        padding: SPACING.small, 
+        backgroundColor: COLORS.grey,
+        borderRadius: 20,
+        padding: SPACING.small,
         shadowColor: COLORS.red,
         shadowOffset: {
             width: 0,
@@ -668,10 +617,10 @@ const styles = StyleSheet.create({
         shadowRadius: 40,
         elevation: 40,
     },
-    section : {
-        marginTop: SPACING.large, 
-        padding: SPACING.small, 
-        borderRadius: 20, 
+    section: {
+        marginTop: SPACING.large,
+        padding: SPACING.small,
+        borderRadius: 20,
         backgroundColor: COLORS.grey,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,.08)',
@@ -681,9 +630,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: SPACING.small
     },
-    sectionHeaderText: { 
-        color: '#FFF', 
-        fontFamily: FONTS.bold, 
+    sectionHeaderText: {
+        color: '#FFF',
+        fontFamily: FONTS.bold,
         fontSize: FONT_SIZES.h3
     },
     attributeName: {
@@ -707,7 +656,7 @@ const styles = StyleSheet.create({
         fontFamily: FONTS.medium,
         fontSize: FONT_SIZES.regular
     },
-    chip: { 
+    chip: {
         marginRight: SPACING.xx_small,
         backgroundColor: COLORS.darkRed2,
         paddingHorizontal: SPACING.xx_small,
@@ -719,10 +668,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: SPACING.xx_small
     },
-    chipText: { 
-        color: '#FFF', 
-        fontFamily: FONTS.medium, 
-        fontSize: FONT_SIZES.medium 
+    chipText: {
+        color: '#FFF',
+        fontFamily: FONTS.medium,
+        fontSize: FONT_SIZES.medium
     },
     table: {
         borderWidth: 1,
@@ -731,15 +680,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         overflow: 'hidden'
     },
-    tableHeaderText: { 
-        color: '#FFF', 
-        fontFamily: FONTS.bold, 
-        fontSize: FONT_SIZES.medium 
+    tableHeaderText: {
+        color: '#FFF',
+        fontFamily: FONTS.bold,
+        fontSize: FONT_SIZES.medium
     },
-    tableHeaderValue: { 
-        color: '#FFF', 
-        fontFamily: FONTS.medium, 
-        fontSize: FONT_SIZES.medium 
+    tableHeaderValue: {
+        color: '#FFF',
+        fontFamily: FONTS.medium,
+        fontSize: FONT_SIZES.medium
     },
     column: {
         padding: SPACING.xx_small

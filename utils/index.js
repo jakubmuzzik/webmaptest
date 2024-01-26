@@ -115,3 +115,18 @@ export const generateThumbnailFromLocalURI = (uri, time) => {
       video.load();
   });
 }
+
+export const calculateAgeFromDate = (dateStr) => {
+  const parsedPastDate = new Date(dateStr.slice(4, 8), dateStr.slice(2, 4) - 1, dateStr.slice(0, 2))
+  const today = new Date()
+
+  const timeDiff = today - parsedPastDate;
+
+  const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25;
+
+  const yearsDiff = timeDiff / millisecondsInYear;
+
+  const roundedYears = Math.floor(yearsDiff);
+
+  return roundedYears;
+}

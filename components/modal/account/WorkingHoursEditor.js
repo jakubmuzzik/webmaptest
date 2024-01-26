@@ -37,6 +37,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) =>
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setChangedWorkingHours(workingHours)
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -65,7 +66,6 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) =>
             useNativeDriver: true
         })
         setVisible(false)
-        setChangedWorkingHours(workingHours)
         setIsChanged(false)
     }
 

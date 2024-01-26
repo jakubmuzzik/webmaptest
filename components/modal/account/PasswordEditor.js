@@ -45,6 +45,12 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             translateY.value = withTiming(0, {
                 useNativeDriver: true
             })
+            setData({
+                currentPassword: '',
+                newPassword: '',
+                currentSecureTextEntry: true,
+                newSecureTextEntry: true,
+            })
         } else {
             translateY.value = withTiming(window.height, {
                 useNativeDriver: true
@@ -73,12 +79,6 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             useNativeDriver: true
         })
         setVisible(false)
-        setData({
-            currentPassword: '',
-            newPassword: '',
-            currentSecureTextEntry: true,
-            newSecureTextEntry: true,
-        })
     }
 
     const reauthenticate = async () => {

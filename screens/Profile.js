@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect, useLayoutEffect } from "react"
 import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, Modal, ScrollView, ImageBackground, Dimensions } from "react-native"
-import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD, SMALL_SCREEN_THRESHOLD } from "../constants"
+import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD, SMALL_SCREEN_THRESHOLD, CURRENCY_SYMBOLS } from "../constants"
 import { normalize, stripEmptyParams } from "../utils"
 import { Image } from 'expo-image'
 import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, MaterialCommunityIcons, EvilIcons, Entypo } from '@expo/vector-icons'
@@ -388,10 +388,10 @@ const Profile = ({ }) => {
                                 <Text style={styles.tableHeaderText}>Incall</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>1000</Text>
+                                <Text style={styles.tableHeaderValue}>1000 {CURRENCY_SYMBOLS['CZK']}</Text>
                             </HoverableView>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>2500</Text>
+                                <Text style={styles.tableHeaderValue}>2500 {CURRENCY_SYMBOLS['CZK']}</Text>
                             </HoverableView>
                         </View>
                         <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
@@ -399,10 +399,10 @@ const Profile = ({ }) => {
                                 <Text style={styles.tableHeaderText}>Outcall</Text>
                             </View>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>1500</Text>
+                                <Text style={styles.tableHeaderValue}>1500 {CURRENCY_SYMBOLS['CZK']}</Text>
                             </HoverableView>
                             <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                                <Text style={styles.tableHeaderValue}>3000</Text>
+                                <Text style={styles.tableHeaderValue}>3000 {CURRENCY_SYMBOLS['CZK']}</Text>
                             </HoverableView>
                         </View>
                     </View>

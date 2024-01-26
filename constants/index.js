@@ -100,6 +100,10 @@ export const SPACING = {
 }
 
 export const CURRENCIES = ['CZK', 'EUR']
+export const CURRENCY_SYMBOLS = {
+    'CZK' : 'Kč',
+    'EUR': '€'
+}
 
 export const rem = (number) => {
     return isLargeScreen ? number * 16 : isMediumScreen ? number * 14 : number * 12

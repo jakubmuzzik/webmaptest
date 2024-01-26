@@ -3,7 +3,7 @@ import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 
 import { connect } from 'react-redux'
-import { updateScrollDisabled } from '../redux/actions'
+import { updateScrollDisabled, fetchUser } from '../redux/actions'
 
 import { getAuth, onAuthStateChanged } from '../firebase/config'
 
@@ -34,7 +34,7 @@ const { height: initialHeight } = Dimensions.get('window')
 
 const auth = getAuth()
 
-const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
+const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
 
     const toastRef = useRef()
@@ -60,19 +60,16 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                         text: "You've been logged out."
                     })
                 }
-            } else if (!user.emailVerified) {
-                setIsLoggedIn(true)
-                //setUserVerified(false)
             } else {
-                if (hasLoadedRef.current) {
+                fetchUser()
+                setIsLoggedIn(true)
+
+                if (user.emailVerified && hasLoadedRef.current) {
                     toastRef.current?.show({
                         type: 'success',
                         text: 'Successfully logged in.'
                     })
                 }
-
-                setIsLoggedIn(true)
-                //setUserVerified(true)
             }
 
             hasLoadedRef.current = true
@@ -279,4 +276,4 @@ const mapStateToProps = (store) => ({
     toastData: store.appState.toastData
 })
 
-export default connect(mapStateToProps, { updateScrollDisabled })(Main)
+export default connect(mapStateToProps, { updateScrollDisabled, fetchUser })(Main)
