@@ -9,7 +9,7 @@ import LottieView from 'lottie-react-native'
 import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
-import { showToast, updateCurrentUser } from '../../redux/actions'
+import { showToast, updateCurrentUserInRedux } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 
 import LoginInformation from './steps/LoginInformation'
@@ -22,7 +22,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
-const EstablishmentSignup = ({ showToast, updateCurrentUser }) => {
+const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -95,30 +95,28 @@ const EstablishmentSignup = ({ showToast, updateCurrentUser }) => {
 
         await sendEmailVerification(response.user)
 
-        const imageURLs = await Promise.all([
-            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id))
-        ])
-
-        for (let i = 0; i < data.images.length; i++) {
-            data.images[i] = {...data.images[i], downloadUrl: imageURLs[i]}
-        }
-
-        const videoURLs = await Promise.all([
+        let urls = await Promise.all([
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id)),
             ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/video')),
-        ])
-
-        for (let i = 0; i < data.videos.length; i++) {
-            data.videos[i] = {...data.videos[i], videoDownloadUrl: videoURLs[i] }
-        }
-
-        const thumbanilURLs = await Promise.all([
             ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/thumbnail')),
         ])
 
-        for (let i = 0; i < data.videos.length; i++) {
-            data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
-        }
+        const imageURLs = urls.splice(0, data.images.length)
+        const videoURLs = urls.splice(0, data.videos.length)
+        const thumbanilURLs = urls.splice(0, data.videos.length)
 
+        data.images.forEach((image, index) => {
+            delete image.image
+            image.videoURLs = videoURLs[index]
+        })
+
+        data.videos.forEach((video, index) => {
+            delete video.video
+            delete video.thumbnail
+
+            video.downloadUrl = imageURLs[index]
+            video.thumbnailDownloadUrl = thumbanilURLs[index]
+        })
         /*const imageBlurhashes = await Promise.all([
             ...data.images.map(image => encodeImageToBlurhash(image.image))
         ])
@@ -135,26 +133,17 @@ const EstablishmentSignup = ({ showToast, updateCurrentUser }) => {
             data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
         }*/
 
-        data.images.forEach((image) => {
-            delete image.image
-        })
-        
-        data.videos.forEach((video) => {
-            delete video.thumbnail
-            delete video.video
-        })
-
-        const userData = {
-            id: response.user.uid,
+        data = {
             ...data,
+            id: getAuth().currentUser.uid,
             nameLowerCase: data.name.toLowerCase(),
             createdDate: new Date(),
             accountType: 'establishment'
         }
         
-        await setDoc(doc(db, 'users', response.user.uid), userData)
+        await setDoc(doc(db, 'users', data.id), data)
         
-        updateCurrentUser(userData)
+        updateCurrentUserInRedux(data)
     }
 
     const uploadAssetToFirestore = async (assetUri, assetPath) => {
@@ -277,4 +266,4 @@ const EstablishmentSignup = ({ showToast, updateCurrentUser }) => {
     )
 }
 
-export default connect(null, { showToast, updateCurrentUser })(EstablishmentSignup)
+export default connect(null, { showToast, updateCurrentUserInRedux })(EstablishmentSignup)

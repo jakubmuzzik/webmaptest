@@ -57,7 +57,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData }) => {
                 if (hasLoadedRef.current) {
                     toastRef.current?.show({
                         type: 'success',
-                        text: 'Successfully logged out.'
+                        text: "You've been logged out."
                     })
                 }
             } else if (!user.emailVerified) {

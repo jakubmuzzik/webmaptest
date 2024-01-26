@@ -37,7 +37,6 @@ const EstablishmentDetails = forwardRef((props, ref) => {
         if (
             !data.name
             || !data.establishmentType
-            || !data.website
             || !data.phone
             || !data.description
         ) {

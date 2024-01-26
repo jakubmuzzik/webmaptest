@@ -20,6 +20,7 @@ import { connect } from 'react-redux'
 import { showToast, updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import uuid from 'react-native-uuid'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
@@ -93,7 +94,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
         routes.slice(0, routes.length - 1).forEach(route => data = { ...data, ...route.ref.current.data })
         data.status = IN_REVIEW
 
-        if (independent) {
+        if (!independent) {
             const response = await createUserWithEmailAndPassword(getAuth(), data.email, data.password)
 
             delete data.password
@@ -101,29 +102,28 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             await sendEmailVerification(response.user)
         }
 
-        const imageURLs = await Promise.all([
-            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id))
-        ])
-
-        for (let i = 0; i < data.images.length; i++) {
-            data.images[i] = {...data.images[i], downloadUrl: imageURLs[i]}
-        }
-
-        const videoURLs = await Promise.all([
+        let urls = await Promise.all([
+            ...data.images.map(image => uploadAssetToFirestore(image.image, 'photos/' + getAuth().currentUser.uid + '/' + image.id)),
             ...data.videos.map(video => uploadAssetToFirestore(video.video, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/video')),
-        ])
-
-        for (let i = 0; i < data.videos.length; i++) {
-            data.videos[i] = {...data.videos[i], videoDownloadUrl: videoURLs[i] }
-        }
-
-        const thumbanilURLs = await Promise.all([
             ...data.videos.map(video => uploadAssetToFirestore(video.thumbnail, 'videos/' + getAuth().currentUser.uid + '/' + video.id + '/thumbnail')),
         ])
 
-        for (let i = 0; i < data.videos.length; i++) {
-            data.videos[i] = {...data.videos[i], thumbnailDownloadUrl: thumbanilURLs[i] }
-        }
+        const imageURLs = urls.splice(0, data.images.length)
+        const videoURLs = urls.splice(0, data.videos.length)
+        const thumbanilURLs = urls.splice(0, data.videos.length)
+
+        data.images.forEach((image, index) => {
+            delete image.image
+            image.videoURLs = videoURLs[index]
+        })
+
+        data.videos.forEach((video, index) => {
+            delete video.video
+            delete video.thumbnail
+
+            video.downloadUrl = imageURLs[index]
+            video.thumbnailDownloadUrl = thumbanilURLs[index]
+        })
 
         /*const imageBlurhashes = await Promise.all([
             ...data.images.map(image => encodeImageToBlurhash(image.image))
@@ -141,18 +141,9 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             data.videos[i] = {...data.videos[i], blurhash: videoThumbnailsBlurhashes[i]}
         }*/
 
-        data.images.forEach((image) => {
-            delete image.image
-        })
-        
-        data.videos.forEach((video) => {
-            delete video.thumbnail
-            delete video.video
-        })
-
-        const ladyData = {
-            id: response.user.uid,
+        data = {
             ...data,
+            id: independent ? getAuth().currentUser.uid : uuid.v4(),
             nameLowerCase: data.name.toLowerCase(),
             createdDate: new Date(),
             accountType: 'lady',
@@ -160,15 +151,15 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
         }
 
         if (!independent) {
-            ladyData.establishmentId = getAuth().currentUser.uid
+            data.establishmentId = getAuth().currentUser.uid
         }
 
-        await setDoc(doc(db, 'users', response.user.uid), ladyData)
+        await setDoc(doc(db, 'users', data.id), data)
 
         if (independent) {
-            updateCurrentUserInRedux(ladyData)
+            updateCurrentUserInRedux(data)
         } else {
-            updateLadyInRedux(ladyData)
+            updateLadyInRedux(data)
         }
     }
 
@@ -201,11 +192,16 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             }
         );
 
-        await uploadTask*/
+        await uploadTask
+        
+        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref)
+        */
 
         const result = await uploadBytes(imageRef, blob)
 
         const downloadURL = await getDownloadURL(result.ref)
+
+        
     
         return downloadURL
     }
