@@ -28,7 +28,7 @@ const LoginInformation = forwardRef((props, ref) => {
     const [confirmSecureTextEntry, setConfirmSecureTextEntry] = useState(true)
 
     const validate = async () => {
-        if (!data.email || !data.password || !data.confirmPassword || data.password !== data.confirmPassword || data.length < 8 || !agreed) {
+        if (!data.email || !data.password || !data.confirmPassword || data.password !== data.confirmPassword || data.password.length < 8 || !agreed) {
             setShowErrors(true)
             return false
         }
