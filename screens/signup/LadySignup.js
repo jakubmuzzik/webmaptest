@@ -40,9 +40,9 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
 
     const [routes] = useState(
         [
-            { key: 'login_information' },
-            { key: 'personal_details' },
-            { key: 'services_and_pricing' },
+            //{ key: 'login_information' },
+            //{ key: 'personal_details' },
+            //{ key: 'services_and_pricing' },
             { key: 'address_and_availability' },
             { key: 'photos_and_videos' },
             { key: 'registration_completed' }

@@ -23,13 +23,21 @@ import {
 
 import { TabView } from 'react-native-tab-view'
 
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
+import Toast from '../../Toast'
+
 import { Button, TouchableRipple, ActivityIndicator, Switch } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
-const AddressEditor = ({ visible, setVisible, address, showToast }) => {
+const AddressEditor = ({ visible, setVisible, address, showToast, userId, updateRedux }) => {
     const [routes] = useState([
         { key: '1' },
         { key: '2' }
@@ -44,6 +52,8 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
     const [search, setSearch] = useState('')
     const [isSearching, setIsSearching] = useState(false)
     const [results, setResults] = useState([])
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -102,18 +112,36 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+
+        let addr = JSON.parse(JSON.stringify(changedAddress))
+        const hidden = addr.hiddenAddress
+        delete addr.hiddenAddress
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {address: addr, hiddenAddress: hidden})
+
             closeModal()
 
             showToast({
                 type: 'success',
                 headerText: 'Success!',
+                text: 'Description was changed successfully.'
+            })
+
+            updateRedux({address: addr, hiddenAddress: hidden})
+        } catch(e) {
+            toastRef.current.show({
+                type: 'error',
                 text: 'Address was changed successfully.'
             })
-        }, 1000)
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const onSearch = (query) => {
@@ -222,11 +250,13 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
                                 If not selected, only city will be visible on your profile
                             </Text>
                         </View>
-                        <Switch value={changedAddress.hiddenAddress}
+                        <Switch
+                            value={!changedAddress.hiddenAddress}
                             onValueChange={(value) => setChangedAddress({
                                 ...changedAddress,
-                                hiddenAddress: value
-                            })} color={COLORS.red}
+                                hiddenAddress: !value
+                            })}
+                            color={COLORS.red}
                         />
                     </View>
 
@@ -394,6 +424,8 @@ const AddressEditor = ({ visible, setVisible, address, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

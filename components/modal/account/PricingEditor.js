@@ -20,21 +20,32 @@ import {
     SPACING,
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE,
-    CURRENCIES
+    CURRENCIES,
+    CURRENCY_SYMBOLS
 } from '../../../constants'
 
+import Toast from '../../Toast'
+
 import { Button, IconButton, HelperText, SegmentedButtons } from 'react-native-paper'
+
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
 
 const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours', '3.5 hour', '4 hours', '4.5 hour', '5 hours', '5.5 hour', '6 hours', '6.5 hour', '7 hours', '7.5 hour', '8 hours', '8.5 hour', '9 hours', '9.5 hour', '10 hours', '10.5 hour', '11 hours', '11.5 hour', '12 hours', '12.5 hour', '13 hours', '13.5 hour', '14 hours', '14.5 hour', '15 hours', '15.5 hour', '16 hours', '16.5 hour', '17 hours', '17.5 hour', '18 hours', '18.5 hour', '19 hours', '19.5 hour', '20 hours', '20.5 hour', '21 hours', '21.5 hour', '22 hours', '22.5 hour', '23 hours', '23.5 hour', '24 hours']
 
 const window = Dimensions.get('window')
 
-const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
+const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, updateRedux }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)
     const [changedPricing, setChangedPricing] = useState(pricing)
     const [isChanged, setIsChanged] = useState(false)
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -77,10 +88,15 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {...changedPricing})
+
             closeModal()
 
             showToast({
@@ -88,7 +104,18 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
                 headerText: 'Success!',
                 text: 'Pricing was changed successfully.'
             })
-        }, 1000)
+
+            updateRedux(changedPricing)
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                //headerText: 'Success!',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const onAddNewPricePress = () => {
@@ -268,7 +295,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
                                 </View>
                                 {changedPricing.incall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                                     <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
-                                        <Text style={styles.tableHeaderText}>Incall ({changedPricing.currency})</Text>
+                                        <Text style={styles.tableHeaderText}>Incall • {CURRENCY_SYMBOLS[changedPricing.currency]}</Text>
                                     </View>
                                     {changedPricing.prices.map((price, index) => (
                                         <View key={price.length} style={{ padding: 4 }}>
@@ -293,7 +320,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
                                 </View>}
                                 {changedPricing.outcall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                                     <View style={[styles.column, { backgroundColor: COLORS.lightGrey }]}>
-                                        <Text style={styles.tableHeaderText}>Outcall ({changedPricing.currency})</Text>
+                                        <Text style={styles.tableHeaderText}>Outcall • {CURRENCY_SYMBOLS[changedPricing.currency]}</Text>
                                     </View>
                                     {changedPricing.prices.map((price, index) => (
                                         <View key={price.length} style={{ padding: 4 }}>
@@ -384,6 +411,8 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

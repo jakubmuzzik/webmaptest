@@ -29,12 +29,16 @@ import {
 
 import { Button } from 'react-native-paper'
 
+import Toast from '../../Toast'
+
 const window = Dimensions.get('window')
 
 const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userId }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedAbout, setChangedAbout] = useState(about)
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -85,6 +89,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
         }
 
         setIsSaving(true)
+        setShowErrorMessage(false)
 
         try {
             await updateDoc(doc(db, 'users', userId), {description: changedAbout})
@@ -99,7 +104,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
 
             updateRedux({description: changedAbout})
         } catch(e) {
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: "Failed to save the data. Please try again later."
             })
@@ -203,6 +208,8 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

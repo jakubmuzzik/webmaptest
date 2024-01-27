@@ -23,6 +23,7 @@ import {
 } from '../../../constants'
 
 import { Button } from 'react-native-paper'
+import Toast from '../../Toast'
 
 import {
     LANGUAGES,
@@ -36,16 +37,23 @@ import {
     EYE_COLORS
 } from '../../../labels'
 
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
 const window = Dimensions.get('window')
 
-const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast }) => {
+const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
-    const [showErrorMessage, setShowErrorMEssage] = useState(false)
+    const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [contentWidth, setContentWidth] = useState(false)
     const [changedPersonalDetails, setChangedPersonalDetails] = useState(personalDetails)
     const [isChanged, setIsChanged] = useState(false)
 
     const containerRef = useRef()
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -84,10 +92,34 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
+        if (
+            !changedPersonalDetails.dateOfBirth
+            || !changedPersonalDetails.sexuality
+            || !changedPersonalDetails.nationality
+            || changedPersonalDetails.languages.length === 0
+            || !changedPersonalDetails.height
+            || !changedPersonalDetails.weight
+            || !changedPersonalDetails.bodyType
+            || !changedPersonalDetails.pubicHair
+            || !changedPersonalDetails.breastSize
+            || !changedPersonalDetails.breastType
+            || !changedPersonalDetails.hairColor
+            || !changedPersonalDetails.eyeColor
+        ) {
+            setShowErrorMessage(true)
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+        setShowErrorMessage(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {...changedPersonalDetails})
+
             closeModal()
 
             showToast({
@@ -95,7 +127,18 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                 headerText: 'Success!',
                 text: 'Personal Details were changed successfully.'
             })
-        }, 1000)
+
+            updateRedux(changedPersonalDetails)
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                //headerText: 'Success!',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const getDateOfBirth = useCallback(() => {
@@ -446,6 +489,8 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

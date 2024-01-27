@@ -21,16 +21,25 @@ import {
     DEFAULT_LANGUAGE
 } from '../../../constants'
 
-import { Button, Switch } from 'react-native-paper'
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
+import Toast from '../../Toast'
+
+import { Button, Switch, HelperText } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) => {
+const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedWorkingHours, setChangedWorkingHours] = useState(workingHours)
     const [isChanged, setIsChanged] = useState(false)
 
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -70,10 +79,79 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) =>
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
+        let dataValid = true
+
+        let wh = JSON.parse(JSON.stringify(changedWorkingHours))
+
+        wh.filter(day => day.enabled).forEach(setup => {
+            if (!setup.from) {
+                setup.invalidFrom = 'Enter value in HH:mm format.'
+            } else {
+                setup.invalidFrom = false
+            }
+
+            if (!setup.until) {
+                setup.invalidUntil = 'Enter value in HH:mm format.'
+            } else {
+                setup.invalidUntil = false
+            }
+
+            if (setup.invalidFrom || setup.invalidUntil) {
+                dataValid = false
+                return
+            }
+
+            try {
+                let hours = parseInt(setup.from.split(':')[0], 10)
+                let minutes = parseInt(setup.from.split(':')[1], 10)
+
+                if (hours >= 0 && hours <= 24 && minutes >= 0 && minutes <= 59) {
+                    setup.invalidFrom = false
+                } else {
+                    setup.invalidFrom = 'Hours must be between 0 and 24, and minutes between 0 and 59.'
+                }
+
+                hours = parseInt(setup.until.split(':')[0], 10)
+                minutes = parseInt(setup.until.split(':')[1], 10)
+
+                if (hours >= 0 && hours <= 24 && minutes >= 0 && minutes <= 59) {
+                    setup.invalidUntil = false
+                } else {
+                    setup.invalidUntil = 'Hours must be between 0 and 24, and minutes between 0 and 59.'
+                }
+            } catch (e) {
+                console.error(e)
+                dataValid = false
+            }
+
+            if (setup.invalidFrom || setup.invalidUntil) {
+                dataValid = false
+            }
+        })
+
+        if (!dataValid) {
+            setShowErrorMessage(true)
+            setChangedWorkingHours(wh)
+            return
+        }
+
+        wh = wh.map(workingHour => {
+            delete workingHour.invalidFrom
+            delete workingHour.invalidUntil
+
+            return workingHour
+        })
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+        setShowErrorMessage(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {workingHours: wh})
+
             closeModal()
 
             showToast({
@@ -81,7 +159,18 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) =>
                 headerText: 'Success!',
                 text: 'Working Hours were changed successfully.'
             })
-        }, 1000)
+
+            updateRedux({workingHours: wh})
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                //headerText: 'Success!',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const onWorkingHourChange = (value, index, attribute) => {
@@ -336,6 +425,8 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast }) =>
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

@@ -28,6 +28,8 @@ import {
     updateDoc,
 } from '../../../firebase/config'
 
+import Toast from '../../Toast'
+
 import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
@@ -36,6 +38,8 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedContactInformation, setChangedContactInformation] = useState(contactInformation)
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -87,6 +91,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
         }
 
         setIsSaving(true)
+        setShowErrorMessage(false)
 
         try {
             await updateDoc(doc(db, 'users', userId), {...changedContactInformation})
@@ -101,7 +106,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
 
             updateRedux(changedContactInformation)
         } catch(e) {
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -281,6 +286,8 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

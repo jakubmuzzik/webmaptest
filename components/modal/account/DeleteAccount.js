@@ -23,6 +23,8 @@ import {
 
 import { Button } from 'react-native-paper'
 
+import Toast from '../../Toast'
+
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
@@ -36,6 +38,8 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
         secureTextEntry: true,
         confirmDelete: false
     })
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -215,6 +219,8 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

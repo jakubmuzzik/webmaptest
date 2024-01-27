@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
+import React, { useState, useCallback, useRef, useMemo, memo, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS, SMALL_SCREEN_THRESHOLD, CURRENCY_SYMBOLS } from '../../constants'
@@ -83,6 +83,18 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
     const [contactInformationEditorVisible, setContactInformationEditorVisible] = useState(false)
 
     const mapRef = useRef()
+
+    useEffect(() => {
+        if (!userData.hiddenAddress && mapRef.current) {
+            mapRef.current.animateCamera({
+                center: {
+                    latitude: userData.address.lat,
+                    longitude: userData.address.lng,
+                },
+                zoom: 13,
+            }, 500)
+        }
+    }, [userData.address, userData.hiddenAddress, mapRef.current])
 
     const onTextLayout = (e) => {
         const element = e.nativeEvent.target
@@ -339,7 +351,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                             </HoverableView>
                         ))}
                     </View>
-                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                    {userData.incall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
                             <Text style={styles.tableHeaderText}>Incall</Text>
                         </View>
@@ -348,8 +360,8 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                                 <Text style={styles.tableHeaderValue}>{price.incall} {CURRENCY_SYMBOLS[userData.currency]}</Text>
                             </HoverableView>
                         ))}
-                    </View>
-                    <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
+                    </View>}
+                    {userData.outcall && <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
                         <View style={[styles.column, { backgroundColor: COLORS.darkRed2 }]}>
                             <Text style={styles.tableHeaderText}>Outcall</Text>
                         </View>
@@ -358,7 +370,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                                 <Text style={styles.tableHeaderValue}>{price.outcall} {CURRENCY_SYMBOLS[userData.currency]}</Text>
                             </HoverableView>
                         ))}
-                    </View>
+                    </View>}
                 </View>
             )}
         </View>
@@ -383,7 +395,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 {userData.services.map(service => (
                     <View key={service} style={styles.chip}>
-                        <Text style={styles.chipText}>Service 1</Text>
+                        <Text style={styles.chipText}>{service}</Text>
                     </View>
                 ))}
             </View>
@@ -438,25 +450,25 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                         <Text style={styles.tableHeaderText}>Availability</Text>
                     </View>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[0].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[1].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[1].enabled ? (userData.workingHours[1].from + ' - ' + userData.workingHours[1].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[2].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[2].enabled ? (userData.workingHours[2].from + ' - ' + userData.workingHours[2].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[3].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[3].enabled ? (userData.workingHours[3].from + ' - ' + userData.workingHours[3].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[4].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[4].enabled ? (userData.workingHours[4].from + ' - ' + userData.workingHours[4].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[5].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[5].enabled ? (userData.workingHours[5].from + ' - ' + userData.workingHours[5].until) : 'Not available'}</Text>
                     </HoverableView>
                     <HoverableView style={styles.column} backgroundColor={COLORS.grey} hoveredBackgroundColor={COLORS.lightGrey}>
-                        <Text style={styles.tableHeaderValue}>{userData.workingHours[0].enabled ? (userData.workingHours[0].from + ' - ' + userData.workingHours[0].until) : 'Not available'}</Text>
+                        <Text style={[styles.tableHeaderValue, { color: userData.workingHours[6].enabled ? COLORS.white : COLORS.greyText }]}>{userData.workingHours[6].enabled ? (userData.workingHours[6].from + ' - ' + userData.workingHours[6].until) : 'Not available'}</Text>
                     </HoverableView>
                 </View>
             </View>
@@ -481,13 +493,13 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, marginBottom: SPACING.x_small }}>
-                <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
-                <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
-                    {userData.address.title}
+                <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.white} style={{ marginRight: 3 }} />
+                <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.white }}>
+                    {userData.hiddenAddress ? userData.address.city : userData.address.title}
                 </Text>
             </View>
 
-            <View style={{ width: '100%', height: 300, borderRadius: 5, overflow: 'hidden' }}>
+            {!userData.hiddenAddress && <View style={{ width: '100%', height: 300, borderRadius: 5, overflow: 'hidden' }}>
                 <MapView
                     ref={mapRef}
                     googleMapsApiKey="AIzaSyCA1Gw6tQbTOm9ME6Ru0nulUNFAOotVY3s"
@@ -498,8 +510,8 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                     loadingFallback={loadingMapFallback}
                     initialCamera={{
                         center: {
-                            latitude: 50.09148,
-                            longitude: 14.45501,
+                            latitude: userData.address.lat,
+                            longitude: userData.address.lng,
                         },
                         zoom: 13,
                     }}
@@ -524,7 +536,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                         />
                     </Marker>
                 </MapView>
-            </View>
+            </View>}
         </View>
     )
 

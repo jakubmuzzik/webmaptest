@@ -104,6 +104,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         }
 
         setIsSaving(true)
+        setShowErrorMessage(false)
         //TODO update redux state if success
 
         try {
@@ -126,14 +127,13 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                 text: 'Verification email was sent to the provided email address.'
             })
             closeModal()
-            //signOut(getAuth())
         } catch(e) {
             if (e.code === 'auth/email-already-in-use') {
                 toastRef.current.show({
                     type: 'error',
                     text: 'Provided Email address is already in use.'
                 })
-            } else if (e.code === 'auth/invalid-email') {
+            } else if (e.code === 'auth/invalid-new-email') {
                 toastRef.current.show({
                     type: 'error',
                     text: 'Provided Email address is invalid.'

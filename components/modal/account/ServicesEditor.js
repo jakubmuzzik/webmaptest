@@ -28,9 +28,17 @@ import {
 import { Button, TouchableRipple } from 'react-native-paper'
 import BouncyCheckbox from "react-native-bouncy-checkbox"
 
+import Toast from '../../Toast'
+
+import {
+    db,
+    doc,
+    updateDoc,
+} from '../../../firebase/config'
+
 const window = Dimensions.get('window')
 
-const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
+const ServicesEditor = ({ visible, setVisible, services, showToast, userId, updateRedux }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [changedServices, setChangedServices] = useState(services)
@@ -41,6 +49,8 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
 
     const filteredServicesRef = useRef([...SERVICES])
     const filteredMassageServicesRef = useRef([...MASSAGE_SERVICES])
+
+    const toastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -80,10 +90,15 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
     }
 
     const onSavePress = async () => {
+        if (isSaving) {
+            return
+        }
+
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
+
+        try {
+            await updateDoc(doc(db, 'users', userId), {services: changedServices})
+
             closeModal()
 
             showToast({
@@ -91,7 +106,18 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
                 headerText: 'Success!',
                 text: 'Services were changed successfully.'
             })
-        }, 1000)
+
+            updateRedux({services: changedServices})
+        } catch(e) {
+            console.error(e)
+            toastRef.current.show({
+                type: 'error',
+                //headerText: 'Success!',
+                text: "Failed to save the data. Please try again later."
+            })
+        } finally {
+            setIsSaving(false)
+        }
     }
 
     const onSearch = (search) => {
@@ -257,6 +283,8 @@ const ServicesEditor = ({ visible, setVisible, services, showToast }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            <Toast ref={toastRef}/>
         </Modal>
     )
 }

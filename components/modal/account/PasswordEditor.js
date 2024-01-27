@@ -34,8 +34,10 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
     const [data, setData] = useState({
         currentPassword: '',
         newPassword: '',
+        confirmNewPassword: '',
         currentSecureTextEntry: true,
         newSecureTextEntry: true,
+        confirmNewSecureTextEntry: true
     })
 
     const toastRef = useRef()
@@ -48,8 +50,10 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             setData({
                 currentPassword: '',
                 newPassword: '',
+                confirmNewPassword: '',
                 currentSecureTextEntry: true,
                 newSecureTextEntry: true,
+                confirmNewSecureTextEntry: true
             })
         } else {
             translateY.value = withTiming(window.height, {
@@ -87,7 +91,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
     }
 
     const onSavePress = async () => {
-        if (!data.newPassword || !data.currentPassword) {
+        if (!data.newPassword || !data.currentPassword || data.newPassword !== data.confirmNewPassword) {
             setShowErrorMessage(true)
             return
         }
@@ -97,6 +101,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
         }
 
         setIsSaving(true)
+        setShowErrorMessage(false)
 
         try {
             await reauthenticate()
@@ -221,6 +226,26 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
                                 onRightIconPress={() => updateSecureTextEntry('newSecureTextEntry')}
                                 errorMessage={showErrorMessage && (!data.newPassword || data.newPassword.length < 8) ? 'Password must be at least 8 characters long' : undefined}
                                 secureTextEntry={data.newSecureTextEntry}
+                                onSubmitEditing={onSavePress}
+                            />
+
+                            <HoverableInput
+                                placeholder="8 or more characters"
+                                label="Confirm new password"
+                                borderColor={COLORS.placeholder}
+                                hoveredBorderColor={COLORS.red}
+                                textColor='#000'
+                                containerStyle={{ marginTop: SPACING.xxx_small, marginHorizontal: SPACING.small }}
+                                textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                                labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                text={data.confirmNewPassword}
+                                setText={(text) => setData({ ...data, ['confirmNewPassword']: text.replaceAll(' ', '') })}
+                                leftIconName="lock-outline"
+                                rightIconName={data.confirmNewSecureTextEntry ? 'eye-off' : 'eye'}
+                                onRightIconPress={() => updateSecureTextEntry('confirmNewSecureTextEntry')}
+                                errorMessage={showErrorMessage && (!data.confirmNewPassword || data.confirmNewPassword.length < 8) ? 'Password must be at least 8 characters long' : showErrorMessage && data.newPassword !== data.confirmNewPassword ? 'Provided new passwords do not match.' : undefined}
+                                secureTextEntry={data.confirmNewSecureTextEntry}
                                 onSubmitEditing={onSavePress}
                             />
                         </Animated.ScrollView>
