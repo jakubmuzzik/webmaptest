@@ -141,7 +141,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         )
     }, [])
 
-    const renderContactInformation = () => (
+    const ContactInformation = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -194,7 +194,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderAbout = () => (
+    const About = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -228,7 +228,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderPersonalDetails = () => (
+    const PersonalDetails = () => (
         <View style={[styles.section, { paddingHorizontal: 0 }]}>
             <View style={[styles.sectionHeader, { marginHorizontal: SPACING.small }]}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -313,7 +313,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderPricing = () => (
+    const Pricing = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
 
@@ -376,7 +376,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderServices = () => (
+    const Services = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -402,7 +402,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderWorkingHours = () => (
+    const WorkingHours = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -475,7 +475,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const renderAddress = () => (
+    const Address = () => (
         <View style={[styles.section, { marginBottom: SPACING.medium }]}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -542,19 +542,19 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
 
     return (
         <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
-            {renderContactInformation()}
+            <ContactInformation />
 
-            {renderAbout()}
+            <About />
 
-            {renderPersonalDetails()}
+            <PersonalDetails />
 
-            {renderPricing()}
+            <Pricing />
 
-            {renderServices()}
+            <Services />
 
-            {renderWorkingHours()}
+            <WorkingHours />
 
-            {renderAddress()}
+            <Address />
 
             <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
             <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
