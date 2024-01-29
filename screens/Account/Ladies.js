@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo, memo } from 'react'
+import React, { useState, useCallback, useRef, useMemo, memo, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions, Image } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS, SUPPORTED_LANGUAGES } from '../../constants'
@@ -7,10 +7,12 @@ import { MaterialCommunityIcons, Ionicons, Octicons } from '@expo/vector-icons'
 import { stripEmptyParams, getParam } from '../../utils'
 import RenderAccountLady from '../../components/list/RenderAccountLady'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-
+import { connect } from 'react-redux'
+import { fetchLadies } from '../../redux/actions'
+import { ACTIVE, INACTIVE, IN_REVIEW, REJECTED} from '../../labels'
 import { MOCK_DATA } from '../../constants'
 
-const Ladies = ({ route, index, setTabHeight }) => {
+const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -18,12 +20,27 @@ const Ladies = ({ route, index, setTabHeight }) => {
     }), [searchParams])
 
     const [data, setData] = useState({
-        active: [MOCK_DATA.slice(25)],
+        active: [],
         inactive: [],
-        pending: [null],
+        inReview: [],
         rejected: []
     })
     const [sectionWidth, setSectionWidth] = useState(0)
+
+    useEffect(() => {
+        fetchLadies()
+    }, [])
+
+    useEffect(() => {
+        const active = ladies.filter(lady => lady.status === ACTIVE)
+        const inactive = ladies.filter(lady => lady.status === INACTIVE)
+        const inReview = ladies.filter(lady => lady.status === IN_REVIEW)
+        const rejected = ladies.filter(lady => lady.status === REJECTED)
+
+        setData({
+            active, inactive, inReview, rejected
+        })
+    }, [ladies])
 
     const navigate = useNavigate()
 
@@ -144,7 +161,7 @@ const Ladies = ({ route, index, setTabHeight }) => {
         }
     ]
 
-    const renderActive = () => (
+    const Active = () => (
         <View style={styles.section}>
             <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
@@ -185,7 +202,7 @@ const Ladies = ({ route, index, setTabHeight }) => {
         </View>
     )
 
-    const renderInactive = () => (
+    const Inactive = () => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
@@ -211,8 +228,8 @@ const Ladies = ({ route, index, setTabHeight }) => {
         </View>
     )
 
-    const renderPending = () => (
-        data.pending.length === 0 ? null :
+    const InReview = () => (
+        data.inReview.length === 0 ? null :
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
@@ -220,7 +237,7 @@ const Ladies = ({ route, index, setTabHeight }) => {
                         In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                        • {data.pending.length}
+                        • {data.inReview.length}
                     </Text>
                 </View>
 
@@ -236,7 +253,7 @@ const Ladies = ({ route, index, setTabHeight }) => {
 
 
     //TODO - if rejected - users clicks edit, fix the data and then click resubmit for review
-    const renderRejected = () => (
+    const Rejected = () => (
         data.rejected.length === 0 ? null :
             <View style={styles.section}>
                 <View style={[styles.sectionHeader, { alignItems: 'center' }]}>
@@ -255,15 +272,19 @@ const Ladies = ({ route, index, setTabHeight }) => {
 
     return (
         <View onLayout={onLayout} style={{ paddingBottom: SPACING.large }}>
-            {renderActive()}
-            {renderPending()}
-            {renderInactive()}
-            {renderRejected()}
+            <Active />
+            <InReview />
+            <Inactive />
+            <Rejected />
         </View>
     )
 }
 
-export default memo(Ladies)
+const mapStateToProps = (store) => ({
+    ladies: store.userState.ladies
+})
+
+export default connect(mapStateToProps, { fetchLadies })(memo(Ladies))
 
 const styles = StyleSheet.create({
     section: {

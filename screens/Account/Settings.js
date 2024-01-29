@@ -6,6 +6,7 @@ import { normalize } from '../../utils'
 import { Button, Tooltip, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { showToast, logOut } from '../../redux/actions'
+import { ACTIVE, IN_REVIEW, INACTIVE, REJECTED } from '../../labels'
 
 import {
     getAuth,
@@ -15,7 +16,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = ({ setTabHeight, showToast, logOut }) => {
+const Settings = ({ setTabHeight, showToast, logOut, currentUser }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -82,9 +83,9 @@ const Settings = ({ setTabHeight, showToast, logOut }) => {
                         </Text>
                     </View>
                     <TouchableOpacity onPress={onStatusChangePress} style={{ flexDirection: 'row', alignItems: 'center' }} activeOpacity={1}>
-                        <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xxx_small }}/>
+                        <Octicons name="dot-fill" size={20} color={currentUser.status === IN_REVIEW ? 'yellow' : currentUser.status === INACTIVE ? 'grey' : currentUser.status === REJECTED ? 'red' : 'green'} style={{ marginRight: SPACING.xxx_small }} />
                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                            Active
+                            {currentUser.status}
                         </Text>
                     </TouchableOpacity>
                 </View>

@@ -330,6 +330,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                                     text={changedPersonalDetails.height}
                                     setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'height')}
+                                    numeric={true}
                                     errorMessage={showErrorMessage && !changedPersonalDetails.height ? 'Enter your height' : undefined}
                                 />
 
@@ -345,6 +346,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                                     placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
                                     text={changedPersonalDetails.weight}
                                     setText={(text) => onValueChange(text.replace(/[^0-9]/g, ''), 'weight')}
+                                    numeric={true}
                                     errorMessage={showErrorMessage && !changedPersonalDetails.weight ? 'Enter your weight' : undefined}
                                 />
                             </View>

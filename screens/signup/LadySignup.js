@@ -40,9 +40,9 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
 
     const [routes] = useState(
         [
-            //{ key: 'login_information' },
-            //{ key: 'personal_details' },
-            //{ key: 'services_and_pricing' },
+            { key: 'login_information' },
+            { key: 'personal_details' },
+            { key: 'services_and_pricing' },
             { key: 'address_and_availability' },
             { key: 'photos_and_videos' },
             { key: 'registration_completed' }
@@ -141,19 +141,19 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             delete data.password
     
             await sendEmailVerification(response.user)
+
+            data.id = getAuth().currentUser.uid
+        } else {
+            data.id = uuid.v4(),
+            establishmentId = getAuth().currentUser.uid
         }
 
         data = {
             ...data,
-            id: independent ? getAuth().currentUser.uid : uuid.v4(),
             nameLowerCase: data.name.toLowerCase(),
             createdDate: new Date(),
             accountType: 'lady',
             independent
-        }
-
-        if (!independent) {
-            data.establishmentId = getAuth().currentUser.uid
         }
 
         //extract assets before uploading
@@ -200,7 +200,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
 
         data.images.forEach((image, index) => {
             delete image.image
-            image.videoURLs = imageURLs[index]
+            image.downloadUrl = imageURLs[index]
         })
 
         data.videos.forEach((video, index) => {

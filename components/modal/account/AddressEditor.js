@@ -130,14 +130,14 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
             showToast({
                 type: 'success',
                 headerText: 'Success!',
-                text: 'Description was changed successfully.'
+                text: 'Address was changed successfully.'
             })
 
             updateRedux({address: addr, hiddenAddress: hidden})
         } catch(e) {
             toastRef.current.show({
                 type: 'error',
-                text: 'Address was changed successfully.'
+                text: "Failed to save the data. Please try again later."
             })
         } finally {
             setIsSaving(false)

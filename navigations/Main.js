@@ -61,7 +61,10 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
                     })
                 }
             } else {
-                fetchUser()
+                //fetch only on page reloads and when already signed in
+                if (!hasLoadedRef.current) {
+                    fetchUser()
+                }
                 setIsLoggedIn(true)
 
                 if (user.emailVerified && hasLoadedRef.current) {

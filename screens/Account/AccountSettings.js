@@ -13,7 +13,7 @@ import Settings from './Settings'
 import Ladies from './Ladies'
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 
-const AccountSettings = ({ currentUser, ladies }) => {
+const AccountSettings = ({ currentUser }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -27,7 +27,9 @@ const AccountSettings = ({ currentUser, ladies }) => {
         { key: 'photos', title: 'Photos', height: '100%', path: '/account/photos' },
         { key: 'videos', title: 'Videos', height: '100%', path: '/account/videos' },
         { key: 'settings', title: 'Settings', height: '100%', path: '/account/settings' },
-    ].map((route, index) => ({ ...route, index })))//.filter(route => route.key !== 'ladies'))
+    ]
+    .filter(route => route.key === 'ladies' ? currentUser.accountType === 'establishment' : true)
+    .map((route, index) => ({ ...route, index })))
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -95,7 +97,7 @@ const AccountSettings = ({ currentUser, ladies }) => {
             case 'settings':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <Settings setTabHeight={(height) => setTabHeight(height, route.index)} />
+                        <Settings currentUser={currentUser} setTabHeight={(height) => setTabHeight(height, route.index)} />
                     </View>
                 )
             default:

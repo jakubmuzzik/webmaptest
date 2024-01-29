@@ -338,7 +338,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
             </View>
 
             {userData.prices.length === 0 ? (
-                <Text style={{ color: COLORS.white, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>No pricing defined</Text>
+                <Text style={{ color: COLORS.greyText, fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>No pricing defined</Text>
             ) : (
                 <View style={styles.table}>
                     <View style={{ flexBasis: 200, flexShrink: 1, flexGrow: 1 }}>
@@ -475,7 +475,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
         </View>
     )
 
-    const Address = () => (
+    const Address = useCallback(() => (
         <View style={[styles.section, { marginBottom: SPACING.medium }]}>
             <View style={styles.sectionHeader}>
                 <Text numberOfLines={1} style={styles.sectionHeaderText}>
@@ -538,7 +538,7 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
                 </MapView>
             </View>}
         </View>
-    )
+    ), [userData.name, userData.address, userData.hiddenAddress])
 
     return (
         <View onLayout={(event) => setTabHeight(event.nativeEvent.layout.height)}>
@@ -546,20 +546,20 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
 
             <About />
 
-            <PersonalDetails />
+            {userData.accountType === 'lady' && <PersonalDetails />}
 
-            <Pricing />
+            {userData.accountType === 'lady' && <Pricing />}
 
-            <Services />
+            {userData.accountType === 'lady' && <Services />}
 
             <WorkingHours />
 
             <Address />
 
             <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            {userData.accountType === 'lady' && <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
             <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
             <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
             <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />

@@ -6,7 +6,7 @@ import {
     CLEAR_DATA,
     LADIES_STATE_CHANGE
 } from './actionTypes'
-import { getAuth, getDoc, doc, db, signOut } from '../firebase/config'
+import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where } from '../firebase/config'
 
 export const updateRoute = (route) => ({
     type: ROUTE_STATE_CHANGE,
@@ -56,6 +56,26 @@ export const fetchUser = () => (dispatch, getState) => {
                 dispatch({ type: USER_STATE_CHANGE, data: snapshot.data() })
             } else {
                 dispatch(logOut())
+            }
+        })
+}
+
+export const fetchLadies = () => (dispatch, getState) => {
+    return getDocs(query(collection(db, "users"), where('establishmentId', '==', getAuth().currentUser.uid)))
+        .then(snapshot => {
+            if (snapshot.empty) {
+                console.log('emptu')
+                dispatch({ type: LADIES_STATE_CHANGE, ladies: [] })
+            } else {
+                const ladies = snapshot.docs
+                    .map(doc => {
+                        const data = doc.data()
+                        const id = doc.id
+                        return { id, ...data }
+                    })
+                    .sort((a, b) => b.createdDate.toDate() - a.createdDate.toDate())
+
+                dispatch({ type: LADIES_STATE_CHANGE, ladies })
             }
         })
 }

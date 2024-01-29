@@ -184,7 +184,7 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
 
         data.images.forEach((image, index) => {
             delete image.image
-            image.videoURLs = imageURLs[index]
+            image.downloadUrl = imageURLs[index]
         })
 
         data.videos.forEach((video, index) => {

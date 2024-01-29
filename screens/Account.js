@@ -43,7 +43,7 @@ const ESTABLISHMENT_LADIES_MESSAGES = {
 
 const { height: initialHeight } = Dimensions.get('window')
 
-const Account = ({ navigation, route, currentUser, ladies }) => {
+const Account = ({ navigation, route, currentUser }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -99,7 +99,7 @@ const Account = ({ navigation, route, currentUser, ladies }) => {
             case 'account':
                 return (
                     <View style={{ marginTop: SPACING.large }}>
-                        <AccountSettings currentUser={currentUser} ladies={ladies} />
+                        <AccountSettings currentUser={currentUser} />
                     </View>
                 )
             case 'edit_lady':
@@ -187,18 +187,48 @@ const Account = ({ navigation, route, currentUser, ladies }) => {
 
     const SkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
-            <ContentLoader
-                speed={2}
-                height={35}
-                style={{ marginHorizontal: SPACING.large, borderRadius: 5, justifyContent: 'space-between' }}
-                backgroundColor={COLORS.grey}
-                foregroundColor={COLORS.lightGrey}
-            >
-                <Rect x="0" y="0" rx="0" ry="0" width="21.25%" height={35} />
-                <Rect x="26.25%" y="0" rx="0" ry="0" width="21.25%" height={35} />
-                <Rect x="52.5%" y="0" rx="0" ry="0" width="21.25%" height={35} />
-                <Rect x="78.75%" y="0" rx="0" ry="0" width="21.25%" height={35} />
-            </ContentLoader>
+            <View style={{ marginHorizontal: SPACING.large, justifyContent: 'space-between', flexDirection: 'row' }}>
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+            </View>
 
             <ContentLoader
                 speed={2}
@@ -287,8 +317,7 @@ const Account = ({ navigation, route, currentUser, ladies }) => {
 }
 
 const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser,
-    ladies: store.userState.ladies
+    currentUser: store.userState.currentUser
 })
 
 export default connect(mapStateToProps)(Account)
