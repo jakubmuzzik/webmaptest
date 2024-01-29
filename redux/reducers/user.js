@@ -7,7 +7,7 @@ import {
 const INITIAL_STATE = {
     currentUser: {},
     //ladies from establishemnt
-    ladies: []
+    ladies: null
 }
 
 export const user = (state = INITIAL_STATE, action) => {

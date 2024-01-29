@@ -31,7 +31,7 @@ export const updateCurrentUserInRedux = (data) => ({
 
 //lady under establishment
 export const updateLadyInRedux = (data) => (dispatch, getState) => {
-    let ladies = JSON.parse(JSON.stringify(getState().userState.ladies))
+    let ladies = getState().userState.ladies ? JSON.parse(JSON.stringify(getState().userState.ladies)) : []
 
     let existingLady = ladies.filter(lady => lady.id === data.id)
 
@@ -64,7 +64,7 @@ export const fetchLadies = () => (dispatch, getState) => {
     return getDocs(query(collection(db, "users"), where('establishmentId', '==', getAuth().currentUser.uid)))
         .then(snapshot => {
             if (snapshot.empty) {
-                console.log('emptu')
+                console.log('empty')
                 dispatch({ type: LADIES_STATE_CHANGE, ladies: [] })
             } else {
                 const ladies = snapshot.docs

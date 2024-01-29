@@ -43,7 +43,7 @@ const ESTABLISHMENT_LADIES_MESSAGES = {
 
 const { height: initialHeight } = Dimensions.get('window')
 
-const Account = ({ navigation, route, currentUser }) => {
+const Account = ({ navigation, route, currentUser={} }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -57,20 +57,38 @@ const Account = ({ navigation, route, currentUser }) => {
         { key: 'account', title: 'Account' },
         { key: 'edit_lady', title: 'Edit Lady' },
         { key: 'add_lady', title: 'Add Lady' },
-    ].map((route, index) => ({ ...route, index })))//.filter(route => route.key !== 'ladies'))
+    ]
+    .map((route, index) => ({ ...route, index })))
 
     const location = useLocation()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (location.pathname.includes('edit-lady')) {
-            setIndex(1)
-        } else if (location.pathname.includes('add-lady')) {
-            setIndex(2)
-        } else {
-            setIndex(0)
+        if (Object.keys(currentUser).length === 0) {
+            return
         }
-    }, [location.pathname])
+
+        if (
+            (
+                location.pathname.includes('add-lady') 
+                || location.pathname.includes('edit-lady')
+            )
+            && currentUser.accountType !== 'establishment'
+        ) {
+            navigate({
+                pathname: '/account',
+                search: new URLSearchParams(stripEmptyParams(params)).toString()
+            },{ replace: true })
+        } else {
+            if (location.pathname.includes('edit-lady')) {
+                setIndex(1)
+            } else if (location.pathname.includes('add-lady')) {
+                setIndex(2)
+            } else {
+                setIndex(0)
+            }
+        }
+    }, [location, currentUser])
 
     const onGoBackPress = () => {
         if (location.key === 'default') {
@@ -82,13 +100,6 @@ const Account = ({ navigation, route, currentUser }) => {
             navigate(-1)
         }
     }
-
-    //todo - this is used only for photos tab - implement skeleton loading
-    const renderLazyPlaceholder = () => (
-        <View style={{ alignSelf: 'center', marginTop: SPACING.xx_large }}>
-            <ActivityIndicator animating color={COLORS.red} size={30} />
-        </View>
-    )
 
     const renderPagesScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
@@ -307,8 +318,6 @@ const Account = ({ navigation, route, currentUser }) => {
                     navigationState={{ index, routes }}
                     renderScene={renderPagesScene}
                     onIndexChange={setIndex}
-                    //lazy
-                    //renderLazyPlaceholder={renderLazyPlaceholder}
                     initialLayout={{ width: Dimensions.get('window').width }}
                 />
             )}

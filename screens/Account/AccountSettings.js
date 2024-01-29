@@ -65,10 +65,6 @@ const AccountSettings = ({ currentUser }) => {
     )
 
     const renderScene = ({ route }) => {
-        if (Math.abs(index - routes.indexOf(route)) > 0) {
-            //return <View />
-        }
-
         switch (route.key) {
             case 'profile-information':
                 return (

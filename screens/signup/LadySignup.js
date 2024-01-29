@@ -145,7 +145,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             data.id = getAuth().currentUser.uid
         } else {
             data.id = uuid.v4(),
-            establishmentId = getAuth().currentUser.uid
+            data.establishmentId = getAuth().currentUser.uid
         }
 
         data = {

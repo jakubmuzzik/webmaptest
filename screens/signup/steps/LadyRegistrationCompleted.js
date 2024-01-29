@@ -39,7 +39,7 @@ const LadyRegistrationCompleted = ({ independent, visible, email }) => {
 
     const onContinuePress = () => {
         navigate({
-            pathname: '/account',
+            pathname: independent ? '/account' : '/account/ladies',
             search: new URLSearchParams(stripEmptyParams({ language: params.language })).toString()
         })
     }

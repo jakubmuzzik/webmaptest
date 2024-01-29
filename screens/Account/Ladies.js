@@ -4,42 +4,46 @@ import { Entypo } from '@expo/vector-icons'
 import { SPACING, FONTS, FONT_SIZES, COLORS, SUPPORTED_LANGUAGES } from '../../constants'
 import { Button } from 'react-native-paper'
 import { MaterialCommunityIcons, Ionicons, Octicons } from '@expo/vector-icons'
-import { stripEmptyParams, getParam } from '../../utils'
+import { stripEmptyParams, getParam, normalize } from '../../utils'
 import RenderAccountLady from '../../components/list/RenderAccountLady'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchLadies } from '../../redux/actions'
 import { ACTIVE, INACTIVE, IN_REVIEW, REJECTED} from '../../labels'
 import { MOCK_DATA } from '../../constants'
+import ContentLoader, { Rect } from "react-content-loader/native"
 
-const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
+const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
     }), [searchParams])
 
-    const [data, setData] = useState({
-        active: [],
+    const hasRendered = useRef()
+
+    /**
+     * active: [],
         inactive: [],
         inReview: [],
         rejected: []
-    })
+     */
+    const [data, setData] = useState()
     const [sectionWidth, setSectionWidth] = useState(0)
 
     useEffect(() => {
-        fetchLadies()
-    }, [])
+        if (!ladies) {
+            fetchLadies()
+        } else {
+            const active = ladies.filter(lady => lady.status === ACTIVE)
+            const inactive = ladies.filter(lady => lady.status === INACTIVE)
+            const inReview = ladies.filter(lady => lady.status === IN_REVIEW)
+            const rejected = ladies.filter(lady => lady.status === REJECTED)
 
-    useEffect(() => {
-        const active = ladies.filter(lady => lady.status === ACTIVE)
-        const inactive = ladies.filter(lady => lady.status === INACTIVE)
-        const inReview = ladies.filter(lady => lady.status === IN_REVIEW)
-        const rejected = ladies.filter(lady => lady.status === REJECTED)
-
-        setData({
-            active, inactive, inReview, rejected
-        })
+            setData({
+                active, inactive, inReview, rejected
+            })
+        }
     }, [ladies])
 
     const navigate = useNavigate()
@@ -191,7 +195,7 @@ const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
                     No active profiles
                 </Text> : (
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                        {MOCK_DATA.slice(25).map(lady => (
+                        {data.active.map(lady => (
                             <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small  }}>
                                 <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions} offsetX={windowWidth * index} />
                             </View>
@@ -200,6 +204,29 @@ const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
                 )
             }
         </View>
+    )
+
+    const InReview = () => (
+        data.inReview.length === 0 ? null :
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        In review
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.inReview.length}
+                    </Text>
+                </View>
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                    {data.inReview.map(lady => (
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                            <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions} offsetX={windowWidth * index} />
+                        </View>
+                    ))}
+                </View>
+            </View>
     )
 
     const Inactive = () => (
@@ -228,30 +255,6 @@ const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
         </View>
     )
 
-    const InReview = () => (
-        data.inReview.length === 0 ? null :
-            <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                    <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
-                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                        In review
-                    </Text>
-                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                        • {data.inReview.length}
-                    </Text>
-                </View>
-
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                    {MOCK_DATA.slice(25).map(lady => (
-                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                            <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions} offsetX={windowWidth * index} />
-                        </View>
-                    ))}
-                </View>
-            </View>
-    )
-
-
     //TODO - if rejected - users clicks edit, fix the data and then click resubmit for review
     const Rejected = () => (
         data.rejected.length === 0 ? null :
@@ -269,6 +272,52 @@ const Ladies = ({ route, index, setTabHeight, ladies=[], fetchLadies }) => {
 
             </View>
     )
+
+    if (!data) {
+        return (
+            <View onLayout={onLayout} style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', paddingVertical: SPACING.x_large }}>
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+                <ContentLoader
+                    speed={2}
+                    height={200}
+                    style={{ marginTop: SPACING.medium, borderRadius: 20 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={200} />
+                </ContentLoader>
+
+                <ContentLoader
+                    speed={2}
+                    height={35}
+                    width={'21.25%'}
+                    style={{ borderRadius: 5, marginTop: SPACING.x_large }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                </ContentLoader>
+                <ContentLoader
+                    speed={2}
+                    height={200}
+                    style={{ marginTop: SPACING.medium, borderRadius: 20 }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height={200} />
+                </ContentLoader>
+            </View>
+        )
+    }
 
     return (
         <View onLayout={onLayout} style={{ paddingBottom: SPACING.large }}>
