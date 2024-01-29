@@ -28,7 +28,7 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
         inReview: [],
         rejected: []
      */
-    const [data, setData] = useState()
+    const [data, setData] = useState({})
     const [sectionWidth, setSectionWidth] = useState(0)
 
     useEffect(() => {
@@ -165,7 +165,7 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
         }
     ]
 
-    const Active = () => (
+    const Active = useCallback(() => (
         <View style={styles.section}>
             <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
@@ -204,9 +204,9 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
                 )
             }
         </View>
-    )
+    ), [data.active])
 
-    const InReview = () => (
+    const InReview = useCallback(() => (
         data.inReview.length === 0 ? null :
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
@@ -227,9 +227,9 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
                     ))}
                 </View>
             </View>
-    )
+    ), [data.inReview])
 
-    const Inactive = () => (
+    const Inactive = useCallback(() => (
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
                 <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
@@ -253,10 +253,10 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
                 )
             }
         </View>
-    )
+    ), [data.inactive])
 
     //TODO - if rejected - users clicks edit, fix the data and then click resubmit for review
-    const Rejected = () => (
+    const Rejected = useCallback(() => (
         data.rejected.length === 0 ? null :
             <View style={styles.section}>
                 <View style={[styles.sectionHeader, { alignItems: 'center' }]}>
@@ -271,9 +271,9 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
 
 
             </View>
-    )
+    ), [data.rejected])
 
-    if (!data) {
+    if (Object.keys(data).length === 0) {
         return (
             <View onLayout={onLayout} style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', paddingVertical: SPACING.x_large }}>
                 <ContentLoader
