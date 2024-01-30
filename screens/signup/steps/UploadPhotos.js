@@ -94,8 +94,10 @@ const UploadPhotos = forwardRef((props, ref) => {
                     return
                 }
 
+                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
+
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash: encodeImageToBlurhash(result.assets[0].uri)}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
                     if (index > 4 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
@@ -138,9 +140,10 @@ const UploadPhotos = forwardRef((props, ref) => {
                 }
 
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
+                const blurhash = await encodeImageToBlurhash(thumbnail)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash: encodeImageToBlurhash(thumbnail)}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }

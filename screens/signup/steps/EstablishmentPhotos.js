@@ -99,22 +99,15 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                     return
                 }
 
+                const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
+
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
                     if (index > 0 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
                     return { ...d }
                 })
-
-                /*setTimeout(async () => {
-                    const blur = await encodeImageToBlurhash(result.assets[0].uri)
-                    console.log(blur)
-                    setData(d => {
-                        d.images[index] = {...d.images[index], blurhash: blur}
-                        return { ...d }
-                    })
-                })*/
             } catch (e) {
                 console.error(e)
             }
@@ -152,9 +145,10 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 }
 
                 const thumbnail = await generateThumbnailFromLocalURI(result.assets[0].uri, 0)
+                const blurhash = await encodeImageToBlurhash(thumbnail)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), status: ACTIVE}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), blurhash, status: ACTIVE}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }
