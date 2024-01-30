@@ -104,7 +104,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
                 text: 'Contact Information was changed successfully.'
             })
 
-            updateRedux(changedContactInformation)
+            updateRedux({...changedContactInformation, id: userId})
         } catch(e) {
             toastRef.current.show({
                 type: 'error',

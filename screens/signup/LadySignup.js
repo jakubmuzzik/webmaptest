@@ -270,7 +270,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             case 'photos_and_videos':
                 return <UploadPhotos ref={route.ref} i={route.index} showToast={showToast} />
             case 'registration_completed':
-                return <LadyRegistrationCompleted independent={independent} visible={index === routes.length - 1} email={''} />
+                return <LadyRegistrationCompleted independent={independent} visible={index === routes.length - 1} showToast={showToast} />
         }
     }
 

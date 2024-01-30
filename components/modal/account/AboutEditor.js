@@ -102,7 +102,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
                 text: 'Description was changed successfully.'
             })
 
-            updateRedux({description: changedAbout})
+            updateRedux({description: changedAbout, id: userId})
         } catch(e) {
             toastRef.current.show({
                 type: 'error',

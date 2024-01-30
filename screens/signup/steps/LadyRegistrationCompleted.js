@@ -15,7 +15,7 @@ import LottieView from 'lottie-react-native'
 import { Button } from 'react-native-paper'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
-const LadyRegistrationCompleted = ({ independent, visible, email }) => {
+const LadyRegistrationCompleted = ({ independent, visible, showToast={showToast} }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -42,6 +42,13 @@ const LadyRegistrationCompleted = ({ independent, visible, email }) => {
             pathname: independent ? '/account' : '/account/ladies',
             search: new URLSearchParams(stripEmptyParams({ language: params.language })).toString()
         })
+
+        if (!independent) {
+            showToast({
+                type: 'success',
+                text: 'Lady was successfully submitted for review.'
+            })
+        }
     }
 
     return (

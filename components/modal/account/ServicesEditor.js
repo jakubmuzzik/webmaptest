@@ -107,7 +107,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast, userId, upda
                 text: 'Services were changed successfully.'
             })
 
-            updateRedux({services: changedServices})
+            updateRedux({services: changedServices, id: userId})
         } catch(e) {
             console.error(e)
             toastRef.current.show({

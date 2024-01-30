@@ -133,7 +133,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
                 text: 'Address was changed successfully.'
             })
 
-            updateRedux({address: addr, hiddenAddress: hidden})
+            updateRedux({address: addr, hiddenAddress: hidden, id: userId})
         } catch(e) {
             toastRef.current.show({
                 type: 'error',

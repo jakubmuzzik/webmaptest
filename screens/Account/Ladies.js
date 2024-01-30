@@ -54,7 +54,7 @@ const Active = ({ onAddNewLadyPress, data, activeActions, cardWidth, offsetX }) 
     </View>
 )
 
-const InReview = ({ data, pendingActions, cardWidth, offsetX }) => (
+const InReview = ({ data, inReviewActions, cardWidth, offsetX }) => (
     data.length === 0 ? null :
         <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -70,7 +70,7 @@ const InReview = ({ data, pendingActions, cardWidth, offsetX }) => (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
                 {data.map(lady => (
                     <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                        <RenderAccountLady lady={lady} width={cardWidth} actions={pendingActions} offsetX={offsetX} />
+                        <RenderAccountLady lady={lady} width={cardWidth} actions={inReviewActions} offsetX={offsetX} />
                     </View>
                 ))}
             </View>
@@ -254,6 +254,10 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
 
     const inReviewActions = [
         {
+            label: 'Edit',
+            onPress: onEditLadyPress
+        },
+        {
             label: 'Delete',
             onPress: onDeletePress,
             iconName: 'delete-outline'
@@ -324,9 +328,9 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
     return (
         <View onLayout={onLayout} style={{ paddingBottom: SPACING.large }}>
             <Active onAddNewLadyPress={onAddNewLadyPress} data={data.active} activeActions={activeActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <InReview data={data.inReview} activeActions={inReviewActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <Inactive data={data.inactive} activeActions={inactiveActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <Rejected data={data.rejected} activeActions={rejectedActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
+            <InReview data={data.inReview} inReviewActions={inReviewActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
+            <Inactive data={data.inactive} inactiveActions={inactiveActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
+            <Rejected data={data.rejected} rejectedActions={rejectedActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
         </View>
     )
 }

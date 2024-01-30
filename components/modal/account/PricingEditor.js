@@ -105,7 +105,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, update
                 text: 'Pricing was changed successfully.'
             })
 
-            updateRedux(changedPricing)
+            updateRedux({...changedPricing, id: userId})
         } catch(e) {
             console.error(e)
             toastRef.current.show({

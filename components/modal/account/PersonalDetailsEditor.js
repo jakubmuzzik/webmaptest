@@ -128,7 +128,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                 text: 'Personal Details were changed successfully.'
             })
 
-            updateRedux(changedPersonalDetails)
+            updateRedux({...changedPersonalDetails, id: userId})
         } catch(e) {
             console.error(e)
             toastRef.current.show({

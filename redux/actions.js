@@ -33,14 +33,19 @@ export const updateCurrentUserInRedux = (data) => ({
 export const updateLadyInRedux = (data) => (dispatch, getState) => {
     let ladies = getState().userState.ladies ? JSON.parse(JSON.stringify(getState().userState.ladies)) : []
 
-    let existingLady = ladies.filter(lady => lady.id === data.id)
+    let existingLady = ladies.find(lady => lady.id === data.id)
 
-    existingLady = existingLady.length ? {
-        ...existingLady[0],
-        ...data
-    } : data
+    if (existingLady) {
+        ladies = ladies.filter(lady => lady.id !== data.id)
+        existingLady = {
+            ...existingLady,
+            ...data
+        } 
+    } else {
+        existingLady = data
+    }
 
-    ladies = ladies.concat(data)
+    ladies.push(existingLady)
 
     dispatch({ type: LADIES_STATE_CHANGE, ladies })
 }

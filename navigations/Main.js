@@ -208,6 +208,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <LadySignup independent/>
                     </View>
+
+                    <Footer />
                 </>
             } />
 
@@ -220,6 +222,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
                     <View style={{ height: initialHeight, paddingTop: normalize(70) }}>
                         <EstablishmentSignup />
                     </View>
+
+                    <Footer />
                 </>
             } />
 

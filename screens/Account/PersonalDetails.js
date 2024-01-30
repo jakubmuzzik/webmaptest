@@ -556,13 +556,13 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
 
             <Address />
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            {userData.accountType === 'lady' && <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
-            {userData.accountType === 'lady' && <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
-            {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />}
-            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
-            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast} userId={getAuth().currentUser.uid} updateRedux={updateCurrentUserInRedux} />
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            {userData.accountType === 'lady' && <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
         </View>
     )
 }

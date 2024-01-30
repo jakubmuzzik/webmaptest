@@ -91,6 +91,7 @@ const Account = ({ navigation, route, currentUser={} }) => {
     }, [location, currentUser])
 
     const onGoBackPress = () => {
+        //can't go back
         if (location.key === 'default') {
             navigate({
                 pathname: '/account/ladies',

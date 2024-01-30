@@ -160,7 +160,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, user
                 text: 'Working Hours were changed successfully.'
             })
 
-            updateRedux({workingHours: wh})
+            updateRedux({workingHours: wh, id: userId})
         } catch(e) {
             console.error(e)
             toastRef.current.show({
