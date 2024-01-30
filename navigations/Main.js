@@ -34,6 +34,67 @@ const { height: initialHeight } = Dimensions.get('window')
 
 const auth = getAuth()
 
+const LayoutWithHeader = ({ children }) => (
+    <>
+        <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
+            <Header />
+        </View>
+
+        <View style={{ flex: 1, marginTop: normalize(70) }}>
+            {children}
+        </View>
+
+        <Footer />
+    </>
+)
+
+const Redirect = ({ replace, to }) => {
+    const [searchParams] = useSearchParams()
+
+    const params = {
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }
+
+    //need to hardcode => search param on Navigate component didn't work
+    if (params.language) {
+        to += '?language=' + params.language
+    }
+
+    return <Navigate to={to} replace={replace} />
+}
+
+const RequireAuth = ({ children }) => {
+    const location = useLocation()
+    const [searchParams] = useSearchParams()
+
+    const params = {
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }
+
+    const isLoggedIn = getAuth()?.currentUser
+    const isVerified = isLoggedIn?.emailVerified
+
+    if (isLoggedIn && !isVerified && location.pathname !== '/verify-email') {
+        let to = '/verify-email'
+        //need to hardcode => search param on Navigate component didn't work
+        if (params.language) {
+            to += '?language=' + params.language
+        }
+
+        return <Navigate to={to} state={{ from: location }} replace />
+    } else if (!isLoggedIn) {
+        let to = '/auth'
+        //need to hardcode => search param on Navigate component didn't work
+        if (params.language) {
+            to += '?language=' + params.language
+        }
+
+        return <Navigate to={to} state={{ from: location }} replace />
+    }
+
+    return children
+}
+
 const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
 
@@ -83,37 +144,6 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
         }
     }, [])
 
-    const RequireAuth = useCallback(({ children }) => {
-        const location = useLocation()
-        const [searchParams] = useSearchParams()
-
-        const params = {
-            language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
-        }
-
-        const isVerified = getAuth()?.currentUser?.emailVerified
-
-        if (isLoggedIn && !isVerified && location.pathname !== '/verify-email') {
-            let to = '/verify-email'
-            //need to hardcode => search param on Navigate component didn't work
-            if (params.language) {
-                to += '?language=' + params.language
-            }
-
-            return <Navigate to={to} state={{ from: location }} replace />
-        } else if (!isLoggedIn) {
-            let to = '/auth'
-            //need to hardcode => search param on Navigate component didn't work
-            if (params.language) {
-                to += '?language=' + params.language
-            }
-
-            return <Navigate to={to} state={{ from: location }} replace />
-        }
-
-        return children
-    }, [isLoggedIn])
-
     /*const ProhibitsAuth = useCallback(({ children }) => {
         const [searchParams] = useSearchParams()
 
@@ -133,36 +163,7 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
 
         return children
     }, [isLoggedIn])*/
-
-    const Redirect = ({ replace, to }) => {
-        const [searchParams] = useSearchParams()
-
-        const params = {
-            language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
-        }
-
-        //need to hardcode => search param on Navigate component didn't work
-        if (params.language) {
-            to += '?language=' + params.language
-        }
-
-        return <Navigate to={to} replace={replace} />
-    }
-
-    const LayoutWithHeader = useCallback(({ children }) => (
-        <>
-            <View style={{ position: 'fixed', zIndex: 1, width: '100%', flexDirection: 'column', backgroundColor: COLORS.lightBlack }}>
-                <Header />
-            </View>
-
-            <View style={{ flex: 1, marginTop: normalize(70) }}>
-                {children}
-            </View>
-
-            <Footer />
-        </>
-    ), [])
-
+    
     const router = createBrowserRouter(createRoutesFromElements(
         <>
             <Route path='/' element={
