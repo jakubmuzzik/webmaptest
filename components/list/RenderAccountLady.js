@@ -39,7 +39,7 @@ const RenderAccountLady = ({ lady, width, showPrice = true, actions=[], offsetX 
                         width
                     }}
                     source={lady.images[0].downloadUrl}
-                    //placeholder={blurhash}
+                    placeholder={lady.images[0].blurhash}
                     resizeMode="cover"
                     transition={200}
                     alt={lady.name}

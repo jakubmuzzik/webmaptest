@@ -22,7 +22,8 @@ const getImageData = image => {
 export const encodeImageToBlurhash = async imageUrl => {
   const image = await loadImage(imageUrl)
   const imageData = getImageData(image)
-  return encode(imageData.data, imageData.width, imageData.height, 4, 4)
+  //return encode(imageData.data, imageData.width, imageData.height, 4, 4)
+  return encode(imageData.data, imageData.width, imageData.height, 1, 1)
 };
 
 export const normalize = (size, inverse = false) => {
