@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, memo, useEffect } from 'react'
+import React, { useState, useMemo, useLayoutEffect, memo, useEffect, useCallback } from 'react'
 import { View, Text, ScrollView, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../../constants'
 import { ActivityIndicator } from 'react-native-paper'
@@ -7,8 +7,11 @@ import { normalize, getParam, stripEmptyParams } from '../../utils'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom'
 import ContentLoader, { Rect } from "react-content-loader/native"
+import { MotiView } from 'moti'
 import { connect } from 'react-redux'
 import { fetchLadies, showToast } from '../../redux/actions'
+
+import { Ionicons } from '@expo/vector-icons'
 
 import PersonalDetails from './PersonalDetails'
 import Photos from './Photos'
@@ -35,12 +38,10 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
     const [ladyData, setLadyData] = useState(null)
 
     useEffect(() => {
-        console.log('saved')
         if (!ladies) {
             fetchLadies()
         } else {
             const foundLadyInRedux = ladies.find(lady => lady.id === id)
-            console.log('new found: ' + foundLadyInRedux.name)
             if (foundLadyInRedux) {
                 setLadyData(foundLadyInRedux)
             } else {
@@ -122,6 +123,35 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
         />
     )
 
+    const LadiesMessages = useCallback(() => {
+        return (
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: -10 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                style={{ marginHorizontal: SPACING.medium, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginBottom: SPACING.medium }}
+            >
+                <View style={{ flexDirection: 'row' }}>
+                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
+
+                    <View style={{ flexShrink: 1 }}>
+                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                            Lady is in review
+                        </Text>
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
+                            All profiles go through a standard review before they become visible.
+                        </Text>
+                    </View>
+                </View>
+            </MotiView>
+        )
+    }, [params.language, ladyData])
+
     const SkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
             <View style={{ marginHorizontal: SPACING.large, justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -194,22 +224,26 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
     }
 
     return (
-        <TabView
-            renderTabBar={renderTabBar}
-            swipeEnabled={false}
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            sceneContainerStyle={{
-                width: normalize(800),
-                maxWidth: '100%',
-                alignSelf: 'center',
-                paddingHorizontal: SPACING.medium,
-            }}
-            initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
-            lazy={({ route }) => route.key !== 'settings'}
-            renderLazyPlaceholder={renderLazyPlaceholder}
-        />
+        <>
+            <LadiesMessages />
+
+            <TabView
+                renderTabBar={renderTabBar}
+                swipeEnabled={false}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                sceneContainerStyle={{
+                    width: normalize(800),
+                    maxWidth: '100%',
+                    alignSelf: 'center',
+                    paddingHorizontal: SPACING.medium,
+                }}
+                initialLayout={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+                lazy={({ route }) => route.key !== 'settings'}
+                renderLazyPlaceholder={renderLazyPlaceholder}
+            />
+        </>
     )
 }
 

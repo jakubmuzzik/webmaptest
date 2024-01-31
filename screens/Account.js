@@ -162,40 +162,7 @@ const Account = ({ navigation, route, currentUser={} }) => {
                 </View>
             </MotiView>
         )
-    }, [index])
-
-    const LadiesMessages = () => {
-        if (index !== 1) {
-            return null
-        }
-
-        return (
-            <MotiView
-                from={{
-                    opacity: 0,
-                    transform: [{ translateY: -10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
-            >
-                <View style={{ flexDirection: 'row' }}>
-                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
-
-                    <View style={{ flexShrink: 1 }}>
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                            Profile is in review22
-                        </Text>
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
-                            All profiles go through a standard review before they become visible.
-                        </Text>
-                    </View>
-                </View>
-            </MotiView>
-        )
-    }
+    }, [index, params.language])
 
     const SkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
@@ -302,12 +269,7 @@ const Account = ({ navigation, route, currentUser={} }) => {
                     </AnimatePresence>
                 </View>
 
-                {Object.keys(currentUser).length > 0 && (
-                    <>
-                        <AccountMessages />
-                        <LadiesMessages />
-                    </>
-                )}
+                {Object.keys(currentUser).length > 0 && <AccountMessages />}
             </View>
 
             {Object.keys(currentUser).length === 0 && <SkeletonLoader />}
