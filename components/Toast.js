@@ -133,7 +133,7 @@ const Toast = forwardRef(({ }, ref) => {
                             animatedTopStyles,
                         ]}>
                         <View
-                            style={{ padding: 10, marginVertical: 5, marginLeft: 5, backgroundColor: toastData.type === 'success' ? '#e0f7e7' : toastData.type === 'warning' ? '#fef7ec' : '#fcd9df', borderRadius: 10 }}
+                            style={{ padding: 10, marginVertical: 5, marginLeft: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: toastData.type === 'success' ? '#e0f7e7' : toastData.type === 'warning' ? '#fef7ec' : '#fcd9df', borderRadius: 10 }}
                         >
                             <MotiView
                                 from={toastData.type === 'success' ? {
@@ -158,7 +158,7 @@ const Toast = forwardRef(({ }, ref) => {
                                 />
                             </MotiView>
                         </View>
-                        <View style={{ flexDirection: 'column', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small, flexShrink: 1 }}>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small, flexShrink: 1 }}>
                             <Text style={styles.toastHeaderText}>{toastData.headerText}</Text>
                             <Text
                                 numberOfLines={2}
@@ -174,6 +174,7 @@ const Toast = forwardRef(({ }, ref) => {
                             </Text>
                         </View>
                         <IconButton
+                            style={{ alignSelf: 'center' }}
                             icon="close"
                             iconColor="#000"
                             size={15}
@@ -197,7 +198,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         flexDirection: 'row',
-        alignItems: 'center',
         alignSelf: 'center',
     },
     toastHeaderText: {

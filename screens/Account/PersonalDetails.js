@@ -21,7 +21,7 @@ import WorkingHoursEditor from '../../components/modal/account/WorkingHoursEdito
 import AddressEditor from '../../components/modal/account/AddressEditor'
 import ContactInformationEditor from '../../components/modal/account/ContactInformationEditor'
 
-import { showToast, updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
+import { updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
 
 import {
     getAuth
@@ -32,7 +32,7 @@ const LOCATION_LONGITUDE_DELTA = 0.6 // == 50 Km
 const INITIAL_LATITUDE = 50.0646126
 const INITIAL_LONGITUDE = 14.3729754
 
-const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserInRedux, updateLadyInRedux }) => {
+const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserInRedux, updateLadyInRedux }) => {
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
 
@@ -556,18 +556,22 @@ const PersonalDetails = ({ setTabHeight, showToast, userData, updateCurrentUserI
 
             <Address />
 
-            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
-            {userData.accountType === 'lady' && <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
-            {userData.accountType === 'lady' && <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
-            {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
-            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
-            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
-            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} showToast={showToast} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <AboutEditor visible={aboutEditorVisible} setVisible={setAboutEditorVisible} about={userData.description} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            {userData.accountType === 'lady' && <PersonalDetailsEditor visible={personalDetailsEditorVisible} setVisible={setPersonalDetailsEditorVisible} personalDetails={personalDetails} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <PricingEditor visible={pricingEditorVisible} setVisible={setPricingEditorVisible} pricing={pricing} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
+            <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
         </View>
     )
 }
 
-export default connect(null, { showToast, updateCurrentUserInRedux, updateLadyInRedux })(memo(PersonalDetails))
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { updateCurrentUserInRedux, updateLadyInRedux })(memo(PersonalDetails))
 
 const styles = StyleSheet.create({
     containerLarge: {

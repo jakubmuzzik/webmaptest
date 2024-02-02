@@ -15,7 +15,7 @@ import { HelperText } from 'react-native-paper'
 import { fetchSignInMethodsForEmail, getAuth } from '../../../firebase/config'
 
 const LoginInformation = forwardRef((props, ref) => {
-    const {i, contentWidth, showToast} = props
+    const {i, contentWidth, toastRef} = props
 
     const [data, setData] = useState({
         email: '',
@@ -36,7 +36,7 @@ const LoginInformation = forwardRef((props, ref) => {
         try {
             const result = await fetchSignInMethodsForEmail(getAuth(), data.email)
             if (result.length > 0) {
-                showToast({
+                toastRef.current.show({
                     type: 'error',
                     text: 'Email address is already in use.'
                 })
@@ -44,12 +44,12 @@ const LoginInformation = forwardRef((props, ref) => {
             }
         } catch(error) {
             if (error.code?.includes('auth')) {
-                showToast({
+                toastRef.current.show({
                     type: 'error',
                     text: 'Invalid Email.'
                 })
             } else {
-                showToast({
+                toastRef.current.show({
                     type: 'error',
                     text: 'Could not validate the email.'
                 })

@@ -38,14 +38,14 @@ const HOURS = ['0.5 hour', '1 hour', '1.5 hour', '2 hours', '2.5 hour', '3 hours
 
 const window = Dimensions.get('window')
 
-const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, updateRedux }) => {
+const PricingEditor = ({ visible, setVisible, pricing, toastRef, userId, updateRedux }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMEssage] = useState(false)
     const [changedPricing, setChangedPricing] = useState(pricing)
     const [isChanged, setIsChanged] = useState(false)
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -99,7 +99,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, update
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Pricing was changed successfully.'
@@ -108,7 +108,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, update
             updateRedux({...changedPricing, id: userId})
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -412,7 +412,7 @@ const PricingEditor = ({ visible, setVisible, pricing, showToast, userId, update
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

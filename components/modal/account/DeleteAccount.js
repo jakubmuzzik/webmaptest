@@ -29,7 +29,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox"
 
 const window = Dimensions.get('window')
 
-const DeleteAccount = ({ visible, setVisible, showToast }) => {
+const DeleteAccount = ({ visible, setVisible, toastRef }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -39,7 +39,7 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
         confirmDelete: false
     })
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -100,7 +100,7 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
             setIsSaving(false)
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Your Email was changed successfully.'
@@ -220,7 +220,7 @@ const DeleteAccount = ({ visible, setVisible, showToast }) => {
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

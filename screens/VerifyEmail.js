@@ -4,13 +4,12 @@ import { Button } from "react-native-paper"
 import { COLORS, SPACING, FONTS, FONT_SIZES, SUPPORTED_LANGUAGES } from "../constants"
 import { normalize, getParam, stripEmptyParams } from "../utils"
 import { getAuth, reload, updateDoc, doc, sendEmailVerification, db } from "../firebase/config"
-import { showToast } from "../redux/actions"
 import { connect } from "react-redux"
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom"
 import EmailEditor from "../components/modal/account/EmailEditor"
 import LottieView from 'lottie-react-native'
 
-const VerifyEmail = ({ showToast }) => {
+const VerifyEmail = ({ toastRef }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -45,7 +44,7 @@ const VerifyEmail = ({ showToast }) => {
                     email: getAuth().currentUser.email
                 })
 
-                showToast({
+                toastRef.current.show({
                     type: 'success',
                     headerText: 'Success!',
                     text: 'Your account has been verified.'
@@ -59,7 +58,7 @@ const VerifyEmail = ({ showToast }) => {
                     replace: true
                 })
             } else {
-                showToast({
+                toastRef.current.show({
                     type: 'warning',
                     text: 'Please verify your email address.'
                 })
@@ -75,13 +74,13 @@ const VerifyEmail = ({ showToast }) => {
         setResetButtonLoading(true)
         try {
             await sendEmailVerification(getAuth().currentUser)
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 text: 'Confimation email has been re-sent.'
             })
         } catch (e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Email could not be sent. Try again later.'
             })
@@ -142,9 +141,13 @@ const VerifyEmail = ({ showToast }) => {
                 </Text>
             </View>
 
-            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} showToast={showToast}/>
+            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} toastRef={toastRef}/>
         </>
     )
 }
 
-export default connect(null, { showToast })(VerifyEmail)
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps)(VerifyEmail)

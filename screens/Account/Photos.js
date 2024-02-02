@@ -1,22 +1,33 @@
-import React, { useState, memo } from 'react'
-import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
+import React, { useState, memo, useCallback, useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, useWindowDimensions, Modal } from 'react-native'
 import { Image } from 'expo-image'
 import { COLORS, FONTS, FONT_SIZES, SPACING, MAX_PHOTO_SIZE_MB, MAX_VIDEO_SIZE_MB, MAX_VIDEOS, MAX_PHOTOS } from '../../constants'
-import { normalize } from '../../utils'
+import { ACTIVE, REJECTED, IN_REVIEW } from '../../labels'
+import { normalize, getFileSizeInMb, getDataType, encodeImageToBlurhash } from '../../utils'
 import { IconButton, Button, TouchableRipple } from 'react-native-paper'
 import { Octicons, Ionicons, AntDesign } from '@expo/vector-icons'
 import DropdownSelect from '../../components/DropdownSelect'
 import RenderImageWithActions from '../../components/list/RenderImageWithActions'
 
-const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
+import { connect } from 'react-redux'
 
-const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
+const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
     const [data, setData] = useState({
-        active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
-        pending: [require('../../assets/CATEGORY1.png'), require('../../assets/CATEGORY2.png'), require('../../assets/CATEGORY3.png'),],
-        rejected: [require('../../assets/dummy_photo.png')]
+        active: [],
+        inReview: [],
+        rejected: []
     })
+
+    useEffect(() => {
+        const active = userData.images.filter(lady => lady.status === ACTIVE)
+        const inReview = userData.images.filter(lady => lady.status === IN_REVIEW)
+        const rejected = userData.images.filter(lady => lady.status === REJECTED)
+
+        setData({
+            active, inReview, rejected
+        })
+    }, [userData.images])
+
     const [sectionWidth, setSectionWidth] = useState(0)
 
     const { width: windowWidth } = useWindowDimensions()
@@ -26,12 +37,75 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
        setSectionWidth(event.nativeEvent.layout.width - 2)
     }
 
-    const onEditImagePress = (image) => {
+    const openImagePicker = async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            base64: true,
+            //aspect: [4, 3],
+            quality: 0.8,
+        })
+
+        if (!result.canceled) {
+            try {
+                const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
+                if (fileSizeMb > MAX_PHOTO_SIZE_MB) {
+                    toastRef.current.show({
+                        type: 'error',
+                        headerText: 'File Size Error',
+                        text: `Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
+                    })
+                    return
+                }
+
+                const dataType = getDataType(result.assets[0].uri)
+                if (dataType !== 'image') {
+                    toastRef.current.show({
+                        type: 'error',
+                        headerText: 'Invalid File Type',
+                        text: `Please upload a supported file type.`
+                    })
+                    return
+                }
+
+                uploadImage()
+
+                /*setData(d => {
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
+                    if (index > 0 && d.images.length < MAX_PHOTOS) {
+                        d.images.push(null)
+                    }
+                    return { ...d }
+                })*/
+            } catch (e) {
+                console.error(e)
+                toastRef.current.show({
+                    type: 'error',
+                    text: `Image could not be uploaded.`
+                })
+            }
+        }
+    }
+
+    const uploadImage = async (imageUri) => {
+        const blurhash = await encodeImageToBlurhash(imageUri)
 
     }
 
-    const onDeleteImagePress = (image) => {
+    const onEditImagePress = (imageId) => {
+        //check if image on
+    }
 
+    const onDeleteImagePress = (imageId) => {
+        const toDelete = userData.images.find(image => image.id === imageId)
+        //deleting image in review when profile is in review
+        if (toDelete.status === IN_REVIEW && userData.status === IN_REVIEW) {
+            toastRef.current.show({
+                type: 'warning',
+                headerText: 'Profile is in review',
+                text: 'You can not delete this photo, your profile is currently in review.'
+            })
+        }
     }
 
     const onAddNewImagePress = () => {
@@ -46,10 +120,6 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
         {
             label: 'Edit',
             onPress: onEditImagePress
-        },
-        {
-            label: 'Delete',
-            onPress: onDeleteImagePress
         }
     ]
 
@@ -72,168 +142,178 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
         }
     ]
 
-    const renderPhotosGrid = () => {
-
-        return (
-            <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
-                <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
-                    {data.active[0] ? <><Image
-                        style={{
-                            aspectRatio: 3 / 4,
-                            width: 'auto',
-                            borderRadius: 10
-                        }}
-                        source={{ uri: data.active[0] }}
-                        placeholder={blurhash}
-                        resizeMode="cover"
-                        transition={200}
+    const PhotosGrid = () => (
+        <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
+            <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
+                {data.active[0] ? <><Image
+                    style={{
+                        aspectRatio: 3 / 4,
+                        width: 'auto',
+                        borderRadius: 10
+                    }}
+                    source={{ uri: data.active[0].downloadUrl }}
+                    placeholder={data.active[0].blurhash}
+                    resizeMode="cover"
+                    transition={200}
+                />
+                    <IconButton
+                        style={{ position: 'absolute', top: 2, right: 2, }}
+                        containerColor={COLORS.grey + 'B3'}
+                        icon="pencil-outline"
+                        iconColor='white'
+                        size={normalize(20)}
+                        onPress={() => onEditImagePress(0)}
                     />
+                </>
+                    :
+                    <TouchableRipple
+                        rippleColor={'rgba(255,255,255,.08)'}
+                        onPress={() => onEditImagePress(0)}
+                        style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
+                    >
+                        <>
+                            <AntDesign name="plus" size={normalize(30)} color="white" />
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add</Text>
+                        </>
+                    </TouchableRipple>}
+            </View>
+            <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
+                <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
+
+                    <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
+                        <Image
+                            style={{
+                                flex: 1,
+                                aspectRatio: 3 / 4,
+                                borderRadius: 10
+                            }}
+                            source={{ uri: data.active[1].downloadUrl }}
+                            placeholder={data.active[1].blurhash}
+                            resizeMode="cover"
+                            transition={200}
+                        />
                         <IconButton
                             style={{ position: 'absolute', top: 2, right: 2, }}
                             containerColor={COLORS.grey + 'B3'}
                             icon="pencil-outline"
                             iconColor='white'
                             size={normalize(20)}
-                            onPress={() => onEditImagePress(0)}
+                            onPress={() => onEditImagePress(1)}
                         />
+                    </View>
+
+
+                    <View style={{ flex: 1 }}>
+                        <Image
+                            style={{
+                                flex: 1,
+                                borderRadius: 10,
+                                aspectRatio: 3 / 4
+                            }}
+                            source={{ uri: data.active[2].downloadUrl }}
+                            placeholder={data.active[2].blurhash}
+                            resizeMode="cover"
+                            transition={200}
+                        />
+                        <IconButton
+                            style={{ position: 'absolute', top: 2, right: 2, }}
+                            containerColor={COLORS.grey + 'B3'}
+                            icon="pencil-outline"
+                            iconColor='white'
+                            size={normalize(20)}
+                            onPress={() => onEditImagePress(2)}
+                        />
+                    </View>
+                </View>
+                <View style={{ flexDirection: 'row', flexGrow: 1 }}>
+
+                    <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
+                        <Image
+                            style={{
+                                flex: 1,
+                                aspectRatio: 3 / 4,
+                                borderRadius: 10
+                            }}
+                            source={{ uri: data.active[3].downloadUrl }}
+                            placeholder={data.active[3].blurhash}
+                            resizeMode="cover"
+                            transition={200}
+                        />
+                        <IconButton
+                            style={{ position: 'absolute', top: 2, right: 2, }}
+                            containerColor={COLORS.grey + 'B3'}
+                            icon="pencil-outline"
+                            iconColor='white'
+                            size={normalize(20)}
+                            onPress={() => onEditImagePress(3)}
+                        />
+                    </View>
+
+                    <View style={{ flex: 1 }}>
+                        <Image
+                            style={{
+                                flex: 1,
+                                borderRadius: 10,
+                                aspectRatio: 3 / 4
+                            }}
+                            source={{ uri: data.active[4].downloadUrl }}
+                            placeholder={data.active[4].blurhash}
+                            resizeMode="cover"
+                            transition={200}
+                        />
+
+                        <IconButton
+                            style={{ position: 'absolute', top: 2, right: 2, }}
+                            containerColor={COLORS.grey + 'B3'}
+                            icon="pencil-outline"
+                            iconColor='white'
+                            size={normalize(20)}
+                            onPress={() => onEditImagePress(4)}
+                        />
+                    </View>
+                </View>
+            </View>
+        </View>
+    )
+
+    const CoverPhoto = useCallback(() => (
+        <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
+            {userData.images[0] ?
+                <React.Fragment>
+                    <Image
+                        style={{
+                            flex: 1,
+                            borderRadius: 10,
+                            aspectRatio: 16 / 9,
+                        }}
+                        source={{ uri: userData.images[0].downloadUrl }}
+                        placeholder={userData.images[0].blurhash}
+                        resizeMode="cover"
+                        transition={200}
+                    />
+                    <IconButton
+                        style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
+                        icon="pencil-outline"
+                        iconColor='white'
+                        size={normalize(20)}
+                        onPress={() => onEditImagePress(0)}
+                    />
+                </React.Fragment> :
+                <TouchableRipple
+                    rippleColor={'rgba(255,255,255,.08)'}
+                    onPress={() => onEditImagePress(0)}
+                    style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
+                >
+                    <>
+                        <AntDesign name="plus" size={normalize(30)} color="white" />
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add</Text>
                     </>
-                        :
-                        <TouchableRipple
-                            rippleColor={'rgba(255,255,255,.08)'}
-                            onPress={() => onEditImagePress(0)}
-                            style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
-                        >
-                            <>
-                                <AntDesign name="plus" size={normalize(30)} color="white" />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add</Text>
-                            </>
-                        </TouchableRipple>}
-                </View>
-                <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
-                    <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
+                </TouchableRipple>
+            }
+        </View>
+    ), [userData.images])
 
-                        <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                            <Image
-                                style={{
-                                    flex: 1,
-                                    aspectRatio: 3 / 4,
-                                    borderRadius: 10
-                                }}
-                                source={{ uri: data.active[1] }}
-                                placeholder={blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-                            <IconButton
-                                style={{ position: 'absolute', top: 2, right: 2, }}
-                                containerColor={COLORS.grey + 'B3'}
-                                icon="pencil-outline"
-                                iconColor='white'
-                                size={normalize(20)}
-                                onPress={() => onEditImagePress(1)}
-                            />
-                        </View>
-
-
-                        <View style={{ flex: 1 }}>
-                            <Image
-                                style={{
-                                    flex: 1,
-                                    borderRadius: 10,
-                                    aspectRatio: 3 / 4
-                                }}
-                                source={{ uri: data.active[2] }}
-                                placeholder={blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-                            <IconButton
-                                style={{ position: 'absolute', top: 2, right: 2, }}
-                                containerColor={COLORS.grey + 'B3'}
-                                icon="pencil-outline"
-                                iconColor='white'
-                                size={normalize(20)}
-                                onPress={() => onEditImagePress(2)}
-                            />
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexGrow: 1 }}>
-
-                        <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                            <Image
-                                style={{
-                                    flex: 1,
-                                    aspectRatio: 3 / 4,
-                                    borderRadius: 10
-                                }}
-                                source={{ uri: data.active[3] }}
-                                placeholder={blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-                            <IconButton
-                                style={{ position: 'absolute', top: 2, right: 2, }}
-                                containerColor={COLORS.grey + 'B3'}
-                                icon="pencil-outline"
-                                iconColor='white'
-                                size={normalize(20)}
-                                onPress={() => onEditImagePress(3)}
-                            />
-                        </View>
-
-                        <View style={{ flex: 1 }}>
-                            <Image
-                                style={{
-                                    flex: 1,
-                                    borderRadius: 10,
-                                    aspectRatio: 3 / 4
-                                }}
-                                source={{ uri: data.active[4] }}
-                                placeholder={blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-
-                            <IconButton
-                                style={{ position: 'absolute', top: 2, right: 2, }}
-                                containerColor={COLORS.grey + 'B3'}
-                                icon="pencil-outline"
-                                iconColor='white'
-                                size={normalize(20)}
-                                onPress={() => onEditImagePress(4)}
-                            />
-                        </View>
-                    </View>
-                </View>
-            </View>
-        )
-    }
-
-    const renderPhotos = (images, actions, showAddMoreButton = false) => {
-
-        return (
-            <View style={{ flexDirection: 'row', marginLeft: SPACING.small, marginRight: SPACING.small - SPACING.small, marginBottom: SPACING.small, flexWrap: 'wrap' }}>
-                {images.map((image) =>
-                    <View key={image ?? Math.random()} style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small }}>
-                        <RenderImageWithActions image={image} actions={actions} offsetX={(windowWidth * index) + offsetX}/>
-                    </View>)}
-
-                {showAddMoreButton &&
-                    <TouchableRipple
-                        rippleColor={'rgba(255,255,255,.08)'}
-                        onPress={onAddNewImagePress}
-                        style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small, alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        <>
-                            <AntDesign name="plus" size={normalize(30)} color="white" />
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF' }}>Add more</Text>
-                        </>
-                    </TouchableRipple>}
-            </View>
-        )
-    }
-
-    const renderActive = () => {
+    const Active = () => {
 
         return (
             <View style={styles.section}>
@@ -248,7 +328,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                         </Text>
                     </View>
 
-                    {((data.active.length + data.pending.length) < MAX_PHOTOS) && <Button
+                    {((data.active.length + data.inReview.length) < MAX_PHOTOS) && <Button
                         labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                         style={{ height: 'auto' }}
                         mode="outlined"
@@ -260,13 +340,32 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                     </Button>}
                 </View>
 
-                {renderPhotosGrid()}
-                {renderPhotos(data.active.slice(5), activeImageActions)}
+                {userData.accountType === 'establishment' && <CoverPhoto />}
+                {userData.accountType === 'lady' && <PhotosGrid />}
+                <AdditionalPhotos images={data.active.slice(5)} actions={activeImageActions} offsetX={offsetX} windowWidth={windowWidth} sectionWidth={sectionWidth} index={index} />
             </View>
         )
     }
 
-    const renderPending = () => {
+    const AdditionalPhotos = ({images, actions }) => {
+        if (!images?.length) {
+            return null
+        }
+    
+        return (
+            <View style={{ flexDirection: 'row', marginLeft: SPACING.small, marginRight: SPACING.small - SPACING.small, marginBottom: SPACING.small, flexWrap: 'wrap' }}>
+                {images.map((image) =>
+                    <View key={image.id} style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', borderRadius: 10, overflow: 'hidden', width: ((sectionWidth - (SPACING.small * 2) - (SPACING.small * 2)) / 3), marginRight: SPACING.small, marginBottom: SPACING.small }}>
+                        <RenderImageWithActions image={image} actions={actions} offsetX={(windowWidth * index) + offsetX}/>
+                    </View>)}
+            </View>
+        )
+    }
+
+    const InReview = () => {
+        if (data.inReview.length === 0) {
+            return null
+        }
         
         return (
             <View style={styles.section}>
@@ -276,22 +375,22 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                         In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                        • {data.pending.length}
+                        • {data.inReview.length}
                     </Text>
                 </View>
 
                 {
-                    data.pending.length === 0 ?
+                    data.inReview.length === 0 ?
                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
-                            No photos under review
+                            No photos in review
                         </Text>
-                        : renderPhotos(data.pending, pendingImageActions)
+                        : <AdditionalPhotos images={data.inReview}  actions={pendingImageActions} windowWidth={windowWidth} sectionWidth={sectionWidth} index={index} />
                 }
             </View>
         )
     }
 
-    const renderRejected = () => {
+    const Rejected = () => {
         if (data.rejected.length === 0) {
             return null
         }
@@ -308,21 +407,28 @@ const Photos = ({ index, setTabHeight, offsetX = 0 }) => {
                     </Text>
                 </View>
 
-                {renderPhotos(data.rejected, rejectedImageActions)}
+                <AdditionalPhotos images={data.rejected}  actions={rejectedImageActions} windowWidth={windowWidth} sectionWidth={sectionWidth} index={index} />
             </View>
         )
     }
 
     return (
+        <>
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {renderActive()}
-            {renderPending()}
-            {renderRejected()}
+            {userData.status !== IN_REVIEW && <Active />}
+            <InReview />
+            <Rejected />
+
         </View>
+        </>
     )
 }
 
-export default memo(Photos)
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps)(memo(Photos))
 
 const styles = StyleSheet.create({
     section: {

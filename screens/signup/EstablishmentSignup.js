@@ -9,7 +9,7 @@ import LottieView from 'lottie-react-native'
 import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
-import { showToast, updateCurrentUserInRedux } from '../../redux/actions'
+import { updateCurrentUserInRedux } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 
 import LoginInformation from './steps/LoginInformation'
@@ -22,7 +22,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
-const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
+const EstablishmentSignup = ({ toastRef, updateCurrentUserInRedux }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -75,7 +75,7 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
             }
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Data could not be processed.'
             })
@@ -90,7 +90,7 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
             data = await uploadUserData()
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Data could not be processed.'
             })
@@ -105,7 +105,7 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
             await uploadUserAssets(data)
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Assets could not be uploaded.'
             })
@@ -214,13 +214,13 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
     const renderScene = ({ route }) => {
         switch (route.key) {
             case '1. Login Information':
-                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} showToast={showToast}/>
+                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} toastRef={toastRef}/>
             case '2. Establishment Details':
                 return <EstablishmentDetails ref={route.ref} i={route.index} contentWidth={contentWidth} />
             case '3. Address & Working hours':
                 return <LocationAndAvailability ref={route.ref} i={route.index} contentWidth={contentWidth} />
             case '4. Upload Photos':
-                return <EstablishmentPhotos ref={route.ref} i={route.index} showToast={showToast} />
+                return <EstablishmentPhotos ref={route.ref} i={route.index} toastRef={toastRef} />
             case '5. Registration Completed':
                 return <EstablishmentRegistrationCompleted visible={index === routes.length - 1} email={''}/>
         }
@@ -318,4 +318,8 @@ const EstablishmentSignup = ({ showToast, updateCurrentUserInRedux }) => {
     )
 }
 
-export default connect(null, { showToast, updateCurrentUserInRedux })(EstablishmentSignup)
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { updateCurrentUserInRedux })(EstablishmentSignup)

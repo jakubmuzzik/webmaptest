@@ -23,7 +23,7 @@ import {
 import HoverableInput from '../HoverableInput'
 import { Button } from 'react-native-paper'
 import { TabView } from 'react-native-tab-view'
-import { showToast, fetchUser } from '../../redux/actions'
+import { fetchUser } from '../../redux/actions'
 import { connect } from 'react-redux'
 
 import Toast from '../Toast'
@@ -41,7 +41,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => {
+const Login = ({ visible, setVisible, onSignUpPress, toastRef, fetchUser }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const location = useLocation()
@@ -69,7 +69,7 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
     const [showErrorMessages, setShowErrorMessages] = useState(false)
     const [index, setIndex] = useState(0)
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -179,12 +179,12 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
             })
         } catch(error) { 
             if (error.code?.includes('auth')) {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Invalid Username or Password.'
                 })
             } else {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     headerText: 'Login error',
                     text: 'Something went wrong.'
@@ -210,13 +210,13 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
         try {
             await sendPasswordResetEmail(getAuth(), data.emailForReset)
             
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 text: 'Instructions to reset your password have been sent to your Email address.'
             })
             closeModal()
         } catch(e) {
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: 'Provided Email address is invalid.'
             })
@@ -408,12 +408,16 @@ const Login = ({ visible, setVisible, onSignUpPress, showToast, fetchUser }) => 
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }
 
-export default connect(null, { showToast, fetchUser })(memo(Login))
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { fetchUser })(memo(Login))
 
 const styles = StyleSheet.create({
     modal__header: {

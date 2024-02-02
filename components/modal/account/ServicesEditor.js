@@ -38,7 +38,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const ServicesEditor = ({ visible, setVisible, services, showToast, userId, updateRedux }) => {
+const ServicesEditor = ({ visible, setVisible, services, toastRef, userId, updateRedux }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [changedServices, setChangedServices] = useState(services)
@@ -50,7 +50,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast, userId, upda
     const filteredServicesRef = useRef([...SERVICES])
     const filteredMassageServicesRef = useRef([...MASSAGE_SERVICES])
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -101,7 +101,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast, userId, upda
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Services were changed successfully.'
@@ -110,7 +110,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast, userId, upda
             updateRedux({services: changedServices, id: userId})
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -284,7 +284,7 @@ const ServicesEditor = ({ visible, setVisible, services, showToast, userId, upda
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

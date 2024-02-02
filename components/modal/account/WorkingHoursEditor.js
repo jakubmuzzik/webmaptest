@@ -33,13 +33,13 @@ import { Button, Switch, HelperText } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, userId, updateRedux }) => {
+const WorkingHoursEditor = ({ visible, setVisible, workingHours, toastRef, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedWorkingHours, setChangedWorkingHours] = useState(workingHours)
     const [isChanged, setIsChanged] = useState(false)
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -154,7 +154,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, user
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Working Hours were changed successfully.'
@@ -163,7 +163,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, user
             updateRedux({workingHours: wh, id: userId})
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -426,7 +426,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, showToast, user
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

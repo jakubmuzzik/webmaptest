@@ -17,14 +17,14 @@ import LottieView from 'lottie-react-native'
 import { BlurView } from 'expo-blur'
 
 import { connect } from 'react-redux'
-import { showToast, updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
+import { updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
 import { IN_REVIEW } from '../../labels'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import uuid from 'react-native-uuid'
 
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
 
-const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, showToast, updateCurrentUserInRedux, updateLadyInRedux}) => {
+const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, updateCurrentUserInRedux, updateLadyInRedux, toastRef }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -80,7 +80,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             }
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Data could not be processed.'
             })
@@ -95,7 +95,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             data = await uploadUserData()
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Data could not be processed.'
             })
@@ -110,7 +110,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             await uploadUserAssets(data)
         } catch(e) {
             console.error(e)
-            showToast({
+            toastRef.current.show({
                 type: 'error',
                 text: 'Assets could not be uploaded.'
             })
@@ -260,7 +260,7 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
     const renderScene = ({ route }) => {
         switch (route.key) {
             case 'login_information':
-                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} showToast={showToast} />
+                return <LoginInformation ref={route.ref} i={route.index} contentWidth={contentWidth} toastRef={toastRef} />
             case 'personal_details':
                 return <PersonalDetails ref={route.ref} i={route.index} contentWidth={contentWidth} offsetX={offsetX} />
             case 'services_and_pricing':
@@ -268,9 +268,9 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
             case 'address_and_availability':
                 return <LocationAndAvailability ref={route.ref} i={route.index} contentWidth={contentWidth} />
             case 'photos_and_videos':
-                return <UploadPhotos ref={route.ref} i={route.index} showToast={showToast} />
+                return <UploadPhotos ref={route.ref} i={route.index} toastRef={toastRef} />
             case 'registration_completed':
-                return <LadyRegistrationCompleted independent={independent} visible={index === routes.length - 1} showToast={showToast} />
+                return <LadyRegistrationCompleted independent={independent} visible={index === routes.length - 1} toastRef={toastRef} />
         }
     }
 
@@ -367,4 +367,8 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, sho
     )
 }
 
-export default connect(null, { showToast, updateCurrentUserInRedux, updateLadyInRedux })(LadySignup)
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { updateCurrentUserInRedux, updateLadyInRedux })(LadySignup)

@@ -1,10 +1,10 @@
 import {
     ROUTE_STATE_CHANGE,
     SCROLL_DISABLED_STATE_CHANGE,
-    SHOW_TOAST,
     USER_STATE_CHANGE,
     CLEAR_DATA,
-    LADIES_STATE_CHANGE
+    LADIES_STATE_CHANGE,
+    STORE_TOAST_REF
 } from './actionTypes'
 import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where } from '../firebase/config'
 
@@ -18,9 +18,9 @@ export const updateScrollDisabled = (scrollDisabled) => ({
     scrollDisabled
 })
 
-export const showToast = (toastData) => ({
-    type: SHOW_TOAST,
-    toastData
+export const storeToastRef = (toastRef) => ({
+    type: STORE_TOAST_REF,
+    toastRef
 })
 
 //either independent lady or establishemtn

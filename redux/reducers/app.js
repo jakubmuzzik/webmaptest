@@ -1,13 +1,13 @@
 import {
     ROUTE_STATE_CHANGE,
     SCROLL_DISABLED_STATE_CHANGE,
-    SHOW_TOAST
+    STORE_TOAST_REF
 } from '../actionTypes'
 
 const INITIAL_STATE = {
     route: {},
     scrollDisabled: false,
-    toastData: undefined
+    toastRef: undefined
 }
 
 export const app = (state = INITIAL_STATE, action) => {
@@ -22,10 +22,10 @@ export const app = (state = INITIAL_STATE, action) => {
                 ...state,
                 scrollDisabled: action.scrollDisabled
             }
-        case SHOW_TOAST:
+        case STORE_TOAST_REF:
             return {
                 ...state,
-                toastData: action.toastData
+                toastRef: action.toastRef
             }
         default:
             return state

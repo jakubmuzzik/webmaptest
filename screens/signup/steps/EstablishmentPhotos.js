@@ -7,7 +7,7 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue
 } from 'react-native-reanimated'
-import { COLORS, SPACING, FONTS, FONT_SIZES } from '../../../constants'
+import { COLORS, SPACING, FONTS, FONT_SIZES, MAX_PHOTO_SIZE_MB, MAX_VIDEO_SIZE_MB, MAX_VIDEOS, MAX_PHOTOS } from '../../../constants'
 import { TouchableRipple, IconButton, HelperText } from 'react-native-paper'
 import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../../../utils'
 import { Image } from 'expo-image'
@@ -15,12 +15,7 @@ import { BlurView } from 'expo-blur'
 import * as ImagePicker from 'expo-image-picker'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import uuid from 'react-native-uuid'
-import { ACTIVE } from '../../../labels'
-
-const MAX_PHOTO_SIZE_MB = 5
-const MAX_VIDEO_SIZE_MB = 10
-const MAX_VIDEOS = 5
-const MAX_PHOTOS = 15
+import { IN_REVIEW } from '../../../labels'
 
 const getDataType = (uri) => {
     const parts = uri.split(',')
@@ -32,7 +27,7 @@ const getFileSizeInMb = (uri) => {
 }
 
 const EstablishmentPhotos = forwardRef((props, ref) => {
-    const { i, offsetX = 0, showToast } = props
+    const { i, offsetX = 0, toastRef } = props
 
     const [data, setData] = useState({
         images: [null, null],
@@ -81,7 +76,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_PHOTO_SIZE_MB) {
-                    showToast({
+                    toastRef.current.show({
                         type: 'error',
                         headerText: 'File Size Error',
                         text: `Maximum file size allowed is ${MAX_PHOTO_SIZE_MB}MB.`
@@ -91,7 +86,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'image') {
-                    showToast({
+                    toastRef.current.show({
                         type: 'error',
                         headerText: 'Invalid File Type',
                         text: `Please upload a supported file type.`
@@ -102,7 +97,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 const blurhash = await encodeImageToBlurhash(result.assets[0].uri)
 
                 setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
+                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: IN_REVIEW, blurhash}
                     if (index > 0 && d.images.length < MAX_PHOTOS) {
                         d.images.push(null)
                     }
@@ -126,7 +121,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
             try {
                 const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
                 if (fileSizeMb > MAX_VIDEO_SIZE_MB) {
-                    showToast({
+                    toastRef.current.show({
                         type: 'error',
                         headerText: 'File Size Error',
                         text: `Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
@@ -136,7 +131,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
 
                 const dataType = getDataType(result.assets[0].uri)
                 if (dataType !== 'video') {
-                    showToast({
+                    toastRef.current.show({
                         type: 'error',
                         headerText: 'Invalid File Type',
                         text: `Please upload a supported file type.`
@@ -148,7 +143,7 @@ const EstablishmentPhotos = forwardRef((props, ref) => {
                 const blurhash = await encodeImageToBlurhash(thumbnail)
 
                 setData(d => {
-                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), blurhash, status: ACTIVE}
+                    d.videos[index] = {thumbnail, video: result.assets[0].uri, id: uuid.v4(), blurhash, status: IN_REVIEW}
                     if (d.videos.length < MAX_VIDEOS) {
                         d.videos.push(null)
                     }

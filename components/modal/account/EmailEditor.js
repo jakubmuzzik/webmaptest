@@ -28,7 +28,7 @@ import Toast from '../../Toast'
 
 const window = Dimensions.get('window')
 
-const EmailEditor = ({ visible, setVisible, showToast }) => {
+const EmailEditor = ({ visible, setVisible, toastRef }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -38,7 +38,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         secureTextEntry: true
     })
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -96,7 +96,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         }
 
         if (data.newEmail === getAuth().currentUser.email) {
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: 'Provided Email address is already in use.'
             })
@@ -111,7 +111,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
             await reauthenticate()
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: 'Invalid password.'
             })
@@ -122,24 +122,24 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
         try {
             await verifyBeforeUpdateEmail(getAuth().currentUser, data.newEmail)
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 text: 'Verification email was sent to the provided email address.'
             })
             closeModal()
         } catch(e) {
             if (e.code === 'auth/email-already-in-use') {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Provided Email address is already in use.'
                 })
             } else if (e.code === 'auth/invalid-new-email') {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Provided Email address is invalid.'
                 })
             } else {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Email could not be changed. Please log out and try it again later.'
                 })
@@ -265,7 +265,7 @@ const EmailEditor = ({ visible, setVisible, showToast }) => {
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

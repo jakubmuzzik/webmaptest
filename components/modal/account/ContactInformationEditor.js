@@ -34,12 +34,12 @@ import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const ContactInformationEditor = ({ visible, setVisible, contactInformation, showToast, userId, updateRedux }) => {
+const ContactInformationEditor = ({ visible, setVisible, contactInformation, toastRef, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedContactInformation, setChangedContactInformation] = useState(contactInformation)
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -98,7 +98,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Contact Information was changed successfully.'
@@ -106,7 +106,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
 
             updateRedux({...changedContactInformation, id: userId})
         } catch(e) {
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -287,7 +287,7 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, sho
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

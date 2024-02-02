@@ -27,7 +27,7 @@ import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const PasswordEditor = ({ visible, setVisible, showToast }) => {
+const PasswordEditor = ({ visible, setVisible, toastRef }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -40,7 +40,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
         confirmNewSecureTextEntry: true
     })
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -107,7 +107,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             await reauthenticate()
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: 'Invalid password.'
             })
@@ -119,7 +119,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             await reauthenticate()
             await updatePassword(getAuth().currentUser, data.newPassword)
             
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 text: 'Your password has been successfully changed.'
             })
@@ -127,12 +127,12 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
             closeModal()
         } catch(e) {
             if (e.code?.includes('auth')) {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Invalid password.'
                 })
             } else {
-                toastRef.current.show({
+                modalToastRef.current.show({
                     type: 'error',
                     text: 'Password could not be changed. Please try it again later.'
                 })
@@ -278,7 +278,7 @@ const PasswordEditor = ({ visible, setVisible, showToast }) => {
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

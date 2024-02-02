@@ -9,10 +9,10 @@ import { BlurView } from 'expo-blur'
 
 const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain', actions, offsetX = 0 }) => {
     const actionsDropdownRef = useRef()
-
+console.log(image.id)
     return (
         <ImageBackground
-            source={{ uri: image }}
+            source={{ uri: image.downloadUrl }}
             style={StyleSheet.absoluteFillObject}
             imageStyle={{ opacity: 0.7 }}
             resizeMode='cover'
@@ -23,7 +23,8 @@ const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain
                         flex: 1,
                         aspectRatio: 1 / 1,
                     }}
-                    source={{ uri: image }}
+                    source={{ uri: image.downloadUrl }}
+                    placeholder={image.blurhash}
                     resizeMode={resizeMode}
                     transition={transition}
                 />
@@ -33,7 +34,7 @@ const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain
                     icon={actions[0].iconName}
                     iconColor='white'
                     size={normalize(20)}
-                    onPress={() => actions[0].onPress(image)}
+                    onPress={() => actions[0].onPress(image.id)}
                 />
                     : <View style={{
                         position: 'absolute',
@@ -44,7 +45,7 @@ const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain
                             ref={actionsDropdownRef}
                             offsetX={offsetX}
                             values={actions.map(action => action.label)}
-                            setText={(text) => actions.find(action => action.label === text).onPress(image)}
+                            setText={(text) => actions.find(action => action.label === text).onPress(image.id)}
                         >
                             <IconButton
                                 icon="dots-horizontal"

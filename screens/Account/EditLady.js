@@ -9,7 +9,7 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { MotiView } from 'moti'
 import { connect } from 'react-redux'
-import { fetchLadies, showToast } from '../../redux/actions'
+import { fetchLadies } from '../../redux/actions'
 
 import { Ionicons } from '@expo/vector-icons'
 
@@ -19,7 +19,7 @@ import Videos from './Videos'
 
 import { getDoc, doc, db } from '../../firebase/config'
 
-const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
+const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -50,7 +50,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
                     search: new URLSearchParams(stripEmptyParams(params)).toString()
                 },{ replace: true })
                 
-                showToast({
+                toastRef.current.show({
                     type: 'error',
                     text: 'Selected Lady could not be found.'
                 })
@@ -93,7 +93,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
             case 'photos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} offsetX={offsetX} />
+                        <Photos userData={ladyData} setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} offsetX={offsetX} />
                     </View>
                 )
             case 'videos':
@@ -134,7 +134,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
                     opacity: 1,
                     transform: [{ translateY: 0 }],
                 }}
-                style={{ marginHorizontal: SPACING.medium, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginBottom: SPACING.medium }}
+                style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center',paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginBottom: SPACING.medium }}
             >
                 <View style={{ flexDirection: 'row' }}>
                     <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
@@ -248,7 +248,8 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, showToast }) => {
 }
 
 const mapStateToProps = (store) => ({
-    ladies: store.userState.ladies
+    ladies: store.userState.ladies,
+    toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps, { fetchLadies, showToast })(memo(EditLady))
+export default connect(mapStateToProps, { fetchLadies })(memo(EditLady))

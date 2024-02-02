@@ -45,7 +45,7 @@ import {
 
 const window = Dimensions.get('window')
 
-const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast, userId, updateRedux }) => {
+const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, toastRef, userId, updateRedux }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [contentWidth, setContentWidth] = useState(false)
@@ -53,7 +53,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
     const [isChanged, setIsChanged] = useState(false)
 
     const containerRef = useRef()
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -122,7 +122,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Personal Details were changed successfully.'
@@ -131,7 +131,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
             updateRedux({...changedPersonalDetails, id: userId})
         } catch(e) {
             console.error(e)
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',
                 text: "Failed to save the data. Please try again later."
@@ -492,7 +492,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, showToast
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

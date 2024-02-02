@@ -81,7 +81,7 @@ const AccountSettings = ({ currentUser }) => {
             case 'photos':
                 return (
                     <View style={{ width: normalize(800), maxWidth: '100%', height: routes[index].height, alignSelf: 'center' }}>
-                        <Photos setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
+                        <Photos userData={currentUser} setTabHeight={(height) => setTabHeight(height, route.index)} index={route.index} />
                     </View>
                 )
             case 'videos':

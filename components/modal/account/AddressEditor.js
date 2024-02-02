@@ -37,7 +37,7 @@ import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
-const AddressEditor = ({ visible, setVisible, address, showToast, userId, updateRedux }) => {
+const AddressEditor = ({ visible, setVisible, address, toastRef, userId, updateRedux }) => {
     const [routes] = useState([
         { key: '1' },
         { key: '2' }
@@ -53,7 +53,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
     const [isSearching, setIsSearching] = useState(false)
     const [results, setResults] = useState([])
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -127,7 +127,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Address was changed successfully.'
@@ -135,7 +135,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
 
             updateRedux({address: addr, hiddenAddress: hidden, id: userId})
         } catch(e) {
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: "Failed to save the data. Please try again later."
             })
@@ -425,7 +425,7 @@ const AddressEditor = ({ visible, setVisible, address, showToast, userId, update
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

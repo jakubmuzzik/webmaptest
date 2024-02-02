@@ -33,12 +33,12 @@ import Toast from '../../Toast'
 
 const window = Dimensions.get('window')
 
-const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userId }) => {
+const AboutEditor = ({ visible, setVisible, about, toastRef, updateRedux, userId }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedAbout, setChangedAbout] = useState(about)
 
-    const toastRef = useRef()
+    const modalToastRef = useRef()
 
     useEffect(() => {
         if (visible) {
@@ -96,7 +96,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
 
             closeModal()
 
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 headerText: 'Success!',
                 text: 'Description was changed successfully.'
@@ -104,7 +104,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
 
             updateRedux({description: changedAbout, id: userId})
         } catch(e) {
-            toastRef.current.show({
+            modalToastRef.current.show({
                 type: 'error',
                 text: "Failed to save the data. Please try again later."
             })
@@ -209,7 +209,7 @@ const AboutEditor = ({ visible, setVisible, about, showToast, updateRedux, userI
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
 
-            <Toast ref={toastRef}/>
+            <Toast ref={modalToastRef}/>
         </Modal>
     )
 }

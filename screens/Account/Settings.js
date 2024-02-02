@@ -5,7 +5,7 @@ import { MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { normalize } from '../../utils'
 import { Button, Tooltip, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
-import { showToast, logOut } from '../../redux/actions'
+import { logOut } from '../../redux/actions'
 import { ACTIVE, IN_REVIEW, INACTIVE, REJECTED } from '../../labels'
 
 import {
@@ -16,7 +16,7 @@ import PasswordEditor from '../../components/modal/account/PasswordEditor'
 import EmailEditor from '../../components/modal/account/EmailEditor'
 import DeleteAccount from '../../components/modal/account/DeleteAccount'
 
-const Settings = ({ setTabHeight, showToast, logOut, currentUser }) => {
+const Settings = ({ setTabHeight, toastRef, logOut, currentUser }) => {
     const [data, setData] = useState({
         name: 'Jakub Muzik',
         email: 'jakub.muzzik@gmail.com'
@@ -112,14 +112,18 @@ const Settings = ({ setTabHeight, showToast, logOut, currentUser }) => {
                 </Button>
             </View>
 
-            <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} showToast={showToast} />
-            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} showToast={showToast}/>
-            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} showToast={showToast}/>
+            <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} toastRef={toastRef} />
+            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} toastRef={toastRef}/>
+            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} toastRef={toastRef}/>
         </View>
     )
 }
 
-export default connect(null, { showToast, logOut })(memo(Settings))
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { logOut })(memo(Settings))
 
 const styles = StyleSheet.create({
     container: {

@@ -15,7 +15,7 @@ import LottieView from 'lottie-react-native'
 import { Button } from 'react-native-paper'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
-const LadyRegistrationCompleted = ({ independent, visible, showToast={showToast} }) => {
+const LadyRegistrationCompleted = ({ independent, visible, toastRef }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -44,7 +44,7 @@ const LadyRegistrationCompleted = ({ independent, visible, showToast={showToast}
         })
 
         if (!independent) {
-            showToast({
+            toastRef.current.show({
                 type: 'success',
                 text: 'Lady was successfully submitted for review.'
             })

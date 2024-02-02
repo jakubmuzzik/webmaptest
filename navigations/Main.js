@@ -3,7 +3,7 @@ import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 
 import { connect } from 'react-redux'
-import { updateScrollDisabled, fetchUser } from '../redux/actions'
+import { updateScrollDisabled, fetchUser, storeToastRef } from '../redux/actions'
 
 import { getAuth, onAuthStateChanged } from '../firebase/config'
 
@@ -95,7 +95,7 @@ const RequireAuth = ({ children }) => {
     return children
 }
 
-const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) => {
+const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser, storeToastRef }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
 
     const toastRef = useRef()
@@ -104,10 +104,8 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser }) =>
     const { height } = useWindowDimensions()
 
     useEffect(() => {
-        if (toastData) {
-            toastRef.current?.show(toastData)
-        }
-    }, [toastData])
+        storeToastRef(toastRef)
+    }, [toastRef])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -284,4 +282,4 @@ const mapStateToProps = (store) => ({
     toastData: store.appState.toastData
 })
 
-export default connect(mapStateToProps, { updateScrollDisabled, fetchUser })(Main)
+export default connect(mapStateToProps, { updateScrollDisabled, fetchUser, storeToastRef })(Main)
