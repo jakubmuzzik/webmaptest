@@ -7,9 +7,49 @@ import { COLORS } from '../../constants'
 import { normalize } from '../../utils'
 import { BlurView } from 'expo-blur'
 
-const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain', actions, offsetX = 0 }) => {
+const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain', actions, offsetX = 0, showActions=true }) => {
     const actionsDropdownRef = useRef()
-console.log(image.id)
+
+    const Actions = () => {
+        if (!showActions) {
+            return null
+        }
+
+        if (actions.length === 1) {
+            return <IconButton
+                style={{ position: 'absolute', top: 2, right: 2, }}
+                containerColor={COLORS.grey + 'B3'}
+                icon={actions[0].iconName}
+                iconColor='white'
+                size={normalize(20)}
+                onPress={() => actions[0].onPress(image.id)}
+            />
+        } else {
+            return (
+                <View style={{
+                    position: 'absolute',
+                    right: 2,
+                    top: 2,
+                }}>
+                    <DropdownSelect
+                        ref={actionsDropdownRef}
+                        offsetX={offsetX}
+                        values={actions.map(action => action.label)}
+                        setText={(text) => actions.find(action => action.label === text).onPress(image.id)}
+                    >
+                        <IconButton
+                            icon="dots-horizontal"
+                            iconColor="#FFF"
+                            containerColor={COLORS.grey + 'B3'}
+                            size={18}
+                            onPress={() => actionsDropdownRef.current?.onDropdownPress()}
+                        />
+                    </DropdownSelect>
+                </View>
+            )
+        }
+    }
+
     return (
         <ImageBackground
             source={{ uri: image.downloadUrl }}
@@ -28,34 +68,8 @@ console.log(image.id)
                     resizeMode={resizeMode}
                     transition={transition}
                 />
-                {actions.length === 1 ? <IconButton
-                    style={{ position: 'absolute', top: 2, right: 2, }}
-                    containerColor={COLORS.grey + 'B3'}
-                    icon={actions[0].iconName}
-                    iconColor='white'
-                    size={normalize(20)}
-                    onPress={() => actions[0].onPress(image.id)}
-                />
-                    : <View style={{
-                        position: 'absolute',
-                        right: 2,
-                        top: 2,
-                    }}>
-                        <DropdownSelect
-                            ref={actionsDropdownRef}
-                            offsetX={offsetX}
-                            values={actions.map(action => action.label)}
-                            setText={(text) => actions.find(action => action.label === text).onPress(image.id)}
-                        >
-                            <IconButton
-                                icon="dots-horizontal"
-                                iconColor="#FFF"
-                                containerColor={COLORS.grey + 'B3'}
-                                size={18}
-                                onPress={() => actionsDropdownRef.current?.onDropdownPress()}
-                            />
-                        </DropdownSelect>
-                    </View>}
+
+                <Actions />
             </BlurView>
         </ImageBackground>
     )

@@ -161,7 +161,7 @@ const Toast = forwardRef(({ }, ref) => {
                         <View style={{ flexDirection: 'column', justifyContent: 'center', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.x_small, flexShrink: 1 }}>
                             <Text style={styles.toastHeaderText}>{toastData.headerText}</Text>
                             <Text
-                                numberOfLines={2}
+                                numberOfLines={4}
                                 style={[
                                     styles.toastText,
                                     toastData.type === 'success'

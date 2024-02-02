@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { View, Text, useWindowDimensions, Dimensions } from 'react-native'
 import { FONTS, FONT_SIZES, SPACING, COLORS, SUPPORTED_LANGUAGES } from '../constants'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, Button } from 'react-native-paper'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 import { MotiText, AnimatePresence, MotiView } from 'moti'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import HoverableView from '../components/HoverableView'
 import { Image } from 'expo-image'
 
 import { connect } from 'react-redux'
@@ -12,12 +13,13 @@ import { connect } from 'react-redux'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import LadySignup from './signup/LadySignup'
 
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, Entypo } from '@expo/vector-icons'
 
 import AccountSettings from './account/AccountSettings'
 import EditLady from './account/EditLady'
 
 import ContentLoader, { Rect } from "react-content-loader/native"
+import { IN_REVIEW, REJECTED } from '../labels'
 
 //todo - create texts for each account statuses 
 //could be a status - Profile was not approved.. fix the following data: list of wrong data
@@ -102,6 +104,10 @@ const Account = ({ navigation, route, currentUser={} }) => {
         }
     }
 
+    const onResubmitPress = () => {
+
+    }
+
     const renderPagesScene = ({ route }) => {
         if (Math.abs(index - routes.indexOf(route)) > 0) {
             return <View />
@@ -136,33 +142,76 @@ const Account = ({ navigation, route, currentUser={} }) => {
             return null
         }
 
-        return (
-            <MotiView
-                from={{
-                    opacity: 0,
-                    transform: [{ translateY: -10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
-            >
-                <View style={{ flexDirection: 'row' }}>
-                    <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
-
-                    <View style={{ flexShrink: 1 }}>
-                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                            Profile is in review
-                        </Text>
-                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
-                            All profiles go through a standard review before they become visible.
-                        </Text>
+        if (currentUser.status === IN_REVIEW) {
+            return (
+                <MotiView
+                    from={{
+                        opacity: 0,
+                        transform: [{ translateY: -10 }],
+                    }}
+                    animate={{
+                        opacity: 1,
+                        transform: [{ translateY: 0 }],
+                    }}
+                    style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginTop: SPACING.x_small }}
+                >
+                    <View style={{ flexDirection: 'row' }}>
+                        <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
+    
+                        <View style={{ flexShrink: 1 }}>
+                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                                Profile is in review
+                            </Text>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
+                                All profiles go through a standard review before they become visible.
+                            </Text>
+                        </View>
                     </View>
-                </View>
-            </MotiView>
-        )
-    }, [index, params.language])
+                </MotiView>
+            )
+        } else if (currentUser.status === REJECTED) {
+            return (
+                <MotiView
+                    from={{
+                        opacity: 0,
+                        transform: [{ translateY: -10 }],
+                    }}
+                    animate={{
+                        opacity: 1,
+                        transform: [{ translateY: 0 }],
+                    }}
+                    style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#d9100a', marginTop: SPACING.x_small }}
+                >
+                    <View style={{ flexDirection: 'row' }}>
+                        <Entypo name="circle-with-cross" size={normalize(20)} color="#d9100a" style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
+    
+                        <View style={{ flexShrink: 1, flexDirection: 'column' }}>
+                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                                Profile has been rejected
+                            </Text>
+                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
+                                Please fix the following data and re-submit your profile for review:
+                            </Text>
+                            <View style={{ marginTop: 4, flexDirection: 'column' }}>
+                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                    • Cover photos
+                                </Text>
+                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                    • Working hours
+                                </Text>
+                            </View>
+
+                            <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
+                                Re-submit
+                            </Text>
+                        </View>
+                    </View>
+                </MotiView>
+            )
+        } else {
+            return null
+        }
+    }, [index, params.language, currentUser])
 
     const SkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>

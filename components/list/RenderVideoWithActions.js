@@ -1,5 +1,5 @@
 import React, { useEffect, useState, memo, useRef } from 'react'
-import { View, Image as RNImage, ImageBackground, TouchableOpacity } from 'react-native'
+import { View, Image as RNImage, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
 import { Image } from 'expo-image'
 import DropdownSelect from '../DropdownSelect'
 import { IconButton, ActivityIndicator } from 'react-native-paper'
@@ -7,9 +7,9 @@ import { COLORS, SPACING } from '../../constants'
 import { normalize, generateThumbnailFromLocalURI } from '../../utils'
 import { Video, ResizeMode } from 'expo-av'
 import { isBrowser } from 'react-device-detect'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 
-const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
+const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = true }) => {
     const actionsDropdownRef = useRef()
 
     const [aspectRatio, setAspectRatio] = useState()
@@ -46,6 +46,67 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
         )
     }
 
+    const Actions = () => {
+        if (!showActions) {
+            return null
+        }
+
+        if (actions.length === 1) {
+            return <IconButton
+                style={{ position: 'absolute', top: 2, right: 2, }}
+                containerColor={COLORS.grey + 'B3'}
+                icon={actions[0].iconName}
+                iconColor='white'
+                size={normalize(20)}
+                onPress={() => actions[0].onPress(video.id)}
+            />
+        } else {
+            return (
+                <View style={{
+                    position: 'absolute',
+                    right: 2,
+                    top: 2,
+                }}>
+                    <DropdownSelect
+                        ref={actionsDropdownRef}
+                        offsetX={offsetX}
+                        values={actions.map(action => action.label)}
+                        setText={(text) => actions.find(action => action.label === text).onPress(video.id)}
+                    >
+                        <IconButton
+                            icon="dots-horizontal"
+                            iconColor="#FFF"
+                            containerColor={COLORS.grey + 'B3'}
+                            size={18}
+                            onPress={() => actionsDropdownRef.current?.onDropdownPress()}
+                        />
+                    </DropdownSelect>
+                </View>
+            )
+        }
+    }
+
+    const Poster = () => (
+        <View style={{ 
+            width: '100%',
+            height: undefined,
+            aspectRatio: aspectRatio,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <Image 
+                style={StyleSheet.absoluteFillObject}
+                source={video.thumbnailDownloadUrl}
+                placeholder={video.blurhash}
+                transition={200}
+                resizeMode='cover'
+            />
+            <TouchableOpacity activeOpacity={0.8} onPress={() => setShowPoster(false)}>
+                <Ionicons name="ios-play-circle-sharp" size={normalize(70)} color='rgba(0,0,0,.7)' />
+            </TouchableOpacity>
+        </View>
+    )
+
     return (
         <>
             {!showPoster && <Video
@@ -61,54 +122,14 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0 }) => {
                     aspectRatio: aspectRatio
                 }}
                 source={{
-                    uri: require('../../assets/big_buck_bunny.mp4'),
+                    uri: video.downloadUrl,
                 }}
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />}
-            {showPoster && (
-                <ImageBackground
-                    source={require('../../assets/dummy_photo.png')}
-                    style={{
-                        width: '100%',
-                        height: undefined,
-                        aspectRatio: aspectRatio,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }} >
-                    <TouchableOpacity activeOpacity={0.8} onPress={() => setShowPoster(false)}>
-                        <Ionicons name="ios-play-circle-sharp" size={normalize(70)} color='rgba(0,0,0,.7)' />
-                    </TouchableOpacity>
-                </ImageBackground>
-            )}
-            {actions.length === 1 ? <IconButton
-                style={{ position: 'absolute', top: 2, right: 2, }}
-                containerColor={COLORS.grey + 'B3'}
-                icon={actions[0].iconName}
-                iconColor='white'
-                size={normalize(20)}
-                onPress={() => actions[0].onPress(image)}
-            />
-                : <View style={{
-                    position: 'absolute',
-                    right: 2,
-                    top: 2,
-                }}>
-                    <DropdownSelect
-                        ref={actionsDropdownRef}
-                        offsetX={offsetX}
-                        values={actions.map(action => action.label)}
-                        setText={(text) => actions.find(action => action.label === text).onPress(image)}
-                    >
-                        <IconButton
-                            icon="dots-horizontal"
-                            iconColor="#FFF"
-                            containerColor={COLORS.grey + 'B3'}
-                            size={18}
-                            onPress={() => actionsDropdownRef.current?.onDropdownPress()}
-                        />
-                    </DropdownSelect>
-                </View>}
+            {showPoster && <Poster />}
+
+            <Actions />
         </>
     )
 }

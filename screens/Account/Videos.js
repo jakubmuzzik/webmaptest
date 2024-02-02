@@ -1,24 +1,35 @@
-import React, { useState, memo } from 'react'
+import React, { useState, memo, useCallback, useEffect } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
 import { Image } from 'expo-image'
-import { COLORS, FONTS, FONT_SIZES, SPACING, SMALL_SCREEN_THRESHOLD } from '../../constants'
-import { normalize } from '../../utils'
+import { COLORS, FONTS, FONT_SIZES, SPACING, SMALL_SCREEN_THRESHOLD, MAX_VIDEO_SIZE_MB, MAX_VIDEOS } from '../../constants'
+import { ACTIVE, REJECTED, IN_REVIEW } from '../../labels'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash, getFileSizeInMb, getDataType } from '../../utils'
 import { IconButton, Button } from 'react-native-paper'
 import { Octicons } from '@expo/vector-icons'
 import DropdownSelect from '../../components/DropdownSelect'
 import RenderVideoWithActions from '../../components/list/RenderVideoWithActions'
+import * as ImagePicker from 'expo-image-picker'
+import { connect } from 'react-redux'
 
-const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
-
-const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
+const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
     const [data, setData] = useState({
-        active: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png')],
-        pending: [require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'), require('../../assets/dummy_photo.png'),],
-        rejected: [require('../../assets/dummy_photo.png')]
+        active: [],
+        inReview: [],
+        rejected: []
     })
     const [sectionWidth, setSectionWidth] = useState(0)
 
+    useEffect(() => {
+        const active = userData.videos.filter(video => video.status === ACTIVE)
+        const inReview = userData.videos.filter(video => video.status === IN_REVIEW)
+        const rejected = userData.videos.filter(video => video.status === REJECTED)
+
+        setData({
+            active, inReview, rejected
+        })
+    }, [userData.videos])
+
+    console.log(data.inReview)
     const { width: windowWidth } = useWindowDimensions()
     const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
 
@@ -27,11 +38,55 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
         setSectionWidth(event.nativeEvent.layout.width - 2)
     }
 
-    const onEditImagePress = (image) => {
+    const openImagePicker = async (index) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+            allowsEditing: true,
+            base64: true,
+            quality: 0.8,
+        })
+
+        if (!result.canceled) {
+            try {
+                const fileSizeMb = getFileSizeInMb(result.assets[0].uri)
+                if (fileSizeMb > MAX_VIDEO_SIZE_MB) {
+                    toastRef.current.show({
+                        type: 'error',
+                        headerText: 'File Size Error',
+                        text:`Maximum file size allowed is ${MAX_VIDEO_SIZE_MB}MB.`
+                    })
+                    return
+                }
+
+                const dataType = getDataType(result.assets[0].uri)
+                if (dataType !== 'video') {
+                    toastRef.current.show({
+                        type: 'error',
+                        headerText: 'Invalid File Type',
+                        text:`Please upload a supported file type.`
+                    })
+                    return
+                }
+
+                uploadVideo()
+            } catch (e) {
+                console.error(e)
+                toastRef.current.show({
+                    type: 'error',
+                    text: `Video could not be uploaded.`
+                })
+            }
+        }
+    }
+
+    const uploadVideo = async (videoUri) => {
+        const thumbnail = await generateThumbnailFromLocalURI(videoUri, 0)
+        const blurhash = await encodeImageToBlurhash(thumbnail)
 
     }
 
-    const onDeleteImagePress = (image) => {
+    const onDeleteVideoPress = (videoId) => {
+        const toDelete = userData.videos.find(video => video.id === videoId)
 
     }
 
@@ -45,19 +100,15 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
 
     const activeActions = [
         {
-            label: 'Edit',
-            onPress: onEditImagePress
-        },
-        {
             label: 'Delete',
-            onPress: onDeleteImagePress
+            onPress: onDeleteVideoPress
         }
     ]
 
-    const pendingActions = [
+    const inReviewActions = [
         {
             label: 'Delete',
-            onPress: onDeleteImagePress,
+            onPress: onDeleteVideoPress,
             iconName: 'delete-outline'
         }
     ]
@@ -69,11 +120,11 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
         },
         {
             label: 'Delete',
-            onPress: onDeleteImagePress
+            onPress: onDeleteVideoPress
         }
     ]
 
-    const renderVideos = (videos, actions) => {
+    const renderVideos = (videos, actions, showActions=true) => {
         const largeContainerStyles = {
             flexDirection: 'row', 
             marginLeft: SPACING.small, 
@@ -93,47 +144,50 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
         return (
             <View style={isSmallScreen ? smallContainerStyles : largeContainerStyles}>
                 {videos.map((video) =>
-                    <View key={videos ?? Math.random()} style={isSmallScreen ? smallImageContainerStyles : largeImageContainerStyles}>
-                        <RenderVideoWithActions video={video} actions={actions} offsetX={(windowWidth * index) + offsetX} />
+                    <View key={video.id} style={isSmallScreen ? smallImageContainerStyles : largeImageContainerStyles}>
+                        <RenderVideoWithActions video={video} actions={actions} offsetX={(windowWidth * index) + offsetX} showActions={showActions} />
                     </View>)}
             </View>
         )
 
     }
 
-    const renderActive = () => {
-
-        return (
-            <View style={styles.section}>
-                <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
-                        <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
-                        <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                            Active
-                        </Text>
-                        <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                            • {data.active.length}
-                        </Text>
-                    </View>
-
-                    <Button
-                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                        style={{ height: 'auto' }}
-                        mode="outlined"
-                        icon="plus"
-                        onPress={onAddNewImagePress}
-                        rippleColor="rgba(220, 46, 46, .16)"
-                    >
-                        Add video
-                    </Button>
+    const Active = useCallback(() => (
+        <View style={styles.section}>
+            <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
+                    <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        Active
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.active.length}
+                    </Text>
                 </View>
 
-                {renderVideos(data.active, activeActions)}
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ height: 'auto' }}
+                    mode="outlined"
+                    icon="plus"
+                    onPress={onAddNewImagePress}
+                    rippleColor="rgba(220, 46, 46, .16)"
+                >
+                    Add video
+                </Button>
             </View>
-        )
-    }
 
-    const renderPending = () => {
+            {
+                data.active.length === 0 ?
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
+                        No active videos
+                    </Text>
+                    : renderVideos(data.active, activeActions)
+            }
+        </View>
+    ), [sectionWidth, data.active])
+
+    const InReview = useCallback(() => {
         
         return (
             <View style={styles.section}>
@@ -143,22 +197,22 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
                         In review
                     </Text>
                     <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                        • {data.pending.length}
+                        • {data.inReview.length}
                     </Text>
                 </View>
 
                 {
-                    data.pending.length === 0 ?
+                    data.inReview.length === 0 ?
                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
-                            No videos under review
+                            No videos in review
                         </Text>
-                        : renderVideos(data.pending, pendingActions)
+                        : renderVideos(data.inReview, inReviewActions, userData.status !== IN_REVIEW)
                 }
             </View>
         )
-    }
+    }, [data.inReview, sectionWidth])
 
-    const renderRejected = () => {
+    const Rejected = useCallback(() => {
         if (data.rejected.length === 0) {
             return null
         }
@@ -178,18 +232,22 @@ const Videos = ({ index, setTabHeight, offsetX = 0 }) => {
                 {renderVideos(data.rejected, rejectedActions)}
             </View>
         )
-    }
+    }, [data.rejected, sectionWidth])
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {renderActive()}
-            {renderPending()}
-            {renderRejected()}
+            {userData.status !== IN_REVIEW && <Active />}
+            <InReview />
+            <Rejected />
         </View>
     )
 }
 
-export default memo(Videos)
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps)(memo(Videos))
 
 const styles = StyleSheet.create({
     section: {
