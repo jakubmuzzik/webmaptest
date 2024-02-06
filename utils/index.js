@@ -24,7 +24,16 @@ export const encodeImageToBlurhash = async imageUrl => {
   const imageData = getImageData(image)
   //return encode(imageData.data, imageData.width, imageData.height, 4, 4)
   return encode(imageData.data, imageData.width, imageData.height, 1, 1)
-};
+}
+
+export const getFileSizeInMb = (uri) => {
+  return (uri.length * (3 / 4) - 2) / (1024 * 1024)
+}
+
+export const getDataType = (uri) => {
+  const parts = uri.split(',')
+  return parts[0].split('/')[0].split(':')[1]
+}
 
 export const normalize = (size, inverse = false) => {
   return isSmallScreen ? size - 5 * (inverse ? -1 : 1) : size

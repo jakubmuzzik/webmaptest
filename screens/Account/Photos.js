@@ -9,20 +9,31 @@ import { Octicons, Ionicons, AntDesign } from '@expo/vector-icons'
 import DropdownSelect from '../../components/DropdownSelect'
 import RenderImageWithActions from '../../components/list/RenderImageWithActions'
 import * as ImagePicker from 'expo-image-picker'
-
+import uuid from 'react-native-uuid'
 import { connect } from 'react-redux'
+import { updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
+import { BlurView } from 'expo-blur'
+import { MotiView } from 'moti'
 
-const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
+import LottieView from 'lottie-react-native'
+
+import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteDoc, deleteObject } from '../../firebase/config'
+
+const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCurrentUserInRedux, updateLadyInRedux }) => {
     const [data, setData] = useState({
         active: [],
         inReview: [],
         rejected: []
     })
 
+    const [fixedCoverImages, setFixedCoverImages] = useState([null, null, null, null, null])
+
+    const [uploading, setUploading] = useState(false)
+
     useEffect(() => {
-        const active = userData.images.filter(image => image.status === ACTIVE)
-        const inReview = userData.images.filter(image => image.status === IN_REVIEW)
-        const rejected = userData.images.filter(image => image.status === REJECTED)
+        const active = userData.images.filter(image => image.status === ACTIVE).sort((a,b) => a.index - b.index)
+        const inReview = userData.images.filter(image => image.status === IN_REVIEW).sort((a,b) => a.index - b.index)
+        const rejected = userData.images.filter(image => image.status === REJECTED).sort((a,b) => a.index - b.index)
 
         setData({
             active, inReview, rejected
@@ -38,7 +49,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
         setSectionWidth(event.nativeEvent.layout.width - 2)
     }
 
-    const openImagePicker = async (index) => {
+    const openImagePicker = async (index, replaceImageId) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -69,15 +80,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                     return
                 }
 
-                uploadImage(result.assets[0].uri, index)
-
-                /*setData(d => {
-                    d.images[index] = {image: result.assets[0].uri, id: uuid.v4(), status: ACTIVE, blurhash}
-                    if (index > 0 && d.images.length < MAX_PHOTOS) {
-                        d.images.push(null)
-                    }
-                    return { ...d }
-                })*/
+                uploadImage(result.assets[0].uri, index, replaceImageId)
             } catch (e) {
                 console.error(e)
                 toastRef.current.show({
@@ -88,21 +91,94 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
         }
     }
 
-    const uploadImage = async (imageUri, index) => {
-        //if index = undefined -> it's a new image -> assign next index
+    const uploadImage = async (imageUri, index, replaceImageId) => {
+        //if index = undefined -> it's additional image -> do not assign index
         //if index = number -> assign the image selected index (when photo will be approved, it will replace the current cover image)
         //if there's already existing in review image for selected cover photo -> display a confirmation window saying it will replace the current in review image
 
+        setUploading(true)
+        try {
+            await uploadUserAsset(imageUri, index, replaceImageId)
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Photo uploaded',
+                text: 'Photo was successfully uploaded.'
+            })
+        } catch(error) {
+            console.error(error)
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Upload error',
+                text: 'Photo could not be uploaded.'
+            })
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    const uploadUserAsset = async (imageUri, index, replaceImageId) => {
         const blurhash = await encodeImageToBlurhash(imageUri)
 
+        let imageData = { image: imageUri, id: replaceImageId ?? uuid.v4(), status: IN_REVIEW, blurhash }
+
+        if (!isNaN(index)) {
+            imageData.index = index
+        }
+
+        let currentImages = [...userData.images]
+
+        if (replaceImageId) {
+            //delete current image from storage
+            currentImages = currentImages.filter(img => img.id !== replaceImageId.id)
+        }
+
+        const url = await uploadAssetToFirestore(imageData.image, 'photos/' + userData.id + '/' + imageData.id)
+
+        delete imageData.image
+        imageData.downloadUrl = url
+
+
+        currentImages.push(imageData)
+        
+        await updateDoc(doc(db, 'users', userData.id), { images: currentImages })
+
+        if (userData.establishmentId) {
+            updateLadyInRedux({ images: currentImages, id: userData.id })
+        } else {
+            updateCurrentUserInRedux({ images: currentImages, id: userData.id })
+        }
+    }
+
+    const uploadAssetToFirestore = async (assetUri, assetPath) => {
+        const imageRef = ref(storage, assetPath)
+    
+        const response = await fetch(assetUri)
+        const blob = await response.blob()
+
+        const result = await uploadBytes(imageRef, blob)
+
+        const downloadURL = await getDownloadURL(result.ref)
+
+        return downloadURL
     }
 
     //only cover photos can be edited
-    const onEditImagePress = (imageId) => {
-        //check if image on
+    const onEditImagePress = (index) => {
+        const inReviewCoverImage = data.inReview.find(img => img.index === index)
+
+        if (inReviewCoverImage) {
+            //show confirmation modal that current in review will be overwritten
+            //openImagePicker(index, inReviewCoverImage.id)
+            
+        } else {
+            openImagePicker(index)
+        }
     }
 
-    const onDeleteImagePress = (imageId) => {
+    const onDeleteImagePress = async (imageId) => {
+        //TODO - show confirmation modal
+
         const toDelete = userData.images.find(image => image.id === imageId)
         //deleting image in review when profile is in review
         if (toDelete.status === IN_REVIEW && userData.status === IN_REVIEW) {
@@ -112,22 +188,57 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 text: 'You can not delete this photo, your profile is currently in review.'
             })
         }
+
+        const imageRef = ref(storage, 'photos/' + userData.id + '/' + imageId)
+        await deleteObject(imageRef)
+
+        const newImages = userData.images.filter(image => image.id !== imageId)
+        await updateDoc(doc(db, 'users', userData.id), { images: newImages })
+
+        if (userData.establishmentId) {
+            updateLadyInRedux({ images: newImages, id: userData.id })
+        } else {
+            updateCurrentUserInRedux({ images: newImages, id: userData.id })
+        }
     }
 
     const onAddNewImagePress = () => {
-
+        openImagePicker()
     }
 
     const onShowRejectedReasonPress = () => {
 
     }
 
+    //ALL ACTIVE PHOTOS
+    const hasAllCoverActivePhotos = () => {
+        for (let i=0; i< (userData.accountType === 'establishment' ? 1 : 5); i++) {
+            if (!data.active[i]) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    //ALL ACTIVE + IN REVIEW PHOTOS
+    const hasAllCoverPhotos = () => {
+        if (userData.accountType === 'establishment') {
+            const coverImage = userData.images.find(image => image.index === 0 && image.status === ACTIVE || image.status === IN_REVIEW)
+            return !!coverImage
+        } else {
+            const coverImages = userData.images.filter(image => Number(image.index) < 5 && (image.status === ACTIVE || image.status === IN_REVIEW))
+            return Number(coverImages.length) === 5
+        }
+    }
+
     //active cover image => display edit icon
     //active additional image -> display delete icon
     const activeImageActions = [
         {
-            label: 'Edit',
-            onPress: onEditImagePress
+            label: 'Delete',
+            onPress: onDeleteImagePress,
+            iconName: 'delete-outline'
         }
     ]
 
@@ -141,37 +252,34 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
 
     const rejectedImageActions = [
         {
-            label: 'Show rejection reason',
-            onPress: onShowRejectedReasonPress
-        },
-        {
             label: 'Delete',
-            onPress: onDeleteImagePress
+            onPress: onDeleteImagePress,
+            iconName: 'delete-outline'
         }
     ]
 
-    const PhotosGrid = () => (
+    const PhotosGrid = ({ photos }) => (
         <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
             <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
-                {data.active[0] ? <><Image
+                {photos[0] ? <><Image
                     style={{
                         aspectRatio: 3 / 4,
                         width: 'auto',
                         borderRadius: 10
                     }}
-                    source={{ uri: data.active[0].downloadUrl }}
-                    placeholder={data.active[0].blurhash}
+                    source={{ uri: photos[0].downloadUrl }}
+                    placeholder={photos[0].blurhash}
                     resizeMode="cover"
                     transition={200}
                 />
-                    <IconButton
+                    {userData.status !== REJECTED && <IconButton
                         style={{ position: 'absolute', top: 2, right: 2, }}
                         containerColor={COLORS.grey + 'B3'}
                         icon="pencil-outline"
                         iconColor='white'
                         size={normalize(20)}
                         onPress={() => onEditImagePress(0)}
-                    />
+                    />}
                 </>
                     :
                     <TouchableRipple
@@ -189,7 +297,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
 
                     <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                        {data.active[1] ? (
+                        {photos[1] ? (
                             <>
                                 <Image
                                     style={{
@@ -197,19 +305,19 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                                         aspectRatio: 3 / 4,
                                         borderRadius: 10
                                     }}
-                                    source={{ uri: data.active[1].downloadUrl }}
-                                    placeholder={data.active[1].blurhash}
+                                    source={{ uri: photos[1].downloadUrl }}
+                                    placeholder={photos[1].blurhash}
                                     resizeMode="cover"
                                     transition={200}
                                 />
-                                <IconButton
+                                {userData.status !== REJECTED && <IconButton
                                     style={{ position: 'absolute', top: 2, right: 2, }}
                                     containerColor={COLORS.grey + 'B3'}
                                     icon="pencil-outline"
                                     iconColor='white'
                                     size={normalize(20)}
                                     onPress={() => onEditImagePress(1)}
-                                />
+                                />}
                             </>
                         ) : <TouchableRipple
                             rippleColor={'rgba(255,255,255,.08)'}
@@ -225,7 +333,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
 
 
                     <View style={{ flex: 1 }}>
-                        {data.active[2] ? (
+                        {photos[2] ? (
                             <>
                                 <Image
                                     style={{
@@ -233,19 +341,19 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                                         borderRadius: 10,
                                         aspectRatio: 3 / 4
                                     }}
-                                    source={{ uri: data.active[2].downloadUrl }}
-                                    placeholder={data.active[2].blurhash}
+                                    source={{ uri: photos[2].downloadUrl }}
+                                    placeholder={photos[2].blurhash}
                                     resizeMode="cover"
                                     transition={200}
                                 />
-                                <IconButton
+                                {userData.status !== REJECTED && <IconButton
                                     style={{ position: 'absolute', top: 2, right: 2, }}
                                     containerColor={COLORS.grey + 'B3'}
                                     icon="pencil-outline"
                                     iconColor='white'
                                     size={normalize(20)}
                                     onPress={() => onEditImagePress(2)}
-                                />
+                                />}
                             </>
                         ) : <TouchableRipple
                             rippleColor={'rgba(255,255,255,.08)'}
@@ -262,7 +370,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 <View style={{ flexDirection: 'row', flexGrow: 1 }}>
 
                     <View style={{ flex: 1, marginRight: SPACING.xxx_small }}>
-                        {data.active[3] ? (
+                        {photos[3] ? (
                             <>
                                 <Image
                                     style={{
@@ -270,19 +378,19 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                                         aspectRatio: 3 / 4,
                                         borderRadius: 10
                                     }}
-                                    source={{ uri: data.active[3].downloadUrl }}
-                                    placeholder={data.active[3].blurhash}
+                                    source={{ uri: photos[3].downloadUrl }}
+                                    laceholder={photos.blurhash}
                                     resizeMode="cover"
                                     transition={200}
                                 />
-                                <IconButton
+                                {userData.status !== REJECTED && <IconButton
                                     style={{ position: 'absolute', top: 2, right: 2, }}
                                     containerColor={COLORS.grey + 'B3'}
                                     icon="pencil-outline"
                                     iconColor='white'
                                     size={normalize(20)}
                                     onPress={() => onEditImagePress(3)}
-                                />
+                                />}
                             </>
                         ) : <TouchableRipple
                             rippleColor={'rgba(255,255,255,.08)'}
@@ -297,7 +405,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                     </View>
 
                     <View style={{ flex: 1 }}>
-                        {data.active[4] ? (
+                        {photos[4] ? (
                             <>
                                 <Image
                                     style={{
@@ -305,20 +413,20 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                                         borderRadius: 10,
                                         aspectRatio: 3 / 4
                                     }}
-                                    source={{ uri: data.active[4].downloadUrl }}
-                                    placeholder={data.active[4].blurhash}
+                                    source={{ uri: photos[4].downloadUrl }}
+                                    placeholder={photos[4].blurhash}
                                     resizeMode="cover"
                                     transition={200}
                                 />
 
-                                <IconButton
+                                {userData.status !== REJECTED && <IconButton
                                     style={{ position: 'absolute', top: 2, right: 2, }}
                                     containerColor={COLORS.grey + 'B3'}
                                     icon="pencil-outline"
                                     iconColor='white'
                                     size={normalize(20)}
                                     onPress={() => onEditImagePress(4)}
-                                />
+                                />}
                             </>
                         ) : <TouchableRipple
                             rippleColor={'rgba(255,255,255,.08)'}
@@ -336,9 +444,9 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
         </View>
     )
 
-    const CoverPhoto = () => (
+    const CoverPhoto = ({ photo }) => (
         <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
-            {userData.images[0] ?
+            {photo ?
                 <React.Fragment>
                     <Image
                         style={{
@@ -346,23 +454,23 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                             borderRadius: 10,
                             aspectRatio: 16 / 9,
                         }}
-                        source={{ uri: userData.images[0].downloadUrl }}
-                        placeholder={userData.images[0].blurhash}
+                        source={{ uri: photo.downloadUrl }}
+                        placeholder={photo.blurhash}
                         resizeMode="cover"
                         transition={200}
                     />
-                    <IconButton
+                    {userData.status !== REJECTED && <IconButton
                         style={{ position: 'absolute', top: normalize(10) - SPACING.xxx_small, right: normalize(10) - SPACING.xxx_small, backgroundColor: COLORS.grey + 'B3' }}
                         icon="pencil-outline"
                         iconColor='white'
                         size={normalize(20)}
                         onPress={() => onEditImagePress(0)}
-                    />
+                    />}
                 </React.Fragment> :
                 <TouchableRipple
                     rippleColor={'rgba(255,255,255,.08)'}
                     onPress={() => onEditImagePress(0)}
-                    style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 3 / 4, borderRadius: 10 }}
+                    style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,.08)', alignItems: 'center', justifyContent: 'center', width: 'auto', aspectRatio: 16 / 9, flex: 1, borderRadius: 10 }}
                 >
                     <>
                         <AntDesign name="plus" size={normalize(30)} color="white" />
@@ -388,36 +496,58 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
         )
     }
 
-    const Active = useCallback(() => (
-        <View style={styles.section}>
-            <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
-                    <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
-                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                        Active
-                    </Text>
-                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                        • {data.active.length}
-                    </Text>
+    const Active = useCallback(() => {
+        const photos = (
+            userData.status === ACTIVE 
+                ? data.active.slice(0, userData.accountType === 'establishment' ? 1 : 5) 
+                //For REJECTED Concat active and in review -> user is uploading missing cover images one by one
+                : data.active.slice(0, userData.accountType === 'establishment' ? 1 : 5).concat(data.inReview.slice(0, userData.accountType === 'establishment' ? 1 : 5))
+        ).reduce((out, current) => {
+            out[current.index] = current
+
+            return out
+        }, {})
+console.log(photos)
+        return (
+            <View style={styles.section}>
+                <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
+                        <Octicons name="dot-fill" size={20} color={userData.status === ACTIVE ? "green" : "orange"} style={{ marginRight: SPACING.xx_small }} />
+                        <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                            {userData.status === ACTIVE ? 'Active' : 'Photos'}
+                        </Text>
+                        {userData.status === ACTIVE && <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                            • {data.active.length}
+                        </Text>}
+                    </View>
+
+                    {((data.active.length + data.inReview.length) < MAX_PHOTOS) && hasAllCoverActivePhotos() && <Button
+                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                        style={{ height: 'auto' }}
+                        mode="outlined"
+                        icon="plus"
+                        onPress={onAddNewImagePress}
+                        rippleColor="rgba(220, 46, 46, .16)"
+                    >
+                        Add photo
+                    </Button>}
                 </View>
 
-                {((data.active.length + data.inReview.length) < MAX_PHOTOS) && <Button
-                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                    style={{ height: 'auto' }}
-                    mode="outlined"
-                    icon="plus"
-                    onPress={onAddNewImagePress}
-                    rippleColor="rgba(220, 46, 46, .16)"
-                >
-                    Add photo
-                </Button>}
-            </View>
+                {!hasAllCoverPhotos() && <>
+                    <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.xx_small }}>
+                        <Ionicons name="information-circle-outline" size={normalize(20)} color={COLORS.error} style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
 
-            {userData.accountType === 'establishment' && <CoverPhoto />}
-            {userData.accountType === 'lady' && <PhotosGrid />}
-            <AdditionalPhotos images={data.active.slice(5)} actions={activeImageActions} />
-        </View>
-    ), [data.active, sectionWidth])
+                        <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.error }}>
+                            Upload all cover photos
+                        </Text>
+                    </View>
+                </>}
+                {userData.accountType === 'establishment' && <CoverPhoto photo={photos[0]} />}
+                {userData.accountType === 'lady' && <PhotosGrid photos={photos} />}
+                <AdditionalPhotos images={data.active.slice(userData.accountType === 'establishment' ? 1 : 5)} actions={activeImageActions} />
+            </View>
+        )
+    }, [userData, sectionWidth, fixedCoverImages, data])
 
     const InReview = useCallback(() => {
         if (data.inReview.length === 0) {
@@ -445,7 +575,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 }
             </View>
         )
-    }, [data.inReview, sectionWidth])
+    }, [sectionWidth, userData, data])
 
     const Rejected = useCallback(() => {
         if (data.rejected.length === 0) {
@@ -467,13 +597,42 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 <AdditionalPhotos images={data.rejected} actions={rejectedImageActions} />
             </View>
         )
-    }, [data.rejected, sectionWidth])
+    }, [data.rejected, sectionWidth, userData, data])
+
+    //TODO - show another section called PENDING - and show only this section and REJECTED section when profile is rejected
+    //upload the image immediately when selecting
+    //images in this section will contain only cover images + edit icon
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {userData.status !== IN_REVIEW && <Active />}
-            <InReview />
+            {(userData.status === ACTIVE || userData.status === REJECTED) && <Active />}
+            {userData.status !== REJECTED && <InReview />}
             <Rejected />
+
+            {uploading && (
+                <Modal transparent>
+                    <MotiView
+                        style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(80,80,80,0.6)' }}
+                        from={{
+                            opacity: 0,
+                        }}
+                        animate={{
+                            opacity: 1
+                        }}
+                    >
+                        <BlurView intensity={20} style={{ height: '100%', width: '100%' }}>
+                            <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
+                                <LottieView
+                                    style={{ width: '20%', minWidth: 200, maxWidth: '90%' }}
+                                    autoPlay
+                                    loop
+                                    source={require('../../assets/file-upload.json')}
+                                />
+                            </View>
+                        </BlurView>
+                    </MotiView>
+                </Modal>
+            )}
         </View>
     )
 }
@@ -482,7 +641,7 @@ const mapStateToProps = (store) => ({
     toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps)(memo(Photos))
+export default connect(mapStateToProps, { updateCurrentUserInRedux, updateLadyInRedux })(memo(Photos))
 
 const styles = StyleSheet.create({
     section: {

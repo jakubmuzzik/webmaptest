@@ -165,8 +165,8 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
                         Name
                     </Text>
                 </View>
-                <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                    {userData.name}
+                <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: userData.name ? COLORS.white : COLORS.error }}>
+                    {userData.name ? userData.name : 'Enter your name'}
                 </Text>
             </View>
             <View style={styles.row}>
@@ -177,16 +177,16 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
                     </Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
-                    <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                        {userData.phone}
+                    <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: userData.phone ? COLORS.white : COLORS.error }}>
+                        {userData.phone ? userData.phone : 'Enter your phone'}
                     </Text>
-                    {userData.whatsapp && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                    {userData.phone && userData.whatsapp && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <FontAwesome5 name="whatsapp" size={18} color="white" />
                     </View>}
-                    {userData.viber && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                    {userData.phone && userData.viber && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <FontAwesome5 name="viber" size={18} color="white" />
                     </View>}
-                    {userData.telegram && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                    {userData.phone && userData.telegram && <View style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, marginLeft: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                         <EvilIcons name="sc-telegram" size={22} color="white" />
                     </View>}
                 </View>
@@ -210,11 +210,11 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
                     Edit
                 </Button>
             </View>
-            <Text style={{ color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
+            <Text style={{ color: userData.description ? COLORS.white : COLORS.error, fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
                 onLayout={onTextLayout}
                 numberOfLines={moreTextShown ? undefined : 5}
             >
-                {userData.description}
+                {userData.description ? userData.description : 'Enter your description'}
             </Text>
             {
                 showTextTriggeringButton && (
@@ -494,8 +494,8 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
 
             <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1, marginBottom: SPACING.x_small }}>
                 <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.white} style={{ marginRight: 3 }} />
-                <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.white }}>
-                    {userData.hiddenAddress ? userData.address.city : userData.address.title}
+                <Text numberOfLines={1} style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: userData.address ? COLORS.white : COLORS.error }}>
+                    {userData.address ? (userData.hiddenAddress ? userData.address.city : userData.address.title) : 'Enter your address'}
                 </Text>
             </View>
 

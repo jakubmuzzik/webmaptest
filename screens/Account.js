@@ -19,7 +19,10 @@ import AccountSettings from './account/AccountSettings'
 import EditLady from './account/EditLady'
 
 import ContentLoader, { Rect } from "react-content-loader/native"
-import { IN_REVIEW, REJECTED } from '../labels'
+import { ACTIVE, IN_REVIEW, REJECTED } from '../labels'
+
+import { updateDoc, doc, db, getAuth } from '../firebase/config'
+import { updateCurrentUserInRedux } from '../redux/actions'
 
 //todo - create texts for each account statuses 
 //could be a status - Profile was not approved.. fix the following data: list of wrong data
@@ -45,7 +48,7 @@ const ESTABLISHMENT_LADIES_MESSAGES = {
 
 const { height: initialHeight } = Dimensions.get('window')
 
-const Account = ({ navigation, route, currentUser={} }) => {
+const Account = ({ navigation, route, currentUser={}, toastRef, updateCurrentUserInRedux}) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -61,6 +64,7 @@ const Account = ({ navigation, route, currentUser={} }) => {
         { key: 'add_lady', title: 'Add Lady' },
     ]
     .map((route, index) => ({ ...route, index })))
+    const [resubmitting, setResubmitting] = useState(false)
 
     const location = useLocation()
     const navigate = useNavigate()
@@ -104,8 +108,59 @@ const Account = ({ navigation, route, currentUser={} }) => {
         }
     }
 
-    const onResubmitPress = () => {
+    const hasAllProfileInformation = () => {
+        return currentUser.name 
+            && currentUser.phone
+            && currentUser.description
+            && currentUser.address
+    }
 
+    const hasAllCoverPhotos = () => {
+        if (currentUser.accountType === 'establishment') {
+            const coverImage = currentUser.images.find(image => image.index === 0 && image.status === ACTIVE || image.status === IN_REVIEW)
+            return coverImage
+        } else {
+            const coverImages = currentUser.images.filter(image => Number(image.index) < 5 && (image.status === ACTIVE || image.status === IN_REVIEW))
+            return Number(coverImages.length) === 5
+        }
+    }
+
+    const onResubmitPress = async () => {
+        if (resubmitting) {
+            return
+        }
+
+        if (!hasAllCoverPhotos() || !hasAllProfileInformation()) {
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Missing data',
+                text: 'Fix all of the rejected data before re-submitting the profile.'
+            })
+
+            return
+        }
+
+        setResubmitting(true)
+        try {
+            await updateDoc(doc(db, 'users', getAuth().currentUser.uid), { status: IN_REVIEW })
+            updateCurrentUserInRedux({ status: IN_REVIEW, id: getAuth().currentUser.uid })
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Profile re-submitted',
+                text: 'Profile was re-submitted for review.'
+            })
+        } catch(e) {
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Re-submit error',
+                label: 'Your profile could not be submitted for review.'
+            })
+
+            console.error(e)
+        } finally {
+            setResubmitting(false)
+        }
     }
 
     const renderPagesScene = ({ route }) => {
@@ -189,21 +244,22 @@ const Account = ({ navigation, route, currentUser={} }) => {
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
                                 Profile has been rejected
                             </Text>
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
+                           {(!hasAllCoverPhotos() || !hasAllProfileInformation()) && <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
                                 Please fix the following data and re-submit your profile for review:
-                            </Text>
+                            </Text>}
                             <View style={{ marginTop: 4, flexDirection: 'column' }}>
-                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                {!hasAllCoverPhotos() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
                                     • Cover photos
-                                </Text>
-                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
-                                    • Working hours
-                                </Text>
+                                </Text>}
+                                {!hasAllProfileInformation() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                    • Profile information
+                                </Text>}
                             </View>
 
-                            <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
+                            {!resubmitting && <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
                                 Re-submit
-                            </Text>
+                            </Text>}
+                            {resubmitting && <ActivityIndicator color={COLORS.red} style={{ width: 'fit-content', marginTop: SPACING.x_small  }} size={normalize(20)} />}
                         </View>
                     </View>
                 </MotiView>
@@ -338,7 +394,8 @@ const Account = ({ navigation, route, currentUser={} }) => {
 }
 
 const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
+    currentUser: store.userState.currentUser,
+    toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps)(Account)
+export default connect(mapStateToProps, { updateCurrentUserInRedux })(Account)

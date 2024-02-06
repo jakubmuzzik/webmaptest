@@ -103,7 +103,6 @@ const Inactive = ({ data, inactiveActions, cardWidth, offsetX }) => (
     </View>
 )
 
-//TODO - if rejected - users clicks edit, fix the data and then click resubmit for review
 const Rejected = ({ data, rejectedActions, cardWidth, offsetX }) => (
     data.length === 0 ? null :
         <View style={styles.section}>
@@ -117,7 +116,13 @@ const Rejected = ({ data, rejectedActions, cardWidth, offsetX }) => (
                 </Text>
             </View>
 
-
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                {data.map(lady => (
+                    <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                        <RenderAccountLady lady={lady} width={cardWidth} actions={rejectedActions} offsetX={offsetX} />
+                    </View>
+                ))}
+            </View>
         </View>
 )
 
@@ -268,10 +273,6 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
         {
             label: 'Edit',
             onPress: onEditLadyPress
-        },
-        {
-            label: 'Show rejection reason',
-            onPress: onShowRejectedReasonPress
         },
         {
             label: 'Delete',

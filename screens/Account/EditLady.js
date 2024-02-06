@@ -9,7 +9,7 @@ import { useSearchParams, useNavigate, useParams } from 'react-router-dom'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { MotiView } from 'moti'
 import { connect } from 'react-redux'
-import { fetchLadies } from '../../redux/actions'
+import { fetchLadies, updateLadyInRedux } from '../../redux/actions'
 
 import { Ionicons, Entypo } from '@expo/vector-icons'
 
@@ -17,10 +17,10 @@ import PersonalDetails from './PersonalDetails'
 import Photos from './Photos'
 import Videos from './Videos'
 
-import { getDoc, doc, db } from '../../firebase/config'
-import { REJECTED, IN_REVIEW } from '../../labels'
+import { updateDoc, doc, db } from '../../firebase/config'
+import { REJECTED, IN_REVIEW, ACTIVE } from '../../labels'
 
-const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
+const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedux }) => {
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
 
@@ -37,6 +37,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
         { key: 'videos', title: 'Videos', height: '100%'  },
     ].map((route, index) => ({ ...route, index })))
     const [ladyData, setLadyData] = useState(null)
+    const [resubmitting, setResubmitting] = useState(false)
 
     useEffect(() => {
         if (!ladies) {
@@ -79,8 +80,54 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
         setIndex(routes.indexOf(route))
     }
 
-    const onResubmitPress = () => {
+    const onResubmitPress = async () => {
+        if (resubmitting) {
+            return
+        }
 
+        if (!hasAllCoverPhotos() || !hasAllProfileInformation()) {
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Missing data',
+                text: 'Fix all of the rejected data before re-submitting the profile.'
+            })
+
+            return
+        }
+
+        setResubmitting(true)
+        try {
+            await updateDoc(doc(db, 'users', ladyData.id), { status: IN_REVIEW })
+            updateLadyInRedux({ status: IN_REVIEW, id: ladyData.id })
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Profile re-submitted',
+                text: 'Profile was re-submitted for review.'
+            })
+        } catch(e) {
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Re-submit error',
+                text: 'Your profile could not be submitted for review.'
+            })
+
+            console.error(e)
+        } finally {
+            setResubmitting(false)
+        }
+    }
+
+    const hasAllProfileInformation = () => {
+        return ladyData.name 
+            && ladyData.phone
+            && ladyData.description
+            && ladyData.address
+    }
+
+    const hasAllCoverPhotos = () => {
+        const coverImages = ladyData.images.filter(image => Number(image.index) < 5 && (image.status === ACTIVE || image.status === IN_REVIEW))
+        return Number(coverImages.length) === 5
     }
 
     const renderScene = ({ route }) => {
@@ -167,7 +214,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
                         opacity: 1,
                         transform: [{ translateY: 0 }],
                     }}
-                    style={{ paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#d9100a', marginTop: SPACING.x_small }}
+                    style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#d9100a', marginBottom: SPACING.medium }}
                 >
                     <View style={{ flexDirection: 'row' }}>
                         <Entypo name="circle-with-cross" size={normalize(20)} color="#d9100a" style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
@@ -176,21 +223,22 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef }) => {
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
                                 Profile has been rejected
                             </Text>
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
+                            {(!hasAllCoverPhotos() || !hasAllProfileInformation()) && <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
                                 Please fix the following data and re-submit your profile for review:
-                            </Text>
+                            </Text>}
                             <View style={{ marginTop: 4, flexDirection: 'column' }}>
-                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                {!hasAllCoverPhotos() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
                                     • Cover photos
-                                </Text>
-                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
-                                    • Working hours
-                                </Text>
+                                </Text>}
+                                {!hasAllProfileInformation() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                    • Profile information
+                                </Text>}
                             </View>
 
-                            <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
+                            {!resubmitting && <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
                                 Re-submit
-                            </Text>
+                            </Text>}
+                            {resubmitting && <ActivityIndicator color={COLORS.red} style={{ width: 'fit-content', marginTop: SPACING.x_small  }} size={normalize(20)} />}
                         </View>
                     </View>
                 </MotiView>
@@ -301,4 +349,4 @@ const mapStateToProps = (store) => ({
     toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps, { fetchLadies })(memo(EditLady))
+export default connect(mapStateToProps, { fetchLadies, updateLadyInRedux })(memo(EditLady))

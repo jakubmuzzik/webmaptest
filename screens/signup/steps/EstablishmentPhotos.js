@@ -9,22 +9,13 @@ import Animated, {
 } from 'react-native-reanimated'
 import { COLORS, SPACING, FONTS, FONT_SIZES, MAX_PHOTO_SIZE_MB, MAX_VIDEO_SIZE_MB, MAX_VIDEOS, MAX_PHOTOS } from '../../../constants'
 import { TouchableRipple, IconButton, HelperText } from 'react-native-paper'
-import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash } from '../../../utils'
+import { normalize, generateThumbnailFromLocalURI, encodeImageToBlurhash, getFileSizeInMb, getDataType } from '../../../utils'
 import { Image } from 'expo-image'
 import { BlurView } from 'expo-blur'
 import * as ImagePicker from 'expo-image-picker'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
 import uuid from 'react-native-uuid'
 import { IN_REVIEW } from '../../../labels'
-
-const getDataType = (uri) => {
-    const parts = uri.split(',')
-    return parts[0].split('/')[0].split(':')[1]
-}
-
-const getFileSizeInMb = (uri) => {
-    return (uri.length * (3 / 4) - 2) / (1024 * 1024)
-}
 
 const EstablishmentPhotos = forwardRef((props, ref) => {
     const { i, offsetX = 0, toastRef } = props
