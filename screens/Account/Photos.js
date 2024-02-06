@@ -507,7 +507,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
             return out
         }, {})
-console.log(photos)
+
         return (
             <View style={styles.section}>
                 <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
