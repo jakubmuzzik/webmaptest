@@ -31,6 +31,7 @@ const ConfirmationModal = ({
 
     const closeModal = () => {
         onCancel()
+        setWorking(false)
     }
 
     const onConfirmPress = async () => {
@@ -49,7 +50,6 @@ const ConfirmationModal = ({
                 text: errorText,
                 headerText: headerErrorText
             })
-        } finally {
             setWorking(false)
         }
     }
@@ -63,7 +63,7 @@ const ConfirmationModal = ({
                     onPressOut={closeModal}
                 >
                     <MotiView
-                        style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}
+                        style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', width: '100%' }}
                         from={{
                             opacity: 0,
                             transform: [{ scale: 0.7 }],
@@ -89,7 +89,7 @@ const ConfirmationModal = ({
                                 <View style={styles.modal__header}>
                                     <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
                                     <View style={{ flexShrink: 1, flexGrow: 0 }}>
-                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large }}>{headerText}</Text>
+                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, textAlign: 'center' }}>{headerText}</Text>
                                     </View>
                                     <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
                                         <HoverableView style={{ marginRight: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
@@ -98,7 +98,7 @@ const ConfirmationModal = ({
                                     </View>
                                 </View>
 
-                                <View style={{ paddingHorizontal: SPACING.medium, paddingVertical: SPACING.small, alignItems: 'center' }}>
+                                <View style={{ paddingHorizontal: SPACING.medium, paddingVertical: SPACING.small, alignItems: 'center', flex: 1 }}>
                                     <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>
                                         {text}
                                     </Text>
