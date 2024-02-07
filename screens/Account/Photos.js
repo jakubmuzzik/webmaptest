@@ -14,10 +14,11 @@ import { connect } from 'react-redux'
 import { updateCurrentUserInRedux, updateLadyInRedux } from '../../redux/actions'
 import { BlurView } from 'expo-blur'
 import { MotiView } from 'moti'
+import ConfirmationModal from '../../components/modal/ConfirmationModal'
 
 import LottieView from 'lottie-react-native'
 
-import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteDoc, deleteObject } from '../../firebase/config'
+import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteObject } from '../../firebase/config'
 
 const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCurrentUserInRedux, updateLadyInRedux }) => {
     const [data, setData] = useState({
@@ -29,6 +30,9 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
     const [fixedCoverImages, setFixedCoverImages] = useState([null, null, null, null, null])
 
     const [uploading, setUploading] = useState(false)
+
+    const [imageToDelete, setImageToDelete] = useState()
+    const [coverImageToEdit, setCoverImageToEdit] = useState()
 
     useEffect(() => {
         const active = userData.images.filter(image => image.status === ACTIVE).sort((a,b) => a.index - b.index)
@@ -103,7 +107,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
             toastRef.current.show({
                 type: 'success',
                 headerText: 'Photo uploaded',
-                text: 'Photo was successfully uploaded.'
+                text: 'Photo was successfully uploaded and submitted for review.'
             })
         } catch(error) {
             console.error(error)
@@ -128,16 +132,15 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
         let currentImages = [...userData.images]
 
-        if (replaceImageId) {
-            //delete current image from storage
-            currentImages = currentImages.filter(img => img.id !== replaceImageId.id)
-        }
-
+        //if there's an existing file in storage, it will be replaced 
         const url = await uploadAssetToFirestore(imageData.image, 'photos/' + userData.id + '/' + imageData.id)
 
         delete imageData.image
         imageData.downloadUrl = url
 
+        if (replaceImageId) {
+            currentImages = currentImages.filter(img => img.id !== replaceImageId)
+        }
 
         currentImages.push(imageData)
         
@@ -169,16 +172,13 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
         if (inReviewCoverImage) {
             //show confirmation modal that current in review will be overwritten
-            //openImagePicker(index, inReviewCoverImage.id)
-            
+            setCoverImageToEdit(inReviewCoverImage)
         } else {
             openImagePicker(index)
         }
     }
 
     const onDeleteImagePress = async (imageId) => {
-        //TODO - show confirmation modal
-
         const toDelete = userData.images.find(image => image.id === imageId)
         //deleting image in review when profile is in review
         if (toDelete.status === IN_REVIEW && userData.status === IN_REVIEW) {
@@ -187,8 +187,14 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                 headerText: 'Profile is in review',
                 text: 'You can not delete this photo, your profile is currently in review.'
             })
+
+            return
         }
 
+        setImageToDelete(imageId)
+    }
+
+    const deleteImage = async (imageId) => {
         const imageRef = ref(storage, 'photos/' + userData.id + '/' + imageId)
         await deleteObject(imageRef)
 
@@ -200,6 +206,12 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         } else {
             updateCurrentUserInRedux({ images: newImages, id: userData.id })
         }
+
+        toastRef.current.show({
+            type: 'success',
+            headerText: 'Success!',
+            text: 'Photo was deleted.'
+        })
     }
 
     const onAddNewImagePress = () => {
@@ -599,10 +611,6 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         )
     }, [data.rejected, sectionWidth, userData, data])
 
-    //TODO - show another section called PENDING - and show only this section and REJECTED section when profile is rejected
-    //upload the image immediately when selecting
-    //images in this section will contain only cover images + edit icon
-
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
             {(userData.status === ACTIVE || userData.status === REJECTED) && <Active />}
@@ -612,7 +620,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
             {uploading && (
                 <Modal transparent>
                     <MotiView
-                        style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(80,80,80,0.6)' }}
+                        style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}
                         from={{
                             opacity: 0,
                         }}
@@ -633,6 +641,29 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                     </MotiView>
                 </Modal>
             )}
+
+            <ConfirmationModal 
+                visible={!!imageToDelete}
+                headerText='Confirm delete'
+                text='Are you sure you want to delete this Photo?'
+                onCancel={() => setImageToDelete(undefined)}
+                onConfirm={() => deleteImage(imageToDelete)}
+                icon='delete-outline'
+                headerErrorText='Delete error'
+                errorText='Photo could not be deleted.'
+            />
+
+            <ConfirmationModal 
+                visible={!!coverImageToEdit}
+                headerText='Replace in review cover photo?'
+                text='There is already an image in review for the selected cover photo. By proceeding, you will replace the existing in-review image with the new one. Are you sure you want to continue?'
+                onCancel={() => setCoverImageToEdit(undefined)}
+                onConfirm={() => openImagePicker(coverImageToEdit.index, coverImageToEdit.id)}
+                //icon='delete-outline'
+                headerErrorText='Edit error'
+                errorText='Photo could not be edited.'
+                confirmLabel='Continue'
+            />
         </View>
     )
 }
