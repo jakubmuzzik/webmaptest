@@ -1,5 +1,5 @@
 import React, { useState, memo, useCallback, useEffect } from 'react'
-import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
+import { View, Text, StyleSheet, useWindowDimensions, Modal } from 'react-native'
 import { Image } from 'expo-image'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SMALL_SCREEN_THRESHOLD, MAX_VIDEO_SIZE_MB, MAX_VIDEOS } from '../../constants'
 import { ACTIVE, REJECTED, IN_REVIEW } from '../../labels'
@@ -10,14 +10,26 @@ import DropdownSelect from '../../components/DropdownSelect'
 import RenderVideoWithActions from '../../components/list/RenderVideoWithActions'
 import * as ImagePicker from 'expo-image-picker'
 import { connect } from 'react-redux'
+import ConfirmationModal from '../../components/modal/ConfirmationModal'
+import { BlurView } from 'expo-blur'
+import { MotiView } from 'moti'
+import LottieView from 'lottie-react-native'
+import { updateLadyInRedux, updateCurrentUserInRedux } from '../../redux/actions'
+import uuid from 'react-native-uuid'
 
-const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
+import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteObject } from '../../firebase/config'
+
+const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateLadyInRedux, updateCurrentUserInRedux }) => {
     const [data, setData] = useState({
         active: [],
         inReview: [],
         rejected: []
     })
     const [sectionWidth, setSectionWidth] = useState(0)
+
+    const [uploading, setUploading] = useState(false)
+
+    const [videoToDelete, setVideoToDelete] = useState()
 
     useEffect(() => {
         const active = userData.videos.filter(video => video.status === ACTIVE)
@@ -29,7 +41,7 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
         })
     }, [userData.videos])
 
-    console.log(data.inReview)
+    
     const { width: windowWidth } = useWindowDimensions()
     const isSmallScreen = windowWidth < SMALL_SCREEN_THRESHOLD
 
@@ -68,7 +80,7 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                     return
                 }
 
-                uploadVideo()
+                uploadVideo(result.assets[0].uri)
             } catch (e) {
                 console.error(e)
                 toastRef.current.show({
@@ -80,28 +92,118 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
     }
 
     const uploadVideo = async (videoUri) => {
+        setUploading(true)
+        try {
+            await uploadUserAsset(videoUri)
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Video uploaded',
+                text: 'Video was successfully uploaded and submitted for review.'
+            })
+        } catch(error) {
+            console.error(error)
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Upload error',
+                text: 'Video could not be uploaded.'
+            })
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    const uploadUserAsset = async (videoUri) => {
         const thumbnail = await generateThumbnailFromLocalURI(videoUri, 0)
         const blurhash = await encodeImageToBlurhash(thumbnail)
 
+        let videoData = { video: videoUri, id: uuid.v4(), status: IN_REVIEW, blurhash, thumbnail }        
+
+        //if there's an existing file in storage, it will be replaced 
+        const urls = await Promise.all([
+            uploadAssetToFirestore(videoData.video, 'videos/' + userData.id + '/' + videoData.id + '/video'),
+            uploadAssetToFirestore(videoData.thumbnail, 'videos/' + userData.id + '/' + videoData.id + '/thumbnail')
+        ])
+
+        delete videoData.video
+        delete videoData.thumbnail
+        videoData.downloadUrl = urls[0]
+        videoData.thumbnailDownloadUrl = urls[1]
+
+        const videos = userData.videos.concat([videoData])
+        
+        await updateDoc(doc(db, 'users', userData.id), { videos })
+
+        if (userData.establishmentId) {
+            updateLadyInRedux({ videos, id: userData.id })
+        } else {
+            updateCurrentUserInRedux({ videos, id: userData.id })
+        }
     }
 
-    const onDeleteVideoPress = (videoId) => {
+    const uploadAssetToFirestore = async (assetUri, assetPath) => {
+        const imageRef = ref(storage, assetPath)
+    
+        const response = await fetch(assetUri)
+        const blob = await response.blob()
+
+        const result = await uploadBytes(imageRef, blob)
+
+        const downloadURL = await getDownloadURL(result.ref)
+
+        return downloadURL
+    }
+
+    const onDeleteVideoPress = async (videoId) => {
         const toDelete = userData.videos.find(video => video.id === videoId)
+        //deleting video in review when profile is in review
+        if (toDelete.status === IN_REVIEW && userData.status === IN_REVIEW) {
+            toastRef.current.show({
+                type: 'warning',
+                headerText: 'Profile is in review',
+                text: 'You can not delete this video, your profile is currently in review.'
+            })
 
+            return
+        }
+
+        setVideoToDelete(videoId)
     }
 
-    const onAddNewImagePress = () => {
+    const deleteVideo = async (videoId) => {
+        const videoRef = ref(storage, 'videos/' + userData.id + '/' + videoId + '/video')
+        const thumbnailRef = ref(storage, 'videos/' + userData.id + '/' + videoId + '/thumbnail')
 
+        await Promise.all([
+            deleteObject(videoRef),
+            deleteObject(thumbnailRef),
+        ])
+
+        const newVideos = userData.videos.filter(video => video.id !== videoId)
+        await updateDoc(doc(db, 'users', userData.id), { videos: newVideos })
+
+        if (userData.establishmentId) {
+            updateLadyInRedux({ videos: newVideos, id: userData.id })
+        } else {
+            updateCurrentUserInRedux({ videos: newVideos, id: userData.id })
+        }
+
+        toastRef.current.show({
+            type: 'success',
+            headerText: 'Success!',
+            text: 'Video was deleted.'
+        })
     }
 
-    const onShowRejectedReasonPress = () => {
-
+    const onAddNewVideoPress = () => {
+        openImagePicker()
     }
 
     const activeActions = [
         {
             label: 'Delete',
-            onPress: onDeleteVideoPress
+            onPress: onDeleteVideoPress,
+            iconName: 'delete-outline'
         }
     ]
 
@@ -115,12 +217,9 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
 
     const rejectedActions = [
         {
-            label: 'Show rejection reason',
-            onPress: onShowRejectedReasonPress
-        },
-        {
             label: 'Delete',
-            onPress: onDeleteVideoPress
+            onPress: onDeleteVideoPress,
+            iconName: 'delete-outline'
         }
     ]
 
@@ -165,16 +264,16 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                     </Text>
                 </View>
 
-                <Button
+                {((data.active.length + data.inReview.length) < MAX_VIDEOS) && <Button
                     labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
                     style={{ height: 'auto' }}
                     mode="outlined"
                     icon="plus"
-                    onPress={onAddNewImagePress}
+                    onPress={onAddNewVideoPress}
                     rippleColor="rgba(220, 46, 46, .16)"
                 >
                     Add video
-                </Button>
+                </Button>}
             </View>
 
             {
@@ -185,9 +284,12 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                     : renderVideos(data.active, activeActions)
             }
         </View>
-    ), [sectionWidth, data.active])
+    ), [sectionWidth, data, userData])
 
     const InReview = useCallback(() => {
+        if (data.inReview.length === 0) {
+            return null
+        }
         
         return (
             <View style={styles.section}>
@@ -210,7 +312,7 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 }
             </View>
         )
-    }, [data.inReview, sectionWidth])
+    }, [data, sectionWidth, userData])
 
     const Rejected = useCallback(() => {
         if (data.rejected.length === 0) {
@@ -232,13 +334,49 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef }) => {
                 {renderVideos(data.rejected, rejectedActions)}
             </View>
         )
-    }, [data.rejected, sectionWidth])
+    }, [data, sectionWidth, userData])
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
             {userData.status !== IN_REVIEW && <Active />}
             <InReview />
             <Rejected />
+
+            {uploading && (
+                <Modal transparent>
+                    <MotiView
+                        style={{ ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}
+                        from={{
+                            opacity: 0,
+                        }}
+                        animate={{
+                            opacity: 1
+                        }}
+                    >
+                        <BlurView intensity={20} style={{ height: '100%', width: '100%' }}>
+                            <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.6)', alignItems: "center", justifyContent: 'center' }}>
+                                <LottieView
+                                    style={{ width: '20%', minWidth: 200, maxWidth: '90%' }}
+                                    autoPlay
+                                    loop
+                                    source={require('../../assets/file-upload.json')}
+                                />
+                            </View>
+                        </BlurView>
+                    </MotiView>
+                </Modal>
+            )}
+
+            <ConfirmationModal 
+                visible={!!videoToDelete}
+                headerText='Confirm delete'
+                text='Are you sure you want to delete this Video?'
+                onCancel={() => setVideoToDelete(undefined)}
+                onConfirm={() => deleteVideo(videoToDelete)}
+                icon='delete-outline'
+                headerErrorText='Delete error'
+                errorText='Video could not be deleted.'
+            />
         </View>
     )
 }
@@ -247,7 +385,7 @@ const mapStateToProps = (store) => ({
     toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps)(memo(Videos))
+export default connect(mapStateToProps, { updateLadyInRedux, updateCurrentUserInRedux })(memo(Videos))
 
 const styles = StyleSheet.create({
     section: {
@@ -277,10 +415,4 @@ const styles = StyleSheet.create({
     smallContainerStyles: {
         flexDirection: 'row', marginHorizontal: SPACING.small,  marginBottom: SPACING.small, flexWrap: 'wrap'
     },
-    largeImageContainerStyles: {
-
-    }, 
-    smallImageContainerStyles: {
-        
-    }
 })

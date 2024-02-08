@@ -8,10 +8,13 @@ import { stripEmptyParams, getParam, normalize } from '../../utils'
 import RenderAccountLady from '../../components/list/RenderAccountLady'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { fetchLadies } from '../../redux/actions'
-import { ACTIVE, INACTIVE, IN_REVIEW, REJECTED} from '../../labels'
+import { fetchLadies, removeLadyFromRedux, updateLadyInRedux } from '../../redux/actions'
+import { ACTIVE, DELETED, INACTIVE, IN_REVIEW, REJECTED} from '../../labels'
 import { MOCK_DATA } from '../../constants'
 import ContentLoader, { Rect } from "react-content-loader/native"
+import ConfirmationModal from '../../components/modal/ConfirmationModal'
+
+import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteObject } from '../../firebase/config'
 
 const Active = ({ onAddNewLadyPress, data, activeActions, cardWidth, offsetX }) => (
     <View style={styles.section}>
@@ -95,8 +98,12 @@ const Inactive = ({ data, inactiveActions, cardWidth, offsetX }) => (
                     No inactive profiles
                 </Text>
             ) : (
-                <View>
-
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                    {data.map(lady => (
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                            <RenderAccountLady lady={lady} width={cardWidth} actions={inactiveActions} offsetX={offsetX} />
+                        </View>
+                    ))}
                 </View>
             )
         }
@@ -126,7 +133,7 @@ const Rejected = ({ data, rejectedActions, cardWidth, offsetX }) => (
         </View>
 )
 
-const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
+const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies, removeLadyFromRedux, updateLadyInRedux, toastRef }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -143,6 +150,10 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
      */
     const [data, setData] = useState({})
     const [sectionWidth, setSectionWidth] = useState(0)
+
+    const [ladyToDeactivate, setLadyToDeactivate] = useState()
+    const [ladyToActivate, setLadyToActivate] = useState()
+    const [ladyToDelete, setLadyToDelete] = useState()
 
     useEffect(() => {
         if (!ladies) {
@@ -183,7 +194,68 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
                         : isLargeScreen ? ((sectionWidth - SPACING.small - SPACING.small) / 5) - (SPACING.small * 4) / 5 : ((sectionWidth - SPACING.small - SPACING.small) / 6) - (SPACING.small * 5) / 6
     }, [sectionWidth])
 
-    
+    const deleteLady = async (ladyId) => {
+        try {
+            await updateDoc(doc(db, 'users', ladyId), { status: DELETED })
+
+            removeLadyFromRedux(ladyId)
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Lady deleted',
+                text: 'Lady was successfuly deleted.'
+            })
+        } catch(error) {
+            console.error(error)
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Delete error',
+                text: 'Lady could not be deleted.'
+            })
+        }
+    }
+
+    const deactivateLady = async (ladyId) => {
+        try {
+            await updateDoc(doc(db, 'users', ladyId), { status: INACTIVE })
+
+            updateLadyInRedux({ status: INACTIVE, id: ladyId })
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Lady deactivated',
+                text: 'Lady was successfuly deactivated.'
+            })
+        } catch(error) {
+            console.error(error)
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Deactivate error',
+                text: 'Lady could not be deactivated.'
+            })
+        }
+    }
+
+    const activateLady = async (ladyId) => {
+        try {
+            await updateDoc(doc(db, 'users', ladyId), { status: ACTIVE })
+
+            updateLadyInRedux({ status: ACTIVE, id: ladyId })
+
+            toastRef.current.show({
+                type: 'success',
+                headerText: 'Lady activated',
+                text: 'Lady was successfuly activated.'
+            })
+        } catch(error) {
+            console.error(error)
+            toastRef.current.show({
+                type: 'error',
+                headerText: 'Activate error',
+                text: 'Lady could not be activated.'
+            })
+        }
+    }
 
     const onOpenProfilePress = (ladyId) => {
         navigate({
@@ -199,16 +271,16 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
         })
     }
 
-    const onDeletePress = () => {
-
+    const onDeletePress = (ladyId) => {
+        setLadyToDelete(ladyId)
     }
 
-    const onDeactivatePress = () => {
-
+    const onDeactivatePress = (ladyId) => {
+        setLadyToDeactivate(ladyId)
     }
 
-    const onActivatePress = () => {
-
+    const onActivatePress = (ladyId) => {
+        setLadyToActivate(ladyId)
     }
 
     const onShowRejectedReasonPress = () => {
@@ -332,15 +404,51 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies }) => {
             <InReview data={data.inReview} inReviewActions={inReviewActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
             <Inactive data={data.inactive} inactiveActions={inactiveActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
             <Rejected data={data.rejected} rejectedActions={rejectedActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
+            
+            <ConfirmationModal 
+                visible={!!ladyToDelete}
+                headerText='Confirm delete'
+                text='Are you sure you want to delete selected Lady? This action can not be undone.'
+                onCancel={() => setLadyToDelete(undefined)}
+                onConfirm={() => deleteLady(ladyToDelete)}
+                icon='delete-outline'
+                headerErrorText='Delete error'
+                errorText='Lady could not be deleted.'
+            />
+
+            <ConfirmationModal
+                visible={!!ladyToActivate}
+                headerText='Confirm Activation'
+                text='Are you sure you want to activate selected Lady? Profile will become visible in profile listings and search results.'
+                onCancel={() => setLadyToActivate(undefined)}
+                onConfirm={() => activateLady(ladyToActivate)}
+                headerErrorText='Activation error'
+                errorText='Lady could not be activated.'
+                confirmLabel='Activate'
+                confirmButtonColor='green'
+            />
+
+            <ConfirmationModal
+                visible={!!ladyToDeactivate}
+                headerText='Confirm Deactivation'
+                text='Are you sure you want to deactivate selected Lady? Profile will be hidden from the profile listings and search results. You can reactivate the profile at any time.'
+                onCancel={() => setLadyToDeactivate(undefined)}
+                onConfirm={() => deactivateLady(ladyToDeactivate)}
+                headerErrorText='Deactivation error'
+                errorText='Lady could not be deactivated.'
+                confirmLabel='Deactivate'
+                confirmButtonColor={COLORS.lightBlack}
+            />
         </View>
     )
 }
 
 const mapStateToProps = (store) => ({
-    ladies: store.userState.ladies
+    ladies: store.userState.ladies,
+    toastRef: store.appState.toastRef
 })
 
-export default connect(mapStateToProps, { fetchLadies })(memo(Ladies))
+export default connect(mapStateToProps, { fetchLadies, removeLadyFromRedux, updateLadyInRedux })(memo(Ladies))
 
 const styles = StyleSheet.create({
     section: {

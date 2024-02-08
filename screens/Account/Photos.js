@@ -27,8 +27,6 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         rejected: []
     })
 
-    const [fixedCoverImages, setFixedCoverImages] = useState([null, null, null, null, null])
-
     const [uploading, setUploading] = useState(false)
 
     const [imageToDelete, setImageToDelete] = useState()
@@ -216,10 +214,6 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
     const onAddNewImagePress = () => {
         openImagePicker()
-    }
-
-    const onShowRejectedReasonPress = () => {
-
     }
 
     //ALL ACTIVE PHOTOS
@@ -559,7 +553,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                 <AdditionalPhotos images={data.active.slice(userData.accountType === 'establishment' ? 1 : 5)} actions={activeImageActions} />
             </View>
         )
-    }, [userData, sectionWidth, fixedCoverImages, data])
+    }, [userData, sectionWidth, data])
 
     const InReview = useCallback(() => {
         if (data.inReview.length === 0) {
@@ -609,7 +603,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                 <AdditionalPhotos images={data.rejected} actions={rejectedImageActions} />
             </View>
         )
-    }, [data.rejected, sectionWidth, userData, data])
+    }, [sectionWidth, userData, data])
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>

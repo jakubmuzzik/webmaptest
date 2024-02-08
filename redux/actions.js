@@ -7,6 +7,7 @@ import {
     STORE_TOAST_REF
 } from './actionTypes'
 import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where } from '../firebase/config'
+import { DELETED } from '../labels'
 
 export const updateRoute = (route) => ({
     type: ROUTE_STATE_CHANGE,
@@ -50,6 +51,14 @@ export const updateLadyInRedux = (data) => (dispatch, getState) => {
     dispatch({ type: LADIES_STATE_CHANGE, ladies })
 }
 
+export const removeLadyFromRedux = (toRemoveId) => (dispatch, getState) => {
+    let ladies = JSON.parse(JSON.stringify(getState().userState.ladies))
+
+    ladies = ladies.filter(lady => lady.id !== toRemoveId)
+
+    dispatch({ type: LADIES_STATE_CHANGE, ladies })
+}
+
 /**
  * 
  * @description Redux thunk functions
@@ -66,7 +75,7 @@ export const fetchUser = () => (dispatch, getState) => {
 }
 
 export const fetchLadies = () => (dispatch, getState) => {
-    return getDocs(query(collection(db, "users"), where('establishmentId', '==', getAuth().currentUser.uid)))
+    return getDocs(query(collection(db, "users"), where('establishmentId', '==', getAuth().currentUser.uid), where('status', '!=', DELETED)))
         .then(snapshot => {
             if (snapshot.empty) {
                 console.log('empty')

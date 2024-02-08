@@ -66,15 +66,17 @@ const ConfirmationModal = ({
                         style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', width: '100%' }}
                         from={{
                             opacity: 0,
-                            transform: [{ scale: 0.7 }],
+                            //translateY: -100,
+                            //transform: [{ scale: 0.7 }],
                         }}
                         animate={{
                             opacity: 1,
-                            transform: [{ scale: 1 }],
+                            //translateY: 0,
+                            //transform: [{ scale: 1 }],
                         }}
                         transition={{
                             type: 'timing',
-                            duration: 100,
+                            duration: 150,
                         }}
                     >
                         <TouchableWithoutFeedback>

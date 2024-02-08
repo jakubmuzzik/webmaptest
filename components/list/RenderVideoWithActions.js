@@ -29,10 +29,8 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
 
     const init = async () => {
         try {
-            //todo - get and save thumbnail aspect ratio when uploading video instead
-            const thumbnailUrl = await generateThumbnailFromLocalURI(require('../../assets/big_buck_bunny.mp4'), 0)
             //setThumbnail(thumbnailUrl)
-            RNImage.getSize(thumbnailUrl, (width, height) => { 
+            RNImage.getSize(video.thumbnailDownloadUrl, (width, height) => { 
                 setAspectRatio(width / height)
             })
         } catch(e) {
@@ -95,7 +93,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
             justifyContent: 'center'
         }}>
             <Image 
-                style={StyleSheet.absoluteFillObject}
+                style={{...StyleSheet.absoluteFillObject, borderRadius: 10}}
                 source={video.thumbnailDownloadUrl}
                 placeholder={video.blurhash}
                 transition={200}
@@ -119,7 +117,8 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
                 videoStyle={{
                     width: '100%',
                     height: undefined,
-                    aspectRatio: aspectRatio
+                    aspectRatio: aspectRatio,
+                    borderRadius: 10
                 }}
                 source={{
                     uri: video.downloadUrl,
