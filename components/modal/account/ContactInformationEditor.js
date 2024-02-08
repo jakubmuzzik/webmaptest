@@ -34,7 +34,7 @@ import { Button } from 'react-native-paper'
 
 const window = Dimensions.get('window')
 
-const ContactInformationEditor = ({ visible, setVisible, contactInformation, toastRef, userId, updateRedux }) => {
+const ContactInformationEditor = ({ visible, setVisible, contactInformation, toastRef, userId, updateRedux, isEstablishment }) => {
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [changedContactInformation, setChangedContactInformation] = useState(contactInformation)
@@ -206,6 +206,21 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, toa
                                     errorMessage={showErrorMessage && !changedContactInformation.phone ? 'Enter your phone' : undefined}
                                 />
                             </View>
+                            {isEstablishment && <View style={{ marginHorizontal: SPACING.small }}>
+                                <HoverableInput
+                                    placeholder="www.website.com"
+                                    label="Website"
+                                    borderColor={COLORS.placeholder}
+                                    hoveredBorderColor={COLORS.red}
+                                    textColor='#000'
+                                    containerStyle={{ marginTop: SPACING.xxx_small }}
+                                    textStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#000' }}
+                                    labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium }}
+                                    placeholderStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.placeholder }}
+                                    text={changedContactInformation.website}
+                                    setText={(text) => onValueChange(text, 'website')}
+                                />
+                            </View>}
                             <View style={{ marginHorizontal: SPACING.small, marginTop: SPACING.x_small}}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <BouncyCheckbox

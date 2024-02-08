@@ -68,8 +68,9 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
         name: userData.name,
         viber: userData.viber,
         whatsapp: userData.whatsapp,
-        telegram: userData.telegram
-    }), [userData.phone, userData.name, userData.viber, userData.whatsapp, userData.telegram])
+        telegram: userData.telegram,
+        website: userData.website
+    }), [userData.phone, userData.name, userData.viber, userData.whatsapp, userData.telegram, userData.website])
 
     const [showTextTriggeringButton, setShowTextTriggeringButton] = useState(false)
     const [moreTextShown, setMoreTextShown] = useState(false)
@@ -191,6 +192,17 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
                     </View>}
                 </View>
             </View>
+            {userData.accountType === 'establishment' && <View style={styles.row}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <MaterialCommunityIcons name="web" size={FONT_SIZES.medium} color="white" style={{ marginRight: SPACING.xxx_small }} />
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: '#FFF', marginRight: SPACING.x_small }}>
+                        Website
+                    </Text>
+                </View>
+                <Text numberOfLines={1} style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: userData.name ? COLORS.white : COLORS.error }}>
+                    {userData.website}
+                </Text>
+            </View>}
         </View>
     )
 
@@ -562,7 +574,7 @@ const PersonalDetails = ({ setTabHeight, toastRef, userData, updateCurrentUserIn
             {userData.accountType === 'lady' && <ServicesEditor visible={servicesEditorVisible} setVisible={setServicesEditorVisible} services={userData.services} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />}
             <WorkingHoursEditor visible={workingHoursEditorVisible} setVisible={setWorkingHoursEditorVisible} workingHours={userData.workingHours} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
             <AddressEditor visible={addressEditorVisible} setVisible={setAddressEditorVisible} address={address} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
-            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} toastRef={toastRef} userId={userData.id} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
+            <ContactInformationEditor visible={contactInformationEditorVisible} setVisible={setContactInformationEditorVisible} contactInformation={contactInformation} toastRef={toastRef} userId={userData.id} isEstablishment={userData.accountType === 'establishment'} updateRedux={userData.establishmentId ? updateLadyInRedux : updateCurrentUserInRedux} />
         </View>
     )
 }
