@@ -48,7 +48,7 @@ const SCREENS_WITH_CITY_SELECTION = [
     'Esc', 'Pri', 'Mas', 'Clu', 'NotFound', 'Explore'
 ]
 
-const Header = ({ logOut }) => {
+const Header = ({ logOut, toastRef }) => {
     const [searchParams] = useSearchParams()
     const location = useLocation()
     const navigate = useNavigate()
@@ -169,6 +169,10 @@ const Header = ({ logOut }) => {
 
     const onLogoutPress = () => {
         logOut()
+        toastRef.current.show({
+            type: 'success',
+            text: "You've been logged out."
+        })
     }
 
     const renderUserDropdown = () => {
@@ -528,7 +532,11 @@ const Header = ({ logOut }) => {
     )
 }
 
-export default connect(null, { logOut })(memo(Header))
+const mapStateToProps = (store) => ({
+    toastRef: store.appState.toastRef
+})
+
+export default connect(mapStateToProps, { logOut })(memo(Header))
 
 const styles = StyleSheet.create({
     headerSmall: {

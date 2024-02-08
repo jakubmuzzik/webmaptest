@@ -116,7 +116,6 @@ const PasswordEditor = ({ visible, setVisible, toastRef }) => {
         }
 
         try {
-            await reauthenticate()
             await updatePassword(getAuth().currentUser, data.newPassword)
             
             toastRef.current.show({
@@ -134,6 +133,7 @@ const PasswordEditor = ({ visible, setVisible, toastRef }) => {
             } else {
                 modalToastRef.current.show({
                     type: 'error',
+                    headerText: 'Password change error',
                     text: 'Password could not be changed. Please try it again later.'
                 })
             }

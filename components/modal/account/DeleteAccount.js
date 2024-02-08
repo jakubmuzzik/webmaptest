@@ -8,7 +8,7 @@ import Animated, {
     useSharedValue,
     withTiming
 } from 'react-native-reanimated'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 import HoverableView from '../../HoverableView'
 import HoverableInput from '../../HoverableInput'
 import { normalize } from '../../../utils'
@@ -16,20 +16,36 @@ import {
     COLORS,
     FONTS,
     FONT_SIZES,
-    SPACING,
-    SUPPORTED_LANGUAGES,
-    DEFAULT_LANGUAGE
+    SPACING
 } from '../../../constants'
+
+import { 
+    getAuth, 
+    EmailAuthProvider, 
+    reauthenticateWithCredential, 
+    writeBatch,
+    db,
+    getDocs,
+    query,
+    collection,
+    where,
+    deleteUser,
+    doc,
+    updateDoc
+} from '../../../firebase/config'
 
 import { Button } from 'react-native-paper'
 
 import Toast from '../../Toast'
 
 import BouncyCheckbox from "react-native-bouncy-checkbox"
+import { DELETED } from '../../../labels'
+
+import OverlaySpinner from '../OverlaySpinner'
 
 const window = Dimensions.get('window')
 
-const DeleteAccount = ({ visible, setVisible, toastRef }) => {
+const DeleteAccount = ({ visible, setVisible, toastRef, isEstablishment, logOut }) => {
 
     const [isSaving, setIsSaving] = useState(false)
     const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -80,32 +96,81 @@ const DeleteAccount = ({ visible, setVisible, toastRef }) => {
         })
         setVisible(false)
     }
+    
+    const reauthenticate = async () => {
+        const cred = EmailAuthProvider.credential(getAuth().currentUser.email, data.password)
+        return reauthenticateWithCredential(getAuth().currentUser, cred)
+    }
 
     const onDeletePress = async () => {
-        //todo - delete l account
-        //step 1 - update user data to - toDelete = true
-        //step 2 - delete auth account from firebase
-        //step 3 - on success - update user data to - toDelete = true, logout and show success toast
-        //step 4 - on error - show error toast
-
-        //todo - delete regular user account
-        //step 1 - delete user data
-        //step 2 - delete auth account from firebase
-        //step 3 - on success - logout and show success toast
-        //step 4 - on error - show error toast
+        if (isSaving) {
+            return
+        }
 
         setIsSaving(true)
-        //todo add try catch, call firebase, update redux state if success
-        setTimeout(() => {
-            setIsSaving(false)
-            closeModal()
 
+        try {
+            await reauthenticate()
+        } catch(e) {
+            console.error(e)
+            modalToastRef.current.show({
+                type: 'error',
+                text: 'Invalid password.'
+            })
+            setIsSaving(false)
+            return
+        }
+
+        try {
+
+            if (isEstablishment) {
+                await deleteEstablishmentData()
+            } else {
+                await updateDoc(doc(db, 'users', getAuth().currentUser.uid), { status: DELETED })
+            }
+
+            await deleteUser(getAuth().currentUser)
+            logOut()
             toastRef.current.show({
                 type: 'success',
-                headerText: 'Success!',
-                text: 'Your Email was changed successfully.'
+                text: 'Your account was successfully deleted.'
             })
-        }, 1000)
+        } catch(e) {
+            modalToastRef.current.show({
+                type: 'error',
+                headerText: 'Delete error',
+                text: 'Account could not be deleted. Please try again later.'
+            })
+            console.error(e)
+        } finally {
+            setIsSaving(false)
+        }
+
+    }
+
+    const deleteEstablishmentData = async () => {
+        const snapshot = await getDocs(query(collection(db, "users"), where('establishmentId', '==', getAuth().currentUser.uid), where('status', '!=', DELETED)))
+
+        if (snapshot.empty) {
+            return
+        }
+
+        const batches = []
+        let ids = snapshot.docs.map(doc => doc.id)
+
+        while (ids.length) {
+            let batch = writeBatch(db)
+            ids.splice(0, 500).forEach(id => {
+                batch.update(doc(db, 'users', id), { status: DELETED })
+            })
+
+            batches.push(batch)
+        }
+
+        await Promise.all([
+            ...batches.map((batch) => batch.commit()),
+            updateDoc(doc(db, 'users', getAuth().currentUser.uid), { status: DELETED })
+        ])
     }
 
     const modalContainerStyles = useAnimatedStyle(() => {
@@ -219,6 +284,8 @@ const DeleteAccount = ({ visible, setVisible, toastRef }) => {
                     </Animated.View>
                 </TouchableWithoutFeedback>
             </TouchableOpacity>
+
+            {isSaving && <OverlaySpinner />}
 
             <Toast ref={modalToastRef}/>
         </Modal>

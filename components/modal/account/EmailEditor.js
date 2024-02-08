@@ -105,7 +105,6 @@ const EmailEditor = ({ visible, setVisible, toastRef }) => {
 
         setIsSaving(true)
         setShowErrorMessage(false)
-        //TODO update redux state if success
 
         try {
             await reauthenticate()

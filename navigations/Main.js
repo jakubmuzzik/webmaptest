@@ -111,14 +111,6 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser, stor
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
-                //setUserVerified(false)
-
-                if (hasLoadedRef.current) {
-                    toastRef.current?.show({
-                        type: 'success',
-                        text: "You've been logged out."
-                    })
-                }
             } else {
                 //fetch only on page reloads and when already signed in
                 if (!hasLoadedRef.current) {

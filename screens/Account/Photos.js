@@ -2,7 +2,7 @@ import React, { useState, memo, useCallback, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions, Modal } from 'react-native'
 import { Image } from 'expo-image'
 import { COLORS, FONTS, FONT_SIZES, SPACING, MAX_PHOTO_SIZE_MB, MAX_PHOTOS } from '../../constants'
-import { ACTIVE, REJECTED, IN_REVIEW } from '../../labels'
+import { ACTIVE, REJECTED, IN_REVIEW, INACTIVE } from '../../labels'
 import { normalize, getFileSizeInMb, getDataType, encodeImageToBlurhash } from '../../utils'
 import { IconButton, Button, TouchableRipple } from 'react-native-paper'
 import { Octicons, Ionicons, AntDesign } from '@expo/vector-icons'
@@ -607,7 +607,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {(userData.status === ACTIVE || userData.status === REJECTED) && <Active />}
+            {(userData.status === ACTIVE || userData.status === REJECTED || userData.status === INACTIVE) && <Active />}
             {userData.status !== REJECTED && <InReview />}
             <Rejected />
 

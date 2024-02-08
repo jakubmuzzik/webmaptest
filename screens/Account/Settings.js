@@ -24,6 +24,11 @@ const Settings = ({ setTabHeight, toastRef, logOut, currentUser, updateCurrentUs
 
     const onLogoutPress = () => {
         logOut()
+
+        toastRef.current.show({
+            type: 'success',
+            text: "You've been logged out."
+        })
     }
 
     const onEmailEditPress = () => {
@@ -159,8 +164,8 @@ const Settings = ({ setTabHeight, toastRef, logOut, currentUser, updateCurrentUs
             </View>
 
             <PasswordEditor visible={passwordEditorVisible} setVisible={setPasswordEditorVisible} toastRef={toastRef} />
-            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} toastRef={toastRef}/>
-            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} toastRef={toastRef}/>
+            <EmailEditor visible={emailEditorVisible} setVisible={setEmailEditorVisible} toastRef={toastRef} />
+            <DeleteAccount visible={deleteAccountVisible} setVisible={setDeleteAccountVisible} toastRef={toastRef} isEstablishment={currentUser.accountType === 'establishment'} logOut={logOut} />
 
             <ConfirmationModal
                 visible={activateConfirmationVisible}
