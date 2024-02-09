@@ -113,6 +113,7 @@ export const MAX_PHOTO_SIZE_MB = 5
 export const MAX_VIDEO_SIZE_MB = 10
 export const MAX_VIDEOS = 5
 export const MAX_PHOTOS = 15
+export const MAX_ITEMS_PER_PAGE = 36
 
 export const MOCK_DATA = [
     {

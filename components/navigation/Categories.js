@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react'
+import React, { useCallback, useMemo, useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions, Dimensions } from 'react-native'
 import { AntDesign, Entypo, FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons'
 import { COLORS, FONT_SIZES, FONTS, SPACING, SMALL_SCREEN_THRESHOLD, LARGE_SCREEN_THRESHOLD } from '../../constants'
@@ -40,7 +40,7 @@ const Categories = ({ }) => {
             key: 'clu',
             icon: (focused) => <MaterialIcons name="meeting-room" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         }
-    ])
+    ].map((route, index) => ({ ...route, index })))
 
     let location = useLocation()
     const navigate = useNavigate()
@@ -60,6 +60,11 @@ const Categories = ({ }) => {
     ]), [params.language])
 
     const filtersRef = useRef()
+
+    useLayoutEffect(() => {
+        const newIndex = routes.find(route => route.path === location.pathname)?.index
+        setIndex(newIndex ?? 0)
+    }, [location])
 
     //close modals when changing language, city etc...
     useEffect(() => {

@@ -4,10 +4,13 @@ import {
     USER_STATE_CHANGE,
     CLEAR_DATA,
     LADIES_STATE_CHANGE,
-    STORE_TOAST_REF
+    STORE_TOAST_REF,
+    LADIES_COUNT_CHANGE,
+    MASSEUSES_COUNT_CHANGE,
+    ESTABLISHMENTS_COUNT_CHANGE
 } from './actionTypes'
-import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where } from '../firebase/config'
-import { DELETED } from '../labels'
+import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where, getCountFromServer } from '../firebase/config'
+import { ACTIVE, DELETED } from '../labels'
 
 export const updateRoute = (route) => ({
     type: ROUTE_STATE_CHANGE,

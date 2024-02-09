@@ -77,7 +77,8 @@ const Pri = ({ navigation, route }) => {
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading ? loadingCards : MOCK_DATA.map(data => renderCard(data))}
+                    {isLoading && <Skeleton />}
+                    {!isLoading &&  MOCK_DATA.map(data => renderCard(data))}
                 </View>
             </View>
         </View>
