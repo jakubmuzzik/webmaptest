@@ -1,7 +1,8 @@
 {
   "files": {
-    "main.js": "/webmaptest/static/js/main.e42d113e.js",
-    "static/js/814.15163837.js": "/webmaptest/static/js/814.15163837.js",
+    "main.js": "/webmaptest/static/js/main.b40d9fee.js",
+    "static/js/986.f22c2020.js": "/webmaptest/static/js/986.f22c2020.js",
+    "static/media/header_logo2.png": "/webmaptest/static/media/header_logo2.e402890e748e5a77f86a.png",
     "static/media/MaterialCommunityIcons.ttf": "/webmaptest/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
     "static/media/Ionicons.ttf": "/webmaptest/static/media/Ionicons.3517aeaa34b2f8cd8eef.ttf",
     "static/media/MaterialIcons.ttf": "/webmaptest/static/media/MaterialIcons.120b4c7bbd155bd0a04d.ttf",
@@ -11,10 +12,13 @@
     "static/media/Poppins-Medium.ttf": "/webmaptest/static/media/Poppins-Medium.673ed42382ab264e0bf5.ttf",
     "static/media/Poppins-Bold.ttf": "/webmaptest/static/media/Poppins-Bold.cdb29a5d7ccf57ff05a3.ttf",
     "static/media/FontAwesome5_Brands.ttf": "/webmaptest/static/media/FontAwesome5_Brands.9e138496e8f1719c6ebf.ttf",
+    "static/media/CATEGORY2.png": "/webmaptest/static/media/CATEGORY2.0158a82aed98a3155f45.png",
     "static/media/AntDesign.ttf": "/webmaptest/static/media/AntDesign.163adab9dbd7cb1ed12a.ttf",
     "static/media/Entypo.ttf": "/webmaptest/static/media/Entypo.fc6169344c041cffcdae.ttf",
     "static/media/CATEGORY1.png": "/webmaptest/static/media/CATEGORY1.b399b69eb29bb1dd5e73.png",
     "static/media/dummy_photo.png": "/webmaptest/static/media/dummy_photo.aa962d803f130c31e5d7.png",
+    "static/media/CATEGORY3.png": "/webmaptest/static/media/CATEGORY3.16da66562373f11d7c2f.png",
+    "static/media/CATEGORY4.png": "/webmaptest/static/media/CATEGORY4.26331dd0ba3561672a08.png",
     "static/media/Octicons.ttf": "/webmaptest/static/media/Octicons.6b742a230954dc640ba2.ttf",
     "static/media/FontAwesome5_Regular.ttf": "/webmaptest/static/media/FontAwesome5_Regular.1017bce89c72f95bcf8e.ttf",
     "static/media/logo-header.png": "/webmaptest/static/media/logo-header.6575dd315c027bd4e2bb.png",
@@ -34,11 +38,11 @@
     "favicon-16.png": "/webmaptest/favicon-16.png",
     "manifest.json": "/webmaptest/manifest.json",
     "serve.json": "/webmaptest/serve.json",
-    "main.e42d113e.js.map": "/webmaptest/static/js/main.e42d113e.js.map",
-    "814.15163837.js.map": "/webmaptest/static/js/814.15163837.js.map"
+    "main.b40d9fee.js.map": "/webmaptest/static/js/main.b40d9fee.js.map",
+    "986.f22c2020.js.map": "/webmaptest/static/js/986.f22c2020.js.map"
   },
   "entrypoints": [
-    "static/js/814.15163837.js",
-    "static/js/main.e42d113e.js"
+    "static/js/986.f22c2020.js",
+    "static/js/main.b40d9fee.js"
   ]
 }
