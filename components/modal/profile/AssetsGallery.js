@@ -18,9 +18,11 @@ const renderItem = ({
 }) => {
     return (
         <Image
-            source={item}
+            source={item.downloadUrl}
             style={StyleSheet.absoluteFillObject}
             resizeMode="contain"
+            placeholder={item.blurhash}
+            transition={200}
             onLoad={(e) => {
                 const { width, height } = e.source
                 setImageDimensions({ width, height })
@@ -91,7 +93,7 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
             <View style={{ width: 800, maxWidth: '100%', alignSelf: 'center' }}>
                 <ScrollView ref={bottomScrollViewRef} horizontal contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: SPACING.small, }}>
                     {assets.map((asset, assetIndex) => (
-                        <TouchableOpacity key={asset} onPress={() => gallery.current?.setIndex(assetIndex, true)} activeOpacity={1}>
+                        <TouchableOpacity key={asset.id} onPress={() => gallery.current?.setIndex(assetIndex, true)} activeOpacity={1}>
                             <Image
                                 style={{
                                     width: dynamicImageSize,
@@ -102,9 +104,9 @@ const AssetsGallery = ({ assets, pressedAssetIndex=0 }) => {
                                     opacity: assetIndex === index ? 1 : 0.6,
                                     borderRadius: 5
                                 }}
-                                source={asset}
+                                source={asset.downloadUrl}
                                 resizeMode='cover'
-                                placeholder={blurhash}
+                                placeholder={asset.blurhash}
                                 transition={200}
                             />
                         </TouchableOpacity>

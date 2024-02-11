@@ -126,7 +126,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />}
-            {showPoster && <Poster />}
+            {!isBrowser && showPoster && <Poster />}
 
             <Actions />
         </>

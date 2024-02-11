@@ -22,10 +22,7 @@ const RenderVideo = ({ video }) => {
 
     const init = async () => {
         try {
-            //todo - get and save thumbnail aspect ratio when uploading video instead
-            const thumbnailUrl = await generateThumbnailFromLocalURI(require('../../assets/big_buck_bunny.mp4'), 0)
-            //setThumbnail(thumbnailUrl)
-            RNImage.getSize(thumbnailUrl, (width, height) => { 
+            RNImage.getSize(video.thumbnailDownloadUrl, (width, height) => { 
                 setAspectRatio(width / height)
             })
         } catch(e) {
@@ -43,22 +40,31 @@ const RenderVideo = ({ video }) => {
             <ActivityIndicator style={{ margin: SPACING.large, alignSelf: 'center' }} animating color={COLORS.red} />
         )
     }
+    
+    const Poster = () => (
+        <View style={{ 
+            width: '100%',
+            height: undefined,
+            aspectRatio: aspectRatio,
+            alignItems: 'center',
+            justifyContent: 'center',
+            ...StyleSheet.absoluteFillObject
+        }}>
+            <Image 
+                style={{...StyleSheet.absoluteFillObject, borderRadius: 10}}
+                source={video.thumbnailDownloadUrl}
+                placeholder={video.blurhash}
+                transition={200}
+                resizeMode='cover'
+            />
+            <TouchableOpacity activeOpacity={0.8} onPress={() => setShowPoster(false)}>
+                <Ionicons name="ios-play-circle-sharp" size={normalize(70)} color='rgba(0,0,0,.7)' />
+            </TouchableOpacity>
+        </View>
+    )
 
     return (
-        <MotiView
-            from={{
-                opacity: 0,
-                transform: [{ translateY: 40 }],
-            }}
-            animate={{
-                opacity: 1,
-                transform: [{ translateY: 0 }],
-            }}
-            transition={{
-                type: 'timing',
-                duration: 200,
-            }}
-        >
+        <>
             <Video
                 ref={videoRef}
                 style={{
@@ -72,29 +78,13 @@ const RenderVideo = ({ video }) => {
                     aspectRatio: aspectRatio
                 }}
                 source={{
-                    uri: require('../../assets/big_buck_bunny.mp4'),
+                    uri: video.downloadUrl
                 }}
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />
-            {!isBrowser && showPoster && (
-                <ImageBackground
-                    source={require('../../assets/dummy_photo.png')}
-                    style={{
-                        width: '100%',
-                        height: undefined,
-                        aspectRatio: aspectRatio,
-                        top: 0,
-                        position: 'absolute',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }} >
-                        <TouchableOpacity activeOpacity={0.8} onPress={onPlayPress}>
-                            <Ionicons name="ios-play-circle-sharp" size={70} color='rgba(0,0,0,.7)' />
-                        </TouchableOpacity>
-                </ImageBackground>
-            )}
-        </MotiView>
+            {!isBrowser && showPoster &&  <Poster />}
+        </>
     )
 }
 

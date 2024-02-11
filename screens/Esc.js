@@ -30,7 +30,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     const [isLoading, setIsLoading] = useState(true)
 
     const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
-
+    
     useEffect(() => {
         if (!ladiesCount) {
             console.log('ladies count init')

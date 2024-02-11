@@ -23,7 +23,7 @@ const RenderLady = ({ lady, width }) => {
 
     return (
         <View style={styles.container}>
-            <Link to={{ pathname: '/profile/' + lady.id, search: new URLSearchParams(stripEmptyParams(params)).toString() }} >
+            <Link to={{ pathname: '/profile/' + lady.id, search: new URLSearchParams(stripEmptyParams(params)).toString() }} state={{ lady }}>
                 <View style={{ flex: 1 }}
                     onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
                     onMouseLeave={isBrowser ? () => setIsHovered(false) : undefined}
