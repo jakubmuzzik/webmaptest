@@ -122,7 +122,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 2,
@@ -130,7 +132,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 3,
@@ -138,7 +142,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 4,
@@ -146,7 +152,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/CATEGORY1.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 5,
@@ -154,7 +162,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 6,
@@ -162,7 +172,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 7,
@@ -170,7 +182,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 8,
@@ -178,7 +192,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 9,
@@ -186,7 +202,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 10,
@@ -194,7 +212,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 11,
@@ -202,7 +222,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 12,
@@ -210,7 +232,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 13,
@@ -218,7 +242,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 14,
@@ -226,7 +252,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 15,
@@ -234,7 +262,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 16,
@@ -242,7 +272,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 17,
@@ -250,7 +282,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 18,
@@ -258,7 +292,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 19,
@@ -266,7 +302,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 20,
@@ -274,7 +312,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 21,
@@ -282,7 +322,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 22,
@@ -290,7 +332,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 23,
@@ -298,7 +342,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 24,
@@ -306,7 +352,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 25,
@@ -314,7 +362,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 26,
@@ -322,7 +372,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 27,
@@ -330,7 +382,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 28,
@@ -338,7 +392,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 29,
@@ -346,7 +402,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 30,
@@ -354,7 +412,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 31,
@@ -362,7 +422,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 32,
@@ -370,7 +432,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
     {
         id: 33,
@@ -378,7 +442,9 @@ export const MOCK_DATA = [
         profilePhoto: require('../assets/dummy_photo.png'),
         images: [require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png'),require('../assets/dummy_photo.png')],
         text1: 'Prague',
-        text2: 'from 2000 CZK/hour'
+        text2: 'from 2000 CZK/hour',
+        dateOfBirth: '25071996',
+        address: {city: 'Praha'}
     },
 
 ]

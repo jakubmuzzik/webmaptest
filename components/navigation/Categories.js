@@ -25,7 +25,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
     const [routes, setRoutes] = useState([
         {
             path: '/',
-            title: 'Escorts',
+            title: 'Ladies',
             key: 'esc',
             icon: (focused) => <Entypo name="mask" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         },

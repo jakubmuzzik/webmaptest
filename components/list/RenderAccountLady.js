@@ -4,7 +4,6 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES } from "../../constants"
 import { normalize, stripEmptyParams, getParam } from "../../utils"
 import { Image } from 'expo-image'
-import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
 import { isBrowser } from 'react-device-detect'
 import { IconButton } from "react-native-paper"
 import { useSearchParams } from 'react-router-dom'

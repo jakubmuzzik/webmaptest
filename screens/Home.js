@@ -18,10 +18,10 @@ const {
 
 import { MOCK_DATA } from '../constants'
 
-const Home = ({ route, navigation }) => {
+const Home = ({  }) => {
     const params = useMemo(() => ({
-        language: SUPPORTED_LANGUAGES.includes(decodeURIComponent(route.params.language)) ? decodeURIComponent(route.params.language) : DEFAULT_LANGUAGE
-    }), [route.params])
+        language: 'en'
+    }), [])
 
     const labels = useMemo(() => translateLabels(params.language, [
         SELECT_CITY
@@ -31,15 +31,7 @@ const Home = ({ route, navigation }) => {
 
     useEffect(() => {
         setLocationModalVisible(false)
-    }, [route.params])
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('blur', () => {
-            setLocationModalVisible(false)
-        })
-
-        return unsubscribe
-    }, [navigation])
+    }, [params])
 
     const [contentWidth, setContentWidth] = useState(INITIAL_SCREEN_WIDTH)
 
@@ -100,7 +92,7 @@ const Home = ({ route, navigation }) => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large }}>
                     <HoverableView style={{...styles.categoryContainer, flexBasis: categoryFlexBasis }} hoveredOpacity={0.8}>
-                        <Link to={{ screen: 'Esc', params: route.params.language ? { language: params.language } : {} }}>
+                        <Link to={{ screen: 'Esc', params: params.language ? { language: params.language } : {} }}>
                             <ImageBackground
                                 source={require('../assets/CATEGORY1.png')}
                                 style={[styles.category, { width: '100%', height: categoryHeight, minHeight: normalize(90) }]}
@@ -112,7 +104,7 @@ const Home = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     <HoverableView style={{...styles.categoryContainer, flexBasis: categoryFlexBasis }} hoveredOpacity={0.8}>
-                        <Link to={{ screen: 'Pri', params: route.params.language ? { language: params.language } : {} }}>
+                        <Link to={{ screen: 'Pri', params: params.language ? { language: params.language } : {} }}>
                             <ImageBackground
                                 source={require('../assets/CATEGORY2.png')}
                                 style={[styles.category, { width: '100%', height: categoryHeight, minHeight: normalize(90) }]}
@@ -124,7 +116,7 @@ const Home = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     <HoverableView style={{...styles.categoryContainer, flexBasis: categoryFlexBasis }} hoveredOpacity={0.8}>
-                        <Link to={{ screen: 'Mas', params: route.params.language ? { language: params.language } : {} }}>
+                        <Link to={{ screen: 'Mas', params: params.language ? { language: params.language } : {} }}>
                             <ImageBackground
                                 source={require('../assets/CATEGORY3.png')}
                                 style={[styles.category, { width: '100%', height: categoryHeight, minHeight: normalize(90) }]}
@@ -136,7 +128,7 @@ const Home = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     <HoverableView style={{...styles.categoryContainer, flexBasis: categoryFlexBasis }} hoveredOpacity={0.8}>
-                        <Link to={{ screen: 'Clu', params: route.params.language ? { language: params.language } : {} }}>
+                        <Link to={{ screen: 'Clu', params: params.language ? { language: params.language } : {} }}>
                             <ImageBackground
                                 source={require('../assets/CATEGORY4.png')}
                                 style={[styles.category, { width: '100%', height: categoryHeight, minHeight: normalize(90) }]}
@@ -148,7 +140,7 @@ const Home = ({ route, navigation }) => {
                         </Link>
                     </HoverableView>
                     {/* <HoverableView style={{...styles.categoryContainer, flexBasis: categoryFlexBasis }} hoveredOpacity={0.8}>
-                        <Link to={{ screen: 'Esc', params: route.params.language ? { language: params.language } : {} }}>
+                        <Link to={{ screen: 'Esc', params: params.language ? { language: params.language } : {} }}>
                             <ImageBackground
                                 source={require('../assets/CATEGORY.png')}
                                 style={[styles.category, { width: '100%'}]}
@@ -163,14 +155,16 @@ const Home = ({ route, navigation }) => {
             </View>
 
             <View style={{ marginBottom: SPACING.large }}>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.page_horizontal }}>Newest Clients</Text>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, marginHorizontal: SPACING.page_horizontal }}>
+                    New Ladies
+                </Text>
 
                 <ScrollView contentContainerStyle={{ marginHorizontal: SPACING.page_horizontal }} horizontal showsHorizontalScrollIndicator={false}>
-                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}><RenderLady client={data} width={150} showPrice={false} /></View> )}
+                    {MOCK_DATA.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}><RenderLady lady={data} width={150} showPrice={false} /></View> )}
                 </ScrollView>
             </View>
 
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} route={{ name: 'Esc', params: route.params.language ? { language: params.language } : {} }} />
+            <CityPicker visible={locationModalVisible} params={params} setVisible={setLocationModalVisible} route={{ name: 'Esc', params: params.language ? { language: params.language } : {} }} />
         </ScrollView>
     )
 }

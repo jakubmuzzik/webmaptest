@@ -23,6 +23,7 @@ import EstablishmentSignup from '../screens/signup/EstablishmentSignup'
 import SignUpOrLogin from '../screens/SignUpOrLogin'
 import SearchResults from '../screens/SearchResults'
 import VerifyEmail from '../screens/VerifyEmail'
+import Home from '../screens/Home'
 
 import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 
@@ -248,6 +249,12 @@ const Main = ({ scrollDisabled, updateScrollDisabled, updateEstablishmentCities,
             <Route path='*' element={
                 <LayoutWithHeader>
                     <NotFound />
+                </LayoutWithHeader>
+            } />
+
+            <Route path='/home' element={
+                <LayoutWithHeader>
+                    <Home />
                 </LayoutWithHeader>
             } />
         </>

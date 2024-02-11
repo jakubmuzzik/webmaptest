@@ -539,7 +539,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                     </Button>}
                 </View>
 
-                {!hasAllCoverPhotos() && <>
+                {!hasAllCoverPhotos() && userData.status === REJECTED && <>
                     <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.xx_small }}>
                         <Ionicons name="information-circle-outline" size={normalize(20)} color={COLORS.error} style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
 

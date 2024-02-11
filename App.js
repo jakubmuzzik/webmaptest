@@ -12,8 +12,6 @@ import { COLORS, FONTS, FONT_SIZES, SMALL_SCREEN_THRESHOLD, SPACING } from './co
 
 import Main from './navigations/Main'
 
-//enableLegacyWebImplementation(true)
-
 export default function App() {
   const [isLoading, setIsLoading] = useState(true)
 
