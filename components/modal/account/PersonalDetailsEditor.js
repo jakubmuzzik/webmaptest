@@ -118,7 +118,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, toastRef,
         setShowErrorMessage(false)
 
         try {
-            await updateDoc(doc(db, 'users', userId), {...changedPersonalDetails})
+            await updateDoc(doc(db, 'users', userId), {...changedPersonalDetails, lastModifiedDate: new Date()})
 
             closeModal()
 
@@ -128,7 +128,7 @@ const PersonalDetailsEditor = ({ visible, setVisible, personalDetails, toastRef,
                 text: 'Personal Details were changed successfully.'
             })
 
-            updateRedux({...changedPersonalDetails, id: userId})
+            updateRedux({...changedPersonalDetails, id: userId, lastModifiedDate: new Date()})
         } catch(e) {
             console.error(e)
             modalToastRef.current.show({

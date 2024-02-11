@@ -30,9 +30,27 @@ import {
 
 import RenderCity from '../list/RenderCity'
 
+import { Skeleton } from 'moti/skeleton'
+
 const window = Dimensions.get('window')
 
-const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) => {
+const CityPicker = ({ visible, setVisible, searchParams, params, routeName, cities }) => {
+    const labels = useMemo(() => translateLabels(params.language, [
+        CZECH,
+        CITY,
+        SELECT_CITY,
+        SEARCH
+    ]), [params.language])
+
+    const [searchCityBorderColor, setSearchCityBorderColor] = useState(COLORS.placeholder)
+    const [citySearch, setCitySearch] = useState('')
+
+    const filteredCitiesRef = useRef([])
+
+    useEffect(() => {
+        filteredCitiesRef.current = cities
+    }, [cities])
+
     useEffect(() => {
         if (visible) {
             translateY.value = withTiming(0, {
@@ -44,18 +62,6 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) =>
             })
         }
     }, [visible])
-
-    const labels = useMemo(() => translateLabels(params.language, [
-        CZECH,
-        CITY,
-        SELECT_CITY,
-        SEARCH
-    ]), [params.language])
-
-    const [searchCityBorderColor, setSearchCityBorderColor] = useState(COLORS.placeholder)
-    const [citySearch, setCitySearch] = useState('')
-
-    const filteredCitiesRef = useRef([...CZECH_CITIES])
 
     const scrollY = useSharedValue(0)
     const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -73,7 +79,7 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) =>
     })
 
     const onCitySearch = useCallback((search) => {
-        filteredCitiesRef.current = search ? [...CZECH_CITIES].filter(city => city.toLowerCase().includes(citySearch.toLowerCase())) : [...CZECH_CITIES]
+        filteredCitiesRef.current = search ? [...cities].filter(city => city.toLowerCase().includes(citySearch.toLowerCase())) : [...cities]
         setCitySearch(search)
     }, [filteredCitiesRef.current])
 
@@ -96,6 +102,26 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) =>
             transform: [{ translateY: translateY.value }]
         }
     })
+
+    const Spacer = ({ height = 16 }) => <View style={{ height }} />
+
+    const MotiSkeleton = () => (
+        <View
+            style={{ flex: 1, paddingHorizontal: SPACING.small, paddingVertical: SPACING.small }}
+        >
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+            <Spacer height={SPACING.xx_small} />
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+            <Spacer height={SPACING.xx_small} />
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+            <Spacer height={SPACING.xx_small} />
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+            <Spacer height={SPACING.xx_small} />
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+            <Spacer height={SPACING.xx_small} />
+            <Skeleton colorMode={'light'} width={'100%'} height={35} />
+        </View>
+    )
 
     return (
         <Modal transparent={true}
@@ -124,29 +150,25 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName }) =>
                         <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small }}>
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>{labels.SELECT_CITY}</Text>
 
-                            <HoverableView style={{ ...styles.searchWrapper, borderRadius: 10, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.small }} hoveredBackgroundColor='#FFF' backgroundColor='#FFF' hoveredBorderColor={COLORS.red} borderColor={searchCityBorderColor} transitionDuration='0ms'>
-                                <Ionicons name="search" size={normalize(20)} color="black" />
-                                <TextInput
-                                    style={styles.citySearch}
-                                    onChangeText={onCitySearch}
-                                    value={citySearch}
-                                    placeholder={labels.SEARCH}
-                                    placeholderTextColor="grey"
-                                    onBlur={() => setSearchCityBorderColor(COLORS.placeholder)}
-                                    onFocus={() => setSearchCityBorderColor(COLORS.red)}
-                                />
-                                <Ionicons onPress={() => onCitySearch('')} style={{ opacity: citySearch ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
-                            </HoverableView>
+                            {!cities && <MotiSkeleton />}
+                            {cities && <>
+                                <HoverableView style={{ ...styles.searchWrapper, borderRadius: 10, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.small }} hoveredBackgroundColor='#FFF' backgroundColor='#FFF' hoveredBorderColor={COLORS.red} borderColor={searchCityBorderColor} transitionDuration='0ms'>
+                                    <Ionicons name="search" size={normalize(20)} color="black" />
+                                    <TextInput
+                                        style={styles.citySearch}
+                                        onChangeText={onCitySearch}
+                                        value={citySearch}
+                                        placeholder={labels.SEARCH}
+                                        placeholderTextColor="grey"
+                                        onBlur={() => setSearchCityBorderColor(COLORS.placeholder)}
+                                        onFocus={() => setSearchCityBorderColor(COLORS.red)}
+                                    />
+                                    <Ionicons onPress={() => onCitySearch('')} style={{ opacity: citySearch ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
+                                </HoverableView>
 
-                            {(filteredCitiesRef.current.some(filteredCity => CZECH_CITIES.includes(filteredCity)) || !citySearch) && <View style={styles.countrySection}>
-                                <Image
-                                    resizeMode="contain"
-                                    source={require('../../assets/images/flags/cz.png')}
-                                    style={styles.countrySection__image}
-                                />
-                                <Text style={styles.countrySection__text}>{labels.CZECH}</Text>
-                            </View>}
-                            {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} searchParams={searchParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} searchParams={searchParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                            </>
+                            }
                         </Animated.ScrollView>
                     </Animated.View>
                 </TouchableWithoutFeedback>

@@ -7,7 +7,12 @@ import {
     STORE_TOAST_REF,
     LADIES_COUNT_CHANGE,
     MASSEUSES_COUNT_CHANGE,
-    ESTABLISHMENTS_COUNT_CHANGE
+    ESTABLISHMENTS_COUNT_CHANGE,
+    LADY_CITIES_STATE_CHANGE,
+    ESTABLISHMENT_CITIES_STATE_CHANGE,
+    LADIES_PAGINATION_DATA_STATE_CHANGE,
+    MASSEUSES_PAGINATION_DATA_STATE_CHANGE,
+    ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE
 } from './actionTypes'
 import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where, getCountFromServer } from '../firebase/config'
 import { ACTIVE, DELETED } from '../labels'
@@ -33,34 +38,48 @@ export const updateCurrentUserInRedux = (data) => ({
     data
 })
 
-//lady under establishment
-export const updateLadyInRedux = (data) => (dispatch, getState) => {
-    let ladies = getState().userState.ladies ? JSON.parse(JSON.stringify(getState().userState.ladies)) : []
+export const updateLadiesCount = (ladiesCount) => ({
+    type: LADIES_COUNT_CHANGE,
+    ladiesCount
+})
 
-    let existingLady = ladies.find(lady => lady.id === data.id)
+export const updateMasseusesCount = (masseusesCount) => ({
+    type: MASSEUSES_COUNT_CHANGE,
+    masseusesCount
+})
 
-    if (existingLady) {
-        ladies = ladies.filter(lady => lady.id !== data.id)
-        existingLady = {
-            ...existingLady,
-            ...data
-        } 
-    } else {
-        existingLady = data
-    }
+export const updateEstablishmentsCount = (establishmentsCount) => ({
+    type: ESTABLISHMENTS_COUNT_CHANGE,
+    establishmentsCount
+})
 
-    ladies.push(existingLady)
+export const updateLadiesData = (data, pageNumber) => ({
+    type: LADIES_PAGINATION_DATA_STATE_CHANGE,
+    data,
+    pageNumber
+})
 
-    dispatch({ type: LADIES_STATE_CHANGE, ladies })
-}
+export const updateMasseusesData = (data, pageNumber) => ({
+    type: MASSEUSES_PAGINATION_DATA_STATE_CHANGE,
+    data,
+    pageNumber
+})
 
-export const removeLadyFromRedux = (toRemoveId) => (dispatch, getState) => {
-    let ladies = JSON.parse(JSON.stringify(getState().userState.ladies))
+export const updateEstablishmentsData = (data, pageNumber) => ({
+    type: ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE,
+    data,
+    pageNumber
+})
 
-    ladies = ladies.filter(lady => lady.id !== toRemoveId)
+export const updateLadyCities = (ladyCities) => ({
+    type: LADY_CITIES_STATE_CHANGE,
+    ladyCities
+})
 
-    dispatch({ type: LADIES_STATE_CHANGE, ladies })
-}
+export const updateEstablishmentCities = (establishmentCities) => ({
+    type: ESTABLISHMENT_CITIES_STATE_CHANGE,
+    establishmentCities
+})
 
 /**
  * 
@@ -95,6 +114,35 @@ export const fetchLadies = () => (dispatch, getState) => {
                 dispatch({ type: LADIES_STATE_CHANGE, ladies })
             }
         })
+}
+
+//lady under establishment
+export const updateLadyInRedux = (data) => (dispatch, getState) => {
+    let ladies = getState().userState.ladies ? JSON.parse(JSON.stringify(getState().userState.ladies)) : []
+
+    let existingLady = ladies.find(lady => lady.id === data.id)
+
+    if (existingLady) {
+        ladies = ladies.filter(lady => lady.id !== data.id)
+        existingLady = {
+            ...existingLady,
+            ...data
+        } 
+    } else {
+        existingLady = data
+    }
+
+    ladies.push(existingLady)
+
+    dispatch({ type: LADIES_STATE_CHANGE, ladies })
+}
+
+export const removeLadyFromRedux = (toRemoveId) => (dispatch, getState) => {
+    let ladies = JSON.parse(JSON.stringify(getState().userState.ladies))
+
+    ladies = ladies.filter(lady => lady.id !== toRemoveId)
+
+    dispatch({ type: LADIES_STATE_CHANGE, ladies })
 }
 
 export const logOut = () => (dispatch, getState) => {

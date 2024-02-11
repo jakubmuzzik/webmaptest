@@ -14,33 +14,35 @@ import Filters from '../modal/Filters'
 import CityPicker from '../modal/CityPicker'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { connect } from 'react-redux'
 
 import { Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 
-const Categories = ({ }) => {
+const Categories = ({ ladyCities, establishmentCities }) => {
     const [searchParams] = useSearchParams()
 
     const [index, setIndex] = useState(0)
     const [routes, setRoutes] = useState([
         {
             path: '/',
-            title: 'EscEscEsc',
+            title: 'Escorts',
             key: 'esc',
             icon: (focused) => <Entypo name="mask" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         },
         {
             path: '/mas',
-            title: 'MasMasMas',
+            title: 'Massages',
             key: 'mas',
             icon: (focused) => <FontAwesome5 name="person-booth" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         },
         {
             path: '/clu',
-            title: 'CluC',
+            title: 'Establishments',
             key: 'clu',
             icon: (focused) => <MaterialIcons name="meeting-room" size={FONT_SIZES.medium + 5} color={focused ? '#FFF' : 'rgba(255,255,255,0.7)'} />
         }
     ].map((route, index) => ({ ...route, index })))
+    const [cities, setCities] = useState([])
 
     let location = useLocation()
     const navigate = useNavigate()
@@ -48,8 +50,8 @@ const Categories = ({ }) => {
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
-    }), [searchParams])
+        city: getParam(cities, searchParams.get('city'), '')
+    }), [searchParams, cities])
 
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
@@ -65,6 +67,22 @@ const Categories = ({ }) => {
         const newIndex = routes.find(route => route.path === location.pathname)?.index
         setIndex(newIndex ?? 0)
     }, [location])
+
+    useEffect(() => {
+        if (location.pathname === '/clu') {
+            if (!establishmentCities) {
+                return
+            }
+
+            setCities(establishmentCities)
+        } else {
+            if (!establishmentCities) {
+                return
+            }
+
+            setCities(ladyCities)
+        }
+    }, [ladyCities, establishmentCities, location.pathname])
 
     //close modals when changing language, city etc...
     useEffect(() => {
@@ -225,119 +243,17 @@ const Categories = ({ }) => {
             </View>
 
             <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} params={params} />
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} searchParams={searchParams} params={params} routeName={routeName} />
-        </View>
-    )
-
-    return (
-        <View style={{
-            flex: 1, backgroundColor: COLORS.grey, borderTopWidth: 1, borderColor: COLORS.lightGrey, flexDirection: 'row',
-            shadowColor: COLORS.lightBlack,
-            shadowOffset: {
-                width: 0,
-                height: 3,
-            },
-            shadowOpacity: 0.27,
-            shadowRadius: 4.65,
-            
-            elevation: 6,
-        }}>
-            
-            <View style={{ flex: 1, flexDirection: 'row', marginHorizontal: SPACING.page_horizontal, marginVertical: SPACING.xx_small  }}>
-                <ScrollView onScroll={onCategoryScroll} scrollEventThrottle={16} showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ alignItems: 'center', justifyContent: 'flex-start' }}>
-                    <HoverableView hoveredOpacity={0.7} style={{ marginRight: SPACING.x_small }}>
-                        {/* <Link to={{ screen: 'Esc', params: route.params.language ? { language: route.params.language } : {} }}> */}
-                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
-                            <View style={[styles.categoryContainer, routeName === '' ? styles.selectedCategoryContainer : {}]}>
-                                <Entypo name="mask" size={normalize(26)} color={routeName === '' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === '' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
-                            </View>
-                        </Link>  
-                    </HoverableView>
-                    {/* <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.small }}>
-                        <Link to={{ screen: 'Pri', params: { ...stripEmptyParams(params) } }} action={StackActions.replace('Pri', {  ...stripEmptyParams(params) })}>
-                            <View style={[styles.categoryContainer, routeName === 'Pri' ? styles.selectedCategoryContainer : {}]}>
-                                <AntDesign name="github" size={normalize(26)} color={routeName === 'Pri' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'Pri' ? COLORS.red : COLORS.placeholder }}>Pri</Text>
-                            </View>
-                        </Link>
-                    </HoverableView> */}
-                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.x_small }}>
-                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/mas', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
-                            <View style={[styles.categoryContainer, routeName === 'mas' ? styles.selectedCategoryContainer : {}]}>
-                                <FontAwesome5 name="person-booth" size={normalize(26)} color={routeName === 'mas' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'mas' ? COLORS.red : COLORS.placeholder }}>Mas</Text>
-                            </View>
-                        </Link>
-                    </HoverableView>
-                    <HoverableView hoveredOpacity={0.7} style={{ marginHorizontal: SPACING.x_small }}>
-                        <Link style={{ textDecoration: 'none' }} to={{ pathname: '/clu', search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
-                            <View style={[styles.categoryContainer, routeName === 'clu' ? styles.selectedCategoryContainer : {}]}>
-                                <MaterialIcons name="meeting-room" size={normalize(26)} color={routeName === 'clu' ? COLORS.red : COLORS.placeholder} />
-                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: routeName === 'clu' ? COLORS.red : COLORS.placeholder }}>Esc</Text>
-                            </View>
-                        </Link>
-                    </HoverableView>
-                </ScrollView>
-                <Animated.View pointerEvents="none" style={leftCategoryScrollOpacityStyle}>
-                    <LinearGradient colors={[
-                        COLORS.grey,
-                        'rgba(255 255 255/0)',
-                    ]}
-                        start={{ x: 0, y: 0.5 }}
-                        end={{ x: 0, y: 0.5 }} style={{ width: normalize(30), height: '100%' }} />
-                </Animated.View>
-                <Animated.View pointerEvents="none" style={rightCategoryScrollOpacityStyle}>
-                    <LinearGradient colors={[
-                        'rgba(255 255 255/0)',
-                        COLORS.grey,
-                    ]}
-                        start={{ x: 0, y: 0.5 }}
-                        end={{ x: 0, y: 0.5 }} style={{ width: normalize(30), height: '100%' }} />
-                </Animated.View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <HoverableView style={{ marginHorizontal: SPACING.x_small }} hoveredOpacity={0.7}>
-                    <TouchableOpacity style={styles.locationWrapper} activeOpacity={0.8}
-                        onPress={() => setLocationModalVisible(true)}
-                    >
-                        <Ionicons style={{ paddingRight: isLargeScreen ? SPACING.xx_small : 0 }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
-                        {isLargeScreen && <View style={styles.locationWrapper__text}>
-                            <Text style={styles.locationHeader}>{params.city ? labels.CITY : labels.ANYWHERE}</Text>
-                            <Text style={styles.locationValue} numberOfLines={1}>{params.city}</Text>
-                        </View>}
-                        <MaterialIcons style={{ paddingLeft: isLargeScreen ? SPACING.xx_small : 0 }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
-                    </TouchableOpacity>
-                </HoverableView>
-
-                <HoverableView hoveredBackgroundColor={COLORS.lightGrey} style={{ justifyContent: 'center', alignItems: 'flex-end', borderWidth: 2, borderRadius: 15, borderColor: filtersCount > 0 ? COLORS.red :COLORS.hoveredLightGrey, marginRight: SPACING.page_horizontal }}>
-                    <TouchableOpacity onPress={onFiltersPress} style={{ paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Image
-                            resizeMode="contain"
-                            source={require('../../assets/icons/filter.svg')}
-                            tintColor='#FFF'
-                            style={{
-                                width: normalize(18),
-                                height:  normalize(18)
-                            }}
-                        />
-                        {!isSmallScreen && <Text style={{ marginLeft: SPACING.xx_small, fontFamily: FONTS.medium, letterSpacing: 1, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                            Filters
-                        </Text>}
-                        {filtersCount > 0 && <View style={{ position: 'absolute', top: normalize(-9, true), right: normalize(-9, true), backgroundColor: COLORS.red, borderRadius: '50%', width: normalize(20), height: normalize(20), alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ color: '#FFF', fontFamily: FONTS.medium, fontSize: FONT_SIZES.small }}>{filtersCount}</Text>
-                        </View>}
-                    </TouchableOpacity>
-                </HoverableView>
-            </View>
-
-            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} params={params} />
-            <CityPicker visible={locationModalVisible} setVisible={setLocationModalVisible} searchParams={searchParams} params={params} routeName={routeName} />
+            <CityPicker visible={locationModalVisible} cities={cities} setVisible={setLocationModalVisible} searchParams={searchParams} params={params} routeName={routeName} />
         </View>
     )
 }
 
-export default Categories
+const mapStateToProps = (store) => ({
+    ladyCities: store.appState.ladyCities,
+    establishmentCities: store.appState.establishmentCities
+})
+
+export default connect(mapStateToProps)(Categories)
 
 const styles = StyleSheet.create({
     categoryContainer: {

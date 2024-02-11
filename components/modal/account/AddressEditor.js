@@ -27,6 +27,7 @@ import {
     db,
     doc,
     updateDoc,
+    runTransaction
 } from '../../../firebase/config'
 
 import Toast from '../../Toast'
@@ -37,7 +38,7 @@ import * as Location from 'expo-location'
 
 const window = Dimensions.get('window')
 
-const AddressEditor = ({ visible, setVisible, address, toastRef, userId, updateRedux }) => {
+const AddressEditor = ({ visible, setVisible, address, toastRef, userId, updateRedux, isEstablishment }) => {
     const [routes] = useState([
         { key: '1' },
         { key: '2' }
@@ -123,7 +124,25 @@ const AddressEditor = ({ visible, setVisible, address, toastRef, userId, updateR
         delete addr.hiddenAddress
 
         try {
-            await updateDoc(doc(db, 'users', userId), {address: addr, hiddenAddress: hidden})
+            await updateDoc(doc(db, 'users', userId), {address: addr, hiddenAddress: hidden, lastModifiedDate: new Date()})
+
+            const infoRef = doc(db, 'info', 'webwide')
+
+            await runTransaction(db, async (transaction) => {
+                const infoDoc = await transaction.get(infoRef)
+
+                const cities = isEstablishment ? infoDoc.data().establishmentCities : infoDoc.data().ladyCities
+
+                if (cities.includes(addr.city)) {
+                    return
+                }
+
+                if (isEstablishment) {
+                    transaction.update(infoRef, { establishmentCities: cities.concat([addr.city]) })
+                } else {
+                    transaction.update(infoRef, { ladyCities: cities.concat([addr.city]) })
+                }
+            })
 
             closeModal()
 
@@ -133,7 +152,7 @@ const AddressEditor = ({ visible, setVisible, address, toastRef, userId, updateR
                 text: 'Address was changed successfully.'
             })
 
-            updateRedux({address: addr, hiddenAddress: hidden, id: userId})
+            updateRedux({address: addr, hiddenAddress: hidden, id: userId, lastModifiedDate: new Date()})
         } catch(e) {
             modalToastRef.current.show({
                 type: 'error',

@@ -150,7 +150,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, toastRef, userI
         setShowErrorMessage(false)
 
         try {
-            await updateDoc(doc(db, 'users', userId), {workingHours: wh})
+            await updateDoc(doc(db, 'users', userId), {workingHours: wh, lastModifiedDate: new Date()})
 
             closeModal()
 
@@ -160,7 +160,7 @@ const WorkingHoursEditor = ({ visible, setVisible, workingHours, toastRef, userI
                 text: 'Working Hours were changed successfully.'
             })
 
-            updateRedux({workingHours: wh, id: userId})
+            updateRedux({workingHours: wh, id: userId, lastModifiedDate: new Date()})
         } catch(e) {
             console.error(e)
             modalToastRef.current.show({

@@ -142,12 +142,12 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
         currentImages.push(imageData)
         
-        await updateDoc(doc(db, 'users', userData.id), { images: currentImages })
+        await updateDoc(doc(db, 'users', userData.id), { images: currentImages, lastModifiedDate: new Date() })
 
         if (userData.establishmentId) {
-            updateLadyInRedux({ images: currentImages, id: userData.id })
+            updateLadyInRedux({ images: currentImages, id: userData.id, lastModifiedDate: new Date() })
         } else {
-            updateCurrentUserInRedux({ images: currentImages, id: userData.id })
+            updateCurrentUserInRedux({ images: currentImages, id: userData.id, lastModifiedDate: new Date() })
         }
     }
 
@@ -197,12 +197,12 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         await deleteObject(imageRef)
 
         const newImages = userData.images.filter(image => image.id !== imageId)
-        await updateDoc(doc(db, 'users', userData.id), { images: newImages })
+        await updateDoc(doc(db, 'users', userData.id), { images: newImages, lastModifiedDate: new Date() })
 
         if (userData.establishmentId) {
-            updateLadyInRedux({ images: newImages, id: userData.id })
+            updateLadyInRedux({ images: newImages, id: userData.id, lastModifiedDate: new Date() })
         } else {
-            updateCurrentUserInRedux({ images: newImages, id: userData.id })
+            updateCurrentUserInRedux({ images: newImages, id: userData.id, lastModifiedDate: new Date() })
         }
 
         toastRef.current.show({
@@ -504,7 +504,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
 
     const Active = useCallback(() => {
         const photos = (
-            userData.status === ACTIVE 
+            (userData.status === ACTIVE || userData.status === INACTIVE)
                 ? data.active.slice(0, userData.accountType === 'establishment' ? 1 : 5) 
                 //For REJECTED Concat active and in review -> user is uploading missing cover images one by one
                 : data.active.slice(0, userData.accountType === 'establishment' ? 1 : 5).concat(data.inReview.slice(0, userData.accountType === 'establishment' ? 1 : 5))
@@ -518,11 +518,11 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
             <View style={styles.section}>
                 <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
-                        <Octicons name="dot-fill" size={20} color={userData.status === ACTIVE ? "green" : "orange"} style={{ marginRight: SPACING.xx_small }} />
+                        <Octicons name="dot-fill" size={20} color={(userData.status === ACTIVE || userData.status === INACTIVE) ? "green" : "orange"} style={{ marginRight: SPACING.xx_small }} />
                         <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                            {userData.status === ACTIVE ? 'Active' : 'Photos'}
+                            {userData.status === REJECTED ? 'Photos' : 'Active'}
                         </Text>
-                        {userData.status === ACTIVE && <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        {(userData.status === ACTIVE || userData.status === INACTIVE) && <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
                             • {data.active.length}
                         </Text>}
                     </View>

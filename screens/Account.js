@@ -142,8 +142,8 @@ const Account = ({ navigation, route, currentUser={}, toastRef, updateCurrentUse
 
         setResubmitting(true)
         try {
-            await updateDoc(doc(db, 'users', getAuth().currentUser.uid), { status: IN_REVIEW })
-            updateCurrentUserInRedux({ status: IN_REVIEW, id: getAuth().currentUser.uid })
+            await updateDoc(doc(db, 'users', getAuth().currentUser.uid), { status: IN_REVIEW, lastSubmittedDate: new Date() })
+            updateCurrentUserInRedux({ status: IN_REVIEW, id: getAuth().currentUser.uid, lastSubmittedDate: new Date() })
 
             toastRef.current.show({
                 type: 'success',

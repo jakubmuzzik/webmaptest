@@ -97,7 +97,7 @@ const ServicesEditor = ({ visible, setVisible, services, toastRef, userId, updat
         setIsSaving(true)
 
         try {
-            await updateDoc(doc(db, 'users', userId), {services: changedServices})
+            await updateDoc(doc(db, 'users', userId), {services: changedServices, lastModifiedDate: new Date()})
 
             closeModal()
 
@@ -107,7 +107,7 @@ const ServicesEditor = ({ visible, setVisible, services, toastRef, userId, updat
                 text: 'Services were changed successfully.'
             })
 
-            updateRedux({services: changedServices, id: userId})
+            updateRedux({services: changedServices, id: userId, lastModifiedDate: new Date()})
         } catch(e) {
             console.error(e)
             modalToastRef.current.show({

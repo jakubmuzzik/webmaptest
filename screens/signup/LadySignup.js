@@ -22,7 +22,7 @@ import { IN_REVIEW } from '../../labels'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import uuid from 'react-native-uuid'
 
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, runTransaction } from '../../firebase/config'
 
 const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, updateCurrentUserInRedux, updateLadyInRedux, toastRef }) => {
     const [searchParams] = useSearchParams()
@@ -163,6 +163,20 @@ const LadySignup = ({ independent=false, showHeaderText = true, offsetX = 0, upd
         data.videos = []
 
         await setDoc(doc(db, 'users', data.id), data)
+
+        const infoRef = doc(db, 'info', 'webwide')
+
+        await runTransaction(db, async (transaction) => {
+            const infoDoc = await transaction.get(infoRef)
+
+            const cities = infoDoc.data().ladyCities
+
+            if (cities.includes(data.address.city)) {
+                return
+            }
+
+            transaction.update(infoRef, { ladyCities: cities.concat([data.address.city]) })
+        })
 
         //put assets back for further processing
         data.images = images

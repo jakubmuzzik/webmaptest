@@ -3,9 +3,9 @@ import { StyleSheet, View, useWindowDimensions, Dimensions } from 'react-native'
 import { normalize, stripEmptyParams, getParam } from '../utils'
 
 import { connect } from 'react-redux'
-import { updateScrollDisabled, fetchUser, storeToastRef } from '../redux/actions'
+import { updateScrollDisabled, fetchUser, storeToastRef, updateLadyCities, updateEstablishmentCities } from '../redux/actions'
 
-import { getAuth, onAuthStateChanged } from '../firebase/config'
+import { getAuth, onAuthStateChanged, getDoc, doc, db } from '../firebase/config'
 
 import Toast from '../components/Toast'
 
@@ -95,7 +95,7 @@ const RequireAuth = ({ children }) => {
     return children
 }
 
-const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser, storeToastRef }) => {
+const Main = ({ scrollDisabled, updateScrollDisabled, updateEstablishmentCities, updateLadyCities, fetchUser, storeToastRef }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(null)
 
     const toastRef = useRef()
@@ -108,6 +108,14 @@ const Main = ({ scrollDisabled, updateScrollDisabled, toastData, fetchUser, stor
     }, [toastRef])
 
     useEffect(() => {
+        getDoc(doc(db, 'info', 'webwide'))
+            .then((snapshot) => {
+                if (snapshot.exists()) {                    
+                    updateLadyCities(snapshot.data().ladyCities)
+                    updateEstablishmentCities(snapshot.data().establishmentCities)
+                }
+            })
+
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (!user) {
                 setIsLoggedIn(false)
@@ -274,4 +282,4 @@ const mapStateToProps = (store) => ({
     toastData: store.appState.toastData
 })
 
-export default connect(mapStateToProps, { updateScrollDisabled, fetchUser, storeToastRef })(Main)
+export default connect(mapStateToProps, { updateScrollDisabled, fetchUser, storeToastRef, updateEstablishmentCities, updateLadyCities })(Main)

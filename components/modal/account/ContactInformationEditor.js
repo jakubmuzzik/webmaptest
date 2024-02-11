@@ -31,6 +31,7 @@ import {
 import Toast from '../../Toast'
 
 import { Button } from 'react-native-paper'
+import { ACTIVE } from '../../../labels'
 
 const window = Dimensions.get('window')
 
@@ -94,7 +95,13 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, toa
         setShowErrorMessage(false)
 
         try {
-            await updateDoc(doc(db, 'users', userId), {...changedContactInformation})
+            let changedData = {...changedContactInformation}
+
+            if (!isEstablishment) {
+                delete changedData.website
+            }
+
+            await updateDoc(doc(db, 'users', userId), {...changedData, lastModifiedDate: new Date()})
 
             closeModal()
 
@@ -104,8 +111,9 @@ const ContactInformationEditor = ({ visible, setVisible, contactInformation, toa
                 text: 'Contact Information was changed successfully.'
             })
 
-            updateRedux({...changedContactInformation, id: userId})
+            updateRedux({...changedData, id: userId, lastModifiedDate: new Date()})
         } catch(e) {
+            console.error(e)
             modalToastRef.current.show({
                 type: 'error',
                 //headerText: 'Success!',

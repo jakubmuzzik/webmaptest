@@ -20,7 +20,7 @@ import EstablishmentRegistrationCompleted from './steps/EstablishmentRegistratio
 
 import { useSearchParams, useNavigate } from 'react-router-dom'
 
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, uploadBytesResumable } from '../../firebase/config'
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, setDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, runTransaction } from '../../firebase/config'
 
 const EstablishmentSignup = ({ toastRef, updateCurrentUserInRedux }) => {
     const [searchParams] = useSearchParams()
@@ -147,6 +147,20 @@ const EstablishmentSignup = ({ toastRef, updateCurrentUserInRedux }) => {
         data.videos = []
 
         await setDoc(doc(db, 'users', data.id), data)
+
+        const infoRef = doc(db, 'info', 'webwide')
+
+        await runTransaction(db, async (transaction) => {
+            const infoDoc = await transaction.get(infoRef)
+
+            const cities = infoDoc.data().establishmentCities
+
+            if (cities.includes(data.address.city)) {
+                return
+            }
+
+            transaction.update(infoRef, { establishmentCities: cities.concat([data.address.city]) })
+        })
 
         //put assets back for further processing
         data.images = images

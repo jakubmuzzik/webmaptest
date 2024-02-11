@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -13,10 +13,11 @@ import RenderLady from '../components/list/RenderLady'
 import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
-
+import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
+import { updateLadiesCount, updateLadiesData } from '../redux/actions'
 
-const Esc = () => {
+const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -28,19 +29,18 @@ const Esc = () => {
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
-    const [ladiesCount, setLadiesCount] = useState()
-    const [data, setData] = useState({})
-
     const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
 
     useEffect(() => {
-        getLadiesCount()
-    }, [])
+        if (!ladiesCount) {
+            console.log('ladies count init')
+            getLadiesCount()
+        }
+    }, [ladiesCount])
 
-    useEffect(() => {
-        setIsLoading(true)
-
-        if (!data[params.page]) {
+    useLayoutEffect(() => {
+        if (!ladiesData[params.page]) {
+            setIsLoading(true)
             loadDataForPage()
         } else {
             setIsLoading(false)
@@ -49,6 +49,15 @@ const Esc = () => {
 
     const loadDataForPage = async () => {
         try {
+            /*setData(data => ({
+                ...data,
+                [params.page]: new Array(MAX_ITEMS_PER_PAGE).fill({
+                    name: 'llll',
+                    dateOfBirth: '25071996',
+                    address: {city: 'Praha'},
+                    images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
+                }, 0)
+            }))*/
             const snapshot = await getDocs(
                 query(
                     collection(db, "users"), 
@@ -61,13 +70,17 @@ const Esc = () => {
             )
             
             if (snapshot.empty) {
-                setData(data => ({
-                    ...data,
-                    [params.page]: []
-                }))
-                return 
+                updateLadiesData([], params.page)
             } else {
-                setData(data => ({
+                const data = snapshot.docs.map(doc => {                    
+                    return ({
+                        ...doc.data(),
+                        id: doc.id
+                    })
+                })
+
+                updateLadiesData(data, params.page)
+                /*setData(data => ({
                     ...data,
                     [params.page]: snapshot.docs.map(doc => {
                         const data = doc.data()
@@ -76,7 +89,7 @@ const Esc = () => {
                             id: doc.id
                         })
                     })
-                }))
+                }))*/
             }
         } catch(error) {
             console.error(error)
@@ -86,9 +99,10 @@ const Esc = () => {
     }
 
     const getLadiesCount = async () => {
+       // return MAX_ITEMS_PER_PAGE * 10
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
-            setLadiesCount(snapshot.data().count)
+            updateLadiesCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
         }
@@ -146,14 +160,19 @@ const Esc = () => {
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
-                    {!isLoading && data[params.page]?.map(data => renderCard(data))}
+                    {!isLoading && ladiesData[params.page]?.map(data => renderCard(data))}
                 </View>
             </View>
         </View>
     )
 }
 
-export default Esc
+const mapStateToProps = (store) => ({
+    ladiesCount: store.appState.ladiesCount,
+    ladiesData: store.appState.ladiesData
+})
+
+export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData })(Esc)
 
 const styles = StyleSheet.create({
     cardContainer: {
