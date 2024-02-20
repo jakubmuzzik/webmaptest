@@ -178,70 +178,74 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
     const LadiesMessages = useCallback(() => {
         if (ladyData.status === IN_REVIEW) {
             return (
-                <MotiView
-                    from={{
-                        opacity: 0,
-                        transform: [{ translateY: -10 }],
-                    }}
-                    animate={{
-                        opacity: 1,
-                        transform: [{ translateY: 0 }],
-                    }}
-                    style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center',paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginBottom: SPACING.medium }}
-                >
-                    <View style={{ flexDirection: 'row' }}>
-                        <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
-    
-                        <View style={{ flexShrink: 1 }}>
-                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                                Lady is in review
-                            </Text>
-                            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
-                                All profiles go through a standard review before they become visible.
-                            </Text>
+                <View style={{ paddingHorizontal: SPACING.medium }}>
+                    <MotiView
+                        from={{
+                            opacity: 0,
+                            transform: [{ translateY: -10 }],
+                        }}
+                        animate={{
+                            opacity: 1,
+                            transform: [{ translateY: 0 }],
+                        }}
+                        style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#f08135', marginBottom: SPACING.medium }}
+                    >
+                        <View style={{ flexDirection: 'row' }}>
+                            <Ionicons name="information-circle-outline" size={normalize(20)} color="#f08135" style={{ marginRight: SPACING.xx_small }} />
+
+                            <View style={{ flexShrink: 1 }}>
+                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                                    Lady is in review
+                                </Text>
+                                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, marginTop: SPACING.xx_small }}>
+                                    All profiles go through a standard review before they become visible.
+                                </Text>
+                            </View>
                         </View>
-                    </View>
-                </MotiView>
+                    </MotiView>
+                </View>
             )
         } else if (ladyData.status === REJECTED) {
             return (
-                <MotiView
-                    from={{
-                        opacity: 0,
-                        transform: [{ translateY: -10 }],
-                    }}
-                    animate={{
-                        opacity: 1,
-                        transform: [{ translateY: 0 }],
-                    }}
-                    style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#d9100a', marginBottom: SPACING.medium }}
-                >
-                    <View style={{ flexDirection: 'row' }}>
-                        <Entypo name="circle-with-cross" size={normalize(20)} color="#d9100a" style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
-    
-                        <View style={{ flexShrink: 1, flexDirection: 'column' }}>
-                            <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
-                                Profile has been rejected
-                            </Text>
-                            {(!hasAllCoverPhotos() || !hasAllProfileInformation()) && <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
-                                Please fix the following data and re-submit your profile for review:
-                            </Text>}
-                            <View style={{ marginTop: 4, flexDirection: 'column' }}>
-                                {!hasAllCoverPhotos() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
-                                    • Cover photos
-                                </Text>}
-                                {!hasAllProfileInformation() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
-                                    • Profile information
-                                </Text>}
-                            </View>
+                <View style={{ paddingHorizontal: SPACING.medium }}>
+                    <MotiView
+                        from={{
+                            opacity: 0,
+                            transform: [{ translateY: -10 }],
+                        }}
+                        animate={{
+                            opacity: 1,
+                            transform: [{ translateY: 0 }],
+                        }}
+                        style={{ width: normalize(800) - SPACING.medium - SPACING.medium, maxWidth: '100%', alignSelf: 'center', paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, borderRadius: 10, backgroundColor: COLORS.darkGrey, borderWidth: 1, borderColor: '#d9100a', marginBottom: SPACING.medium }}
+                    >
+                        <View style={{ flexDirection: 'row' }}>
+                            <Entypo name="circle-with-cross" size={normalize(20)} color="#d9100a" style={{ marginRight: SPACING.xx_small, marginTop: 1 }} />
 
-                            {!resubmitting && <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
-                                Re-submit
-                            </Text>}
-                            {resubmitting && <ActivityIndicator color={COLORS.red} style={{ width: 'fit-content', marginTop: SPACING.x_small  }} size={normalize(20)} />}
+                            <View style={{ flexShrink: 1, flexDirection: 'column' }}>
+                                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: '#FFF' }}>
+                                    Profile has been rejected
+                                </Text>
+                                {(!hasAllCoverPhotos() || !hasAllProfileInformation()) && <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.xx_small }}>
+                                    Please fix the following data and re-submit your profile for review:
+                                </Text>}
+                                <View style={{ marginTop: 4, flexDirection: 'column' }}>
+                                    {!hasAllCoverPhotos() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                        • Cover photos
+                                    </Text>}
+                                    {!hasAllProfileInformation() && <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: COLORS.white }}>
+                                        • Profile information
+                                    </Text>}
+                                </View>
+
+                                {!resubmitting && <Text onPress={onResubmitPress} style={{ width: 'fit-content', color: COLORS.linkColor, fontFamily: FONTS.bold, fontSize: FONTS.medium, marginTop: SPACING.x_small }}>
+                                    Re-submit
+                                </Text>}
+                                {resubmitting && <ActivityIndicator color={COLORS.red} style={{ width: 'fit-content', marginTop: SPACING.x_small }} size={normalize(20)} />}
+                            </View>
                         </View>
-                    </View>
-                </MotiView>
+                    </MotiView>
+                </View>
             )
         } else {
             return null

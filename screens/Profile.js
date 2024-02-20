@@ -9,14 +9,14 @@ import HoverableView from "../components/HoverableView"
 import MapView, { Marker } from 'react-native-maps'
 import AssetsTabView from "../components/modal/profile/AssetsTabView"
 import { isBrowser } from 'react-device-detect'
-import { Skeleton } from "moti/skeleton"
+import { MotiText, MotiView } from "moti"
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { getDoc, doc, db } from "../firebase/config"
 import Toast from "../components/Toast"
 
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { connect } from "react-redux"
-import { ACTIVE } from "../labels"
+import { ACTIVE, MASSAGE_SERVICES } from "../labels"
 
 const Profile = ({ toastRef }) => {
     const location = useLocation()
@@ -34,6 +34,7 @@ const Profile = ({ toastRef }) => {
     const [photosModalVisible, setPhotosModalVisible] = useState(false)
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(location.state?.lady)
+    const [establishmentName, setEstablishmentName] = useState()
 
     const images = useMemo(() => {
         if (!data) {
@@ -58,6 +59,10 @@ const Profile = ({ toastRef }) => {
     useLayoutEffect(() => {
         if (data) {
             setLoading(false)
+
+            if (data.establishmentId) {
+                fetchEstablishmentName(data.establishmentId)
+            }
         } else {
             fetchLady()
         }
@@ -73,9 +78,15 @@ const Profile = ({ toastRef }) => {
         try {
             const snapshot = await getDoc(doc(db, 'users', id))
             if (snapshot.exists()) {
+                const snapshotData = snapshot.data()
                 setData({
-                    ...snapshot.data()
+                    ...snapshotData,
+                    id: snapshotData.id
                 })
+
+                if (snapshotData.establishmentId) {
+                    fetchEstablishmentName(snapshotData.establishmentId)
+                }
             }
         } catch (error) {
             console.error(error)
@@ -85,6 +96,17 @@ const Profile = ({ toastRef }) => {
             })
         } finally {
             setLoading(false)
+        }
+    }
+
+    const fetchEstablishmentName = async (establishmentId) => {
+        try {
+            let snapshot = await getDoc(doc(db, 'users', establishmentId))
+            if (snapshot.exists()) {
+                setEstablishmentName(snapshot.data().name)
+            }
+        } catch (error) {
+            console.error(error)
         }
     }
 
@@ -101,6 +123,10 @@ const Profile = ({ toastRef }) => {
         }
     }, [])
 
+    const onEstablishmentLinkPress = () => {
+
+    }
+
     const loadingMapFallback = useMemo(() => {
         return (
             <View style={{ ...StyleSheet.absoluteFill, justifyContent: 'center', alignItems: 'center' }}>
@@ -114,10 +140,24 @@ const Profile = ({ toastRef }) => {
         setPhotosModalVisible(true)
     }
 
-    const Photos = () => (
+    const Photos = useCallback(() => (
         <>
             <View style={{ flexDirection: 'row', }}>
-                <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
+                <MotiView 
+                    from={{
+                        opacity: 0,
+                        transform: [{ translateX: -20 }],
+                    }}
+                    animate={{
+                        opacity: 1,
+                        transform: [{ translateX: 0 }],
+                    }}
+                    transition={{
+                        //type: 'timing',
+                        //duration: 400,
+                    }}
+                    style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}
+                >
                     <HoverableView hoveredOpacity={0.8}>
                         <TouchableOpacity onPress={() => onImagePress(0)}>
                             <Image
@@ -133,9 +173,24 @@ const Profile = ({ toastRef }) => {
                             />
                         </TouchableOpacity>
                     </HoverableView>
-                </View>
+                </MotiView>
                 <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
-                    <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
+                    <MotiView
+                        from={{
+                            opacity: 0,
+                            transform: [{ translateY: 20 }],
+                        }}
+                        animate={{
+                            opacity: 1,
+                            transform: [{ translateY: 0 }],
+                        }}
+                        transition={{
+                            //type: 'timing',
+                            //duration: 400,
+                        }}
+                        delay={150}
+                        style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}
+                    >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
                             <TouchableOpacity onPress={() => onImagePress(1)}>
                                 <Image
@@ -166,8 +221,23 @@ const Profile = ({ toastRef }) => {
                                 />
                             </TouchableOpacity>
                         </HoverableView>
-                    </View>
-                    <View style={{ flexDirection: 'row', flexGrow: 1 }}>
+                    </MotiView>
+                    <MotiView
+                        from={{
+                            opacity: 0,
+                            transform: [{ translateY: 20 }],
+                        }}
+                        animate={{
+                            opacity: 1,
+                            transform: [{ translateY: 0 }],
+                        }}
+                        transition={{
+                            //type: 'timing',
+                            //duration: 400,
+                        }}
+                        delay={250}
+                        style={{ flexDirection: 'row', flexGrow: 1 }}
+                    >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
                             <TouchableOpacity onPress={() => onImagePress(3)}>
                                 <Image
@@ -198,7 +268,7 @@ const Profile = ({ toastRef }) => {
                                 />
                             </TouchableOpacity>
                         </HoverableView>
-                    </View>
+                    </MotiView>
                 </View>
             </View>
 
@@ -221,7 +291,7 @@ const Profile = ({ toastRef }) => {
                 </TouchableOpacity>
             </View>
         </>
-    )
+    ), [images, videos])
 
     const Skeleton = () => (
         <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
@@ -270,7 +340,6 @@ const Profile = ({ toastRef }) => {
                         speed={2}
                         height={500 + SPACING.xxx_small}
                         width='100%'
-                        aspectRatio={3 / 4}
                         style={{ borderRadius: 10, alignSelf: 'center' }}
                         backgroundColor={COLORS.grey}
                         foregroundColor={COLORS.lightGrey}
@@ -284,7 +353,6 @@ const Profile = ({ toastRef }) => {
                             speed={2}
                             height={500 / 2}
                             width='100%'
-                            aspectRatio={3 / 4}
                             style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
@@ -295,7 +363,6 @@ const Profile = ({ toastRef }) => {
                             speed={2}
                             height={500 / 2}
                             width='100%'
-                            aspectRatio={3 / 4}
                             style={{ borderRadius: 10, alignSelf: 'center' }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
@@ -308,7 +375,6 @@ const Profile = ({ toastRef }) => {
                             speed={2}
                             height={500 / 2}
                             width='100%'
-                            aspectRatio={3 / 4}
                             style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
@@ -319,7 +385,6 @@ const Profile = ({ toastRef }) => {
                             speed={2}
                             height={500 / 2}
                             width='100%'
-                            aspectRatio={3 / 4}
                             style={{ borderRadius: 10, alignSelf: 'center' }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
@@ -365,6 +430,9 @@ const Profile = ({ toastRef }) => {
             <Text style={{ color: '#FFF', marginBottom: SPACING.x_small, marginHorizontal: SPACING.xx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, }}>
                 {data.name}
             </Text>
+            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginBottom: SPACING.xx_small }}>
+                {calculateAgeFromDate(data.dateOfBirth)} years <Text style={{ color: COLORS.red }}>•</Text> {data.height} cm <Text style={{ color: COLORS.red }}>•</Text> {data.weight} kg
+            </Text>
             <View style={{ flexDirection: 'row', marginBottom: SPACING.xx_small, alignItems: 'center' }}>
                 <MaterialCommunityIcons name="phone" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text onPress={() => console.log('')} style={{ marginRight: SPACING.xx_small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
@@ -380,27 +448,38 @@ const Profile = ({ toastRef }) => {
                     <EvilIcons name="sc-telegram" size={22} color="white" />
                 </TouchableOpacity>
             </View>
-            <View style={{ flexDirection: 'row', marginBottom: SPACING.xx_small, alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', marginBottom: SPACING.medium, alignItems: 'center' }}>
                 <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
                     {data.address.city}
                 </Text>
             </View>
-            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginBottom: SPACING.medium }}>
-                {calculateAgeFromDate(data.dateOfBirth)} years <Text style={{ color: COLORS.red }}>•</Text> {data.height} cm <Text style={{ color: COLORS.red }}>•</Text> {data.weight} kg
-            </Text>
         </View>
     )
 
-    const About = () => (
+    const About = useCallback(() => (
         <View style={[styles.section, { marginTop: SPACING.xxx_large }]}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                     About
                 </Text>
-                <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                {!data.establishmentId && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
                     • Independent lady
-                </Text>
+                </Text>}
+                {data.establishmentId && establishmentName && <MotiText
+                    from={{
+                        opacity: 0,
+                        //transform: [{ translatex: 100 }],
+                    }}
+                    animate={{
+                        opacity: 1,
+                        //transform: [{ translatex: 0 }],
+                    }}
+                    numberOfLines={2} 
+                    style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}
+                >
+                    • Lady from <Text onPress={onEstablishmentLinkPress} style={{ color: COLORS.linkColor }}>{establishmentName}</Text>
+                </MotiText>}
             </View>
 
             <Text style={{ color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
@@ -419,7 +498,7 @@ const Profile = ({ toastRef }) => {
                 )
             }
         </View>
-    )
+    ), [data, establishmentName, showTextTriggeringButton, moreTextShown])
 
     const PersonalDetails = () => (
         <View style={[styles.section, { paddingHorizontal: 0 }]}>
@@ -501,9 +580,9 @@ const Profile = ({ toastRef }) => {
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                     Services
                 </Text>
-                <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                {data.services.every(service => MASSAGE_SERVICES.includes(service)) && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
                     • Only massages
-                </Text>
+                </Text>}
             </View>
 
             <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -717,7 +796,11 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const Content = () => (
+    if (loading) {
+        return <Skeleton />
+    }
+
+    return (
         <>
             <LinearGradient colors={[
                 COLORS.grey,
@@ -743,16 +826,6 @@ const Profile = ({ toastRef }) => {
 
                 <Address />
             </View>
-        </>
-    )
-
-    if (loading) {
-        return <Skeleton />
-    }
-
-    return (
-        <>
-            <Content />
 
             <AssetsTabView visible={photosModalVisible} pressedAssetIndex={pressedImageIndexRef.current} images={Object.values(images)} videos={videos} closeModal={closeModal} />
         </>

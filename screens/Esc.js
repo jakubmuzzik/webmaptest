@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect, useCallback } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -15,6 +15,7 @@ import { normalize, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
+import { MotiView, MotiText } from 'moti'
 import { updateLadiesCount, updateLadiesData } from '../redux/actions'
 
 const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) => {
@@ -47,17 +48,18 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         }
     }, [params.page])
 
+    const loadMockDataForPage = () => {
+        updateLadiesData(new Array(MAX_ITEMS_PER_PAGE).fill({
+            name: 'llll',
+            dateOfBirth: '25071996',
+            address: {city: 'Praha'},
+            images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
+        }, 0), params.page)
+        setIsLoading(false)
+    }
+
     const loadDataForPage = async () => {
         try {
-            /*setData(data => ({
-                ...data,
-                [params.page]: new Array(MAX_ITEMS_PER_PAGE).fill({
-                    name: 'llll',
-                    dateOfBirth: '25071996',
-                    address: {city: 'Praha'},
-                    images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
-                }, 0)
-            }))*/
             const snapshot = await getDocs(
                 query(
                     collection(db, "users"), 
@@ -80,16 +82,6 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                 })
 
                 updateLadiesData(data, params.page)
-                /*setData(data => ({
-                    ...data,
-                    [params.page]: snapshot.docs.map(doc => {
-                        const data = doc.data()
-                        return ({
-                            ...data,
-                            id: doc.id
-                        })
-                    })
-                }))*/
             }
         } catch(error) {
             console.error(error)
@@ -99,7 +91,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     }
 
     const getLadiesCount = async () => {
-       // return MAX_ITEMS_PER_PAGE * 10
+        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
+        return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateLadiesCount(snapshot.data().count)
@@ -122,11 +115,27 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
             : isLargeScreen ? (contentWidth / 5) - (SPACING.large + SPACING.large / 5) : (contentWidth / 6) - (SPACING.large + SPACING.large / 6) 
     }, [contentWidth])
 
-    const renderCard = (data) => {
+    const renderCard = (data, index) => {
         return (
-            <View key={data.id} style={[styles.cardContainer, { width: cardWidth }]}>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: 50 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                transition={{
+                    //type: 'timing',
+                    //duration: 600,
+                }}
+                delay={index * 20}
+                key={data.id}
+                style={[styles.cardContainer, { width: cardWidth }]}
+            >
                 <RenderLady lady={data} width={cardWidth} />
-            </View>
+            </MotiView>
         )
     }
 
@@ -146,21 +155,50 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         ))
     }
 
+    const AnimatedHeaderText = useCallback(() => {
+        return (
+            <>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
+                    Esc
+                </Text>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
+                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
+                        {params.city ? params.city : 'Anywhere'}
+                    </Text>
+                    {ladiesCount && (
+                        <MotiText
+                            from={{
+                                opacity: 0,
+                                transform: [{ translateX: 20 }],
+                            }}
+                            animate={{
+                                opacity: 1,
+                                transform: [{ translateX: 0 }],
+                            }}
+                            transition={{
+                                //type: 'timing',
+                                //duration: 600,
+                            }}
+                            style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
+                        >
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} ladies</Text>
+                        </MotiText>
+                    )}
+                </View>
+            </>
+        )
+    }, [ladiesCount])
+
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>
-                {/* <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Escort
-                </Text> */}
-                {/* <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                    Anywhere • 218 ladies
-                </Text> */}
+                <AnimatedHeaderText />
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
-                    {!isLoading && ladiesData[params.page]?.map(data => renderCard(data))}
+                    {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>
         </View>
