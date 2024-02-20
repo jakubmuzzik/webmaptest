@@ -91,8 +91,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     }
 
     const getLadiesCount = async () => {
-        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
+        //updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
+        //return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateLadiesCount(snapshot.data().count)
@@ -169,11 +169,11 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                         <MotiText
                             from={{
                                 opacity: 0,
-                                transform: [{ translateX: 20 }],
+                                transform: [{ rotateX: '90deg' }],
                             }}
                             animate={{
                                 opacity: 1,
-                                transform: [{ translateX: 0 }],
+                                transform: [{ rotateX: '0deg' }],
                             }}
                             transition={{
                                 //type: 'timing',
@@ -187,7 +187,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                 </View>
             </>
         )
-    }, [ladiesCount])
+    }, [ladiesCount, params.city])
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 

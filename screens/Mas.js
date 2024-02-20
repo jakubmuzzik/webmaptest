@@ -91,8 +91,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }
 
     const getMasseusesCount = async () => {
-        updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
+        //updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
+        //return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateMasseusesCount(snapshot.data().count)
@@ -169,11 +169,11 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                         <MotiText
                             from={{
                                 opacity: 0,
-                                transform: [{ translateX: 20 }],
+                                transform: [{ rotateX: '90deg' }],
                             }}
                             animate={{
                                 opacity: 1,
-                                transform: [{ translateX: 0 }],
+                                transform: [{ rotateX: '0deg' }],
                             }}
                             transition={{
                                 //type: 'timing',
@@ -187,7 +187,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                 </View>
             </>
         )
-    }, [masseusesCount])
+    }, [masseusesCount, params.city])
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 

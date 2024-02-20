@@ -188,7 +188,7 @@ const Profile = ({ toastRef }) => {
                             //type: 'timing',
                             //duration: 400,
                         }}
-                        delay={150}
+                        //delay={150}
                         style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
@@ -235,7 +235,7 @@ const Profile = ({ toastRef }) => {
                             //type: 'timing',
                             //duration: 400,
                         }}
-                        delay={250}
+                        delay={150}
                         style={{ flexDirection: 'row', flexGrow: 1 }}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
