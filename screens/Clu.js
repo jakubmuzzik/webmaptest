@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect, useCallback } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -10,13 +10,15 @@ import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { CZECH_CITIES, ACTIVE } from '../labels'
 import RenderLady from '../components/list/RenderLady'
-import { normalize, getParam } from '../utils'
 import { MOCK_DATA } from '../constants'
+import { normalize, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
-
+import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
+import { MotiView, MotiText } from 'moti'
+import { updateLadiesCount, updateLadiesData } from '../redux/actions'
 
-const Clu = () => {
+const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -28,24 +30,33 @@ const Clu = () => {
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
-    const [ladiesCount, setLadiesCount] = useState()
-    const [data, setData] = useState({})
-
     const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
-
+    
     useEffect(() => {
-        getLadiesCount()
-    }, [])
+        if (!ladiesCount) {
+            console.log('ladies count init')
+            getLadiesCount()
+        }
+    }, [ladiesCount])
 
-    useEffect(() => {
-        setIsLoading(true)
-
-        if (!data[params.page]) {
+    useLayoutEffect(() => {
+        if (!ladiesData[params.page]) {
+            setIsLoading(true)
             loadDataForPage()
         } else {
             setIsLoading(false)
         }
     }, [params.page])
+
+    const loadMockDataForPage = () => {
+        updateLadiesData(new Array(MAX_ITEMS_PER_PAGE).fill({
+            name: 'llll',
+            dateOfBirth: '25071996',
+            address: {city: 'Praha'},
+            images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
+        }, 0), params.page)
+        setIsLoading(false)
+    }
 
     const loadDataForPage = async () => {
         try {
@@ -61,22 +72,16 @@ const Clu = () => {
             )
             
             if (snapshot.empty) {
-                setData(data => ({
-                    ...data,
-                    [params.page]: []
-                }))
-                return 
+                updateLadiesData([], params.page)
             } else {
-                setData(data => ({
-                    ...data,
-                    [params.page]: snapshot.docs.map(doc => {
-                        const data = doc.data()
-                        return ({
-                            ...data,
-                            id: doc.id
-                        })
+                const data = snapshot.docs.map(doc => {                    
+                    return ({
+                        ...doc.data(),
+                        id: doc.id
                     })
-                }))
+                })
+
+                updateLadiesData(data, params.page)
             }
         } catch(error) {
             console.error(error)
@@ -86,9 +91,11 @@ const Clu = () => {
     }
 
     const getLadiesCount = async () => {
+        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
+        return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
-            setLadiesCount(snapshot.data().count)
+            updateLadiesCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
         }
@@ -108,11 +115,27 @@ const Clu = () => {
             : isLargeScreen ? (contentWidth / 5) - (SPACING.large + SPACING.large / 5) : (contentWidth / 6) - (SPACING.large + SPACING.large / 6) 
     }, [contentWidth])
 
-    const renderCard = (data) => {
+    const renderCard = (data, index) => {
         return (
-            <View key={data.id} style={[styles.cardContainer, { width: cardWidth }]}>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: 10 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                transition={{
+                    type: 'timing',
+                    duration: 300,
+                }}
+                delay={index * 20}
+                key={data.id}
+                style={[styles.cardContainer, { width: cardWidth }]}
+            >
                 <RenderLady lady={data} width={cardWidth} />
-            </View>
+            </MotiView>
         )
     }
 
@@ -132,33 +155,64 @@ const Clu = () => {
         ))
     }
 
+    const AnimatedHeaderText = useCallback(() => {
+        return (
+            <>
+                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
+                    Establishments
+                </Text>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
+                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
+                        {params.city ? params.city : 'Anywhere'}
+                    </Text>
+                    {ladiesCount && (
+                        <MotiText
+                            from={{
+                                opacity: 0,
+                                transform: [{ rotateX: '90deg' }],
+                            }}
+                            animate={{
+                                opacity: 1,
+                                transform: [{ rotateX: '0deg' }],
+                            }}
+                            style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
+                        >
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} ladies</Text>
+                        </MotiText>
+                    )}
+                </View>
+            </>
+        )
+    }, [ladiesCount, params.city])
+
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>
-                {/* <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Establishments
-                </Text> */}
-                {/* <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                    Anywhere • 218 ladies
-                </Text> */}
+                <AnimatedHeaderText />
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
-                    {!isLoading && data[params.page]?.map(data => renderCard(data))}
+                    {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>
         </View>
     )
 }
 
-export default Clu
+const mapStateToProps = (store) => ({
+    ladiesCount: store.appState.ladiesCount,
+    ladiesData: store.appState.ladiesData
+})
+
+export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData })(Clu)
 
 const styles = StyleSheet.create({
     cardContainer: {
         marginRight: SPACING.large,
         marginBottom: SPACING.large,
+        overflow: 'hidden'
         //flexShrink: 1
     },
 })
