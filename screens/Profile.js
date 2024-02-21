@@ -43,7 +43,7 @@ const Profile = ({ toastRef }) => {
     const [data, setData] = useState(location.state?.lady)
     const [establishmentName, setEstablishmentName] = useState()
 
-    const establishmentNameRotateX = useSharedValue('-90deg')
+    const establishmentNameRotateX = useSharedValue('90deg')
     const leftPhotoOpacity = useSharedValue(0)
     const rightPhotosOpacity1 = useSharedValue(0)
     const rightPhotosOpacity2 = useSharedValue(0)
