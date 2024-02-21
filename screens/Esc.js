@@ -42,7 +42,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     useLayoutEffect(() => {
         if (!ladiesData[params.page]) {
             setIsLoading(true)
-            loadMockDataForPage()
+            loadDataForPage()
         } else {
             setIsLoading(false)
         }
@@ -159,7 +159,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         return (
             <>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Esc
+                    Ladies
                 </Text>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
                     <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>

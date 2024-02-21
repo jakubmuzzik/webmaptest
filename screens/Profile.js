@@ -146,15 +146,15 @@ const Profile = ({ toastRef }) => {
                 <MotiView 
                     from={{
                         opacity: 0,
-                        transform: [{ translateX: -20 }],
+                        transform: [{ translateY: 20 }],
                     }}
                     animate={{
                         opacity: 1,
-                        transform: [{ translateX: 0 }],
+                        transform: [{ translateY: 0 }],
                     }}
                     transition={{
-                        //type: 'timing',
-                        //duration: 400,
+                        type: 'timing',
+                        duration: 300,
                     }}
                     style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}
                 >
@@ -185,10 +185,10 @@ const Profile = ({ toastRef }) => {
                             transform: [{ translateY: 0 }],
                         }}
                         transition={{
-                            //type: 'timing',
-                            //duration: 400,
+                            type: 'timing',
+                            duration: 300,
                         }}
-                        //delay={150}
+                        delay={20}
                         style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
@@ -232,10 +232,10 @@ const Profile = ({ toastRef }) => {
                             transform: [{ translateY: 0 }],
                         }}
                         transition={{
-                            //type: 'timing',
-                            //duration: 400,
+                            type: 'timing',
+                            duration: 300,
                         }}
-                        delay={150}
+                        delay={40}
                         style={{ flexDirection: 'row', flexGrow: 1 }}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>

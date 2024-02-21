@@ -20,6 +20,12 @@ const RenderVideo = ({ video }) => {
         init()
     }, [])
 
+    useEffect(() => {
+        if (!showPoster && videoRef.current) {
+            videoRef.current.playAsync()
+        }
+    }, [showPoster, videoRef.current])
+
     const init = async () => {
         try {
             RNImage.getSize(video.thumbnailDownloadUrl, (width, height) => { 
@@ -28,11 +34,6 @@ const RenderVideo = ({ video }) => {
         } catch(e) {
             console.error(e)
         }
-    }
-
-    const onPlayPress = () => {
-        videoRef.current.playAsync()
-        setShowPoster(false)
     }
 
     if (!aspectRatio) {
