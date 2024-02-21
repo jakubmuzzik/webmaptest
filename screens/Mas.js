@@ -42,7 +42,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     useLayoutEffect(() => {
         if (!masseusesData[params.page]) {
             setIsLoading(true)
-            loadDataForPage()
+            loadMockDataForPage()
         } else {
             setIsLoading(false)
         }
@@ -91,8 +91,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }
 
     const getMasseusesCount = async () => {
-        //updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
-        //return
+        updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
+        return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateMasseusesCount(snapshot.data().count)
@@ -120,15 +120,15 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
             <MotiView
                 from={{
                     opacity: 0,
-                    transform: [{ translateY: 50 }],
+                    transform: [{ translateY: 10 }],
                 }}
                 animate={{
                     opacity: 1,
                     transform: [{ translateY: 0 }],
                 }}
                 transition={{
-                    //type: 'timing',
-                    //duration: 600,
+                    type: 'timing',
+                    duration: 300,
                 }}
                 delay={index * 20}
                 key={data.id}
@@ -174,10 +174,6 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                             animate={{
                                 opacity: 1,
                                 transform: [{ rotateX: '0deg' }],
-                            }}
-                            transition={{
-                                //type: 'timing',
-                                //duration: 600,
                             }}
                             style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
                         >

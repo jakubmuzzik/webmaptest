@@ -54,6 +54,54 @@ const ConfirmationModal = ({
         }
     }
 
+    const Content = () => (
+        <>
+            <View style={styles.modal__header}>
+                <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
+                <View style={{ flexShrink: 1, flexGrow: 0 }}>
+                    <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, textAlign: 'center' }}>{headerText}</Text>
+                </View>
+                <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
+                    <HoverableView style={{ marginRight: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
+                        <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
+                    </HoverableView>
+                </View>
+            </View>
+
+            <View style={{ paddingHorizontal: SPACING.medium, paddingVertical: SPACING.small, alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>
+                    {text}
+                </Text>
+            </View>
+
+            <View style={{ borderTopWidth: 1, borderTopColor: COLORS.placeholder, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightBlack }}
+                    style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
+                    buttonColor="#FFF"
+                    mode="outlined"
+                    rippleColor='rgba(0,0,0,.1)'
+                    onPress={closeModal}
+                >
+                    {cancelLabel}
+                </Button>
+
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: confirmButtonTextColor }}
+                    style={{ flexShrink: 1, borderRadius: 10 }}
+                    buttonColor={confirmButtonColor}
+                    mode="contained"
+                    onPress={onConfirmPress}
+                    icon={icon}
+                    loading={working}
+                    disabled={working}
+                >
+                    {confirmLabel}
+                </Button>
+            </View>
+        </>
+    )
+
     return (
         <Modal transparent visible={visible} animationType='none'>
             <BlurView intensity={20} style={{ flex: 1 }}>
@@ -88,49 +136,7 @@ const ConfirmationModal = ({
                                 maxHeight: '80%',
                                 overflow: 'hidden',
                             }}>
-                                <View style={styles.modal__header}>
-                                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0 }}></View>
-                                    <View style={{ flexShrink: 1, flexGrow: 0 }}>
-                                        <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, textAlign: 'center' }}>{headerText}</Text>
-                                    </View>
-                                    <View style={{ flexBasis: 50, flexGrow: 1, flexShrink: 0, alignItems: 'flex-end' }}>
-                                        <HoverableView style={{ marginRight: SPACING.small, width: SPACING.x_large, height: SPACING.x_large, justifyContent: 'center', alignItems: 'center', borderRadius: 17.5 }} hoveredBackgroundColor={COLORS.hoveredHoveredWhite} backgroundColor={COLORS.hoveredWhite}>
-                                            <Ionicons onPress={closeModal} name="close" size={normalize(25)} color="black" />
-                                        </HoverableView>
-                                    </View>
-                                </View>
-
-                                <View style={{ paddingHorizontal: SPACING.medium, paddingVertical: SPACING.small, alignItems: 'center', flex: 1 }}>
-                                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>
-                                        {text}
-                                    </Text>
-                                </View>
-
-                                <View style={{ borderTopWidth: 1, borderTopColor: COLORS.placeholder, paddingHorizontal: SPACING.small, paddingVertical: SPACING.x_small, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Button
-                                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: COLORS.lightBlack }}
-                                        style={{ flexShrink: 1, borderRadius: 10, borderWidth: 0 }}
-                                        buttonColor="#FFF"
-                                        mode="outlined"
-                                        rippleColor='rgba(0,0,0,.1)'
-                                        onPress={closeModal}
-                                    >
-                                        {cancelLabel}
-                                    </Button>
-
-                                    <Button
-                                        labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, color: confirmButtonTextColor }}
-                                        style={{ flexShrink: 1, borderRadius: 10 }}
-                                        buttonColor={confirmButtonColor}
-                                        mode="contained"
-                                        onPress={onConfirmPress}
-                                        icon={icon}
-                                        loading={working}
-                                        disabled={working}
-                                    >
-                                        {confirmLabel}
-                                    </Button>
-                                </View>
+                                <Content />
                             </View>
                         </TouchableWithoutFeedback>
                     </MotiView>

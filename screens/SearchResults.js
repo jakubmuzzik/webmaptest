@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { useSearchParams } from 'react-router-dom'
 import { getParam } from '../utils'
@@ -18,9 +18,16 @@ const SearchResults = () => {
 
     const [isLoading, setIsLoading] = useState(true)
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
+    const [results, setResults] = useState([])
 
     useEffect(() => {
         setTimeout(() => {
+            setResults(new Array(30).fill({
+                name: 'llll',
+                dateOfBirth: '25071996',
+                address: {city: 'Praha'},
+                images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
+            }, 0))
             setIsLoading(false)
         }, 1000)
     }, [])
@@ -39,11 +46,27 @@ const SearchResults = () => {
             : isLargeScreen ? (contentWidth / 5) - (SPACING.large + SPACING.large / 5) : (contentWidth / 6) - (SPACING.large + SPACING.large / 6) 
     }, [contentWidth])
 
-    const renderCard = (data) => {
+    const renderCard = (data, index) => {
         return (
-            <View key={data.id} style={{ marginRight: SPACING.large, marginBottom: SPACING.large, overflow: 'hidden', width: cardWidth }}>
-                <RenderLady client={data} width={cardWidth} />
-            </View>
+            <MotiView
+                from={{
+                    opacity: 0,
+                    transform: [{ translateY: 10 }],
+                }}
+                animate={{
+                    opacity: 1,
+                    transform: [{ translateY: 0 }],
+                }}
+                transition={{
+                    type: 'timing',
+                    duration: 300,
+                }}
+                delay={index * 20}
+                key={data.id}
+                style={[styles.cardContainer, { width: cardWidth }]}
+            >
+                <RenderLady lady={data} width={cardWidth} />
+            </MotiView>
         )
     }
 
@@ -92,7 +115,7 @@ const SearchResults = () => {
     const Content = () => (
         <>
             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF' }}>
-                Search results for {params.query}
+                Search results for: {params.query}
             </Text>
 
             <View style={{ marginTop: SPACING.large }}>
@@ -101,7 +124,7 @@ const SearchResults = () => {
                 </Text>
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.medium }}>
-                    {MOCK_DATA.map(data => renderCard(data))}
+                    {results.map((result, index) => renderCard(result, index))}
                 </View>
             </View>
         </>
@@ -117,3 +140,12 @@ const SearchResults = () => {
 }
 
 export default SearchResults
+
+const styles = StyleSheet.create({
+    cardContainer: {
+        marginRight: SPACING.large,
+        marginBottom: SPACING.large,
+        overflow: 'hidden'
+        //flexShrink: 1
+    },
+})
