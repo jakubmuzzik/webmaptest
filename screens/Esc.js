@@ -117,8 +117,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
 
     const renderCard = (data, index) => {
         return (
-            <MotiView
-                from={{
+            <View
+                /*from={{
                     opacity: 0,
                     transform: [{ translateY: 10 }],
                 }}
@@ -130,12 +130,12 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                     type: 'timing',
                     duration: 300,
                 }}
-                delay={index * 20}
+                delay={index * 20}*/
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
-                <RenderLady lady={data} width={cardWidth} />
-            </MotiView>
+                <RenderLady lady={data} width={cardWidth} delay={index * 20}/>
+            </View>
         )
     }
 

@@ -1,4 +1,4 @@
-import React, { memo, useState, useRef, useMemo, useCallback } from "react"
+import React, { memo, useState, useRef, useMemo, useEffect } from "react"
 import { StyleSheet, Text, View, FlatList } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES } from "../../constants"
@@ -8,10 +8,14 @@ import { isBrowser } from 'react-device-detect'
 
 import { useSearchParams, Link } from 'react-router-dom'
 
-const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    withDelay
+} from 'react-native-reanimated'
 
-const RenderLady = ({ lady, width }) => {
+const RenderLady = ({ lady, width, delay = 0 }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -20,8 +24,30 @@ const RenderLady = ({ lady, width }) => {
 
     const [isHovered, setIsHovered] = useState(false)
 
+    const translateY = useSharedValue(10)
+    const opacity = useSharedValue(0)
+
+    const containerAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            flexDirection: 'column',
+            flexGrow: 1,
+            borderRadius: 10,
+            opacity: opacity.value,
+            transform: [{ translateY: translateY.value }],
+        }
+    })
+
+    useEffect(() => {
+        translateY.value = withDelay(delay, withTiming(0, {
+            useNativeDriver: true
+        }))
+        opacity.value = withDelay(delay,withTiming(1, {
+            useNativeDriver: true
+        }))
+    }, [])
+
     return (
-        <View style={styles.container}>
+        <Animated.View style={containerAnimatedStyle}>
             <Link to={{ pathname: '/profile/' + lady.id, search: new URLSearchParams(stripEmptyParams(params)).toString() }} state={{ lady }}>
                 <View style={{ flex: 1 }}
                     onMouseEnter={isBrowser ? () => setIsHovered(true) : undefined}
@@ -49,7 +75,7 @@ const RenderLady = ({ lady, width }) => {
             <Text numberOfLines={1} style={{ textAlign: 'center', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: COLORS.greyText }}>
                 {calculateAgeFromDate(lady.dateOfBirth) + ' years'} <Text style={{ color: COLORS.red }}>•</Text> {lady.address.city}
             </Text>
-        </View>
+        </Animated.View>
     )
 }
 
