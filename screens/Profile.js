@@ -14,6 +14,13 @@ import ContentLoader, { Rect } from "react-content-loader/native"
 import { getDoc, doc, db } from "../firebase/config"
 import Toast from "../components/Toast"
 
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    withDelay
+} from 'react-native-reanimated'
+
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { connect } from "react-redux"
 import { ACTIVE, MASSAGE_SERVICES } from "../labels"
@@ -35,6 +42,84 @@ const Profile = ({ toastRef }) => {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(location.state?.lady)
     const [establishmentName, setEstablishmentName] = useState()
+
+    const establishmentNameOpacity = useSharedValue(0)
+
+    const leftPhotoOpacity = useSharedValue(0)
+    const rightPhotosOpacity1 = useSharedValue(0)
+    const rightPhotosOpacity2 = useSharedValue(0)
+    const leftPhotoTranslateY = useSharedValue(20)
+    const rightPhotosTranslateY1 = useSharedValue(20)
+    const rightPhotosTranslateY2 = useSharedValue(20)
+
+    const establishmentNameAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            color: COLORS.greyText, 
+            fontSize: FONT_SIZES.large, 
+            fontFamily: FONTS.medium,
+            establishmentNameOpacity: establishmentNameOpacity.value
+        }
+    })
+
+    const leftPhotoAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            width: '50%', 
+            flexShrink: 1, 
+            marginRight: SPACING.xxx_small,
+            opacity: leftPhotoOpacity.value,
+            transform: [{ translateY:leftPhotoTranslateY.value  }],
+        }
+    })
+
+    const rightPhotosAnimatedStyle1 = useAnimatedStyle(() => {
+        return {
+            flexDirection: 'row', 
+            marginBottom: SPACING.xxx_small, 
+            flexGrow: 1,
+            opacity: rightPhotosOpacity1.value,
+            transform: [{ translateY:rightPhotosTranslateY1.value  }],
+        }
+    })
+
+    const rightPhotosAnimatedStyle2 = useAnimatedStyle(() => {
+        return {
+            flexDirection: 'row', 
+            flexGrow: 1,
+            opacity: rightPhotosOpacity2.value,
+            transform: [{ translateY:rightPhotosTranslateY2.value  }],
+        }
+    })
+
+    useEffect(() => {
+        if (establishmentName) {
+            establishmentNameOpacity.value = withTiming(1, {
+                useNativeDriver: true
+            })
+        }
+    }, [establishmentName])
+
+    useEffect(() => {
+        if (!loading) {
+            leftPhotoOpacity.value = withTiming(1, {
+                useNativeDriver: true
+            })
+            leftPhotoTranslateY.value = withTiming(0, {
+                useNativeDriver: true
+            })
+            rightPhotosOpacity1.value = withDelay(20, withTiming(1, {
+                useNativeDriver: true
+            }))
+            rightPhotosTranslateY1.value = withDelay(20, withTiming(0, {
+                useNativeDriver: true
+            }))
+            rightPhotosOpacity2.value = withDelay(40, withTiming(1, {
+                useNativeDriver: true
+            }))
+            rightPhotosTranslateY2.value = withDelay(40, withTiming(0, {
+                useNativeDriver: true
+            }))
+        }
+    }, [loading])
 
     const images = useMemo(() => {
         if (!data) {
@@ -139,159 +224,6 @@ const Profile = ({ toastRef }) => {
         pressedImageIndexRef.current = index
         setPhotosModalVisible(true)
     }
-
-    const Photos = useCallback(() => (
-        <>
-            <View style={{ flexDirection: 'row', }}>
-                <MotiView 
-                    from={{
-                        opacity: 0,
-                        transform: [{ translateY: 20 }],
-                    }}
-                    animate={{
-                        opacity: 1,
-                        transform: [{ translateY: 0 }],
-                    }}
-                    transition={{
-                        type: 'timing',
-                        duration: 300,
-                    }}
-                    style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}
-                >
-                    <HoverableView hoveredOpacity={0.8}>
-                        <TouchableOpacity onPress={() => onImagePress(0)}>
-                            <Image
-                                style={{
-                                    aspectRatio: 3 / 4,
-                                    width: 'auto',
-                                    borderRadius: 10
-                                }}
-                                source={images[0].downloadUrl}
-                                placeholder={images[0].blurhash}
-                                resizeMode="cover"
-                                transition={200}
-                            />
-                        </TouchableOpacity>
-                    </HoverableView>
-                </MotiView>
-                <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
-                    <MotiView
-                        from={{
-                            opacity: 0,
-                            transform: [{ translateY: 20 }],
-                        }}
-                        animate={{
-                            opacity: 1,
-                            transform: [{ translateY: 0 }],
-                        }}
-                        transition={{
-                            type: 'timing',
-                            duration: 300,
-                        }}
-                        delay={20}
-                        style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}
-                    >
-                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
-                            <TouchableOpacity onPress={() => onImagePress(1)}>
-                                <Image
-                                    style={{
-                                        aspectRatio: 3 / 4,
-                                        flex: 1,
-                                        borderRadius: 10
-                                    }}
-                                    source={images[1].downloadUrl}
-                                    placeholder={images[1].blurhash}
-                                    resizeMode="cover"
-                                    transition={200}
-                                />
-                            </TouchableOpacity>
-                        </HoverableView>
-                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1 }}>
-                            <TouchableOpacity onPress={() => onImagePress(2)}>
-                                <Image
-                                    style={{
-                                        aspectRatio: 3 / 4,
-                                        flex: 1,
-                                        borderRadius: 10
-                                    }}
-                                    source={images[2].downloadUrl}
-                                    placeholder={images[2].blurhash}
-                                    contentFit="cover"
-                                    transition={200}
-                                />
-                            </TouchableOpacity>
-                        </HoverableView>
-                    </MotiView>
-                    <MotiView
-                        from={{
-                            opacity: 0,
-                            transform: [{ translateY: 20 }],
-                        }}
-                        animate={{
-                            opacity: 1,
-                            transform: [{ translateY: 0 }],
-                        }}
-                        transition={{
-                            type: 'timing',
-                            duration: 300,
-                        }}
-                        delay={40}
-                        style={{ flexDirection: 'row', flexGrow: 1 }}
-                    >
-                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
-                            <TouchableOpacity onPress={() => onImagePress(3)}>
-                                <Image
-                                    style={{
-                                        aspectRatio: 3 / 4,
-                                        flex: 1,
-                                        borderRadius: 10
-                                    }}
-                                    source={images[3].downloadUrl}
-                                    placeholder={images[3].blurhash}
-                                    resizeMode="cover"
-                                    transition={200}
-                                />
-                            </TouchableOpacity>
-                        </HoverableView>
-                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1 }}>
-                            <TouchableOpacity onPress={() => onImagePress(4)}>
-                                <Image
-                                    style={{
-                                        aspectRatio: 3 / 4,
-                                        flex: 1,
-                                        borderRadius: 10
-                                    }}
-                                    source={images[4].downloadUrl}
-                                    placeholder={images[4].blurhash}
-                                    resizeMode="cover"
-                                    transition={200}
-                                />
-                            </TouchableOpacity>
-                        </HoverableView>
-                    </MotiView>
-                </View>
-            </View>
-
-            <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: SPACING.small }}>
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
-                    {Object.keys(images).length} {Object.keys(images).length > 1 ? 'photos' : 'photo'}
-                </Text>
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
-                    |
-                </Text>
-                {videos.length > 0 && <><Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
-                    {videos.length} {videos.length > 1 ? 'videos' : 'video'}
-                </Text>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
-                        |
-                    </Text></>}
-                <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: 4 }}>View all</Text>
-                    <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
-                </TouchableOpacity>
-            </View>
-        </>
-    ), [images, videos])
 
     const Skeleton = () => (
         <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
@@ -457,7 +389,136 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const About = useCallback(() => (
+    const Photos = useCallback(() => (
+        <>
+            <View style={{ flexDirection: 'row', }}>
+                <Animated.View 
+                    /*transition={{
+                        type: 'timing',
+                        duration: 300,
+                    }}*/
+                    style={leftPhotoAnimatedStyle}
+                >
+                    <HoverableView hoveredOpacity={0.8}>
+                        <TouchableOpacity onPress={() => onImagePress(0)}>
+                            <Image
+                                style={{
+                                    aspectRatio: 3 / 4,
+                                    width: 'auto',
+                                    borderRadius: 10
+                                }}
+                                source={images[0].downloadUrl}
+                                placeholder={images[0].blurhash}
+                                resizeMode="cover"
+                                transition={200}
+                            />
+                        </TouchableOpacity>
+                    </HoverableView>
+                </Animated.View>
+                <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
+                    <Animated.View
+                        /*transition={{
+                            type: 'timing',
+                            duration: 300,
+                        }}
+                        delay={20}*/
+                        style={rightPhotosAnimatedStyle1}
+                    >
+                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
+                            <TouchableOpacity onPress={() => onImagePress(1)}>
+                                <Image
+                                    style={{
+                                        aspectRatio: 3 / 4,
+                                        flex: 1,
+                                        borderRadius: 10
+                                    }}
+                                    source={images[1].downloadUrl}
+                                    placeholder={images[1].blurhash}
+                                    resizeMode="cover"
+                                    transition={200}
+                                />
+                            </TouchableOpacity>
+                        </HoverableView>
+                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1 }}>
+                            <TouchableOpacity onPress={() => onImagePress(2)}>
+                                <Image
+                                    style={{
+                                        aspectRatio: 3 / 4,
+                                        flex: 1,
+                                        borderRadius: 10
+                                    }}
+                                    source={images[2].downloadUrl}
+                                    placeholder={images[2].blurhash}
+                                    contentFit="cover"
+                                    transition={200}
+                                />
+                            </TouchableOpacity>
+                        </HoverableView>
+                    </Animated.View>
+                    <Animated.View
+                        /*transition={{
+                            type: 'timing',
+                            duration: 300,
+                        }}
+                        delay={40}*/
+                        style={rightPhotosAnimatedStyle2}
+                    >
+                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
+                            <TouchableOpacity onPress={() => onImagePress(3)}>
+                                <Image
+                                    style={{
+                                        aspectRatio: 3 / 4,
+                                        flex: 1,
+                                        borderRadius: 10
+                                    }}
+                                    source={images[3].downloadUrl}
+                                    placeholder={images[3].blurhash}
+                                    resizeMode="cover"
+                                    transition={200}
+                                />
+                            </TouchableOpacity>
+                        </HoverableView>
+                        <HoverableView hoveredOpacity={0.8} style={{ flex: 1 }}>
+                            <TouchableOpacity onPress={() => onImagePress(4)}>
+                                <Image
+                                    style={{
+                                        aspectRatio: 3 / 4,
+                                        flex: 1,
+                                        borderRadius: 10
+                                    }}
+                                    source={images[4].downloadUrl}
+                                    placeholder={images[4].blurhash}
+                                    resizeMode="cover"
+                                    transition={200}
+                                />
+                            </TouchableOpacity>
+                        </HoverableView>
+                    </Animated.View>
+                </View>
+            </View>
+
+            <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: SPACING.small }}>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                    {Object.keys(images).length} {Object.keys(images).length > 1 ? 'photos' : 'photo'}
+                </Text>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
+                    |
+                </Text>
+                {videos.length > 0 && <><Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                    {videos.length} {videos.length > 1 ? 'videos' : 'video'}
+                </Text>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
+                        |
+                    </Text></>}
+                <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: 4 }}>View all</Text>
+                    <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
+                </TouchableOpacity>
+            </View>
+        </>
+    ), [images, videos])
+
+    const About = () => (
         <View style={[styles.section, { marginTop: SPACING.xxx_large }]}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -466,20 +527,14 @@ const Profile = ({ toastRef }) => {
                 {!data.establishmentId && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
                     • Independent lady
                 </Text>}
-                {data.establishmentId && establishmentName && <MotiText
-                    from={{
-                        opacity: 0,
-                        //transform: [{ translatex: 100 }],
-                    }}
-                    animate={{
-                        opacity: 1,
-                        //transform: [{ translatex: 0 }],
-                    }}
-                    numberOfLines={2} 
-                    style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}
-                >
-                    • Lady from <Text onPress={onEstablishmentLinkPress} style={{ color: COLORS.linkColor }}>{establishmentName}</Text>
-                </MotiText>}
+                {data.establishmentId && establishmentName && (
+                    <Animated.Text
+                        numberOfLines={2}
+                        style={establishmentNameAnimatedStyle}
+                    >
+                        • Lady from <Text onPress={onEstablishmentLinkPress} style={{ color: COLORS.linkColor }}>{establishmentName}</Text>
+                    </Animated.Text>
+                )}
             </View>
 
             <Text style={{ color: '#FFF', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, lineHeight: 22 }}
@@ -498,7 +553,7 @@ const Profile = ({ toastRef }) => {
                 )
             }
         </View>
-    ), [data, establishmentName, showTextTriggeringButton, moreTextShown])
+    )
 
     const PersonalDetails = () => (
         <View style={[styles.section, { paddingHorizontal: 0 }]}>
