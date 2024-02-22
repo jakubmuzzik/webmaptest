@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { CZECH_CITIES, ACTIVE } from '../labels'
+import { CZECH_CITIES, ACTIVE, MASSAGE_SERVICES } from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { normalize, getParam } from '../utils'
 import { MOCK_DATA } from '../constants'
@@ -91,10 +91,16 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }
 
     const getMasseusesCount = async () => {
-        updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
         try {
-            const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
+            const snapshot = await getCountFromServer(
+                query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'lady'), 
+                    where('status', '==', ACTIVE),
+                    where('services', 'in', MASSAGE_SERVICES)
+                )
+            )
+            console.log(snapshot.data())
             updateMasseusesCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
@@ -165,7 +171,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
                         {params.city ? params.city : 'Anywhere'}
                     </Text>
-                    {masseusesCount && (
+                    {!isNaN(masseusesCount) && (
                         <MotiText
                             from={{
                                 opacity: 0,

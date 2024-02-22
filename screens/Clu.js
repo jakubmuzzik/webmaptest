@@ -165,7 +165,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                     <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
                         {params.city ? params.city : 'Anywhere'}
                     </Text>
-                    {ladiesCount && (
+                    {!isNaN(ladiesCount) && (
                         <MotiText
                             from={{
                                 opacity: 0,
