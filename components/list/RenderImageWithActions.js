@@ -10,7 +10,7 @@ import { BlurView } from 'expo-blur'
 const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain', actions, offsetX = 0, showActions=true }) => {
     const actionsDropdownRef = useRef()
 
-    const Actions = () => {
+    const renderActions = () => {
         if (!showActions) {
             return null
         }
@@ -69,7 +69,7 @@ const RenderImageWithActions = ({ image, transition = 200, resizeMode = 'contain
                     transition={transition}
                 />
 
-                <Actions />
+                {renderActions()}
             </BlurView>
         </ImageBackground>
     )

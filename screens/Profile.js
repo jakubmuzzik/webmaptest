@@ -105,6 +105,7 @@ const Profile = ({ toastRef }) => {
     useLayoutEffect(() => {
         if (data) {
             setLoading(false)
+            console.log('has data')
 
             if (data.establishmentId) {
                 fetchEstablishmentName(data.establishmentId)
@@ -261,19 +262,11 @@ const Profile = ({ toastRef }) => {
         setPhotosModalVisible(true)
     }
 
-    const Skeleton = () => (
+    const renderSkeleton = () => (
         <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, /*backgroundColor: COLORS.lightBlack,*/ padding: SPACING.large }}>
-            {/* <LinearGradient colors={[
-                    COLORS.grey,
-                    COLORS.lightBlack,
-                ]}
-                    style={{ position: 'absolute', width: '100%', height: Dimensions.get('window').height - normalize(70) }}
-                //locations={[0.5, 0.7]}
-                /> */}
-
             <ContentLoader
                 speed={2}
-                height={35}
+                height={FONT_SIZES.large * 2}
                 width='45%'
                 style={{ borderRadius: 5, marginTop: SPACING.large, alignSelf: 'center' }}
                 backgroundColor={COLORS.grey}
@@ -283,7 +276,7 @@ const Profile = ({ toastRef }) => {
             </ContentLoader>
             <ContentLoader
                 speed={2}
-                height={35}
+                height={FONT_SIZES.large * 2}
                 width='50%'
                 style={{ borderRadius: 5, marginTop: SPACING.small, alignSelf: 'center' }}
                 backgroundColor={COLORS.grey}
@@ -293,7 +286,7 @@ const Profile = ({ toastRef }) => {
             </ContentLoader>
             <ContentLoader
                 speed={2}
-                height={35}
+                height={FONT_SIZES.large * 2}
                 width='50%'
                 style={{ borderRadius: 5, marginTop: SPACING.small, alignSelf: 'center' }}
                 backgroundColor={COLORS.grey}
@@ -306,9 +299,9 @@ const Profile = ({ toastRef }) => {
                 <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
                     <ContentLoader
                         speed={2}
-                        height={500 + SPACING.xxx_small}
+                        height={'100%'}
                         width='100%'
-                        style={{ borderRadius: 10, alignSelf: 'center' }}
+                        style={{ borderRadius: 10, alignSelf: 'center', aspectRatio: 3/4 }}
                         backgroundColor={COLORS.grey}
                         foregroundColor={COLORS.lightGrey}
                     >
@@ -319,9 +312,9 @@ const Profile = ({ toastRef }) => {
                     <View style={{ flexDirection: 'row', marginBottom: SPACING.xxx_small, flexGrow: 1 }}>
                         <ContentLoader
                             speed={2}
-                            height={500 / 2}
+                            height={'100%'}
                             width='100%'
-                            style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small }}
+                            style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small, aspectRatio: 3/4, }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
                         >
@@ -329,9 +322,9 @@ const Profile = ({ toastRef }) => {
                         </ContentLoader>
                         <ContentLoader
                             speed={2}
-                            height={500 / 2}
+                            height={'100%'}
                             width='100%'
-                            style={{ borderRadius: 10, alignSelf: 'center' }}
+                            style={{ borderRadius: 10, alignSelf: 'center', aspectRatio: 3/4, }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
                         >
@@ -341,9 +334,9 @@ const Profile = ({ toastRef }) => {
                     <View style={{ flexDirection: 'row', flexGrow: 1 }}>
                         <ContentLoader
                             speed={2}
-                            height={500 / 2}
+                            height={'100%'}
                             width='100%'
-                            style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small }}
+                            style={{ borderRadius: 10, alignSelf: 'center', marginRight: SPACING.xxx_small, aspectRatio: 3/4, }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
                         >
@@ -351,9 +344,9 @@ const Profile = ({ toastRef }) => {
                         </ContentLoader>
                         <ContentLoader
                             speed={2}
-                            height={500 / 2}
+                            height={'100%'}
                             width='100%'
-                            style={{ borderRadius: 10, alignSelf: 'center' }}
+                            style={{ borderRadius: 10, alignSelf: 'center', aspectRatio: 3/4, }}
                             backgroundColor={COLORS.grey}
                             foregroundColor={COLORS.lightGrey}
                         >
@@ -393,7 +386,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const HeaderInfo = () => (
+    const renderHeaderInfo = () => (
         <View style={{ alignItems: 'center', flex: 1 }}>
             <Text style={{ color: '#FFF', marginBottom: SPACING.x_small, marginHorizontal: SPACING.xx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, }}>
                 {data.name}
@@ -406,15 +399,15 @@ const Profile = ({ toastRef }) => {
                 <Text onPress={() => console.log('')} style={{ marginRight: SPACING.xx_small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
                     {data.phone}
                 </Text>
-                <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                {data.whatsapp && <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#108a0c', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                     <FontAwesome5 name="whatsapp" size={18} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
+                </TouchableOpacity>}
+               {data.viber && <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#7d3daf', borderRadius: '50%', marginRight: SPACING.xxx_small, alignItems: 'center', justifyContent: 'center' }}>
                     <FontAwesome5 name="viber" size={18} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+                </TouchableOpacity>}
+                {data.telegram && <TouchableOpacity style={{ padding: 5, width: 28, height: 28, backgroundColor: '#38a5e4', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
                     <EvilIcons name="sc-telegram" size={22} color="white" />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
             {data.website && <View style={{ flexDirection: 'row', marginBottom: SPACING.xx_small, alignItems: 'center' }}>
                 <MaterialCommunityIcons name="web" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
@@ -431,7 +424,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const PhotosGrid = useCallback(() => (
+    const renderPhotosGrid = () => (
         <>
             <View style={{ flexDirection: 'row', }}>
                 <Animated.View 
@@ -459,11 +452,6 @@ const Profile = ({ toastRef }) => {
                 </Animated.View>
                 <View style={{ flexDirection: 'column', width: '50%', flexShrink: 1 }}>
                     <Animated.View
-                        /*transition={{
-                            type: 'timing',
-                            duration: 300,
-                        }}
-                        delay={20}*/
                         style={rightPhotosAnimatedStyle1}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
@@ -498,11 +486,6 @@ const Profile = ({ toastRef }) => {
                         </HoverableView>
                     </Animated.View>
                     <Animated.View
-                        /*transition={{
-                            type: 'timing',
-                            duration: 300,
-                        }}
-                        delay={40}*/
                         style={rightPhotosAnimatedStyle2}
                     >
                         <HoverableView hoveredOpacity={0.8} style={{ flex: 1, marginRight: SPACING.xxx_small, }}>
@@ -558,9 +541,9 @@ const Profile = ({ toastRef }) => {
                 </TouchableOpacity>
             </View>
         </>
-    ), [images, videos])
+    )
 
-    const CoverPhoto = useCallback(() => (
+    const renderCoverPhoto = () => (
         <>
             <Animated.View
                 style={coverPhotoAnimatedStyle}
@@ -601,9 +584,9 @@ const Profile = ({ toastRef }) => {
                 </TouchableOpacity>
             </View>
         </>
-    ), [images, videos])
+    )
 
-    const About = () => (
+    const renderAbout = () => (
         <View style={[styles.section, { marginTop: SPACING.xxx_large }]}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -643,7 +626,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const PersonalDetails = () => (
+    const renderPersonalDetails = () => (
         <View style={[styles.section, { paddingHorizontal: 0 }]}>
             <Text style={[styles.sectionHeaderText, { marginLeft: SPACING.small }]}>
                 Personal Details
@@ -717,7 +700,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const Services = () => (
+    const renderServices = () => (
         <View style={styles.section}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -738,7 +721,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const WorkingHours = () => {
+    const renderWorkingHours = () => {
         const todaysDay = new Date().toLocaleString('en-us', {weekday:'long'}).toLowerCase()
         const todaysWorkingHours = data.workingHours.find(workingHours => workingHours.day === todaysDay)
 
@@ -832,7 +815,7 @@ const Profile = ({ toastRef }) => {
         )
     }
 
-    const Pricing = () => {
+    const renderPricing = () => {
         if (data.prices.length === 0) {
             return null
         }
@@ -884,7 +867,7 @@ const Profile = ({ toastRef }) => {
         )
     }
 
-    const Address = () => (
+    const renderAddress = () => (
         <View style={styles.section}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
@@ -1064,7 +1047,7 @@ const Profile = ({ toastRef }) => {
     }
 
     if (loading) {
-        return <Skeleton />
+        return renderSkeleton()
     }
 
     return (
@@ -1077,23 +1060,23 @@ const Profile = ({ toastRef }) => {
             />
 
             <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, padding: SPACING.large }}>
-                <HeaderInfo />
+                {renderHeaderInfo()}
 
-                {data.accountType === 'lady' && <PhotosGrid />}
+                {data.accountType === 'lady' && renderPhotosGrid()}
 
-                {data.accountType === 'establishment' && <CoverPhoto />}
+                {data.accountType === 'establishment' && renderCoverPhoto()}
 
-                <About />
+                {renderAbout()}
 
-                {data.accountType === 'lady' && <PersonalDetails />}
+                {data.accountType === 'lady' && renderPersonalDetails()}
 
-                {data.accountType === 'lady' && <Pricing />}
+                {data.accountType === 'lady' && renderPricing()}
 
-                {data.accountType === 'lady' && <Services />}
+                {data.accountType === 'lady' && renderServices()}
 
-                <WorkingHours />
+                {renderWorkingHours()}
 
-                <Address />
+                {renderAddress()}
 
                 {data.accountType === 'establishment' && renderLadiesUnderEstablishment()}
             </View>

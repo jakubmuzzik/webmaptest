@@ -253,7 +253,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
         
     }, [params.language, ladyData])
 
-    const SkeletonLoader = () => (
+    const renderSkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
             <View style={{ marginHorizontal: SPACING.large, justifyContent: 'space-between', flexDirection: 'row' }}>
                 <ContentLoader
@@ -321,7 +321,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
     )
 
     if (ladyData === null) {
-        return <SkeletonLoader />
+        return renderSkeletonLoader()
     }
 
     return (

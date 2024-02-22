@@ -192,7 +192,7 @@ const Account = ({ navigation, route, currentUser={}, toastRef, updateCurrentUse
         }
     }
 
-    const AccountMessages = useCallback(() => {
+    const renderAccountMessages = () => {
         if (index !== 0) {
             return null
         }
@@ -267,9 +267,9 @@ const Account = ({ navigation, route, currentUser={}, toastRef, updateCurrentUse
         } else {
             return null
         }
-    }, [index, params.language, currentUser])
+    }
 
-    const SkeletonLoader = () => (
+    const renderSkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
             <View style={{ marginHorizontal: SPACING.large, justifyContent: 'space-between', flexDirection: 'row' }}>
                 <ContentLoader
@@ -374,10 +374,10 @@ const Account = ({ navigation, route, currentUser={}, toastRef, updateCurrentUse
                     </AnimatePresence>
                 </View>
 
-                {Object.keys(currentUser).length > 0 && <AccountMessages />}
+                {Object.keys(currentUser).length > 0 && renderAccountMessages()}
             </View>
 
-            {Object.keys(currentUser).length === 0 && <SkeletonLoader />}
+            {Object.keys(currentUser).length === 0 && renderSkeletonLoader()}
 
             {Object.keys(currentUser).length > 0 && (
                 <TabView

@@ -44,7 +44,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
         )
     }
 
-    const Actions = () => {
+    const renderActions = () => {
         if (!showActions) {
             return null
         }
@@ -84,7 +84,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
         }
     }
 
-    const Poster = () => (
+    const renderPoster = () => (
         <View style={{ 
             width: '100%',
             height: undefined,
@@ -126,9 +126,9 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />}
-            {!isBrowser && showPoster && <Poster />}
+            {!isBrowser && showPoster && renderPoster()}
 
-            <Actions />
+            {renderActions()}
         </>
     )
 }

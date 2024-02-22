@@ -130,7 +130,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
         )
     }
 
-    const Skeleton = () => {
+    const renderSkeleton = () => {
         return new Array(MAX_ITEMS_PER_PAGE).fill(null, 0).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
@@ -184,7 +184,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                 {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && <Skeleton />}
+                    {isLoading && renderSkeleton()}
                     {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>

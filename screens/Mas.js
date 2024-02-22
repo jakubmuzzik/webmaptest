@@ -133,7 +133,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
         )
     }
 
-    const Skeleton = () => {
+    const renderSkeleton = () => {
         return new Array(MAX_ITEMS_PER_PAGE).fill(null, 0).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
@@ -186,7 +186,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                 {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && <Skeleton />}
+                    {isLoading && renderSkeleton()}
                     {!isLoading && masseusesData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>

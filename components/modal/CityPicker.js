@@ -104,7 +104,7 @@ const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
 
     const Spacer = ({ height = 16 }) => <View style={{ height }} />
 
-    const MotiSkeleton = () => (
+    const renderMotiSkeleton = () => (
         <View
             style={{ flex: 1, paddingHorizontal: SPACING.small, paddingVertical: SPACING.small }}
         >
@@ -149,7 +149,7 @@ const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
                         <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small }}>
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>{labels.SELECT_CITY}</Text>
 
-                            {!cities && <MotiSkeleton />}
+                            {!cities && renderMotiSkeleton()}
                             {cities && <>
                                 <HoverableView style={{ ...styles.searchWrapper, borderRadius: 10, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.small }} hoveredBackgroundColor='#FFF' backgroundColor='#FFF' hoveredBorderColor={COLORS.red} borderColor={searchCityBorderColor} transitionDuration='0ms'>
                                     <Ionicons name="search" size={normalize(20)} color="black" />
