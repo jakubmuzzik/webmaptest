@@ -170,7 +170,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                             }}
                             style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
                         >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{masseusesCount} ladies</Text>
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{masseusesCount} {masseusesCount === 1 ? 'Masseuse' : 'Masseuses'}</Text>
                         </MotiText>
                     )}
                 </View>

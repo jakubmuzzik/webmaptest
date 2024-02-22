@@ -153,9 +153,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                     Establishments
                 </Text>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                        {params.city ? params.city : 'Anywhere'}
-                    </Text>
+                    <SwappableText value={params.city ? params.city : establishmentCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
+
                     {!isNaN(establishmentsCount) && (
                         <MotiText
                             from={{
@@ -168,7 +167,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                             }}
                             style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
                         >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{establishmentsCount} Establishments</Text>
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{establishmentsCount} {establishmentsCount === 1 ? 'Establishment' : 'Establishments'}</Text>
                         </MotiText>
                     )}
                 </View>

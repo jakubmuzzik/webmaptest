@@ -162,7 +162,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                             }}
                             style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
                         >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} ladies</Text>
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} {ladiesCount === 1 ? 'Lady' : 'Ladies'} </Text>
                         </MotiText>
                     )}
                 </View>

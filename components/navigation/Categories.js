@@ -215,7 +215,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
                     >
                         <Ionicons style={{ paddingRight: isLargeScreen ? SPACING.xx_small : 0 }} name="md-location-sharp" size={normalize(30)} color={COLORS.red} />
                         {isLargeScreen && <View style={styles.locationWrapper__text}>
-                            <Text style={styles.locationHeader}>{params.city ? labels.CITY : labels.ANYWHERE}</Text>
+                            <Text style={styles.locationHeader}>{params.city ? labels.CITY : 'Select a city'}</Text>
                             <Text style={styles.locationValue} numberOfLines={1}>{params.city}</Text>
                         </View>}
                         <MaterialIcons style={{ paddingLeft: isLargeScreen ? SPACING.xx_small : 0 }} name="keyboard-arrow-down" size={normalize(24)} color={COLORS.red} />
