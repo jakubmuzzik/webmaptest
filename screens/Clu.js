@@ -9,16 +9,16 @@ import {
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
 import { CZECH_CITIES, ACTIVE } from '../labels'
-import RenderLady from '../components/list/RenderLady'
+import RenderEstablishment from '../components/list/RenderEstablishment'
 import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
-import { updateLadiesCount, updateLadiesData } from '../redux/actions'
+import { updateEstablishmentsCount, updateEstablishmentsData } from '../redux/actions'
 
-const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) => {
+const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmentsCount, establishentsData }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
@@ -30,17 +30,16 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
 
-    const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
+    const numberOfPages = Math.ceil(establishmentsCount / MAX_ITEMS_PER_PAGE)
     
     useEffect(() => {
-        if (!ladiesCount) {
-            console.log('ladies count init')
-            getLadiesCount()
+        if (!establishmentsCount) {
+            getEstablishmentsCount()
         }
-    }, [ladiesCount])
+    }, [establishmentsCount])
 
     useLayoutEffect(() => {
-        if (!ladiesData[params.page]) {
+        if (!establishentsData[params.page]) {
             setIsLoading(true)
             loadDataForPage()
         } else {
@@ -49,7 +48,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     }, [params.page])
 
     const loadMockDataForPage = () => {
-        updateLadiesData(new Array(MAX_ITEMS_PER_PAGE).fill({
+        updateEstablishmentsData(new Array(MAX_ITEMS_PER_PAGE).fill({
             name: 'llll',
             dateOfBirth: '25071996',
             address: {city: 'Praha'},
@@ -63,7 +62,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
             const snapshot = await getDocs(
                 query(
                     collection(db, "users"), 
-                    where('accountType', '==', 'lady'), 
+                    where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
                     orderBy("createdDate"),
                     startAt((Number(params.page) - 1) * MAX_ITEMS_PER_PAGE),
@@ -72,7 +71,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
             )
             
             if (snapshot.empty) {
-                updateLadiesData([], params.page)
+                updateEstablishmentsData([], params.page)
             } else {
                 const data = snapshot.docs.map(doc => {                    
                     return ({
@@ -81,7 +80,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                     })
                 })
 
-                updateLadiesData(data, params.page)
+                updateEstablishmentsData(data, params.page)
             }
         } catch(error) {
             console.error(error)
@@ -90,12 +89,16 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         } 
     }
 
-    const getLadiesCount = async () => {
-        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
+    const getEstablishmentsCount = async () => {
         try {
-            const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
-            updateLadiesCount(snapshot.data().count)
+            const snapshot = await getCountFromServer(
+                query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'establishment'), 
+                    where('status', '==', ACTIVE)
+                )
+            )
+            updateEstablishmentsCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
         }
@@ -134,7 +137,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
-                <RenderLady lady={data} width={cardWidth} />
+                <RenderEstablishment establishment={data} width={cardWidth} />
             </MotiView>
         )
     }
@@ -165,7 +168,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                     <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
                         {params.city ? params.city : 'Anywhere'}
                     </Text>
-                    {!isNaN(ladiesCount) && (
+                    {!isNaN(establishmentsCount) && (
                         <MotiText
                             from={{
                                 opacity: 0,
@@ -177,13 +180,13 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                             }}
                             style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
                         >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} ladies</Text>
+                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{establishmentsCount} Establishments</Text>
                         </MotiText>
                     )}
                 </View>
             </>
         )
-    }, [ladiesCount, params.city])
+    }, [establishmentsCount, params.city])
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
@@ -194,7 +197,7 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
-                    {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
+                    {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>
         </View>
@@ -202,11 +205,11 @@ const Clu = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
 }
 
 const mapStateToProps = (store) => ({
-    ladiesCount: store.appState.ladiesCount,
-    ladiesData: store.appState.ladiesData
+    establishmentsCount: store.appState.establishmentsCount,
+    establishentsData: store.appState.establishentsData
 })
 
-export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData })(Clu)
+export default connect(mapStateToProps, { updateEstablishmentsCount, updateEstablishmentsData })(Clu)
 
 const styles = StyleSheet.create({
     cardContainer: {

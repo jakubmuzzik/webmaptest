@@ -91,8 +91,6 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     }
 
     const getLadiesCount = async () => {
-        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateLadiesCount(snapshot.data().count)

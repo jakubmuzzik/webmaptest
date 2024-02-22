@@ -13,6 +13,8 @@ import { MotiText, MotiView } from "moti"
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { getDoc, doc, db } from "../firebase/config"
 import Toast from "../components/Toast"
+import { Link } from 'react-router-dom'
+import RenderLady from "../components/list/RenderLady"
 
 import Animated, {
     useSharedValue,
@@ -42,14 +44,17 @@ const Profile = ({ toastRef }) => {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState(location.state?.lady)
     const [establishmentName, setEstablishmentName] = useState()
+    const [ladiesUnderEstablishment, setLadiesUnderEstablishment] = useState()
 
     const establishmentNameRotateX = useSharedValue('90deg')
     const leftPhotoOpacity = useSharedValue(0)
+    const coverPhotoOpacity = useSharedValue(0)
     const rightPhotosOpacity1 = useSharedValue(0)
     const rightPhotosOpacity2 = useSharedValue(0)
     const leftPhotoTranslateY = useSharedValue(20)
     const rightPhotosTranslateY1 = useSharedValue(20)
     const rightPhotosTranslateY2 = useSharedValue(20)
+    const coverPhotoTranslateY = useSharedValue(20)
 
     const establishmentNameAnimatedStyle = useAnimatedStyle(() => {
         return {
@@ -57,6 +62,14 @@ const Profile = ({ toastRef }) => {
             fontSize: FONT_SIZES.large, 
             fontFamily: FONTS.medium,
             transform: [{ rotateX: establishmentNameRotateX.value }],
+        }
+    })
+
+    const coverPhotoAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            width: '100%',
+            opacity: coverPhotoOpacity.value,
+            transform: [{ translateY:coverPhotoTranslateY.value  }],
         }
     })
 
@@ -89,6 +102,18 @@ const Profile = ({ toastRef }) => {
         }
     })
 
+    useLayoutEffect(() => {
+        if (data) {
+            setLoading(false)
+
+            if (data.establishmentId) {
+                fetchEstablishmentName(data.establishmentId)
+            }
+        } else {
+            fetchUser()
+        }
+    }, [data])
+
     useEffect(() => {
         if (establishmentName) {
             establishmentNameRotateX.value = withTiming('0deg', {
@@ -98,7 +123,11 @@ const Profile = ({ toastRef }) => {
     }, [establishmentName])
 
     useEffect(() => {
-        if (!loading) {
+        if (loading || !data) {
+            return
+        }
+
+        if (data.accountType === 'lady') {
             leftPhotoOpacity.value = withTiming(1, {
                 useNativeDriver: true
             })
@@ -117,8 +146,21 @@ const Profile = ({ toastRef }) => {
             rightPhotosTranslateY2.value = withDelay(40, withTiming(0, {
                 useNativeDriver: true
             }))
+        } else {
+            coverPhotoOpacity.value = withTiming(1, {
+                useNativeDriver: true
+            })
+            coverPhotoTranslateY.value = withTiming(0, {
+                useNativeDriver: true
+            })
         }
-    }, [loading])
+    }, [loading, data])
+
+    useEffect(() => {
+        if (!photosModalVisible && !isNaN(pressedImageIndexRef.current)) {
+            pressedImageIndexRef.current = undefined
+        }
+    }, [photosModalVisible])
 
     const images = useMemo(() => {
         if (!data) {
@@ -140,25 +182,7 @@ const Profile = ({ toastRef }) => {
         return data.videos.filter(video => video.status === ACTIVE)
     }, [data])
 
-    useLayoutEffect(() => {
-        if (data) {
-            setLoading(false)
-
-            if (data.establishmentId) {
-                fetchEstablishmentName(data.establishmentId)
-            }
-        } else {
-            fetchLady()
-        }
-    }, [data])
-
-    useEffect(() => {
-        if (!photosModalVisible && !isNaN(pressedImageIndexRef.current)) {
-            pressedImageIndexRef.current = undefined
-        }
-    }, [photosModalVisible])
-
-    const fetchLady = async () => {
+    const fetchUser = async () => {
         try {
             const snapshot = await getDoc(doc(db, 'users', id))
             if (snapshot.exists()) {
@@ -170,6 +194,8 @@ const Profile = ({ toastRef }) => {
 
                 if (snapshotData.establishmentId) {
                     fetchEstablishmentName(snapshotData.establishmentId)
+                } else if (snapshotData.accountType === 'establishment') {
+                    fetchLadiesUnderEstablishment(snapshotData.id)
                 }
             }
         } catch (error) {
@@ -192,6 +218,17 @@ const Profile = ({ toastRef }) => {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    const fetchLadiesUnderEstablishment = async (establishmentId) => {
+        setTimeout(() => {
+            setLadiesUnderEstablishment(new Array(30).fill({
+                name: 'lady xxx',
+                dateOfBirth: '25071996',
+                address: {city: 'Praha'},
+                images: [{ downloadUrl: require('../assets/dummy_photo.png') }]
+            }, 0))
+        }, 1500)
     }
 
     const closeModal = () => {
@@ -361,9 +398,9 @@ const Profile = ({ toastRef }) => {
             <Text style={{ color: '#FFF', marginBottom: SPACING.x_small, marginHorizontal: SPACING.xx_small, fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, }}>
                 {data.name}
             </Text>
-            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginBottom: SPACING.xx_small }}>
+            {data.accountType === 'lady' && <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginBottom: SPACING.xx_small }}>
                 {calculateAgeFromDate(data.dateOfBirth)} years <Text style={{ color: COLORS.red }}>•</Text> {data.height} cm <Text style={{ color: COLORS.red }}>•</Text> {data.weight} kg
-            </Text>
+            </Text>}
             <View style={{ flexDirection: 'row', marginBottom: SPACING.xx_small, alignItems: 'center' }}>
                 <MaterialCommunityIcons name="phone" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text onPress={() => console.log('')} style={{ marginRight: SPACING.xx_small, fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
@@ -379,6 +416,12 @@ const Profile = ({ toastRef }) => {
                     <EvilIcons name="sc-telegram" size={22} color="white" />
                 </TouchableOpacity>
             </View>
+            {data.website && <View style={{ flexDirection: 'row', marginBottom: SPACING.xx_small, alignItems: 'center' }}>
+                <MaterialCommunityIcons name="web" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                    {data.website}
+                </Text>
+            </View>}
             <View style={{ flexDirection: 'row', marginBottom: SPACING.medium, alignItems: 'center' }}>
                 <MaterialCommunityIcons name="map-marker" size={20} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
@@ -388,7 +431,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const Photos = useCallback(() => (
+    const PhotosGrid = useCallback(() => (
         <>
             <View style={{ flexDirection: 'row', }}>
                 <Animated.View 
@@ -517,14 +560,60 @@ const Profile = ({ toastRef }) => {
         </>
     ), [images, videos])
 
+    const CoverPhoto = useCallback(() => (
+        <>
+            <Animated.View
+                style={coverPhotoAnimatedStyle}
+            >
+                <HoverableView hoveredOpacity={0.8}>
+                    <TouchableOpacity onPress={() => onImagePress(0)}>
+                        <Image
+                            style={{
+                                aspectRatio: 16 / 9,
+                                width: 'auto',
+                                borderRadius: 10
+                            }}
+                            source={images[0].downloadUrl}
+                            placeholder={images[0].blurhash}
+                            resizeMode="cover"
+                            transition={200}
+                        />
+                    </TouchableOpacity>
+                </HoverableView>
+            </Animated.View>
+
+            <View style={{ alignSelf: 'center', flexDirection: 'row', marginTop: SPACING.small }}>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                    {Object.keys(images).length} {Object.keys(images).length > 1 ? 'photos' : 'photo'}
+                </Text>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
+                    |
+                </Text>
+                {videos.length > 0 && <><Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText }}>
+                    {videos.length} {videos.length > 1 ? 'videos' : 'video'}
+                </Text>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: COLORS.greyText, marginHorizontal: SPACING.xx_small }}>
+                        |
+                    </Text></>}
+                <TouchableOpacity onPress={() => setPhotosModalVisible(true)} style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: '#FFF', marginRight: 4 }}>View all</Text>
+                    <MaterialCommunityIcons name="dots-grid" size={20} color="white" />
+                </TouchableOpacity>
+            </View>
+        </>
+    ), [images, videos])
+
     const About = () => (
         <View style={[styles.section, { marginTop: SPACING.xxx_large }]}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: SPACING.small }}>
                 <Text style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
                     About
                 </Text>
-                {!data.establishmentId && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                {!data.establishmentId && data.accountType === 'lady' && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
                     • Independent lady
+                </Text>}
+                {data.establishmentType && <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium }}>
+                    • {data.establishmentType}
                 </Text>}
                 {data.establishmentId && establishmentName && (
                     <Animated.Text
@@ -850,6 +939,130 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
+    const LadiesUnderEstablishment = () => {
+        if (!ladiesUnderEstablishment) {
+            return (
+                <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
+                    <ContentLoader
+                        speed={2}
+                        height={35}
+                        width='45%'
+                        style={{ borderRadius: 5, marginTop: SPACING.large, alignSelf: 'center' }}
+                        backgroundColor={COLORS.grey}
+                        foregroundColor={COLORS.lightGrey}
+                    >
+                        <Rect x="0" y="0" rx="0" ry="0" width="100%" height={35} />
+                    </ContentLoader>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: SPACING.medium }}>
+                        <View style={{ width: 150, aspectRatio: 3/4, borderRadius: 10 }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center',}}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                        <View style={{ width: 150, aspectRatio: 3/4, marginLeft: SPACING.large }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center' }}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                        <View style={{ width: 150, marginLeft: SPACING.large, aspectRatio: 3/4 }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center' }}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                        <View style={{ width: 150, marginLeft: SPACING.large, aspectRatio: 3/4 }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center' }}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                        <View style={{ width: 150, marginLeft: SPACING.large, aspectRatio: 3/4 }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center' }}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                        <View style={{ width: 150, marginLeft: SPACING.large, aspectRatio: 3/4 }}>
+                            <ContentLoader
+                                speed={2}
+                                height={'100%'}
+                                width='100%'
+                                style={{ borderRadius: 10, alignSelf: 'center' }}
+                                backgroundColor={COLORS.grey}
+                                foregroundColor={COLORS.lightGrey}
+                            >
+                                <Rect x="0" y="0" rx="0" ry="0" width="100%" height={'100%'} />
+                            </ContentLoader>
+                        </View>
+                    </ScrollView>
+                </View>
+            )
+        }
+
+        if (ladiesUnderEstablishment.length === 0) {
+            return null
+        }
+
+        return (
+            <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
+                <MotiText 
+                    style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h2, color: '#FFF', marginBottom: SPACING.medium, textAlign: 'center' }}
+                    from={{
+                        opacity: 0,
+                        transform: [{ translateY: -20 }],
+                    }}
+                    animate={{
+                        opacity: 1,
+                        transform: [{ translateY: 0 }],
+                    }}
+                    transition={{
+                        type: 'timing'
+                    }}
+                >
+                    Ladies in {data.name}
+                </MotiText> 
+
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {ladiesUnderEstablishment.map((data, index) => <View key={data.id} style={{ marginLeft: index === 0 ? 0 : SPACING.large, width: 150 }}>
+                        <RenderLady lady={data} width={150} delay={index * 20} />
+                    </View>)}
+                </ScrollView>
+            </View>
+        )
+    }
+
     if (loading) {
         return <Skeleton />
     }
@@ -866,19 +1079,23 @@ const Profile = ({ toastRef }) => {
             <View style={{ alignSelf: 'center', maxWidth: '100%', width: 800 + SPACING.xxx_small, padding: SPACING.large }}>
                 <HeaderInfo />
 
-                <Photos />
+                {data.accountType === 'lady' && <PhotosGrid />}
+
+                {data.accountType === 'establishment' && <CoverPhoto />}
 
                 <About />
 
-                <PersonalDetails />
+                {data.accountType === 'lady' && <PersonalDetails />}
 
-                <Pricing />
+                {data.accountType === 'lady' && <Pricing />}
 
-                <Services />
+                {data.accountType === 'lady' && <Services />}
 
                 <WorkingHours />
 
                 <Address />
+
+                <LadiesUnderEstablishment />
             </View>
 
             <AssetsTabView visible={photosModalVisible} pressedAssetIndex={pressedImageIndexRef.current} images={Object.values(images)} videos={videos} closeModal={closeModal} />
