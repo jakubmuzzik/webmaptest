@@ -279,7 +279,7 @@ const Header = ({ logOut, toastRef }) => {
                                         activeOpacity={0.8}
                                     >
                                         <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}>
-                                            {labels.SIGN_UP}
+                                            Join us
                                         </Text>
                                     </TouchableOpacity>
                                 </HoverableView>
@@ -421,13 +421,13 @@ const Header = ({ logOut, toastRef }) => {
                 </HoverableView>}
                 <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
                     <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.xx_small }}>
-                        {getAuth().currentUser ? (
+                        {getAuth().currentUser && <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red, paddingRight: SPACING.xxx_small }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />}
+                        {/* {getAuth().currentUser ? (
                             <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />
                         ) : (
                             <Ionicons name="person-circle-outline" size={normalize(28)} color="white" />
-                        )}
-                        
-                        <MaterialIcons style={{ paddingLeft: SPACING.xxx_small }} name="menu" size={normalize(20)} color="white" />
+                        )} */}
+                        <MaterialIcons name="menu" size={normalize(20)} color="white" />
                     </TouchableOpacity>
                 </HoverableView>
             </>
@@ -450,7 +450,7 @@ const Header = ({ logOut, toastRef }) => {
                             //end={{ x: 1, y: 0.5 }}
                             />
                             <TouchableOpacity onPress={onSignUpPress} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: SPACING.x_small, paddingVertical: SPACING.xx_small }}>
-                                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Sign up</Text>
+                                <Text style={{ color: '#FFF', fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium }}>Join us</Text>
                             </TouchableOpacity>
                         </HoverableView>
                         <HoverableView hoveredOpacity={0.8} style={{ justifyContent: 'center' }}>
