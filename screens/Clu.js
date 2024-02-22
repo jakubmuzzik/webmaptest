@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { CZECH_CITIES, ACTIVE } from '../labels'
+import { ACTIVE } from '../labels'
 import RenderEstablishment from '../components/list/RenderEstablishment'
 import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'

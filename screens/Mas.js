@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { CZECH_CITIES, ACTIVE, MASSAGE_SERVICES } from '../labels'
+import { ACTIVE, MASSAGE_SERVICES } from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { normalize, getParam } from '../utils'
 import { MOCK_DATA } from '../constants'

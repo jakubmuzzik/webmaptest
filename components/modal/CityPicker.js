@@ -12,7 +12,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
 import { normalize, getParam } from '../../utils'
 import {
-    CZECH_CITIES,
     CZECH,
     CITY,
     SELECT_CITY,

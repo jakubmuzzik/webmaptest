@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { normalize, stripEmptyParams, getParam } from '../../utils'
 import { SUPPORTED_LANGUAGES } from '../../constants'
-import { CZECH_CITIES, CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
+import { CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
 import { Badge } from 'react-native-paper'
 
 import HoverableView from '../../components/HoverableView'

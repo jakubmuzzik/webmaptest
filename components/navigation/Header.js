@@ -23,7 +23,6 @@ import {
 } from '../../constants'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import {
-    CZECH_CITIES,
     SEARCH,
     SIGN_IN,
     SIGN_UP,
@@ -55,7 +54,8 @@ const Header = ({ logOut, toastRef }) => {
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), '')
+        //on purpose
+        city: searchParams.get('city')
     }), [searchParams])
 
     const labels = useMemo(() => translateLabels(params.language, [
