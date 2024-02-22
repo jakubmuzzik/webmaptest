@@ -34,7 +34,7 @@ import { Skeleton } from 'moti/skeleton'
 
 const window = Dimensions.get('window')
 
-const CityPicker = ({ visible, setVisible, searchParams, params, routeName, cities }) => {
+const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
         CITY,
@@ -166,7 +166,8 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName, citi
                                     <Ionicons onPress={() => onCitySearch('')} style={{ opacity: citySearch ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
                                 </HoverableView>
 
-                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} searchParams={searchParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                                <RenderCity routeName={routeName} params={params} iconName={params.city ? 'radio-button-unchecked' : 'radio-button-checked'} iconColor={params.city ? 'grey' : COLORS.red} />
+                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} params={params} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                             </>
                             }
                         </Animated.ScrollView>

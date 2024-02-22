@@ -17,15 +17,16 @@ import { getCountFromServer, db, collection, query, where, startAt, limit, order
 import { updateMasseusesCount, updateMasseusesData } from '../redux/actions'
 import { MotiView, MotiText } from 'moti'
 import { connect } from 'react-redux'
+import SwappableText from '../components/animated/SwappableText'
 
-const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData }) => {
+const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData, ladyCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), ''),
+        city: getParam(ladyCities, searchParams.get('city'), ''),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
-    }), [searchParams])
+    }), [searchParams, ladyCities])
 
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
@@ -42,7 +43,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     useLayoutEffect(() => {
         if (!masseusesData[params.page]) {
             setIsLoading(true)
-            loadMockDataForPage()
+            loadDataForPage()
         } else {
             setIsLoading(false)
         }
@@ -123,25 +124,12 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
 
     const renderCard = (data, index) => {
         return (
-            <MotiView
-                from={{
-                    opacity: 0,
-                    transform: [{ translateY: 10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                transition={{
-                    type: 'timing',
-                    duration: 300,
-                }}
-                delay={index * 20}
+            <View
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
-                <RenderLady lady={data} width={cardWidth} />
-            </MotiView>
+                <RenderLady lady={data} width={cardWidth} delay={index * 20}/>
+            </View>
         )
     }
 
@@ -161,16 +149,15 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
         ))
     }
 
-    const AnimatedHeaderText = useCallback(() => {
+    const animatedHeaderText = () => {
         return (
             <>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
                     Massages
                 </Text>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                        {params.city ? params.city : 'Anywhere'}
-                    </Text>
+                    <SwappableText value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
+
                     {!isNaN(masseusesCount) && (
                         <MotiText
                             from={{
@@ -189,14 +176,14 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                 </View>
             </>
         )
-    }, [masseusesCount, params.city])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
            <View style={{ marginLeft: SPACING.large }}>
-                <AnimatedHeaderText />
+                {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
@@ -209,7 +196,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
 
 const mapStateToProps = (store) => ({
     masseusesCount: store.appState.masseusesCount,
-    masseusesData: store.appState.masseusesData
+    masseusesData: store.appState.masseusesData,
+    ladyCities: store.appState.ladyCities,
 })
 
 export default connect(mapStateToProps, { updateMasseusesCount, updateMasseusesData })(Mas)

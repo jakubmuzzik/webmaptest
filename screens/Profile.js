@@ -939,7 +939,7 @@ const Profile = ({ toastRef }) => {
         </View>
     )
 
-    const LadiesUnderEstablishment = () => {
+    const renderLadiesUnderEstablishment = () => {
         if (!ladiesUnderEstablishment) {
             return (
                 <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
@@ -1095,7 +1095,7 @@ const Profile = ({ toastRef }) => {
 
                 <Address />
 
-                <LadiesUnderEstablishment />
+                {data.accountType === 'establishment' && renderLadiesUnderEstablishment()}
             </View>
 
             <AssetsTabView visible={photosModalVisible} pressedAssetIndex={pressedImageIndexRef.current} images={Object.values(images)} videos={videos} closeModal={closeModal} />

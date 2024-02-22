@@ -17,15 +17,16 @@ import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
 import { updateEstablishmentsCount, updateEstablishmentsData } from '../redux/actions'
+import SwappableText from '../components/animated/SwappableText'
 
-const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmentsCount, establishentsData }) => {
+const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmentsCount, establishentsData, establishmentCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), ''),
+        city: getParam(establishmentCities, searchParams.get('city'), ''),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
-    }), [searchParams])
+    }), [searchParams, establishmentCities])
 
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
@@ -120,25 +121,12 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
 
     const renderCard = (data, index) => {
         return (
-            <MotiView
-                from={{
-                    opacity: 0,
-                    transform: [{ translateY: 10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                transition={{
-                    type: 'timing',
-                    duration: 300,
-                }}
-                delay={index * 20}
+            <View
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
                 <RenderEstablishment establishment={data} width={cardWidth} />
-            </MotiView>
+            </View>
         )
     }
 
@@ -158,7 +146,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
         ))
     }
 
-    const AnimatedHeaderText = useCallback(() => {
+    const animatedHeaderText = () => {
         return (
             <>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
@@ -186,14 +174,14 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                 </View>
             </>
         )
-    }, [establishmentsCount, params.city])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>
-                <AnimatedHeaderText />
+                {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && <Skeleton />}
@@ -206,7 +194,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
 
 const mapStateToProps = (store) => ({
     establishmentsCount: store.appState.establishmentsCount,
-    establishentsData: store.appState.establishentsData
+    establishentsData: store.appState.establishentsData,
+    establishmentCities: store.appState.establishmentCities
 })
 
 export default connect(mapStateToProps, { updateEstablishmentsCount, updateEstablishmentsData })(Clu)
