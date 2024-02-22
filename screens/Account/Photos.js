@@ -264,7 +264,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         }
     ]
 
-    const PhotosGrid = ({ photos }) => (
+    const renderPhotosGrid = (photos) => (
         <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
             <View style={{ width: '50%', flexShrink: 1, marginRight: SPACING.xxx_small, }}>
                 {photos[0] ? <><Image
@@ -450,7 +450,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         </View>
     )
 
-    const CoverPhoto = ({ photo }) => (
+    const renderCoverPhoto = (photo ) => (
         <View style={{ flexDirection: 'row', marginHorizontal: SPACING.small, marginBottom: SPACING.small }}>
             {photo ?
                 <React.Fragment>
@@ -487,7 +487,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         </View>
     )
 
-    const AdditionalPhotos = ({ images, actions, showActions = true }) => {
+    const renderAdditionalPhotos = (images, actions, showActions = true) => {
         if (!images?.length) {
             return null
         }
@@ -502,7 +502,7 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
         )
     }
 
-    const Active = useCallback(() => {
+    const renderActive = () => {
         const photos = (
             (userData.status === ACTIVE || userData.status === INACTIVE)
                 ? data.active.slice(0, userData.accountType === 'establishment' ? 1 : 5) 
@@ -548,14 +548,14 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                         </Text>
                     </View>
                 </>}
-                {userData.accountType === 'establishment' && <CoverPhoto photo={photos[0]} />}
-                {userData.accountType === 'lady' && <PhotosGrid photos={photos} />}
-                <AdditionalPhotos images={data.active.slice(userData.accountType === 'establishment' ? 1 : 5)} actions={activeImageActions} />
+                {userData.accountType === 'establishment' && renderCoverPhoto(photos[0])}
+                {userData.accountType === 'lady' && renderPhotosGrid(photos)}
+                {renderAdditionalPhotos(data.active.slice(userData.accountType === 'establishment' ? 1 : 5), activeImageActions)}
             </View>
         )
-    }, [userData, sectionWidth, data])
+    }
 
-    const InReview = useCallback(() => {
+    const renderInReview = () => {
         if (data.inReview.length === 0) {
             return null
         }
@@ -577,13 +577,13 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
                             No photos in review
                         </Text>
-                        : <AdditionalPhotos images={data.inReview} actions={pendingImageActions} showActions={userData.status !== IN_REVIEW} />
+                        : renderAdditionalPhotos(data.inReview, pendingImageActions, userData.status !== IN_REVIEW)
                 }
             </View>
         )
-    }, [sectionWidth, userData, data])
+    }
 
-    const Rejected = useCallback(() => {
+    const renderRejected = () => {
         if (data.rejected.length === 0) {
             return null
         }
@@ -600,16 +600,16 @@ const Photos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateCu
                     </Text>
                 </View>
 
-                <AdditionalPhotos images={data.rejected} actions={rejectedImageActions} />
+                {renderAdditionalPhotos(data.rejected, rejectedImageActions)}
             </View>
         )
-    }, [sectionWidth, userData, data])
+    }
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {(userData.status === ACTIVE || userData.status === REJECTED || userData.status === INACTIVE) && <Active />}
-            {userData.status !== REJECTED && <InReview />}
-            <Rejected />
+            {(userData.status === ACTIVE || userData.status === REJECTED || userData.status === INACTIVE) && renderActive()}
+            {userData.status !== REJECTED && renderInReview()}
+            {renderRejected()}
 
             {uploading && (
                 <Modal transparent>

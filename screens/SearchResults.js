@@ -70,7 +70,7 @@ const SearchResults = () => {
         )
     }
 
-    const SkeletonLoader = () => (
+    const renderSkeletonLoader = () => (
         <>
             <ContentLoader
                 speed={2}
@@ -112,7 +112,7 @@ const SearchResults = () => {
         </>
     )
 
-    const Content = () => (
+    const renderContent = () => (
         <>
             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF' }}>
                 Search results for: {params.query}
@@ -132,9 +132,9 @@ const SearchResults = () => {
 
     return (
         <View onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)} style={{ backgroundColor: COLORS.lightBlack, flex: 1, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }}>
-            {isLoading && <SkeletonLoader />}
+            {isLoading && renderSkeletonLoader()}
 
-            {!isLoading && <Content />}
+            {!isLoading && renderContent()}
         </View>
     )
 }

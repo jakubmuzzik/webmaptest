@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import { normalize, stripEmptyParams, getParam } from '../../utils'
 import { SUPPORTED_LANGUAGES } from '../../constants'
-import { CZECH_CITIES, CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
+import { CITY, ANYWHERE, SELECT_CITY, SEARCH, CZECH, translateLabels } from '../../labels'
 import { Badge } from 'react-native-paper'
 
 import HoverableView from '../../components/HoverableView'
@@ -50,8 +50,9 @@ const Categories = ({ ladyCities, establishmentCities }) => {
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(cities, searchParams.get('city'), '')
-    }), [searchParams, cities])
+        city: getParam(cities, searchParams.get('city'), ''),
+        page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
+    }), [searchParams, ladyCities])
 
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
@@ -243,7 +244,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
             </View>
 
             <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} params={params} />
-            <CityPicker visible={locationModalVisible} cities={cities} setVisible={setLocationModalVisible} searchParams={searchParams} params={params} routeName={routeName} />
+            <CityPicker visible={locationModalVisible} cities={cities} setVisible={setLocationModalVisible} params={params} routeName={routeName} />
         </View>
     )
 }

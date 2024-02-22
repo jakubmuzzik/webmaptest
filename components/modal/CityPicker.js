@@ -12,7 +12,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
 import { normalize, getParam } from '../../utils'
 import {
-    CZECH_CITIES,
     CZECH,
     CITY,
     SELECT_CITY,
@@ -34,7 +33,7 @@ import { Skeleton } from 'moti/skeleton'
 
 const window = Dimensions.get('window')
 
-const CityPicker = ({ visible, setVisible, searchParams, params, routeName, cities }) => {
+const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
         CITY,
@@ -105,7 +104,7 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName, citi
 
     const Spacer = ({ height = 16 }) => <View style={{ height }} />
 
-    const MotiSkeleton = () => (
+    const renderMotiSkeleton = () => (
         <View
             style={{ flex: 1, paddingHorizontal: SPACING.small, paddingVertical: SPACING.small }}
         >
@@ -150,7 +149,7 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName, citi
                         <Animated.ScrollView scrollEventThrottle={1} onScroll={scrollHandler} style={{ flex: 1, zIndex: 1 }} contentContainerStyle={{ paddingBottom: SPACING.small }}>
                             <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginTop: SPACING.xxxxx_large, marginHorizontal: SPACING.small }}>{labels.SELECT_CITY}</Text>
 
-                            {!cities && <MotiSkeleton />}
+                            {!cities && renderMotiSkeleton()}
                             {cities && <>
                                 <HoverableView style={{ ...styles.searchWrapper, borderRadius: 10, marginVertical: SPACING.xx_small, marginHorizontal: SPACING.small }} hoveredBackgroundColor='#FFF' backgroundColor='#FFF' hoveredBorderColor={COLORS.red} borderColor={searchCityBorderColor} transitionDuration='0ms'>
                                     <Ionicons name="search" size={normalize(20)} color="black" />
@@ -166,7 +165,8 @@ const CityPicker = ({ visible, setVisible, searchParams, params, routeName, citi
                                     <Ionicons onPress={() => onCitySearch('')} style={{ opacity: citySearch ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
                                 </HoverableView>
 
-                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} searchParams={searchParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                                <RenderCity routeName={routeName} params={params} iconName={params.city ? 'radio-button-unchecked' : 'radio-button-checked'} iconColor={params.city ? 'grey' : COLORS.red} />
+                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} params={params} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                             </>
                             }
                         </Animated.ScrollView>

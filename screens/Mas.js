@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { CZECH_CITIES, ACTIVE } from '../labels'
+import { ACTIVE, MASSAGE_SERVICES } from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { normalize, getParam } from '../utils'
 import { MOCK_DATA } from '../constants'
@@ -17,15 +17,16 @@ import { getCountFromServer, db, collection, query, where, startAt, limit, order
 import { updateMasseusesCount, updateMasseusesData } from '../redux/actions'
 import { MotiView, MotiText } from 'moti'
 import { connect } from 'react-redux'
+import SwappableText from '../components/animated/SwappableText'
 
-const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData }) => {
+const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData, ladyCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), ''),
+        city: getParam(ladyCities, searchParams.get('city'), ''),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
-    }), [searchParams])
+    }), [searchParams, ladyCities])
 
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
@@ -42,7 +43,7 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     useLayoutEffect(() => {
         if (!masseusesData[params.page]) {
             setIsLoading(true)
-            loadMockDataForPage()
+            loadDataForPage()
         } else {
             setIsLoading(false)
         }
@@ -91,10 +92,16 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }
 
     const getMasseusesCount = async () => {
-        updateMasseusesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
         try {
-            const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
+            const snapshot = await getCountFromServer(
+                query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'lady'), 
+                    where('status', '==', ACTIVE),
+                    where('services', 'in', MASSAGE_SERVICES)
+                )
+            )
+            console.log(snapshot.data())
             updateMasseusesCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
@@ -117,29 +124,16 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
 
     const renderCard = (data, index) => {
         return (
-            <MotiView
-                from={{
-                    opacity: 0,
-                    transform: [{ translateY: 10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                transition={{
-                    type: 'timing',
-                    duration: 300,
-                }}
-                delay={index * 20}
+            <View
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
-                <RenderLady lady={data} width={cardWidth} />
-            </MotiView>
+                <RenderLady lady={data} width={cardWidth} delay={index * 20}/>
+            </View>
         )
     }
 
-    const Skeleton = () => {
+    const renderSkeleton = () => {
         return new Array(MAX_ITEMS_PER_PAGE).fill(null, 0).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
@@ -155,17 +149,16 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
         ))
     }
 
-    const AnimatedHeaderText = useCallback(() => {
+    const animatedHeaderText = () => {
         return (
             <>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
                     Massages
                 </Text>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                        {params.city ? params.city : 'Anywhere'}
-                    </Text>
-                    {masseusesCount && (
+                    <SwappableText value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
+
+                    {!isNaN(masseusesCount) && (
                         <MotiText
                             from={{
                                 opacity: 0,
@@ -183,17 +176,17 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                 </View>
             </>
         )
-    }, [masseusesCount, params.city])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
            <View style={{ marginLeft: SPACING.large }}>
-                <AnimatedHeaderText />
+                {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && <Skeleton />}
+                    {isLoading && renderSkeleton()}
                     {!isLoading && masseusesData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>
@@ -203,7 +196,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
 
 const mapStateToProps = (store) => ({
     masseusesCount: store.appState.masseusesCount,
-    masseusesData: store.appState.masseusesData
+    masseusesData: store.appState.masseusesData,
+    ladyCities: store.appState.ladyCities,
 })
 
 export default connect(mapStateToProps, { updateMasseusesCount, updateMasseusesData })(Mas)

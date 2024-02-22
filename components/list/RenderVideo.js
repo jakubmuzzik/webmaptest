@@ -42,7 +42,7 @@ const RenderVideo = ({ video }) => {
         )
     }
     
-    const Poster = () => (
+    const renderPoster = () => (
         <View style={{ 
             width: '100%',
             height: undefined,
@@ -84,7 +84,7 @@ const RenderVideo = ({ video }) => {
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />
-            {!isBrowser && showPoster &&  <Poster />}
+            {!isBrowser && showPoster && renderPoster()}
         </>
     )
 }

@@ -36,36 +36,6 @@ export const TRINEC = 'Třinec'
 export const USTI = 'Ústí nad Labem'
 export const ZLIN = 'Zlín'
 
-
-export const CZECH_CITIES = [
-    BRNO,
-    CESKE_BUDEJOVICE,
-    CHOMUTOV,
-    DECIN,
-    HAVIROV,
-    HRADEC_KRALOVE,
-    JABLONEC,
-    JIHLAVA,
-    KARLOVY,
-    KARVINA,
-    KLADNO,
-    LIBEREC,
-    MLADA_BOLESLAV,
-    MOST,
-    OLOMOUC,
-    OPAVA,
-    OSTRAVA,
-    PARDUBICE,
-    PLZEN,
-    PRAGUE,
-    PREROV,
-    PROSTEJOV,
-    TEPLICE,
-    TRINEC,
-    USTI,
-    ZLIN
-]
-
 //LABELS
 export const CZECH = 'CZECH'
 export const HOME = 'HOME' 

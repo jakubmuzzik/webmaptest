@@ -251,7 +251,7 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateLa
 
     }
 
-    const Active = useCallback(() => (
+    const renderActive = () => (
         <View style={styles.section}>
             <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
@@ -284,9 +284,9 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateLa
                     : renderVideos(data.active, activeActions)
             }
         </View>
-    ), [sectionWidth, data, userData])
+    )
 
-    const InReview = useCallback(() => {
+    const renderInReview = () => {
         if (data.inReview.length === 0) {
             return null
         }
@@ -312,9 +312,9 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateLa
                 }
             </View>
         )
-    }, [data, sectionWidth, userData])
+    }
 
-    const Rejected = useCallback(() => {
+    const renderRejected = () => {
         if (data.rejected.length === 0) {
             return null
         }
@@ -334,13 +334,13 @@ const Videos = ({ index, setTabHeight, offsetX = 0, userData, toastRef, updateLa
                 {renderVideos(data.rejected, rejectedActions)}
             </View>
         )
-    }, [data, sectionWidth, userData])
+    }
 
     return (
         <View style={{ paddingBottom: SPACING.large }} onLayout={onLayout}>
-            {userData.status !== IN_REVIEW && <Active />}
-            <InReview />
-            <Rejected />
+            {userData.status !== IN_REVIEW && renderActive()}
+            {renderInReview()}
+            {renderRejected()}
 
             {uploading && (
                 <Modal transparent>

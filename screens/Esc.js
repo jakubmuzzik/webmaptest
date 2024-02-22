@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { CZECH_CITIES, ACTIVE } from '../labels'
+import { ACTIVE } from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'
@@ -17,15 +17,16 @@ import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
 import { updateLadiesCount, updateLadiesData } from '../redux/actions'
+import SwappableText from '../components/animated/SwappableText'
 
-const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) => {
+const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, ladyCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(CZECH_CITIES, searchParams.get('city'), ''),
+        city: getParam(ladyCities, searchParams.get('city'), ''),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
-    }), [searchParams])
+    }), [searchParams, ladyCities])
 
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
@@ -91,8 +92,6 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     }
 
     const getLadiesCount = async () => {
-        updateLadiesCount(MAX_ITEMS_PER_PAGE * 10) 
-        return
         try {
             const snapshot = await getCountFromServer(query(collection(db, "users"), where('accountType', '==', 'lady'), where('status', '==', ACTIVE)))
             updateLadiesCount(snapshot.data().count)
@@ -118,19 +117,6 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
     const renderCard = (data, index) => {
         return (
             <View
-                /*from={{
-                    opacity: 0,
-                    transform: [{ translateY: 10 }],
-                }}
-                animate={{
-                    opacity: 1,
-                    transform: [{ translateY: 0 }],
-                }}
-                transition={{
-                    type: 'timing',
-                    duration: 300,
-                }}
-                delay={index * 20}*/
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
@@ -139,7 +125,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         )
     }
 
-    const Skeleton = () => {
+    const renderSkeleton = () => {
         return new Array(MAX_ITEMS_PER_PAGE).fill(null, 0).map((_, index) => (
             <View key={index} style={[styles.cardContainer, { width: cardWidth }]}>
                 <ContentLoader
@@ -155,17 +141,16 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
         ))
     }
 
-    const AnimatedHeaderText = useCallback(() => {
+    const animatedHeaderText = () => {
         return (
             <>
                 <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
                     Ladies
                 </Text>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <Text numberOfLines={1} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}>
-                        {params.city ? params.city : 'Anywhere'}
-                    </Text>
-                    {ladiesCount && (
+                    <SwappableText value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
+
+                    {!isNaN(ladiesCount) && (
                         <MotiText
                             from={{
                                 opacity: 0,
@@ -183,17 +168,17 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
                 </View>
             </>
         )
-    }, [ladiesCount, params.city])
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             <View style={{ marginLeft: SPACING.large }}>
-                <AnimatedHeaderText />
+                {animatedHeaderText()}
 
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && <Skeleton />}
+                    {isLoading && renderSkeleton()}
                     {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
                 </View>
             </View>
@@ -203,7 +188,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData }) =
 
 const mapStateToProps = (store) => ({
     ladiesCount: store.appState.ladiesCount,
-    ladiesData: store.appState.ladiesData
+    ladiesData: store.appState.ladiesData,
+    ladyCities: store.appState.ladyCities,
 })
 
 export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData })(Esc)

@@ -20,7 +20,6 @@ import {
     DEFAULT_LANGUAGE
 } from '../../constants'
 import { 
-    CZECH_CITIES,
     BODY_TYPES,
     PUBIC_HAIR_VALUES,
     SEXUAL_ORIENTATION,
