@@ -125,7 +125,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                 key={data.id}
                 style={[styles.cardContainer, { width: cardWidth }]}
             >
-                <RenderEstablishment establishment={data} width={cardWidth} />
+                <RenderEstablishment establishment={data} width={cardWidth} delay={index*20}/>
             </View>
         )
     }

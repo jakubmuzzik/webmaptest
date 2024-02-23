@@ -72,9 +72,6 @@ const RenderEstablishment = ({ establishment, width, delay = 0 }) => {
             <Text numberOfLines={1} style={{ textAlign: 'center', fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.white, marginTop: SPACING.x_small }}>
                 {establishment.name}
             </Text>
-            {/* <Text numberOfLines={1} style={{ textAlign: 'center', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: COLORS.greyText }}>
-                {establishment.address.city}
-            </Text> */}
             <View style={{ flexDirection: 'row', marginBottom: SPACING.medium, alignItems: 'center', justifyContent: 'center' }}>
                 <MaterialCommunityIcons name="map-marker" size={FONT_SIZES.medium} color={COLORS.greyText} style={{ marginRight: 3 }} />
                 <Text numberOfLines={1} style={{ textAlign: 'center', fontFamily: FONTS.regular, fontSize: FONT_SIZES.medium, color: COLORS.greyText }}>

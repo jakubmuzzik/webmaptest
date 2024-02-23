@@ -98,10 +98,10 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
-                    where('services', 'in', MASSAGE_SERVICES)
+                    where('services', 'array-contains-any', MASSAGE_SERVICES)
                 )
             )
-            console.log(snapshot.data())
+            
             updateMasseusesCount(snapshot.data().count)
         } catch(e) {
             console.error(e)
