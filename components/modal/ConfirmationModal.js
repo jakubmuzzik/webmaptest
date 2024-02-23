@@ -69,7 +69,7 @@ const ConfirmationModal = ({
             </View>
 
             <View style={{ paddingHorizontal: SPACING.medium, paddingVertical: SPACING.small, alignItems: 'center', flex: 1 }}>
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, textAlign: 'center' }}>
+                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, textAlign: 'center' }}>
                     {text}
                 </Text>
             </View>
