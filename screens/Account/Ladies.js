@@ -16,123 +16,6 @@ import ConfirmationModal from '../../components/modal/ConfirmationModal'
 
 import { updateDoc, doc, db, ref, uploadBytes, storage, getDownloadURL, deleteObject } from '../../firebase/config'
 
-const Active = ({ onAddNewLadyPress, data, activeActions, cardWidth, offsetX }) => (
-    <View style={styles.section}>
-        <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
-                <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
-                <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                    Active
-                </Text>
-                <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                    • {data.length}
-                </Text>
-            </View>
-
-            <Button
-                labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
-                style={{ height: 'auto' }}
-                mode="outlined"
-                icon="plus"
-                onPress={onAddNewLadyPress}
-                rippleColor="rgba(220, 46, 46, .16)"
-            >
-                Add lady
-            </Button>
-        </View>
-
-        {
-            data.length === 0 ? <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
-                No active profiles
-            </Text> : (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                    {data.map(lady => (
-                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                            <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions} offsetX={offsetX} />
-                        </View>
-                    ))}
-                </View>
-            )
-        }
-    </View>
-)
-
-const InReview = ({ data, inReviewActions, cardWidth, offsetX }) => (
-    data.length === 0 ? null :
-        <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-                <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
-                <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                    In review
-                </Text>
-                <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                    • {data.length}
-                </Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                {data.map(lady => (
-                    <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                        <RenderAccountLady lady={lady} width={cardWidth} actions={inReviewActions} offsetX={offsetX} />
-                    </View>
-                ))}
-            </View>
-        </View>
-)
-
-const Inactive = ({ data, inactiveActions, cardWidth, offsetX }) => (
-    <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-            <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
-            <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                Inactive
-            </Text>
-            <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                • {data.length}
-            </Text>
-        </View>
-
-        {
-            data.length === 0 ? (
-                <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
-                    No inactive profiles
-                </Text>
-            ) : (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                    {data.map(lady => (
-                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                            <RenderAccountLady lady={lady} width={cardWidth} actions={inactiveActions} offsetX={offsetX} />
-                        </View>
-                    ))}
-                </View>
-            )
-        }
-    </View>
-)
-
-const Rejected = ({ data, rejectedActions, cardWidth, offsetX }) => (
-    data.length === 0 ? null :
-        <View style={styles.section}>
-            <View style={[styles.sectionHeader, { alignItems: 'center' }]}>
-                <Octicons name="dot-fill" size={20} color="red" style={{ marginRight: SPACING.xx_small }} />
-                <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
-                    Rejected
-                </Text>
-                <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
-                    • {data.length}
-                </Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
-                {data.map(lady => (
-                    <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
-                        <RenderAccountLady lady={lady} width={cardWidth} actions={rejectedActions} offsetX={offsetX} />
-                    </View>
-                ))}
-            </View>
-        </View>
-)
-
 const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies, removeLadyFromRedux, updateLadyInRedux, toastRef }) => {
     const [searchParams] = useSearchParams()
 
@@ -398,12 +281,129 @@ const Ladies = ({ route, index, setTabHeight, ladies, fetchLadies, removeLadyFro
         )
     }
 
+    const renderActive = () => (
+        <View style={styles.section}>
+            <View style={[styles.sectionHeader, { justifyContent: 'space-between' }]}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', flexShrink: 1 }}>
+                    <Octicons name="dot-fill" size={20} color="green" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        Active
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.active.length}
+                    </Text>
+                </View>
+    
+                <Button
+                    labelStyle={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.medium, color: '#FFF' }}
+                    style={{ height: 'auto' }}
+                    mode="outlined"
+                    icon="plus"
+                    onPress={onAddNewLadyPress}
+                    rippleColor="rgba(220, 46, 46, .16)"
+                >
+                    Add lady
+                </Button>
+            </View>
+    
+            {
+                data.active.length === 0 ? <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
+                    No active profiles
+                </Text> : (
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                        {data.active.map(lady => (
+                            <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                                <RenderAccountLady lady={lady} width={cardWidth} actions={activeActions} offsetX={windowWidth * index} />
+                            </View>
+                        ))}
+                    </View>
+                )
+            }
+        </View>
+    )
+
+    const renderInReview = () => (
+        data.inReview.length === 0 ? null :
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Octicons name="dot-fill" size={20} color="yellow" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        In review
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.inReview.length}
+                    </Text>
+                </View>
+    
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                    {data.inReview.map(lady => (
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                            <RenderAccountLady lady={lady} width={cardWidth} actions={inReviewActions} offsetX={windowWidth * index} />
+                        </View>
+                    ))}
+                </View>
+            </View>
+    )
+
+    const renderInactive = () => (
+        <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+                <Octicons name="dot-fill" size={20} color="grey" style={{ marginRight: SPACING.xx_small }} />
+                <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                    Inactive
+                </Text>
+                <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                    • {data.length}
+                </Text>
+            </View>
+    
+            {
+                data.inactive.length === 0 ? (
+                    <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: COLORS.greyText, textAlign: 'center', margin: SPACING.small }}>
+                        No inactive profiles
+                    </Text>
+                ) : (
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                        {data.inactive.map(lady => (
+                            <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                                <RenderAccountLady lady={lady} width={cardWidth} actions={inactiveActions} offsetX={windowWidth * index} />
+                            </View>
+                        ))}
+                    </View>
+                )
+            }
+        </View>
+    )
+
+    const renderRejected = () => (
+        data.rejected.length === 0 ? null :
+            <View style={styles.section}>
+                <View style={[styles.sectionHeader, { alignItems: 'center' }]}>
+                    <Octicons name="dot-fill" size={20} color="red" style={{ marginRight: SPACING.xx_small }} />
+                    <Text numberOfLines={1} style={[styles.sectionHeaderText, { marginBottom: 0, marginRight: 5 }]}>
+                        Rejected
+                    </Text>
+                    <Text style={[styles.sectionHeaderText, { color: COLORS.greyText, fontFamily: FONTS.medium }]}>
+                        • {data.rejected.length}
+                    </Text>
+                </View>
+    
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.small }}>
+                    {data.rejected.map(lady => (
+                        <View key={lady.id} style={{ width: cardWidth, marginBottom: SPACING.medium, marginRight: SPACING.small }}>
+                            <RenderAccountLady lady={lady} width={cardWidth} actions={rejectedActions} offsetX={windowWidth * index} />
+                        </View>
+                    ))}
+                </View>
+            </View>
+    )
+
     return (
         <View onLayout={onLayout} style={{ paddingBottom: SPACING.large }}>
-            <Active onAddNewLadyPress={onAddNewLadyPress} data={data.active} activeActions={activeActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <InReview data={data.inReview} inReviewActions={inReviewActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <Inactive data={data.inactive} inactiveActions={inactiveActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
-            <Rejected data={data.rejected} rejectedActions={rejectedActions} cardWidth={cardWidth} offsetX={windowWidth * index} />
+            {renderActive()}
+            {renderInReview()}
+            {renderInactive()}
+            {renderRejected()}
             
             <ConfirmationModal 
                 visible={!!ladyToDelete}

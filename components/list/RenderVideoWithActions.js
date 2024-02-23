@@ -6,7 +6,6 @@ import { IconButton, ActivityIndicator } from 'react-native-paper'
 import { COLORS, SPACING } from '../../constants'
 import { normalize, generateThumbnailFromLocalURI } from '../../utils'
 import { Video, ResizeMode } from 'expo-av'
-import { isBrowser } from 'react-device-detect'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 
 const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = true }) => {
@@ -126,7 +125,7 @@ const RenderVideoWithActions = ({ video, actions, offsetX = 0, showActions = tru
                 useNativeControls
                 resizeMode={ResizeMode.CONTAIN}
             />}
-            {!isBrowser && showPoster && renderPoster()}
+            {showPoster && renderPoster()}
 
             {renderActions()}
         </>

@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, MAX_ITEMS_PER_PAGE } from '../constants'
 import { useSearchParams } from 'react-router-dom'
-import { getParam, stripEmptyParams } from '../utils'
+import { getParam, normalize, stripEmptyParams } from '../utils'
 import { MOCK_DATA } from '../constants'
 import ContentLoader, { Rect } from "react-content-loader/native"
 import RenderLady from '../components/list/RenderLady'
@@ -24,6 +24,7 @@ import {
 } from '../firebase/config'
 import { useNavigate } from 'react-router-dom'
 import SwappableText from '../components/animated/SwappableText'
+import LottieView from 'lottie-react-native'
 
 const SearchResults = ({ toastRef }) => {
     const [searchParams] = useSearchParams()
@@ -163,7 +164,7 @@ const SearchResults = ({ toastRef }) => {
         }
 
         return (
-            <>
+            <View style={{ marginTop: SPACING.large }}>
                 <Text style={{ fontSize: FONT_SIZES.h2, color: '#FFF', fontFamily: FONTS.bold, marginHorizontal: SPACING.large, textAlign: 'center'}}>
                     Ladies
                 </Text>
@@ -171,7 +172,7 @@ const SearchResults = ({ toastRef }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.small }}>
                     {ladies.map((result, index) => renderLady(result, index))}
                 </View>
-            </>
+            </View>
         )
     }
 
@@ -181,7 +182,7 @@ const SearchResults = ({ toastRef }) => {
         }
 
         return (
-            <>
+            <View style={{ marginTop: SPACING.large }}>
                 <Text style={{ fontSize: FONT_SIZES.h2, color: '#FFF', fontFamily: FONTS.bold, marginHorizontal: SPACING.large, textAlign: 'center' }}>
                     Establishments
                 </Text>
@@ -189,32 +190,20 @@ const SearchResults = ({ toastRef }) => {
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginLeft: SPACING.large, marginTop: SPACING.small }}>
                     {establishments.map((result, index) => renderEstablishment(result, index))}
                 </View>
-            </>
+            </View>
         )
     }
 
     const renderNoResults = () => (
-        null
-    )
-
-    const renderContent = () => (
-        <>
-            {/* <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.large, marginHorizontal: SPACING.large, color: COLORS.greyText, textAlign: 'center' }}>
-                Search results
-            </Text>
-            <SwappableText 
-                value={params.query} 
-                style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, marginHorizontal: SPACING.large, color: '#FFF', textAlign: 'center' }} 
-            /> */}
-
-            <View style={{ marginTop: SPACING.large }}>
-                {renderLadies()}
-
-                {renderEstablishments()}
-
-                {ladies.length === 0 && establishments.length === 0 && renderNoResults()}
-            </View>
-        </>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: -normalize(50)}}>
+            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF' }}>Sorry, we couldn't find any results</Text>
+            <LottieView
+                style={{ height: 180 }}
+                autoPlay
+                loop
+                source={require('../assets/no-results-white.json')}
+            />
+        </View>
     )
 
     return (
@@ -229,7 +218,11 @@ const SearchResults = ({ toastRef }) => {
 
             {isLoading && renderSkeletonLoader()}
 
-            {!isLoading && renderContent()}
+            {!isLoading && ladies.length > 0 && renderLadies()}
+
+            {!isLoading && establishments.length > 0 && renderEstablishments()}
+
+            {!isLoading && ladies.length === 0 && establishments.length === 0 && renderNoResults()}
         </View>
     )
 }

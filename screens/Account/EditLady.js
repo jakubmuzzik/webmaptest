@@ -175,7 +175,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
         />
     )
 
-    const LadiesMessages = useCallback(() => {
+    const renderLadiesMessages = () => {
         if (ladyData.status === IN_REVIEW) {
             return (
                 <View style={{ paddingHorizontal: SPACING.medium }}>
@@ -251,7 +251,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
             return null
         }
         
-    }, [params.language, ladyData])
+    }
 
     const renderSkeletonLoader = () => (
         <View style={{ width: normalize(800), maxWidth: '100%', alignSelf: 'center', marginVertical: SPACING.x_large}}>
@@ -326,7 +326,7 @@ const EditLady = ({ offsetX = 0, ladies, fetchLadies, toastRef, updateLadyInRedu
 
     return (
         <>
-            <LadiesMessages />
+            {renderLadiesMessages()}
 
             <TabView
                 renderTabBar={renderTabBar}

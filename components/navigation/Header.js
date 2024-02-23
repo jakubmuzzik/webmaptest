@@ -421,7 +421,7 @@ const Header = ({ logOut, toastRef }) => {
                 </HoverableView>}
                 <HoverableView hoveredBackgroundColor={COLORS.hoveredLightGrey} backgroundColor={COLORS.lightGrey} style={{ marginLeft: SPACING.small, borderRadius: 20, justifyContent: 'center' }}>
                     <TouchableOpacity ref={userDropdownRef} onPress={toggleUserDropdown} activeOpacity={0.8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: SPACING.xxx_small, paddingHorizontal: SPACING.xx_small }}>
-                        {getAuth().currentUser && <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red, paddingRight: SPACING.xxx_small }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />}
+                        {getAuth().currentUser && <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red, marginRight: SPACING.xxx_small }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />}
                         {/* {getAuth().currentUser ? (
                             <Avatar.Text size={normalize(28)} label={userData.name} style={{ backgroundColor: COLORS.red }} labelStyle={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }} />
                         ) : (
