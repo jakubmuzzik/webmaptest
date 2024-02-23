@@ -156,7 +156,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
 
         navigate({
             pathname: route.path,
-            search: new URLSearchParams(stripEmptyParams(params)).toString()
+            search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city })).toString()
         })
     }
 
@@ -171,7 +171,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
                 // <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>
                 //     {route.title}
                 // </Text>
-                <Link style={{ textDecoration: 'none' }} to={{ pathname: route.path, search: new URLSearchParams(stripEmptyParams(params)).toString() }}>
+                <Link style={{ textDecoration: 'none' }} to={{ pathname: route.path, search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city })).toString() }}>
                     <View style={styles.categoryContainer}>
                         {route.icon(focused)}
                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.medium, color: focused ? '#FFF' : 'rgba(255,255,255,0.7)' }}>

@@ -14,7 +14,7 @@ import { MOCK_DATA } from '../constants'
 import { normalize, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
+import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
 import { updateEstablishmentsCount, updateEstablishmentsData } from '../redux/actions'
 import SwappableText from '../components/animated/SwappableText'
@@ -59,14 +59,52 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
     }
 
     const loadDataForPage = async () => {
+        if (Number(params.page) === 1) {
+            loadDataForFirstPage()
+            return
+        }
+
+        //previous page has data and is the last one
+        if (establishentsData[Number(params.page) - 1] && establishentsData[Number(params.page) - 1].length < MAX_ITEMS_PER_PAGE) {
+            updateEstablishmentsData([], params.page)
+            return
+        }
+
         try {
+            let lastVisibleSnapshot
+
+            if (establishentsData[Number(params.page) - 1]) {
+                const lastVisibleId = establishentsData[Number(params.page) - 1][MAX_ITEMS_PER_PAGE - 1].id
+                lastVisibleSnapshot = await getDoc(doc(db, 'users', lastVisibleId))
+            } else {
+                const offset = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
+    
+                //query all data from the beginning till the last one
+                const q = query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'establishment'), 
+                    where('status', '==', ACTIVE),
+                    orderBy("createdDate"),
+                    limit(offset)
+                )
+    
+                const offsetSnapshot = await getDocs(q)
+                //requested page number from url might exceeds data size
+                if (offsetSnapshot.empty || offsetSnapshot.size !== offset) {
+                    updateEstablishmentsData([], params.page)
+                    return
+                }
+    
+                lastVisibleSnapshot = offsetSnapshot.docs[offsetSnapshot.docs.length-1]
+            }
+
             const snapshot = await getDocs(
                 query(
                     collection(db, "users"), 
                     where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
                     orderBy("createdDate"),
-                    startAt((Number(params.page) - 1) * MAX_ITEMS_PER_PAGE),
+                    startAfter(lastVisibleSnapshot),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
             )
@@ -82,6 +120,38 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                 })
 
                 updateEstablishmentsData(data, params.page)
+            }
+        } catch(error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        } 
+    }
+
+    const loadDataForFirstPage = async () => {
+        try {
+            const snapshot = await getDocs(
+                query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'establishment'), 
+                    where('status', '==', ACTIVE),
+                    orderBy("createdDate"),
+                    startAt(0),
+                    limit(MAX_ITEMS_PER_PAGE)
+                )
+            )
+            
+            if (snapshot.empty) {
+                updateEstablishmentsData([], 1)
+            } else {
+                const data = snapshot.docs.map(doc => {                    
+                    return ({
+                        ...doc.data(),
+                        id: doc.id
+                    })
+                })
+    
+                updateEstablishmentsData(data, 1)
             }
         } catch(error) {
             console.error(error)

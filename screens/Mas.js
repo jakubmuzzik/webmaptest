@@ -13,7 +13,7 @@ import RenderLady from '../components/list/RenderLady'
 import { normalize, getParam } from '../utils'
 import { MOCK_DATA } from '../constants'
 import { useSearchParams } from 'react-router-dom'
-import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs } from '../firebase/config'
+import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter } from '../firebase/config'
 import { updateMasseusesCount, updateMasseusesData } from '../redux/actions'
 import { MotiView, MotiText } from 'moti'
 import { connect } from 'react-redux'
@@ -35,7 +35,6 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
 
     useEffect(() => {
         if (!masseusesCount) {
-            console.log('ladies count init')
             getMasseusesCount()
         }
     }, [masseusesCount])
@@ -60,14 +59,54 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }
 
     const loadDataForPage = async () => {
+        if (Number(params.page) === 1) {
+            loadDataForFirstPage()
+            return
+        }
+
+        //previous page has data and is the last one
+        if (masseusesData[Number(params.page) - 1] && masseusesData[Number(params.page) - 1].length < MAX_ITEMS_PER_PAGE) {
+            updateMasseusesData([], params.page)
+            return
+        }
+
         try {
+            let lastVisibleSnapshot
+
+            if (masseusesData[Number(params.page) - 1]) {
+                const lastVisibleId = masseusesData[Number(params.page) - 1][MAX_ITEMS_PER_PAGE - 1].id
+                lastVisibleSnapshot = await getDoc(doc(db, 'users', lastVisibleId))
+            } else {
+                const offset = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
+    
+                //query all data from the beginning till the last one
+                const q = query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'lady'), 
+                    where('status', '==', ACTIVE),
+                    where('services', 'array-contains-any', MASSAGE_SERVICES),
+                    orderBy("createdDate"),
+                    limit(offset)
+                )
+    
+                const offsetSnapshot = await getDocs(q)
+                //requested page number from url might exceeds data size
+                if (offsetSnapshot.empty || offsetSnapshot.size !== offset) {
+                    updateMasseusesData([], params.page)
+                    return
+                }
+    
+                lastVisibleSnapshot = offsetSnapshot.docs[offsetSnapshot.docs.length-1]
+            }
+
             const snapshot = await getDocs(
                 query(
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
+                    where('services', 'array-contains-any', MASSAGE_SERVICES),
                     orderBy("createdDate"),
-                    startAt((Number(params.page) - 1) * MAX_ITEMS_PER_PAGE),
+                    startAfter(lastVisibleSnapshot),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
             )
@@ -83,6 +122,39 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                 })
 
                 updateMasseusesData(data, params.page)
+            }
+        } catch(error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
+        } 
+    }
+
+    const loadDataForFirstPage = async () => {
+        try {
+            const snapshot = await getDocs(
+                query(
+                    collection(db, "users"), 
+                    where('accountType', '==', 'lady'), 
+                    where('status', '==', ACTIVE),
+                    where('services', 'array-contains-any', MASSAGE_SERVICES),
+                    orderBy("createdDate"),
+                    startAt(0),
+                    limit(MAX_ITEMS_PER_PAGE)
+                )
+            )
+            
+            if (snapshot.empty) {
+                updateMasseusesData([], 1)
+            } else {
+                const data = snapshot.docs.map(doc => {                    
+                    return ({
+                        ...doc.data(),
+                        id: doc.id
+                    })
+                })
+    
+                updateMasseusesData(data, 1)
             }
         } catch(error) {
             console.error(error)

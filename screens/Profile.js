@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect, useLayoutEffect } from "react"
 import { View, StyleSheet, Text, TouchableOpacity, useWindowDimensions, Modal, ScrollView, ImageBackground, Dimensions } from "react-native"
 import { COLORS, FONTS, FONT_SIZES, SPACING, SUPPORTED_LANGUAGES, LARGE_SCREEN_THRESHOLD, SMALL_SCREEN_THRESHOLD, CURRENCY_SYMBOLS } from "../constants"
-import { calculateAgeFromDate, normalize, stripEmptyParams } from "../utils"
+import { calculateAgeFromDate, normalize, stripEmptyParams, getParam } from "../utils"
 import { Image } from 'expo-image'
 import { AntDesign, Ionicons, Feather, FontAwesome, Octicons, FontAwesome5, MaterialCommunityIcons, EvilIcons, Entypo } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -23,14 +23,31 @@ import Animated, {
     withDelay
 } from 'react-native-reanimated'
 
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { connect } from "react-redux"
 import { ACTIVE, MASSAGE_SERVICES } from "../labels"
 
 const Profile = ({ toastRef }) => {
     const location = useLocation()
+    const navigate = useNavigate()
+
+    const [searchParams] = useSearchParams()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), '')
+    }), [searchParams])
 
     const { id } = useParams()
+
+    const initiallyRendered = useRef(false)
+
+    useEffect(() => {
+        //reload page when navigate from profile to profile
+        if (initiallyRendered.current) {
+            navigate(0)
+        }
+        initiallyRendered.current = true
+    }, [id])
 
     const { width } = useWindowDimensions()
     const isSmallScreen = width <= SMALL_SCREEN_THRESHOLD
@@ -103,6 +120,7 @@ const Profile = ({ toastRef }) => {
     })
 
     useLayoutEffect(() => {
+        console.log(location.state)
         if (data) {
             setLoading(false)
             console.log('has data')
@@ -246,7 +264,20 @@ const Profile = ({ toastRef }) => {
     }, [])
 
     const onEstablishmentLinkPress = () => {
+        setLoading(true)
+        //setEstablishmentName(null)
+        //setData(null)
+        navigate({
+            pathname: '/profile/' + data.establishmentId,
+            search: new URLSearchParams({ 
+                ...stripEmptyParams(params)
+            }).toString(),
+            state: null
+        })
 
+        
+        //fetchUser()
+        //navigate(0)
     }
 
     const loadingMapFallback = useMemo(() => {
@@ -603,7 +634,7 @@ const Profile = ({ toastRef }) => {
                         numberOfLines={2}
                         style={establishmentNameAnimatedStyle}
                     >
-                        • Lady from <Text onPress={onEstablishmentLinkPress} style={{ color: COLORS.linkColor }}>{establishmentName}</Text>
+                        • Lady from <Text onPress={onEstablishmentLinkPress} style={{ color: COLORS.linkColor, textDecorationLine: 'underline' }}>{establishmentName}</Text>
                     </Animated.Text>
                 )}
             </View>
