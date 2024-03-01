@@ -12,7 +12,8 @@ import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
-    withDelay
+    withDelay,
+    withSpring
 } from 'react-native-reanimated'
 
 const RenderLady = ({ lady, width, delay = 0 }) => {
@@ -24,7 +25,7 @@ const RenderLady = ({ lady, width, delay = 0 }) => {
 
     const [isHovered, setIsHovered] = useState(false)
 
-    const translateY = useSharedValue(10)
+    const translateY = useSharedValue(20)
     const opacity = useSharedValue(0)
 
     const containerAnimatedStyle = useAnimatedStyle(() => {
@@ -41,7 +42,7 @@ const RenderLady = ({ lady, width, delay = 0 }) => {
         translateY.value = withDelay(delay, withTiming(0, {
             useNativeDriver: true
         }))
-        opacity.value = withDelay(delay,withTiming(1, {
+        opacity.value = withDelay(delay, withTiming(1, {
             useNativeDriver: true
         }))
     }, [])

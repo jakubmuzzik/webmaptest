@@ -6,7 +6,7 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated'
 
-const SwappableText = ({value, style={}}) => {
+const SwappableText = ({value, style={}, duration=300}) => {
     const opacity = useSharedValue(0)
     const rotateX = useSharedValue('90deg')
 
@@ -33,19 +33,23 @@ const SwappableText = ({value, style={}}) => {
     
     const animateIn = () => {
         opacity.value = withTiming(1, {
-            useNativeDriver: true
+            useNativeDriver: true,
+            duration
         })
         rotateX.value = withTiming('0deg', {
-            useNativeDriver: true
+            useNativeDriver: true,
+            duration
         })
     }
 
     const animateOut = () => {
         opacity.value = withTiming(0, {
-            useNativeDriver: true
+            useNativeDriver: true,
+            duration
         })
         rotateX.value = withTiming('90deg', {
-            useNativeDriver: true
+            useNativeDriver: true,
+            duration
         }, () => setCurrentValue(value))
     }
 

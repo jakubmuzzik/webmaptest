@@ -1,13 +1,24 @@
-import React, { useEffect, useRef } from 'react'
-import { View } from 'react-native'
+import React, { useEffect, useRef, useMemo } from 'react'
+import { View, Text } from 'react-native'
 import Header from '../components/navigation/Header'
 import Categories from '../components/navigation/Categories'
-import { Outlet } from 'react-router-dom'
-import { COLORS, SPACING } from '../constants'
-import { normalize } from '../utils'
+import { Outlet, useLocation, useSearchParams } from 'react-router-dom'
+import { COLORS, FONTS, FONT_SIZES, SUPPORTED_LANGUAGES, SPACING } from '../constants'
+import { normalize, getParam } from '../utils'
 import Animated, { withTiming, useSharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import SwappableText from '../components/animated/SwappableText'
+import { connect } from 'react-redux'
+import ContentLoader, { Rect } from "react-content-loader/native"
 
-const Explore = () => {
+const Explore = ({ ladiesCount, ladyCities, masseusesCount, establishmentsCount, establishmentCities }) => {
+    const [searchParams] = useSearchParams()
+
+    const location = useLocation()
+
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: getParam(location.pathname === '/clu' ? establishmentCities : ladyCities, searchParams.get('city'), '')
+    }), [searchParams, establishmentCities, ladyCities, location.pathname])
 
     const previousScrollY = useRef(window.scrollY)
     const positiveScrollYDelta = useRef(0)
@@ -57,6 +68,72 @@ const Explore = () => {
         }
     })
 
+    const dataCount = location.pathname === '/' ? ladiesCount : location.pathname === '/mas' ? masseusesCount : establishmentsCount
+
+    const getDataCountText = () => {
+        if (dataCount === 1) {
+            return location.pathname === '/' ? dataCount + ' lady' : location.pathname === '/mas' ? dataCount + ' masseuse' : dataCount + ' establishment'
+        } else {
+            return location.pathname === '/' ? dataCount + ' ladies' : location.pathname === '/mas' ? dataCount + ' masseuses' : dataCount + ' establishments'
+        }
+    }
+
+    const citiesLoaded = location.pathname === '/clu' ? establishmentCities : ladyCities
+
+    const animatedHeaderText = () => {
+        return (
+            <View style={{ marginTop: SPACING.large }}>
+                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
+                    {!citiesLoaded && <ContentLoader
+                        speed={2}
+                        height={FONT_SIZES.large}
+                        width={80}
+                        style={{ borderRadius: 5 }}
+                        backgroundColor={COLORS.grey}
+                        foregroundColor={COLORS.lightGrey}
+                    >
+                        <Rect x="0" y="0" rx="0" ry="0" width="100%" height={FONT_SIZES.large} />
+                    </ContentLoader>}
+
+                    {citiesLoaded && <SwappableText 
+                        value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} 
+                        style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} 
+                    />}
+
+                    <Text
+                        style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
+                    >
+                        &nbsp;•&nbsp;
+                    </Text>
+
+                    {isNaN(dataCount) && <ContentLoader
+                        speed={2}
+                        height={FONT_SIZES.large}
+                        width={80}
+                        style={{ borderRadius: 5 }}
+                        backgroundColor={COLORS.grey}
+                        foregroundColor={COLORS.lightGrey}
+                    >
+                        <Rect x="0" y="0" rx="0" ry="0" width="100%" height={FONT_SIZES.large} />
+                    </ContentLoader>}
+
+                    {!isNaN(dataCount) && (
+                        <SwappableText
+                            value={getDataCountText()}
+                            style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
+                        />
+                    )}
+                </View>
+
+                <SwappableText 
+                    value={location.pathname === '/' ? 'Ladies' : location.pathname === '/mas' ? 'Massages' : 'Establishments'} 
+                    style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}
+                    duration={200}
+                />
+            </View>
+        )
+    }
+
     return (
         <>
             <Animated.View style={containersStyle}>
@@ -64,10 +141,20 @@ const Explore = () => {
             </Animated.View>
 
             <View style={{ marginTop: normalize(62.5) }}>
+                {animatedHeaderText()}
+
                 <Outlet />
             </View>
         </>
     )
 }
 
-export default Explore
+const mapStateToProps = (store) => ({
+    ladiesCount: store.appState.ladiesCount,
+    ladyCities: store.appState.ladyCities,
+    masseusesCount: store.appState.masseusesCount,
+    establishmentsCount: store.appState.establishmentsCount,
+    establishmentCities: store.appState.establishmentCities
+})
+
+export default connect(mapStateToProps)(Explore)

@@ -32,6 +32,10 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
     const [isLoading, setIsLoading] = useState(true)
 
     const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
+
+    useEffect(() => {
+        console.log(params.city)
+    }, [params.city])
     
     useEffect(() => {
         if (!ladiesCount) {
@@ -246,12 +250,12 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
+            {/* {animatedHeaderText()} */}
+            
             <View style={{ marginLeft: SPACING.large }}>
-                {animatedHeaderText()}
-
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && renderSkeleton()}
                     {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}

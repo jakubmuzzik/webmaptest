@@ -246,12 +246,12 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large, paddingTop: SPACING.large }} 
+        <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            <View style={{ marginLeft: SPACING.large }}>
-                {animatedHeaderText()}
+            {/* {animatedHeaderText()} */}
 
+            <View style={{ marginLeft: SPACING.large }}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
                     {isLoading && renderSkeleton()}
                     {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}

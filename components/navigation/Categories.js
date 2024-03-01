@@ -52,7 +52,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
         city: getParam(cities, searchParams.get('city'), ''),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
-    }), [searchParams, ladyCities])
+    }), [searchParams, cities])
 
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,

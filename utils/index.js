@@ -49,6 +49,10 @@ export const stripDefaultFilters = (defaultFilters, filters) => {
 }
 
 export const getParam = (supportedValues, param, fallbackValue) => {
+  if (!supportedValues) {
+    return fallbackValue
+  }
+
   const decodedParam = decodeURIComponent(param)
 
   if (!decodedParam) {
