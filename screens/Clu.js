@@ -11,13 +11,14 @@ import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGU
 import { ACTIVE } from '../labels'
 import RenderEstablishment from '../components/list/RenderEstablishment'
 import { MOCK_DATA } from '../constants'
-import { normalize, getParam } from '../utils'
+import { chunkArray, getParam } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter } from '../firebase/config'
+import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter, doc } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
 import { updateEstablishmentsCount, updateEstablishmentsData } from '../redux/actions'
 import SwappableText from '../components/animated/SwappableText'
+import Pagination from '../components/Pagination'
 
 const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmentsCount, establishentsData, establishmentCities=[] }) => {
     const [searchParams] = useSearchParams()
@@ -72,12 +73,14 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
 
         try {
             let lastVisibleSnapshot
-
+            //previous page has data - use last doc from previous page
             if (establishentsData[Number(params.page) - 1]) {
                 const lastVisibleId = establishentsData[Number(params.page) - 1][MAX_ITEMS_PER_PAGE - 1].id
                 lastVisibleSnapshot = await getDoc(doc(db, 'users', lastVisibleId))
-            } else {
-                const offset = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
+            } 
+            //previous page does not have data
+            else {
+                const dataCountFromBeginning = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
     
                 //query all data from the beginning till the last one
                 const q = query(
@@ -85,17 +88,31 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                     where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
                     orderBy("createdDate"),
-                    limit(offset)
+                    limit(dataCountFromBeginning)
                 )
     
-                const offsetSnapshot = await getDocs(q)
+                const previousDataSnapshot = await getDocs(q)
                 //requested page number from url might exceeds data size
-                if (offsetSnapshot.empty || offsetSnapshot.size !== offset) {
+                if (previousDataSnapshot.empty || previousDataSnapshot.size !== dataCountFromBeginning) {
                     updateEstablishmentsData([], params.page)
                     return
                 }
     
-                lastVisibleSnapshot = offsetSnapshot.docs[offsetSnapshot.docs.length-1]
+                lastVisibleSnapshot = previousDataSnapshot.docs[previousDataSnapshot.docs.length-1]
+
+                //store data from previous pages in redux
+                chunkArray(previousDataSnapshot.docs, MAX_ITEMS_PER_PAGE).forEach((chunk, index) => {
+                    if (!establishentsData[Number(index) + 1]) {
+                        const data = chunk.map(doc => {                    
+                            return ({
+                                ...doc.data(),
+                                id: doc.id
+                            })
+                        })
+        
+                        updateEstablishmentsData(data, Number(index) + 1)
+                    }
+                })
             }
 
             const snapshot = await getDocs(
@@ -112,6 +129,7 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
             if (snapshot.empty) {
                 updateEstablishmentsData([], params.page)
             } else {
+                 //store data from the requested page in redux
                 const data = snapshot.docs.map(doc => {                    
                     return ({
                         ...doc.data(),
@@ -251,11 +269,13 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
         >
             {/* {animatedHeaderText()} */}
 
-            <View style={{ marginLeft: SPACING.large }}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && renderSkeleton()}
-                    {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}
-                </View>
+            <View style={{ marginLeft: SPACING.large, flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large, flex: 1 }}>
+                {isLoading && renderSkeleton()}
+                {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}
+            </View>
+
+            <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
+               {establishmentsCount && <Pagination dataCount={establishmentsCount}/>}
             </View>
         </View>
     )

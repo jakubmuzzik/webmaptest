@@ -11,13 +11,14 @@ import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGU
 import { ACTIVE, MASSAGE_SERVICES, SERVICES } from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { MOCK_DATA } from '../constants'
-import { normalize, getParam } from '../utils'
+import { normalize, getParam, chunkArray } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { getCountFromServer, db, collection, query, where, startAfter, startAt, limit, orderBy, getDocs, getDoc } from '../firebase/config'
+import { getCountFromServer, db, collection, query, where, startAfter, startAt, limit, orderBy, getDocs, getDoc, doc } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
 import { updateLadiesCount, updateLadiesData } from '../redux/actions'
 import SwappableText from '../components/animated/SwappableText'
+import Pagination from '../components/Pagination'
 
 const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, ladyCities=[] }) => {
     const [searchParams] = useSearchParams()
@@ -45,6 +46,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
 
     useLayoutEffect(() => {
         if (!ladiesData[params.page]) {
+            console.log('does not have data for page: ' + params.page)
             setIsLoading(true)
             loadDataForPage()
         } else {
@@ -77,11 +79,24 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
         try {
             let lastVisibleSnapshot
 
+            //previous page has data - use last doc from previous page
             if (ladiesData[Number(params.page) - 1]) {
                 const lastVisibleId = ladiesData[Number(params.page) - 1][MAX_ITEMS_PER_PAGE - 1].id
                 lastVisibleSnapshot = await getDoc(doc(db, 'users', lastVisibleId))
-            } else {
-                const offset = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
+            } 
+            //previous page does not have data
+            else {
+                //try to find the closest previous page that has data
+                /*
+                //possible improvement - not implemented yet
+                for (let i=Number(params.page); i>0; i--) {
+                    if (ladiesData[i]) {
+                        const lastVisibleId = ladiesData[i][MAX_ITEMS_PER_PAGE - 1].id
+                        const numberOfPagesSkipped = Number(params.page) - i
+                    }
+                }*/
+
+                const dataCountFromBeginning = (Number(params.page) - 1) * MAX_ITEMS_PER_PAGE
     
                 //query all data from the beginning till the last one
                 const q = query(
@@ -89,17 +104,31 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
                     orderBy("createdDate"),
-                    limit(offset)
+                    limit(dataCountFromBeginning)
                 )
     
-                const offsetSnapshot = await getDocs(q)
+                const previousDataSnapshot = await getDocs(q)
                 //requested page number from url might exceeds data size
-                if (offsetSnapshot.empty || offsetSnapshot.size !== offset) {
+                if (previousDataSnapshot.empty || previousDataSnapshot.size !== dataCountFromBeginning) {
                     updateLadiesData([], params.page)
                     return
                 }
     
-                lastVisibleSnapshot = offsetSnapshot.docs[offsetSnapshot.docs.length-1]
+                lastVisibleSnapshot = previousDataSnapshot.docs[previousDataSnapshot.docs.length-1]
+
+                //store data from previous pages in redux
+                chunkArray(previousDataSnapshot.docs, MAX_ITEMS_PER_PAGE).forEach((chunk, index) => {
+                    if (!ladiesData[Number(index) + 1]) {
+                        const data = chunk.map(doc => {                    
+                            return ({
+                                ...doc.data(),
+                                id: doc.id
+                            })
+                        })
+        
+                        updateLadiesData(data, Number(index) + 1)
+                    }
+                })
             }
 
             const snapshot = await getDocs(
@@ -116,6 +145,7 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
             if (snapshot.empty) {
                 updateLadiesData([], params.page)
             } else {
+                //store data from the requested page in redux
                 const data = snapshot.docs.map(doc => {                    
                     return ({
                         ...doc.data(),
@@ -254,12 +284,14 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
             {/* {animatedHeaderText()} */}
-            
-            <View style={{ marginLeft: SPACING.large }}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large }}>
-                    {isLoading && renderSkeleton()}
-                    {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
-                </View>
+
+            <View style={{ marginLeft: SPACING.large, flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large, flex: 1 }}>
+                {isLoading && renderSkeleton()}
+                {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
+            </View>
+
+            <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
+               {ladiesCount && <Pagination dataCount={ladiesCount}/>}
             </View>
         </View>
     )

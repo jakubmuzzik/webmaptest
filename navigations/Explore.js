@@ -140,7 +140,7 @@ const Explore = ({ ladiesCount, ladyCities, masseusesCount, establishmentsCount,
                 <Categories />
             </Animated.View>
 
-            <View style={{ marginTop: normalize(62.5) }}>
+            <View style={{ marginTop: normalize(62.5), flexGrow: 1 }}>
                 {animatedHeaderText()}
 
                 <Outlet />
