@@ -115,6 +115,13 @@ export const MAX_VIDEOS = 5
 export const MAX_PHOTOS = 15
 export const MAX_ITEMS_PER_PAGE = 36
 
+export const MIN_AGE = 18
+export const MAX_AGE = 60
+export const MIN_HEIGHT = 150
+export const MAX_HEIGHT = 190
+export const MIN_WEIGHT = 50
+export const MAX_WEIGHT = 90
+
 export const MOCK_DATA = [
     {
         id: 1,

@@ -10,14 +10,20 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, Entypo } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize, getParam, stripEmptyParams, stripDefaultFilters } from '../../utils'
+import { normalize, getParam, stripEmptyParams, stripDefaultFilters, getFilterParams } from '../../utils'
 import {
     COLORS,
     FONTS,
     FONT_SIZES,
     SPACING,
     SUPPORTED_LANGUAGES,
-    DEFAULT_LANGUAGE
+    DEFAULT_LANGUAGE,
+    MIN_AGE,
+    MAX_AGE,
+    MIN_HEIGHT,
+    MAX_HEIGHT,
+    MIN_WEIGHT,
+    MAX_WEIGHT,
 } from '../../constants'
 import { 
     BODY_TYPES,
@@ -40,18 +46,11 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom'
 
 const window = Dimensions.get('window')
 
-const MIN_AGE = 18
-const MAX_AGE = 60
-const MIN_HEIGHT = 150
-const MAX_HEIGHT = 190
-const MIN_WEIGHT = 50
-const MAX_WEIGHT = 90
-
 const DEFAULT_FILTERS = {
     ageRange: [MIN_AGE, MAX_AGE],
     heightRange: [MIN_HEIGHT, MAX_HEIGHT],
     weightRange: [MIN_WEIGHT, MAX_WEIGHT],
-    onlyVerified: false,
+    //onlyVerified: false,
     onlyIndependent: false,
     //onlyPremium: false,
     outcall: false,
@@ -69,58 +68,20 @@ const DEFAULT_FILTERS = {
 }
 
 const Filters = forwardRef((props, ref) => {
-    const { visible, setVisible, params } = props
+    const { visible, setVisible } = props
 
     const [searchParams] = useSearchParams()
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: searchParams.get('city'),
+        //purposely ommitting page 
+    }), [searchParams])
+
     const navigate = useNavigate()
     const location = useLocation()
 
     const filterParams = useMemo(() => {
-        const ageRangeParam = decodeURIComponent(searchParams.get('ageRange'))?.split(',')
-        let ageRange = undefined
-        if(Array.isArray(ageRangeParam) && ageRangeParam.length === 2) {
-            ageRange = []
-            ageRange[0] = !isNaN(ageRangeParam[0]) && ageRangeParam[0] >= MIN_AGE && ageRangeParam[0] < MAX_AGE ? ageRangeParam[0] : MIN_AGE
-            ageRange[1] = !isNaN(ageRangeParam[1]) && ageRangeParam[1] > ageRange[0] && ageRangeParam[1] <= MAX_AGE ? ageRangeParam[1] : MAX_AGE
-        }
-
-        const heightRangeParam = decodeURIComponent(searchParams.get('heightRange'))?.split(',')
-        let heightRange = undefined
-        if(Array.isArray(heightRangeParam) && heightRangeParam.length === 2) {
-            heightRange = []
-            heightRange[0] = !isNaN(heightRangeParam[0]) && heightRangeParam[0] >= MIN_HEIGHT && heightRangeParam[0] < MAX_HEIGHT ? heightRangeParam[0] : MIN_HEIGHT
-            heightRange[1] = !isNaN(heightRangeParam[1]) && heightRangeParam[1] > heightRange[0] && heightRangeParam[1] <= MAX_HEIGHT ? heightRangeParam[1] : MAX_HEIGHT
-        }
-
-        const weightRangeParam = decodeURIComponent(searchParams.get('weightRange'))?.split(',')
-        let weightRange = undefined
-        if(Array.isArray(weightRangeParam) && weightRangeParam.length === 2) {
-            weightRange = []
-            weightRange[0] = !isNaN(weightRangeParam[0]) && weightRangeParam[0] >= MIN_WEIGHT && weightRangeParam[0] < MAX_WEIGHT ? weightRangeParam[0] : MIN_WEIGHT
-            weightRange[1] = !isNaN(weightRangeParam[1]) && weightRangeParam[1] > weightRange[0] && weightRangeParam[1] <= MAX_WEIGHT ? weightRangeParam[1] : MAX_WEIGHT
-        }
-
-        const isBoolean = (value) => value === 'true' || value === 'false'
-
-        return stripEmptyParams({
-            ageRange,
-            heightRange,
-            weightRange,
-            onlyVerified: isBoolean(searchParams.get('onlyVerified')) ? Boolean(searchParams.get('onlyVerified')) : undefined,
-            onlyIndependent: isBoolean(searchParams.get('onlyIndependent')) ? Boolean(searchParams.get('onlyIndependent')) : undefined,
-            outcall: isBoolean(searchParams.get('outcall')) ? Boolean(searchParams.get('outcall')) : undefined,
-            incall: isBoolean(searchParams.get('incall')) ? Boolean(searchParams.get('incall')) : undefined,
-            services: searchParams.get('services') ? decodeURIComponent(searchParams.get('services')).split(',').filter(val => SERVICES.includes(val)) : undefined,
-            bodyType: searchParams.get('bodyType') ? decodeURIComponent(searchParams.get('bodyType')).split(',').filter(val => BODY_TYPES.includes(val)) : undefined,
-            hairColor: searchParams.get('hairColor') ? decodeURIComponent(searchParams.get('hairColor')).split(',').filter(val => HAIR_COLORS.includes(val)) : undefined,
-            eyeColor: searchParams.get('eyeColor') ? decodeURIComponent(searchParams.get('eyeColor')).split(',').filter(val => EYE_COLORS.includes(val)) : undefined,
-            pubicHair: searchParams.get('pubicHair') ? decodeURIComponent(searchParams.get('pubicHair')).split(',').filter(val => PUBIC_HAIR_VALUES.includes(val)) : undefined,
-            breastSize: searchParams.get('breastSize') ? decodeURIComponent(searchParams.get('breastSize')).split(',').filter(val => BREAST_SIZES.includes(val)) : undefined,
-            breastType: searchParams.get('breastType') ? decodeURIComponent(searchParams.get('breastType')).split(',').filter(val => BREAST_TYPES.includes(val)) : undefined,
-            speaks: searchParams.get('speaks') ? decodeURIComponent(searchParams.get('speaks')).split(',').filter(val => LANGUAGES.includes(val)) : undefined,
-            nationality: searchParams.get('nationality') ? decodeURIComponent(searchParams.get('nationality')).split(',').filter(val => NATIONALITIES.includes(val)) : undefined,
-            sexualOrientation: searchParams.get('sexualOrientation') ? decodeURIComponent(searchParams.get('sexualOrientation')).split(',').filter(val => SEXUAL_ORIENTATION.includes(val)) : undefined
-        })
+        return getFilterParams(searchParams)
     }, [searchParams])
 
     useImperativeHandle(ref, () => ({
@@ -485,7 +446,7 @@ const Filters = forwardRef((props, ref) => {
                             <View style={styles.filterSection}>
                                 <Text style={styles.filterHeader}>Profile</Text> 
                                 
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small }}>
+                                {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.xx_small }}>
                                     <View style={{ flex: 1, flexDirection: 'column', marginRight: SPACING.small }}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>
                                             Verified
@@ -497,7 +458,7 @@ const Filters = forwardRef((props, ref) => {
                                     <Switch value={filters.onlyVerified}
                                         onValueChange={(value) => onFiltersChange('onlyVerified', value)} color={COLORS.red}
                                     />
-                                </View>
+                                </View> */}
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <View style={{ flex: 1, flexDirection: 'column', marginRight: SPACING.small }}>
                                         <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.large }}>

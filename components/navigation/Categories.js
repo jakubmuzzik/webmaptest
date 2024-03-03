@@ -15,10 +15,11 @@ import CityPicker from '../modal/CityPicker'
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import { connect } from 'react-redux'
+import { resetEstablishmentsData, resetLadiesData, resetMasseusesData } from '../../redux/actions'
 
 import { Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 
-const Categories = ({ ladyCities, establishmentCities }) => {
+const Categories = ({ ladyCities, establishmentCities, resetEstablishmentsData, resetLadiesData, resetMasseusesData }) => {
     const [searchParams] = useSearchParams()
 
     const [index, setIndex] = useState(0)
@@ -154,6 +155,10 @@ const Categories = ({ ladyCities, establishmentCities }) => {
 
         setIndex(routes.indexOf(route))
 
+        resetEstablishmentsData()
+        resetLadiesData()
+        resetMasseusesData()
+
         navigate({
             pathname: route.path,
             search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city })).toString()
@@ -243,7 +248,7 @@ const Categories = ({ ladyCities, establishmentCities }) => {
                 </HoverableView>
             </View>
 
-            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} params={params} />
+            <Filters ref={filtersRef} visible={filtersVisible} setVisible={setFiltersVisible} />
             <CityPicker visible={locationModalVisible} cities={cities} setVisible={setLocationModalVisible} params={params} routeName={routeName} />
         </View>
     )
@@ -254,7 +259,7 @@ const mapStateToProps = (store) => ({
     establishmentCities: store.appState.establishmentCities
 })
 
-export default connect(mapStateToProps)(Categories)
+export default connect(mapStateToProps,{ resetEstablishmentsData, resetLadiesData, resetMasseusesData })(Categories)
 
 const styles = StyleSheet.create({
     categoryContainer: {

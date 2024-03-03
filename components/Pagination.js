@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react'
 import { View, useWindowDimensions, Text } from 'react-native'
 import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING } from '../constants'
-import { getParam, normalize, stripEmptyParams } from '../utils'
+import { getFilterParams, normalize, stripEmptyParams } from '../utils'
 import { useLocation, useSearchParams, Link } from 'react-router-dom'
 import { AntDesign } from '@expo/vector-icons'
 import HoverableIcon from './HoverableIcon'
@@ -20,6 +20,10 @@ const Pagination = ({ dataCount, maxItemsPerPage = MAX_ITEMS_PER_PAGE }) => {
         city: searchParams.get('city'),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
     }), [searchParams])
+
+    const filterParams = useMemo(() => {
+        return getFilterParams(searchParams)
+    }, [searchParams])
 
     const allPages = useRef([...Array(Math.ceil(dataCount / maxItemsPerPage)).keys()].map((_, index) => ({pagenum: index + 1})))
 
@@ -55,13 +59,13 @@ const Pagination = ({ dataCount, maxItemsPerPage = MAX_ITEMS_PER_PAGE }) => {
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
             <Link style={{ textDecoration: 'none', width: PAGINATION_ITEM_WIDTH }} to={{
                 pathname: location.pathname,
-                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: 1 })).toString()
+                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: 1, ...filterParams })).toString()
             }}>
                 <HoverableIcon color={COLORS.white} hoveredColor={COLORS.red} containerStyle={{ alignItems: 'flex-end' }} renderIcon={(color) => <AntDesign name="doubleleft" size={FONT_SIZES.x_large} color={color} />} />
             </Link>
             <Link style={{ textDecoration: 'none', width: PAGINATION_ITEM_WIDTH }} to={{
                 pathname: location.pathname,
-                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: Number(params.page) === 1 ? 1 : Number(params.page) - 1 })).toString()
+                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: Number(params.page) === 1 ? 1 : Number(params.page) - 1, ...filterParams })).toString()
             }}>
                 <HoverableIcon color={COLORS.white} hoveredColor={COLORS.red} containerStyle={{ alignItems: 'flex-end' }} renderIcon={(color) => <AntDesign name="left" size={FONT_SIZES.x_large} color={color} />} />
             </Link>
@@ -73,7 +77,7 @@ const Pagination = ({ dataCount, maxItemsPerPage = MAX_ITEMS_PER_PAGE }) => {
                         style={{ textDecoration: 'none', minWidth: PAGINATION_ITEM_WIDTH, alignItems: 'center', display: 'flex', justifyContent: 'center' }}
                         to={{
                             pathname: location.pathname,
-                            search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: page.pagenum })).toString()
+                            search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: page.pagenum, ...filterParams })).toString()
                         }}
                     >
                         <HoverableText
@@ -101,7 +105,7 @@ const Pagination = ({ dataCount, maxItemsPerPage = MAX_ITEMS_PER_PAGE }) => {
                             style={{ textDecoration: 'none', minWidth: PAGINATION_ITEM_WIDTH, alignItems: 'center', display: 'flex', justifyContent: 'center' }}
                             to={{
                                 pathname: location.pathname,
-                                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: allPages.current.length })).toString()
+                                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: allPages.current.length, ...filterParams })).toString()
                             }}
                         >
                             <HoverableText
@@ -122,13 +126,13 @@ const Pagination = ({ dataCount, maxItemsPerPage = MAX_ITEMS_PER_PAGE }) => {
 
             <Link style={{ textDecoration: 'none', width: PAGINATION_ITEM_WIDTH }} to={{
                 pathname: location.pathname,
-                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: Number(params.page) === allPages.current.length ? allPages.current.length : Number(params.page) + 1 })).toString()
+                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: Number(params.page) === allPages.current.length ? allPages.current.length : Number(params.page) + 1, ...filterParams })).toString()
             }}>
                 <HoverableIcon color={COLORS.white} hoveredColor={COLORS.red} renderIcon={(color) => <AntDesign name="right" size={FONT_SIZES.x_large} color={color} />} />
             </Link>
             <Link style={{ textDecoration: 'none', width: PAGINATION_ITEM_WIDTH }} to={{
                 pathname: location.pathname,
-                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: allPages.current.length })).toString()
+                search: new URLSearchParams(stripEmptyParams({ language: params.language, city: params.city, page: allPages.current.length, ...filterParams })).toString()
             }}>
                 <HoverableIcon color={COLORS.white} hoveredColor={COLORS.red} renderIcon={(color) => <AntDesign name="doubleright" size={FONT_SIZES.x_large} color={color} />} />
             </Link>

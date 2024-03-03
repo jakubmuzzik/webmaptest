@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HoverableView from '../HoverableView'
-import { normalize, getParam } from '../../utils'
+import { normalize, getParam, getFilterParams } from '../../utils'
 import {
     CZECH,
     CITY,
@@ -26,6 +26,7 @@ import {
     SUPPORTED_LANGUAGES,
     DEFAULT_LANGUAGE
 } from '../../constants'
+import { useSearchParams } from 'react-router-dom'
 
 import RenderCity from '../list/RenderCity'
 
@@ -33,7 +34,18 @@ import { Skeleton } from 'moti/skeleton'
 
 const window = Dimensions.get('window')
 
-const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
+const CityPicker = ({ visible, setVisible, routeName, cities }) => {
+    const [searchParams] = useSearchParams()
+    const params = useMemo(() => ({
+        language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
+        city: searchParams.get('city'),
+        //purposely ommitting page 
+    }), [searchParams])
+
+    const filterParams = useMemo(() => {
+        return getFilterParams(searchParams)
+    }, [searchParams])
+
     const labels = useMemo(() => translateLabels(params.language, [
         CZECH,
         CITY,
@@ -165,8 +177,8 @@ const CityPicker = ({ visible, setVisible, params, routeName, cities }) => {
                                     <Ionicons onPress={() => onCitySearch('')} style={{ opacity: citySearch ? '1' : '0' }} name="close" size={normalize(20)} color="black" />
                                 </HoverableView>
 
-                                <RenderCity routeName={routeName} params={params} iconName={params.city ? 'radio-button-unchecked' : 'radio-button-checked'} iconColor={params.city ? 'grey' : COLORS.red} />
-                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} params={params} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
+                                <RenderCity routeName={routeName} params={params} filterParams={filterParams} iconName={params.city ? 'radio-button-unchecked' : 'radio-button-checked'} iconColor={params.city ? 'grey' : COLORS.red} />
+                                {filteredCitiesRef.current.map(city => <RenderCity key={city} city={city} routeName={routeName} params={params} filterParams={filterParams} iconName={city === params.city ? 'radio-button-checked' : 'radio-button-unchecked'} iconColor={city === params.city ? COLORS.red : 'grey'} />)}
                             </>
                             }
                         </Animated.ScrollView>

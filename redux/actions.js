@@ -12,7 +12,10 @@ import {
     ESTABLISHMENT_CITIES_STATE_CHANGE,
     LADIES_PAGINATION_DATA_STATE_CHANGE,
     MASSEUSES_PAGINATION_DATA_STATE_CHANGE,
-    ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE
+    ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE,
+    RESET_LADIES_PAGINATION_DATA,
+    RESET_MASSEUSES_PAGINATION_DATA,
+    RESET_ESTABLISHMENTS_PAGINATION_DATA
 } from './actionTypes'
 import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where, getCountFromServer } from '../firebase/config'
 import { ACTIVE, DELETED } from '../labels'
@@ -79,6 +82,18 @@ export const updateLadyCities = (ladyCities) => ({
 export const updateEstablishmentCities = (establishmentCities) => ({
     type: ESTABLISHMENT_CITIES_STATE_CHANGE,
     establishmentCities
+})
+
+export const resetLadiesData = () => ({
+    type: RESET_LADIES_PAGINATION_DATA
+})
+
+export const resetMasseusesData = () => ({
+    type: RESET_MASSEUSES_PAGINATION_DATA
+})
+
+export const resetEstablishmentsData = () => ({
+    type: RESET_ESTABLISHMENTS_PAGINATION_DATA
 })
 
 /**

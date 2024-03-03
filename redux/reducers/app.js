@@ -9,7 +9,10 @@ import {
     ESTABLISHMENT_CITIES_STATE_CHANGE,
     ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE,
     LADIES_PAGINATION_DATA_STATE_CHANGE,
-    MASSEUSES_PAGINATION_DATA_STATE_CHANGE
+    MASSEUSES_PAGINATION_DATA_STATE_CHANGE,
+    RESET_LADIES_PAGINATION_DATA,
+    RESET_MASSEUSES_PAGINATION_DATA,
+    RESET_ESTABLISHMENTS_PAGINATION_DATA
 } from '../actionTypes'
 
 const INITIAL_STATE = {
@@ -91,6 +94,21 @@ export const app = (state = INITIAL_STATE, action) => {
                     ...state.masseusesData,
                     [action.pageNumber] : action.data
                 }
+            }
+        case RESET_LADIES_PAGINATION_DATA:
+            return {
+                ...state,
+                ladiesData: {}
+            }
+        case RESET_MASSEUSES_PAGINATION_DATA:
+            return {
+                ...state,
+                masseusesData: {}
+            }
+        case RESET_ESTABLISHMENTS_PAGINATION_DATA:
+            return {
+                ...state,
+                establishentsData: {}
             }
         default:
             return state

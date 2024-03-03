@@ -28,7 +28,7 @@ import {
     SIGN_UP,
     translateLabels
 } from '../../labels'
-import { stripEmptyParams, getParam } from '../../utils'
+import { stripEmptyParams, getParam, getFilterParams } from '../../utils'
 import { MotiView } from 'moti'
 import { LinearGradient } from 'expo-linear-gradient'
 import HoverableView from '../HoverableView'
@@ -57,6 +57,10 @@ const Header = ({ logOut, toastRef }) => {
         //on purpose
         city: searchParams.get('city')
     }), [searchParams])
+
+    const filterParams = useMemo(() => {
+        return getFilterParams(searchParams)
+    }, [searchParams])
 
     const labels = useMemo(() => translateLabels(params.language, [
         SEARCH,
@@ -357,7 +361,7 @@ const Header = ({ logOut, toastRef }) => {
                             style={[styles.dropdown, { top: dropdownTop, right: languageDropdownRight, marginRight: 0, overflow: 'hidden' }]}
                         >
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'cs' })).toString() }}>
+                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'cs', ...filterParams })).toString() }}>
                                     <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}>
                                         <Image
                                             resizeMode='contain'
@@ -373,7 +377,7 @@ const Header = ({ logOut, toastRef }) => {
                                 </Link>
                             </HoverableView>
                             <HoverableView hoveredBackgroundColor={COLORS.hoveredWhite}>
-                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'en' })).toString() }} >
+                                <Link style={{ textDecoration: 'none' }} to={{ pathname: location.pathname, search: new URLSearchParams(stripEmptyParams({ ...params, language: 'en', ...filterParams })).toString() }} >
                                     <View style={{ padding: SPACING.xx_small, flexDirection: 'row', alignItems: 'center' }}>
                                         <Image
                                             resizeMode='contain'
