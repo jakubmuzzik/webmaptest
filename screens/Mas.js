@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -7,32 +7,59 @@ import {
     Text
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
-import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { ACTIVE, MASSAGE_SERVICES } from '../labels'
+import { 
+    COLORS, 
+    FONTS, 
+    FONT_SIZES, 
+    MAX_ITEMS_PER_PAGE, 
+    SPACING, 
+    SUPPORTED_LANGUAGES ,
+    MIN_AGE,
+    MAX_AGE,
+    MIN_HEIGHT,
+    MAX_HEIGHT,
+    MIN_WEIGHT,
+    MAX_WEIGHT,
+} from '../constants'
+import { 
+    ACTIVE, 
+    BODY_TYPES,
+    PUBIC_HAIR_VALUES,
+    SEXUAL_ORIENTATION,
+    SERVICES,
+    HAIR_COLORS,
+    BREAST_SIZES,
+    BREAST_TYPES,
+    EYE_COLORS,
+    LANGUAGES,
+    NATIONALITIES,
+    MASSAGE_SERVICES
+} from '../labels'
 import RenderLady from '../components/list/RenderLady'
-import { chunkArray, getParam } from '../utils'
+import { normalize, getParam, chunkArray, areValuesEqual, getFilterParams } from '../utils'
 import { MOCK_DATA } from '../constants'
 import { useSearchParams } from 'react-router-dom'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter, doc } from '../firebase/config'
-import { updateMasseusesCount, updateMasseusesData } from '../redux/actions'
+import { updateMasseusesCount, updateMasseusesData, resetAllPaginationData } from '../redux/actions'
 import { MotiView, MotiText } from 'moti'
 import { connect } from 'react-redux'
 import SwappableText from '../components/animated/SwappableText'
 import Pagination from '../components/Pagination'
+import LottieView from 'lottie-react-native'
 
-const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData, ladyCities=[] }) => {
+const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseusesData, ladyCities=[], resetAllPaginationData }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(ladyCities, searchParams.get('city'), ''),
+        city: searchParams.get('city'),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
     }), [searchParams, ladyCities])
 
+    const previousCity = useRef(searchParams.get('city'))
+
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
-
-    const numberOfPages = Math.ceil(masseusesCount / MAX_ITEMS_PER_PAGE)
 
     useEffect(() => {
         if (!masseusesCount) {
@@ -41,13 +68,46 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
     }, [masseusesCount])
 
     useLayoutEffect(() => {
-        if (!masseusesData[params.page]) {
+        //filters changed
+        if (previousCity.current !== params.city) {
+            console.log('city changed')
+
             setIsLoading(true)
+
+            //trigger useEffect to update ladies count
+            updateMasseusesCount()
+
             loadDataForPage()
-        } else {
-            setIsLoading(false)
+            resetAllPaginationData()
+
+            previousCity.current = params.city
         }
-    }, [params.page])
+        //pagination changed
+        else {
+            console.log('pagination changed')
+            if (!masseusesData[params.page]) {
+                console.log('does not have data for page: ' + params.page)
+                setIsLoading(true)
+                loadDataForPage()
+            } else {
+                setIsLoading(false)
+            }
+        }
+    }, [params.page, params.city])
+
+    const getWhereConditions = () => {
+        let whereConditions = []
+
+        if (params.city) {
+            whereConditions.push(where('address.city', '==', params.city))
+        }
+
+        return whereConditions
+    }
+
+    const getOrdering = () => {
+        return orderBy("createdDate")
+    }
 
     const loadMockDataForPage = () => {
         updateMasseusesData(new Array(MAX_ITEMS_PER_PAGE).fill({
@@ -88,7 +148,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
                     where('services', 'array-contains-any', MASSAGE_SERVICES),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     limit(dataCountFromBeginning)
                 )
     
@@ -122,7 +183,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
                     where('services', 'array-contains-any', MASSAGE_SERVICES),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAfter(lastVisibleSnapshot),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -156,7 +218,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
                     where('services', 'array-contains-any', MASSAGE_SERVICES),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAt(0),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -188,7 +251,8 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
-                    where('services', 'array-contains-any', MASSAGE_SERVICES)
+                    where('services', 'array-contains-any', MASSAGE_SERVICES),
+                    ...getWhereConditions(),
                 )
             )
             
@@ -239,48 +303,47 @@ const Mas = ({ updateMasseusesCount, updateMasseusesData, masseusesCount, masseu
         ))
     }
 
-    const animatedHeaderText = () => {
+    const renderPaginationSkeleton = () => {
         return (
-            <>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Massages
-                </Text>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <SwappableText value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
-
-                    {!isNaN(masseusesCount) && (
-                        <MotiText
-                            from={{
-                                opacity: 0,
-                                transform: [{ rotateX: '90deg' }],
-                            }}
-                            animate={{
-                                opacity: 1,
-                                transform: [{ rotateX: '0deg' }],
-                            }}
-                            style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
-                        >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{masseusesCount} {masseusesCount === 1 ? 'Masseuse' : 'Masseuses'}</Text>
-                        </MotiText>
-                    )}
-                </View>
-            </>
+            <View style={{width: 300, alignSelf: 'center'}}>
+                <ContentLoader
+                    speed={2}
+                    width={300}
+                    style={{ height: FONT_SIZES.x_large }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height="100%" />
+                </ContentLoader>
+            </View>
         )
     }
+
+    const renderNoResults = () => (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF' }}>Sorry, we couldn't find any results</Text>
+            <LottieView
+                style={{ height: 180 }}
+                autoPlay
+                loop
+                source={require('../assets/no-results-white.json')}
+            />
+        </View>
+    )
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            {/* {animatedHeaderText()} */}
-
             <View style={{ marginLeft: SPACING.large, flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large, flex: 1 }}>
                 {isLoading && renderSkeleton()}
                 {!isLoading && masseusesData[params.page]?.map((data, index) => renderCard(data, index))}
+                {!isLoading && masseusesData[params.page]?.length === 0 && renderNoResults()}
             </View>
 
             <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
                {masseusesCount && <Pagination dataCount={masseusesCount}/>}
+               {isNaN(masseusesCount) && renderPaginationSkeleton()}
             </View>
         </View>
     )
@@ -292,7 +355,7 @@ const mapStateToProps = (store) => ({
     ladyCities: store.appState.ladyCities,
 })
 
-export default connect(mapStateToProps, { updateMasseusesCount, updateMasseusesData })(Mas)
+export default connect(mapStateToProps, { updateMasseusesCount, updateMasseusesData, resetAllPaginationData })(Mas)
 
 const styles = StyleSheet.create({
     cardContainer: {

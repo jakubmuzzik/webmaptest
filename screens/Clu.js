@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, useEffect, useCallback } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect, useRef } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -7,8 +7,34 @@ import {
     Text
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
-import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { ACTIVE } from '../labels'
+import { 
+    COLORS, 
+    FONTS, 
+    FONT_SIZES, 
+    MAX_ITEMS_PER_PAGE, 
+    SPACING, 
+    SUPPORTED_LANGUAGES ,
+    MIN_AGE,
+    MAX_AGE,
+    MIN_HEIGHT,
+    MAX_HEIGHT,
+    MIN_WEIGHT,
+    MAX_WEIGHT,
+} from '../constants'
+import { 
+    ACTIVE, 
+    BODY_TYPES,
+    PUBIC_HAIR_VALUES,
+    SEXUAL_ORIENTATION,
+    SERVICES,
+    HAIR_COLORS,
+    BREAST_SIZES,
+    BREAST_TYPES,
+    EYE_COLORS,
+    LANGUAGES,
+    NATIONALITIES,
+    MASSAGE_SERVICES
+} from '../labels'
 import RenderEstablishment from '../components/list/RenderEstablishment'
 import { MOCK_DATA } from '../constants'
 import { chunkArray, getParam } from '../utils'
@@ -16,18 +42,21 @@ import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAt, limit, orderBy, getDocs, getDoc, startAfter, doc } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
-import { updateEstablishmentsCount, updateEstablishmentsData } from '../redux/actions'
+import { updateEstablishmentsCount, updateEstablishmentsData, resetAllPaginationData } from '../redux/actions'
 import SwappableText from '../components/animated/SwappableText'
 import Pagination from '../components/Pagination'
+import LottieView from 'lottie-react-native'
 
-const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmentsCount, establishentsData, establishmentCities=[] }) => {
+const Clu = ({ updateEstablishmentsCount, resetAllPaginationData, updateEstablishmentsData, establishmentsCount, establishentsData, establishmentCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(establishmentCities, searchParams.get('city'), ''),
+        city: searchParams.get('city'),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
     }), [searchParams, establishmentCities])
+
+    const previousCity = useRef(searchParams.get('city'))
 
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
@@ -41,13 +70,46 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
     }, [establishmentsCount])
 
     useLayoutEffect(() => {
-        if (!establishentsData[params.page]) {
+        //filters changed
+        if (previousCity.current !== params.city) {
+            console.log('city changed')
+            
             setIsLoading(true)
+
+            //trigger useEffect to update ladies count
+            updateEstablishmentsCount()
+
             loadDataForPage()
-        } else {
-            setIsLoading(false)
+            resetAllPaginationData()
+
+            previousCity.current = params.city
+        } 
+        //pagination changed
+        else {
+            console.log('pagination changed')
+            if (!establishentsData[params.page]) {
+                console.log('does not have data for page: ' + params.page)
+                setIsLoading(true)
+                loadDataForPage()
+            } else {
+                setIsLoading(false)
+            }
+        } 
+    }, [params.page, params.city])
+
+    const getWhereConditions = () => {
+        let whereConditions = []
+
+        if (params.city) {
+            whereConditions.push(where('address.city', '==', params.city))
         }
-    }, [params.page])
+
+        return whereConditions
+    }
+
+    const getOrdering = () => {
+        return orderBy("createdDate")
+    }
 
     const loadMockDataForPage = () => {
         updateEstablishmentsData(new Array(MAX_ITEMS_PER_PAGE).fill({
@@ -87,7 +149,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                     collection(db, "users"), 
                     where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     limit(dataCountFromBeginning)
                 )
     
@@ -120,7 +183,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                     collection(db, "users"), 
                     where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAfter(lastVisibleSnapshot),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -153,7 +217,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                     collection(db, "users"), 
                     where('accountType', '==', 'establishment'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAt(0),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -184,7 +249,8 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
                 query(
                     collection(db, "users"), 
                     where('accountType', '==', 'establishment'), 
-                    where('status', '==', ACTIVE)
+                    where('status', '==', ACTIVE),
+                    ...getWhereConditions()
                 )
             )
             updateEstablishmentsCount(snapshot.data().count)
@@ -233,49 +299,48 @@ const Clu = ({ updateEstablishmentsCount, updateEstablishmentsData, establishmen
             </View>
         ))
     }
-
-    const animatedHeaderText = () => {
+    
+    const renderPaginationSkeleton = () => {
         return (
-            <>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Establishments
-                </Text>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <SwappableText value={params.city ? params.city : establishmentCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
-
-                    {!isNaN(establishmentsCount) && (
-                        <MotiText
-                            from={{
-                                opacity: 0,
-                                transform: [{ rotateX: '90deg' }],
-                            }}
-                            animate={{
-                                opacity: 1,
-                                transform: [{ rotateX: '0deg' }],
-                            }}
-                            style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
-                        >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{establishmentsCount} {establishmentsCount === 1 ? 'Establishment' : 'Establishments'}</Text>
-                        </MotiText>
-                    )}
-                </View>
-            </>
+            <View style={{width: 300, alignSelf: 'center'}}>
+                <ContentLoader
+                    speed={2}
+                    width={300}
+                    style={{ height: FONT_SIZES.x_large }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height="100%" />
+                </ContentLoader>
+            </View>
         )
     }
+
+    const renderNoResults = () => (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF' }}>Sorry, we couldn't find any results</Text>
+            <LottieView
+                style={{ height: 180 }}
+                autoPlay
+                loop
+                source={require('../assets/no-results-white.json')}
+            />
+        </View>
+    )
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            {/* {animatedHeaderText()} */}
-
             <View style={{ marginLeft: SPACING.large, flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large, flex: 1 }}>
                 {isLoading && renderSkeleton()}
                 {!isLoading && establishentsData[params.page]?.map((data, index) => renderCard(data, index))}
+                {!isLoading && establishentsData[params.page]?.length === 0 && renderNoResults()}
             </View>
 
             <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
                {establishmentsCount && <Pagination dataCount={establishmentsCount}/>}
+               {isNaN(establishmentsCount) && renderPaginationSkeleton()}
             </View>
         </View>
     )
@@ -287,7 +352,7 @@ const mapStateToProps = (store) => ({
     establishmentCities: store.appState.establishmentCities
 })
 
-export default connect(mapStateToProps, { updateEstablishmentsCount, updateEstablishmentsData })(Clu)
+export default connect(mapStateToProps, { updateEstablishmentsCount, updateEstablishmentsData, resetAllPaginationData })(Clu)
 
 const styles = StyleSheet.create({
     cardContainer: {

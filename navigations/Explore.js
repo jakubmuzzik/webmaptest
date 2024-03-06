@@ -10,15 +10,15 @@ import SwappableText from '../components/animated/SwappableText'
 import { connect } from 'react-redux'
 import ContentLoader, { Rect } from "react-content-loader/native"
 
-const Explore = ({ ladiesCount, ladyCities, masseusesCount, establishmentsCount, establishmentCities }) => {
+const Explore = ({ ladiesCount, masseusesCount, establishmentsCount }) => {
     const [searchParams] = useSearchParams()
 
     const location = useLocation()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(location.pathname === '/clu' ? establishmentCities : ladyCities, searchParams.get('city'), '')
-    }), [searchParams, establishmentCities, ladyCities, location.pathname])
+        city: searchParams.get('city')
+    }), [searchParams, location.pathname])
 
     const previousScrollY = useRef(window.scrollY)
     const positiveScrollYDelta = useRef(0)
@@ -78,27 +78,14 @@ const Explore = ({ ladiesCount, ladyCities, masseusesCount, establishmentsCount,
         }
     }
 
-    const citiesLoaded = location.pathname === '/clu' ? establishmentCities : ladyCities
-
     const animatedHeaderText = () => {
         return (
             <View style={{ marginTop: SPACING.large }}>
                 <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    {!citiesLoaded && <ContentLoader
-                        speed={2}
-                        height={FONT_SIZES.large}
-                        width={80}
-                        style={{ borderRadius: 5 }}
-                        backgroundColor={COLORS.grey}
-                        foregroundColor={COLORS.lightGrey}
-                    >
-                        <Rect x="0" y="0" rx="0" ry="0" width="100%" height={FONT_SIZES.large} />
-                    </ContentLoader>}
-
-                    {citiesLoaded && <SwappableText 
-                        value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} 
+                    <SwappableText 
+                        value={params.city ? params.city : 'Anywhere'} 
                         style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} 
-                    />}
+                    />
 
                     <Text
                         style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
@@ -151,10 +138,8 @@ const Explore = ({ ladiesCount, ladyCities, masseusesCount, establishmentsCount,
 
 const mapStateToProps = (store) => ({
     ladiesCount: store.appState.ladiesCount,
-    ladyCities: store.appState.ladyCities,
     masseusesCount: store.appState.masseusesCount,
-    establishmentsCount: store.appState.establishmentsCount,
-    establishmentCities: store.appState.establishmentCities
+    establishmentsCount: store.appState.establishmentsCount
 })
 
 export default connect(mapStateToProps)(Explore)

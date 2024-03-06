@@ -19,8 +19,10 @@ import {
   LANGUAGES,
   NATIONALITIES
 } from '../labels'
+import { where } from '../firebase/config'
 
 import { encode } from "blurhash"
+import { MASSAGE_SERVICES } from '../labels'
 
 const loadImage = async src =>
   new Promise((resolve, reject) => {
@@ -220,4 +222,69 @@ export const getFilterParams = (searchParams) => {
     nationality: searchParams.get('nationality') ? decodeURIComponent(searchParams.get('nationality')).split(',').filter(val => NATIONALITIES.includes(val)) : undefined,
     sexualOrientation: searchParams.get('sexualOrientation') ? decodeURIComponent(searchParams.get('sexualOrientation')).split(',').filter(val => SEXUAL_ORIENTATION.includes(val)) : undefined
   })
+}
+
+export const buildWhereConditions = (filterParams) => {
+  let whereConditions = []
+
+  const filterNames = Object.keys(filterParams)
+  console.log(filterNames)
+
+  if (filterNames.includes('ageRange')) {
+
+  } else {
+
+  }
+
+  if (filterNames.includes('heightRange')) {
+
+  } else {
+
+  }
+
+  if (filterNames.includes('weightRange')) {
+
+  } else {
+
+  }
+
+  if (filterNames.includes('onlyIndependent')) {
+    //whereConditions.push(where('independent', '==', true), )
+  } else {
+
+  }
+
+  if (filterNames.includes('outcall')) {
+
+  } else {
+
+  }
+
+  if (filterNames.includes('incall')) {
+
+  } else {
+
+  }
+
+  whereConditions.push(where('services', 'array-contains-any', filterNames.includes('services') ? filterParams.services : [...SERVICES, ...MASSAGE_SERVICES]))
+
+  whereConditions.push(where('bodyType', 'array-contains-any', filterNames.includes('bodyType') ? filterParams.bodyType : BODY_TYPES))
+
+  whereConditions.push(where('hairColor', 'array-contains-any', filterNames.includes('hairColor') ? filterParams.hairColor : HAIR_COLORS))
+
+  whereConditions.push(where('eyeColor', 'array-contains-any', filterNames.includes('eyeColor') ? filterParams.eyeColor : EYE_COLORS))
+
+  whereConditions.push(where('pubicHair', 'array-contains-any', filterNames.includes('pubicHair') ? filterParams.pubicHair : PUBIC_HAIR_VALUES))
+
+  whereConditions.push(where('breastSize', 'array-contains-any', filterNames.includes('breastSize') ? filterParams.breastSize : BREAST_SIZES))
+
+  whereConditions.push(where('breastType', 'array-contains-any', filterNames.includes('breastType') ? filterParams.breastType : BREAST_TYPES))
+
+  whereConditions.push(where('languages', 'array-contains-any', filterNames.includes('speaks') ? filterParams.speaks : LANGUAGES))
+
+  whereConditions.push(where('nationality', 'array-contains-any', filterNames.includes('nationality') ? filterParams.nationality : NATIONALITIES))
+
+  whereConditions.push(where('sexuality', 'array-contains-any', filterNames.includes('sexualOrientation') ? filterParams.sexualOrientation : SEXUAL_ORIENTATION))
+
+  return whereConditions
 }

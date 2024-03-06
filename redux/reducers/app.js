@@ -12,7 +12,9 @@ import {
     MASSEUSES_PAGINATION_DATA_STATE_CHANGE,
     RESET_LADIES_PAGINATION_DATA,
     RESET_MASSEUSES_PAGINATION_DATA,
-    RESET_ESTABLISHMENTS_PAGINATION_DATA
+    RESET_ESTABLISHMENTS_PAGINATION_DATA,
+    RESET_ALL_PAGINATION_DATA
+
 } from '../actionTypes'
 
 const INITIAL_STATE = {
@@ -109,6 +111,13 @@ export const app = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 establishentsData: {}
+            }
+        case RESET_ALL_PAGINATION_DATA:
+            return {
+                ...state,
+                establishentsData: {},
+                masseusesData: {},
+                adiesData: {}
             }
         default:
             return state

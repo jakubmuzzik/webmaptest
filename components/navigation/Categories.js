@@ -155,9 +155,9 @@ const Categories = ({ ladyCities, establishmentCities, resetEstablishmentsData, 
 
         setIndex(routes.indexOf(route))
 
-        resetEstablishmentsData()
-        resetLadiesData()
-        resetMasseusesData()
+        //resetEstablishmentsData()
+        //resetLadiesData()
+        //resetMasseusesData()
 
         navigate({
             pathname: route.path,

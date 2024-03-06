@@ -15,7 +15,8 @@ import {
     ESTABLISHMENT_PAGINATION_DATA_STATE_CHANGE,
     RESET_LADIES_PAGINATION_DATA,
     RESET_MASSEUSES_PAGINATION_DATA,
-    RESET_ESTABLISHMENTS_PAGINATION_DATA
+    RESET_ESTABLISHMENTS_PAGINATION_DATA,
+    RESET_ALL_PAGINATION_DATA
 } from './actionTypes'
 import { getAuth, getDoc, doc, db, signOut, getDocs, query, collection, where, getCountFromServer } from '../firebase/config'
 import { ACTIVE, DELETED } from '../labels'
@@ -94,6 +95,10 @@ export const resetMasseusesData = () => ({
 
 export const resetEstablishmentsData = () => ({
     type: RESET_ESTABLISHMENTS_PAGINATION_DATA
+})
+
+export const resetAllPaginationData = () => ({
+    type: RESET_ALL_PAGINATION_DATA
 })
 
 /**

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, useEffect, useCallback } from 'react'
+import React, { useState, useMemo, useLayoutEffect, useEffect, useRef } from 'react'
 import { 
     View, 
     Dimensions, 
@@ -7,36 +7,58 @@ import {
     Text
 } from 'react-native'
 import ContentLoader, { Rect } from "react-content-loader/native"
-import { COLORS, FONTS, FONT_SIZES, MAX_ITEMS_PER_PAGE, SPACING, SUPPORTED_LANGUAGES } from '../constants'
-import { ACTIVE, MASSAGE_SERVICES, SERVICES } from '../labels'
+import { 
+    COLORS, 
+    FONTS, 
+    FONT_SIZES, 
+    MAX_ITEMS_PER_PAGE, 
+    SPACING, 
+    SUPPORTED_LANGUAGES ,
+    MIN_AGE,
+    MAX_AGE,
+    MIN_HEIGHT,
+    MAX_HEIGHT,
+    MIN_WEIGHT,
+    MAX_WEIGHT,
+} from '../constants'
+import { 
+    ACTIVE, 
+    BODY_TYPES,
+    PUBIC_HAIR_VALUES,
+    SEXUAL_ORIENTATION,
+    SERVICES,
+    HAIR_COLORS,
+    BREAST_SIZES,
+    BREAST_TYPES,
+    EYE_COLORS,
+    LANGUAGES,
+    NATIONALITIES
+} from '../labels'
 import RenderLady from '../components/list/RenderLady'
 import { MOCK_DATA } from '../constants'
-import { normalize, getParam, chunkArray } from '../utils'
+import { normalize, getParam, chunkArray, areValuesEqual, getFilterParams } from '../utils'
 import { useSearchParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { getCountFromServer, db, collection, query, where, startAfter, startAt, limit, orderBy, getDocs, getDoc, doc } from '../firebase/config'
 import { MotiView, MotiText } from 'moti'
-import { updateLadiesCount, updateLadiesData } from '../redux/actions'
+import { updateLadiesCount, updateLadiesData, resetAllPaginationData } from '../redux/actions'
 import SwappableText from '../components/animated/SwappableText'
 import Pagination from '../components/Pagination'
+import LottieView from 'lottie-react-native'
 
-const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, ladyCities=[] }) => {
+const Esc = ({ updateLadiesCount, updateLadiesData, resetAllPaginationData, ladiesCount, ladiesData, ladyCities=[] }) => {
     const [searchParams] = useSearchParams()
 
     const params = useMemo(() => ({
         language: getParam(SUPPORTED_LANGUAGES, searchParams.get('language'), ''),
-        city: getParam(ladyCities, searchParams.get('city'), ''),
+        city: searchParams.get('city'),
         page: searchParams.get('page') && !isNaN(searchParams.get('page')) ? searchParams.get('page') : 1
     }), [searchParams, ladyCities])
 
+    const previousCity = useRef(searchParams.get('city'))
+
     const [contentWidth, setContentWidth] = useState(document.body.clientWidth - (SPACING.page_horizontal - SPACING.large) * 2)
     const [isLoading, setIsLoading] = useState(true)
-
-    const numberOfPages = Math.ceil(ladiesCount / MAX_ITEMS_PER_PAGE)
-
-    useEffect(() => {
-        console.log(params.city)
-    }, [params.city])
     
     useEffect(() => {
         if (!ladiesCount) {
@@ -45,14 +67,46 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
     }, [ladiesCount])
 
     useLayoutEffect(() => {
-        if (!ladiesData[params.page]) {
-            console.log('does not have data for page: ' + params.page)
+        //filters changed
+        if (previousCity.current !== params.city) {
+            console.log('city changed')
+            
             setIsLoading(true)
+
+            //trigger useEffect to update ladies count
+            updateLadiesCount()
+
             loadDataForPage()
-        } else {
-            setIsLoading(false)
+            resetAllPaginationData()
+
+            previousCity.current = params.city
+        } 
+        //pagination changed
+        else {
+            console.log('pagination changed')
+            if (!ladiesData[params.page]) {
+                console.log('does not have data for page: ' + params.page)
+                setIsLoading(true)
+                loadDataForPage()
+            } else {
+                setIsLoading(false)
+            }
+        } 
+    }, [params.page, params.city])
+
+    const getWhereConditions = () => {
+        let whereConditions = []
+
+        if (params.city) {
+            whereConditions.push(where('address.city', '==', params.city))
         }
-    }, [params.page])
+
+        return whereConditions
+    }
+
+    const getOrdering = () => {
+        return orderBy("createdDate")
+    }
 
     const loadMockDataForPage = () => {
         updateLadiesData(new Array(MAX_ITEMS_PER_PAGE).fill({
@@ -103,7 +157,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     limit(dataCountFromBeginning)
                 )
     
@@ -136,7 +191,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAfter(lastVisibleSnapshot),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -169,7 +225,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                     collection(db, "users"), 
                     where('accountType', '==', 'lady'), 
                     where('status', '==', ACTIVE),
-                    orderBy("createdDate"),
+                    ...getWhereConditions(),
+                    getOrdering(),
                     startAt(0),
                     limit(MAX_ITEMS_PER_PAGE)
                 )
@@ -200,7 +257,8 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
                 query(
                     collection(db, "users"),
                     where('accountType', '==', 'lady'),
-                    where('status', '==', ACTIVE)
+                    where('status', '==', ACTIVE),
+                    ...getWhereConditions(),
                 )
             )
             updateLadiesCount(snapshot.data().count)
@@ -250,48 +308,47 @@ const Esc = ({ updateLadiesCount, updateLadiesData, ladiesCount, ladiesData, lad
         ))
     }
 
-    const animatedHeaderText = () => {
+    const renderPaginationSkeleton = () => {
         return (
-            <>
-                <Text style={{ fontFamily: FONTS.bold, fontSize: FONT_SIZES.h1, color: '#FFF', textAlign: 'center' }}>
-                    Ladies
-                </Text>
-                <View style={{ flexDirection: 'row', alignSelf: 'center', alignItems: 'center' }}>
-                    <SwappableText value={params.city ? params.city : ladyCities.length === 0 ? '' : 'Anywhere'} style={{ color: COLORS.greyText, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }} />
-
-                    {!isNaN(ladiesCount) && (
-                        <MotiText
-                            from={{
-                                opacity: 0,
-                                transform: [{ rotateX: '90deg' }],
-                            }}
-                            animate={{
-                                opacity: 1,
-                                transform: [{ rotateX: '0deg' }],
-                            }}
-                            style={{ color: COLORS.red, fontSize: FONT_SIZES.large, fontFamily: FONTS.medium, textAlign: 'center' }}
-                        >
-                            &nbsp;•&nbsp;<Text style={{ color: COLORS.greyText }}>{ladiesCount} {ladiesCount === 1 ? 'Lady' : 'Ladies'} </Text>
-                        </MotiText>
-                    )}
-                </View>
-            </>
+            <View style={{width: 300, alignSelf: 'center'}}>
+                <ContentLoader
+                    speed={2}
+                    width={300}
+                    style={{ height: FONT_SIZES.x_large }}
+                    backgroundColor={COLORS.grey}
+                    foregroundColor={COLORS.lightGrey}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="100%" height="100%" />
+                </ContentLoader>
+            </View>
         )
     }
+
+    const renderNoResults = () => (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: FONTS.medium, fontSize: FONT_SIZES.x_large, color: '#FFF' }}>Sorry, we couldn't find any results</Text>
+            <LottieView
+                style={{ height: 180 }}
+                autoPlay
+                loop
+                source={require('../assets/no-results-white.json')}
+            />
+        </View>
+    )
 
     return (
         <View style={{ flex: 1, backgroundColor: COLORS.lightBlack, marginHorizontal: SPACING.page_horizontal - SPACING.large }} 
             onLayout={(event) => setContentWidth(event.nativeEvent.layout.width)}
         >
-            {/* {animatedHeaderText()} */}
-
             <View style={{ marginLeft: SPACING.large, flexDirection: 'row', flexWrap: 'wrap', marginTop: SPACING.large, flex: 1 }}>
                 {isLoading && renderSkeleton()}
                 {!isLoading && ladiesData[params.page]?.map((data, index) => renderCard(data, index))}
+                {!isLoading && ladiesData[params.page]?.length === 0 && renderNoResults()}
             </View>
 
             <View style={{ marginTop: SPACING.large, marginBottom: SPACING.medium }}>
                {ladiesCount && <Pagination dataCount={ladiesCount}/>}
+               {isNaN(ladiesCount) && renderPaginationSkeleton()}
             </View>
         </View>
     )
@@ -303,7 +360,7 @@ const mapStateToProps = (store) => ({
     ladyCities: store.appState.ladyCities,
 })
 
-export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData })(Esc)
+export default connect(mapStateToProps, { updateLadiesCount, updateLadiesData, resetAllPaginationData })(Esc)
 
 const styles = StyleSheet.create({
     cardContainer: {
