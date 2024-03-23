@@ -117,7 +117,7 @@ export const app = (state = INITIAL_STATE, action) => {
                 ...state,
                 establishentsData: {},
                 masseusesData: {},
-                adiesData: {}
+                ladiesData: {}
             }
         default:
             return state
